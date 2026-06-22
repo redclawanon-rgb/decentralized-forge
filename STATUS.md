@@ -299,16 +299,16 @@ Status: **complete as local conformance metadata; no signing, relay publishing, 
 
 Outputs:
 
-- `scripts/nip34_adapter.py` now validates local NIP-01 event shape for dry-run fixtures: required fields, integer `kind`/`created_at`, string `content`, array-of-string `tags`, and fixture pubkey shape.
+- `scripts/nip34_adapter.py` now validates local NIP-01 event shape for dry-run fixtures: required fields, exact non-bool integer `kind`/`created_at`, string `content`, array-of-string `tags`, and fixture pubkey shape.
 - The adapter exports `dry_run.conformance.reports[]` for repository announcement (`30617`), issue (`1621`), patch (`1617`), and repository state (`30618`) fixtures.
 - Reports preserve placeholder id/signature detection and explicit `event_id_computed: false`, `signed: false`, and `published: false` fields.
 - Reports include local-only `serialized_event_payload` and `possible_event_id` references when NIP-01 shape permits; fixture `id`/`sig` values are not replaced.
-- `tests/test_registry_fixture.py` covers valid reports, placeholder id/signature metadata, local possible event IDs, and invalid tag/content rejection.
+- `tests/test_registry_fixture.py` covers valid reports, placeholder id/signature metadata, local possible event IDs, and invalid bool integer/tag/content/pubkey rejection.
 - README, `.hermes/context.md`, `AGENT-LOOPS.md`, and `docs/nip34-event-shapes.md` updated for Loop 14 behavior and boundaries.
 
 Verified commands:
 
-- `python3 -m unittest discover -s tests` — passed, 29 tests.
+- `python3 -m unittest discover -s tests` — passed, 31 tests.
 - `python3 -m json.tool fixtures/nostr-repo-announcement.json` — passed.
 - `python3 -m json.tool fixtures/nostr-collaboration-events.json` — passed.
 - `python3 -m json.tool fixtures/nostr-repo-state-status.json` — passed.

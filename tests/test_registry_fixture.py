@@ -536,6 +536,46 @@ class RegistryFixtureTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "not eligible"):
             nip34_adapter.nip01_serialized_event_payload(invalid)
 
+    def test_nip01_event_shape_rejects_bool_integer_fields(self):
+        for field in ["created_at", "kind"]:
+            with self.subTest(field=field):
+                invalid = json.loads(json.dumps(self.nostr_repo_fixture))
+                invalid[field] = True
+
+                shape = nip34_adapter.validate_nip01_event_shape(invalid)
+                report = nip34_adapter.conformance_report(invalid, label=f"bool-{field}")
+
+                self.assertFalse(shape["valid_for_local_fixture"])
+                self.assertFalse(shape[f"{field}_is_int"])
+                self.assertIn(f"{field} must be an int", shape["errors"])
+                self.assertIsNone(nip34_adapter.possible_event_id(invalid))
+                self.assertIsNone(report["possible_event_id"])
+                self.assertIsNone(report["serialized_event_payload"])
+                self.assertFalse(report["event_id_computed"])
+
+    def test_nip01_event_shape_rejects_missing_pubkey_and_non_list_tags(self):
+        missing_pubkey = json.loads(json.dumps(self.nostr_repo_fixture))
+        missing_pubkey.pop("pubkey")
+        missing_shape = nip34_adapter.validate_nip01_event_shape(missing_pubkey)
+        missing_report = nip34_adapter.conformance_report(missing_pubkey, label="missing-pubkey")
+
+        self.assertFalse(missing_shape["required_fields_present"])
+        self.assertFalse(missing_shape["valid_for_local_fixture"])
+        self.assertIn("missing required field: pubkey", missing_shape["errors"])
+        self.assertIsNone(nip34_adapter.possible_event_id(missing_pubkey))
+        self.assertIsNone(missing_report["possible_event_id"])
+
+        non_list_tags = json.loads(json.dumps(self.nostr_repo_fixture))
+        non_list_tags["tags"] = {"not": "a list"}
+        tags_shape = nip34_adapter.validate_nip01_event_shape(non_list_tags)
+        tags_report = nip34_adapter.conformance_report(non_list_tags, label="non-list-tags")
+
+        self.assertFalse(tags_shape["valid_for_local_fixture"])
+        self.assertFalse(tags_shape["tags_are_arrays_of_strings"])
+        self.assertIn("tags must be a list", tags_shape["errors"])
+        self.assertIsNone(nip34_adapter.possible_event_id(non_list_tags))
+        self.assertIsNone(tags_report["possible_event_id"])
+
     def test_renderer_outputs_expected_html(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             output = Path(tmpdir) / "demo.html"
@@ -679,7 +719,8 @@ class RegistryFixtureTests(unittest.TestCase):
             html = output.read_text(encoding="utf-8")
             self.assertIn("NIP-34 fixture adapter", html)
             self.assertIn("local parser/conformance output", html)
-            self.assertIn("No relay publishing, signing, event ID computation, relay fetching, or live verification is performed or claimed", html)
+            self.assertIn("No relay publishing, signing, fixture ID replacement, relay fetching, or live verification is performed or claimed", html)
+            self.assertIn("possible_event_id values are local reference hashes only", html)
             self.assertIn("Repo ID", html)
             self.assertIn("demo-project", html)
             self.assertIn("wss://relay.example.invalid", html)

@@ -205,7 +205,7 @@ Keep repository state/status evidence local until a future loop explicitly appro
 
 **Current result:**
 
-Completed as local-only conformance reporting. `scripts/nip34_adapter.py` now validates required NIP-01 event fields, tag/content shapes, integer `kind`/`created_at`, and fixture pubkey shape for repository announcement (`30617`), issue (`1621`), patch (`1617`), and repository state (`30618`) fixtures. The adapter exports `dry_run.conformance.reports[]` with placeholder id/signature flags, `event_id_computed: false`, `signed: false`, `published: false`, and local-only `serialized_event_payload`/`possible_event_id` references where shape permits. Tests cover valid reports and invalid tag/content rejection.
+Completed as local-only conformance reporting. `scripts/nip34_adapter.py` now validates required NIP-01 event fields, tag/content shapes, exact non-bool integer `kind`/`created_at`, and fixture pubkey shape for repository announcement (`30617`), issue (`1621`), patch (`1617`), and repository state (`30618`) fixtures. The adapter exports `dry_run.conformance.reports[]` with placeholder id/signature flags, `event_id_computed: false`, `signed: false`, `published: false`, and local-only `serialized_event_payload`/`possible_event_id` references where shape permits; those references are not fixture ID replacements or signed/relay-accepted event ID claims. Tests cover valid reports and invalid bool integer/tag/content/pubkey rejection.
 
 **Gate:**
 

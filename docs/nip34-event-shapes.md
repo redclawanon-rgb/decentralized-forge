@@ -127,7 +127,7 @@ NIP-01 defines the event fields `id`, `pubkey`, `created_at`, `kind`, `tags`, `c
 Loop 14 implements only local metadata checks:
 
 - Required event fields checked: `pubkey`, `created_at`, `kind`, `tags`, and `content`.
-- Shape checks: `kind` and `created_at` are integers, `content` is a string, and every tag is an array of strings.
+- Shape checks: `kind` and `created_at` are exact JSON-style integers (Python bools are rejected), `content` is a string, and every tag is an array of strings.
 - Fixture pubkeys must be 64 lowercase hex or this project's obvious repeated-digit synthetic fixture values.
 - Placeholder `id` and `sig` strings are accepted and reported as placeholders because the fixtures are dry-run only.
 - `event_id_computed: false`, `signed: false`, and `published: false` remain explicit even when a `possible_event_id` reference hash is included.
@@ -146,7 +146,7 @@ python3 scripts/render_project_page.py fixtures/example-project.registry.json ou
 
 When the repository and collaboration arguments are provided, the renderer imports the fixture pair through `scripts/nip34_adapter.py` and adds a **NIP-34 fixture adapter** section to the generated HTML. Loop 13's optional state/status argument extends that section with the `kind: 30618` state, HEAD ref/commit, local refs, fixture-only status/check projections, and explicit state/status non-claims. The section displays repository id/name/kind, relay hints, dry-run publish status, imported issue and patch counts/titles/statuses/summaries/source kinds, placeholder event IDs/signatures, relay-tool fallback, synthetic key policy, NIP-35 boundary fields, and repository state/status dry-run fields.
 
-The arguments must be provided together so the renderer cannot accidentally display a partial repository or collaboration import. The output is labeled as local parser/conformance data and explicitly states that no relay publishing, signing, event ID computation, relay fetching, or live verification is performed or claimed.
+The arguments must be provided together so the renderer cannot accidentally display a partial repository or collaboration import. The output is labeled as local parser/conformance data and explicitly states that no relay publishing, signing, fixture ID replacement, relay fetching, or live verification is performed or claimed. Any `possible_event_id` values are local reference hashes only, not signed or relay-accepted event ID claims.
 
 ## NIP-35 boundary
 
@@ -168,7 +168,7 @@ Current local fields:
 - `status`/`conclusion`: copied as local fixture display fields
 - `synthetic: true` and `published: false`
 
-The fixture has explicit non-claims for no relay publish/fetch, no event ID computation, no signing/private keys, no public CI status creation, and no live NIP status semantics claim.
+The fixture has explicit non-claims for no relay publish/fetch, no fixture ID replacement, no signing/private keys, no public CI status creation, and no live NIP status semantics claim. Local `possible_event_id` reference hashes, when present in conformance reports, are not signed or relay-accepted event IDs.
 
 ## Open decisions before public NIP-34 publishing
 

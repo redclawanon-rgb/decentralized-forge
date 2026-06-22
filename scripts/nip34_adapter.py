@@ -53,9 +53,12 @@ def validate_nip01_event_shape(event: dict[str, Any]) -> dict[str, Any]:
     if "pubkey" in event and not (pubkey_is_lower_hex or pubkey_is_fixture_synthetic):
         errors.append("pubkey must be 64 lowercase hex or an obvious repeated-digit fixture key")
 
-    if "created_at" in event and not isinstance(event.get("created_at"), int):
+    created_at_is_int = type(event.get("created_at")) is int
+    kind_is_int = type(event.get("kind")) is int
+
+    if "created_at" in event and not created_at_is_int:
         errors.append("created_at must be an int")
-    if "kind" in event and not isinstance(event.get("kind"), int):
+    if "kind" in event and not kind_is_int:
         errors.append("kind must be an int")
     if "content" in event and not isinstance(event.get("content"), str):
         errors.append("content must be a string")
@@ -79,8 +82,8 @@ def validate_nip01_event_shape(event: dict[str, Any]) -> dict[str, Any]:
         "required_fields_present": all(field in event for field in ["pubkey", "created_at", "kind", "tags", "content"]),
         "pubkey_is_lower_hex_64": pubkey_is_lower_hex,
         "pubkey_is_fixture_synthetic": pubkey_is_fixture_synthetic,
-        "created_at_is_int": isinstance(event.get("created_at"), int),
-        "kind_is_int": isinstance(event.get("kind"), int),
+        "created_at_is_int": created_at_is_int,
+        "kind_is_int": kind_is_int,
         "tags_are_arrays_of_strings": tags_valid,
         "content_is_string": isinstance(event.get("content"), str),
         "valid_for_local_fixture": required_shape_valid,

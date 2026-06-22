@@ -274,7 +274,8 @@ def render_nip34_adapter_section(exported: dict | None) -> str:
         "<h2>NIP-34 fixture adapter</h2>"
         '<p class="notice"><strong>NIP-34 local parser/conformance output:</strong> '
         "this section is generated from local NIP-34 fixture files via <code>scripts/nip34_adapter.py</code>. "
-        "No relay publishing, signing, event ID computation, relay fetching, or live verification is performed or claimed. "
+        "No relay publishing, signing, fixture ID replacement, relay fetching, or live verification is performed or claimed; "
+        "possible_event_id values are local reference hashes only, not signed or relay-accepted event ID claims. "
         "Dry-run placeholders are displayed so these fixtures cannot be mistaken for live Nostr events.</p>"
         '<dl class="metadata">'
         + field("Repo ID", project.get("id"))
