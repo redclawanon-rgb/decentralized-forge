@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-adapter-replay-checklist.v1",
-  "loop": 26,
+  "loop": 28,
   "purpose": "Secret-free gates for future Radicle local CLI replay and Nostr disposable relay publish/readback verification.",
   "discovery": {
     "rad_command": "command -v rad",
@@ -37,7 +37,11 @@
     "loop_25_nostr_publish_readback_json": "evidence/nostr-loop25-publish-readback-2026-06-22.json",
     "network_protocol_actions_used_after_loop_25": true,
     "loop_26_live_evidence_import_recorded": true,
-    "loop_26_live_evidence_index": "fixtures/live-evidence-index.json"
+    "loop_26_live_evidence_index": "fixtures/live-evidence-index.json",
+    "loop_28_nostr_readback_check_recorded": true,
+    "loop_28_nostr_readback_check_evidence": "evidence/nostr-loop28-readback-check-2026-06-22.md",
+    "loop_28_nostr_readback_check_json": "evidence/nostr-loop28-readback-check-2026-06-22.json",
+    "network_protocol_actions_used_after_loop_28": true
   },
   "global_gates": [
     "approved_tooling_path_required",
@@ -236,7 +240,31 @@
       "no_full_nip34_or_forge_protocol_compatibility_claim"
     ],
     "imported_into_live_evidence_index_after_loop_26": true,
-    "live_evidence_index_state_after_loop_26": "selected-relay-readback-verified"
+    "live_evidence_index_state_after_loop_26": "selected-relay-readback-verified",
+    "status_after_loop_28": "readback_persistence_divergence_checked_no_new_publish",
+    "readback_check_evidence_after_loop_28": "evidence/nostr-loop28-readback-check-2026-06-22.md",
+    "readback_check_json_after_loop_28": "evidence/nostr-loop28-readback-check-2026-06-22.json",
+    "selected_relays_rechecked_after_loop_28": [
+      "wss://relay.damus.io",
+      "wss://nos.lol"
+    ],
+    "extra_relays_checked_after_loop_28": [
+      "wss://relay.primal.net",
+      "wss://nostr.wine"
+    ],
+    "readback_verified_relays_after_loop_28": [
+      "wss://relay.damus.io",
+      "wss://nos.lol",
+      "wss://relay.primal.net"
+    ],
+    "unmatched_relays_after_loop_28": [
+      "wss://nostr.wine"
+    ],
+    "new_event_published_after_loop_28": false,
+    "production_or_personal_key_used_after_loop_28": false,
+    "paid_infrastructure_used_after_loop_28": false,
+    "direct_outreach_after_loop_28": false,
+    "claim_boundary_after_loop_28": "readback persistence/divergence evidence only; selected relays plus one extra relay returned and verified the exact event, one extra relay did not return it; no durability/global-propagation/censorship-resistance/identity-trust/production-readiness/full-compatibility claim"
   },
   "secrets_policy": {
     "contains_secret_values": false,

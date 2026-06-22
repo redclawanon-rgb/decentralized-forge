@@ -165,6 +165,24 @@ No direct outreach, spending, paid infrastructure, production/private personal k
 
 ## Loop 28 — Nostr readback persistence/divergence check
 
+**Status:** Complete 2026-06-22 as readback-only persistence/divergence evidence; no new publish.
+
+**Result:**
+
+1. Re-read event `4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba` by ID from the two Loop 25 selected relays plus two Permission-E extra readback-only relays.
+2. `wss://relay.damus.io`, `wss://nos.lol`, and `wss://relay.primal.net` returned the exact event; fields matched the signed preview and `nak verify` passed.
+3. `wss://nostr.wine` did not return the event during this check.
+4. No new Nostr event was published and no secret key material was read or printed.
+
+**Artifacts:**
+
+- `evidence/nostr-loop28-readback-check-2026-06-22.md`
+- `evidence/nostr-loop28-readback-check-2026-06-22.json`
+
+**Boundary preserved:**
+
+This is selected/limited relay readback evidence only. It is not a durability guarantee, global propagation proof, censorship-resistance proof, identity-trust proof, production-readiness claim, security guarantee, or full NIP-34/forge compatibility claim. No paid/authenticated relay, production/private personal key, direct outreach, spending, or Radicle public-network action occurred.
+
 **Goal:** Re-read the Loop 25 event after time has passed and record whether selected relays still return the same event.
 
 **Approval needed:** Permission E if querying additional public relays or publishing another event. Re-reading the two already-used relays is low-risk and covered by prior live evidence scope.

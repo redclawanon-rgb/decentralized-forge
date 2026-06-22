@@ -235,6 +235,30 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertFalse(nostr_gate["direct_outreach_after_loop_25"])
             self.assertIn("no_durability_guarantee", nostr_gate["non_claims_after_loop_25"])
 
+        if checklist["loop"] >= 28:
+            discovery = checklist["discovery"]
+            self.assertTrue(discovery["loop_28_nostr_readback_check_recorded"])
+            self.assertTrue(discovery["network_protocol_actions_used_after_loop_28"])
+            nostr_gate = checklist["nostr_disposable_readback"]
+            self.assertEqual(
+                nostr_gate["status_after_loop_28"],
+                "readback_persistence_divergence_checked_no_new_publish",
+            )
+            self.assertEqual(
+                nostr_gate["selected_relays_rechecked_after_loop_28"],
+                ["wss://relay.damus.io", "wss://nos.lol"],
+            )
+            self.assertEqual(
+                nostr_gate["extra_relays_checked_after_loop_28"],
+                ["wss://relay.primal.net", "wss://nostr.wine"],
+            )
+            self.assertIn("wss://relay.primal.net", nostr_gate["readback_verified_relays_after_loop_28"])
+            self.assertIn("wss://nostr.wine", nostr_gate["unmatched_relays_after_loop_28"])
+            self.assertFalse(nostr_gate["new_event_published_after_loop_28"])
+            self.assertFalse(nostr_gate["production_or_personal_key_used_after_loop_28"])
+            self.assertFalse(nostr_gate["paid_infrastructure_used_after_loop_28"])
+            self.assertFalse(nostr_gate["direct_outreach_after_loop_28"])
+
         required_global_gates = {
             "approved_tooling_path_required",
             "temporary_or_disposable_state_only",
@@ -337,6 +361,42 @@ class RegistryFixtureTests(unittest.TestCase):
             "not production readiness",
         ]:
             self.assertIn(required_non_claim, evidence_blob)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, evidence_blob)
+
+    def test_loop28_nostr_readback_check_evidence_is_bounded(self):
+        checklist = self.live_replay_checklist
+        if checklist["loop"] < 28:
+            self.skipTest("Loop 28 Nostr readback persistence evidence not recorded yet")
+        nostr_gate = checklist["nostr_disposable_readback"]
+        evidence_path = ROOT / nostr_gate["readback_check_json_after_loop_28"]
+        evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+        self.assertEqual(evidence["loop"], 28)
+        self.assertEqual(evidence["event_id"], nostr_gate["event_id_after_loop_25"])
+        self.assertEqual(evidence["selected_relays"], nostr_gate["selected_relays_rechecked_after_loop_28"])
+        self.assertEqual(evidence["extra_relays"], nostr_gate["extra_relays_checked_after_loop_28"])
+        self.assertEqual(evidence["verified_relays"], nostr_gate["readback_verified_relays_after_loop_28"])
+        by_relay = {readback["relay"]: readback for readback in evidence["readback"]}
+        for selected_relay in nostr_gate["selected_relays_rechecked_after_loop_28"]:
+            self.assertTrue(by_relay[selected_relay]["matched"])
+            self.assertTrue(by_relay[selected_relay]["field_match"])
+            self.assertEqual(by_relay[selected_relay]["verify_readback"]["returncode"], 0)
+        self.assertTrue(by_relay["wss://relay.primal.net"]["matched"])
+        self.assertFalse(by_relay["wss://nostr.wine"]["matched"])
+        evidence_blob = json.dumps(evidence).lower()
+        for required_non_claim in [
+            "not proof of global propagation",
+            "not proof of censorship resistance",
+            "not production readiness",
+            "not full nip-34 or forge protocol compatibility",
+        ]:
+            self.assertIn(required_non_claim, evidence_blob)
+        for action_not_taken in [
+            "no new nostr event was published",
+            "no secret key material was read or printed",
+            "no radicle public-network action was taken",
+        ]:
+            self.assertIn(action_not_taken, evidence_blob)
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, evidence_blob)
 

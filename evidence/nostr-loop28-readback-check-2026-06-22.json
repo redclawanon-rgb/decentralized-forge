@@ -1,0 +1,340 @@
+{
+  "actions_not_taken": [
+    "no new Nostr event was published",
+    "no secret key material was read or printed",
+    "no paid/authenticated relay was used",
+    "no production/private personal key was used",
+    "no Radicle public-network action was taken"
+  ],
+  "created_utc": "2026-06-22T18:32:38.019783+00:00",
+  "divergence": [
+    {
+      "field_match": true,
+      "matched": true,
+      "relay": "wss://relay.damus.io",
+      "verify_passed": true
+    },
+    {
+      "field_match": true,
+      "matched": true,
+      "relay": "wss://nos.lol",
+      "verify_passed": true
+    },
+    {
+      "field_match": true,
+      "matched": true,
+      "relay": "wss://relay.primal.net",
+      "verify_passed": true
+    },
+    {
+      "field_match": false,
+      "matched": false,
+      "relay": "wss://nostr.wine",
+      "verify_passed": false
+    }
+  ],
+  "event_id": "4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba",
+  "extra_relays": [
+    "wss://relay.primal.net",
+    "wss://nostr.wine"
+  ],
+  "input_event_file": "evidence/nostr-loop24-signed-event-preview-2026-06-22.json",
+  "loop": 28,
+  "matched_relays": [
+    "wss://relay.damus.io",
+    "wss://nos.lol",
+    "wss://relay.primal.net"
+  ],
+  "non_claims": [
+    "readback persistence on selected relays is not a durability guarantee",
+    "extra relay non-readback is not proof of absence from the wider Nostr network",
+    "not proof of global propagation",
+    "not proof of censorship resistance",
+    "not proof of identity trust",
+    "not production readiness",
+    "not full NIP-34 or forge protocol compatibility"
+  ],
+  "permission_scope": "Permission E granted 2026-06-22; readback-only checks, no new publish/event.",
+  "readback": [
+    {
+      "cmd": [
+        "/home/openclaw/.local/bin/nak",
+        "req",
+        "-i",
+        "4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba",
+        "wss://relay.damus.io"
+      ],
+      "events": [
+        {
+          "content": "Decentralized Forge prototype/research relay test. This event announces a local/static prototype and live-adapter evidence paths only. It does not claim production readiness, durability, censorship resistance, global propagation, identity trust, security guarantees, or full protocol compatibility.",
+          "created_at": 1782142614,
+          "id": "4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba",
+          "kind": 30617,
+          "pubkey": "6669423ee76d9d5adc8e81df79286c2569edbe5ab84f3e35043db71a54eff5c8",
+          "sig": "109b5458e25a36c84ef633480d20c179b58f0a6a3df9576304577fc15ae44edc9f4e06f03c956ef0aa0828d75b6dabeb55fb7c9e3ebe03689c828df2753847c3",
+          "tags": [
+            [
+              "d",
+              "decentralized-forge-live-adapter-prototype-2026-06-22"
+            ],
+            [
+              "name",
+              "Decentralized Forge prototype live-adapter test"
+            ],
+            [
+              "description",
+              "Prototype/research NIP-34 repository announcement for Decentralized Forge live-adapter publish/readback verification."
+            ],
+            [
+              "web",
+              "https://github.com/redclawanon-rgb/decentralized-forge"
+            ],
+            [
+              "clone",
+              "https://github.com/redclawanon-rgb/decentralized-forge.git"
+            ],
+            [
+              "relays",
+              "wss://relay.damus.io"
+            ],
+            [
+              "relays",
+              "wss://nos.lol"
+            ],
+            [
+              "t",
+              "decentralized-forge"
+            ],
+            [
+              "t",
+              "prototype"
+            ],
+            [
+              "t",
+              "research"
+            ],
+            [
+              "t",
+              "live-adapter-test"
+            ]
+          ]
+        }
+      ],
+      "events_returned": 1,
+      "field_match": true,
+      "matched": true,
+      "relay": "wss://relay.damus.io",
+      "returncode": 0,
+      "source": "loop25-selected",
+      "stderr": "connecting to relay.damus.io... ok.\n",
+      "stdout": "{\"kind\":30617,\"id\":\"4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba\",\"pubkey\":\"6669423ee76d9d5adc8e81df79286c2569edbe5ab84f3e35043db71a54eff5c8\",\"created_at\":1782142614,\"tags\":[[\"d\",\"decentralized-forge-live-adapter-prototype-2026-06-22\"],[\"name\",\"Decentralized Forge prototype live-adapter test\"],[\"description\",\"Prototype/research NIP-34 repository announcement for Decentralized Forge live-adapter publish/readback verification.\"],[\"web\",\"https://github.com/redclawanon-rgb/decentralized-forge\"],[\"clone\",\"https://github.com/redclawanon-rgb/decentralized-forge.git\"],[\"relays\",\"wss://relay.damus.io\"],[\"relays\",\"wss://nos.lol\"],[\"t\",\"decentralized-forge\"],[\"t\",\"prototype\"],[\"t\",\"research\"],[\"t\",\"live-adapter-test\"]],\"content\":\"Decentralized Forge prototype/research relay test. This event announces a local/static prototype and live-adapter evidence paths only. It does not claim production readiness, durability, censorship resistance, global propagation, identity trust, security guarantees, or full protocol compatibility.\",\"sig\":\"109b5458e25a36c84ef633480d20c179b58f0a6a3df9576304577fc15ae44edc9f4e06f03c956ef0aa0828d75b6dabeb55fb7c9e3ebe03689c828df2753847c3\"}\n",
+      "verify_readback": {
+        "cmd": [
+          "/home/openclaw/.local/bin/nak",
+          "verify"
+        ],
+        "returncode": 0,
+        "stderr": "",
+        "stdout": ""
+      }
+    },
+    {
+      "cmd": [
+        "/home/openclaw/.local/bin/nak",
+        "req",
+        "-i",
+        "4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba",
+        "wss://nos.lol"
+      ],
+      "events": [
+        {
+          "content": "Decentralized Forge prototype/research relay test. This event announces a local/static prototype and live-adapter evidence paths only. It does not claim production readiness, durability, censorship resistance, global propagation, identity trust, security guarantees, or full protocol compatibility.",
+          "created_at": 1782142614,
+          "id": "4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba",
+          "kind": 30617,
+          "pubkey": "6669423ee76d9d5adc8e81df79286c2569edbe5ab84f3e35043db71a54eff5c8",
+          "sig": "109b5458e25a36c84ef633480d20c179b58f0a6a3df9576304577fc15ae44edc9f4e06f03c956ef0aa0828d75b6dabeb55fb7c9e3ebe03689c828df2753847c3",
+          "tags": [
+            [
+              "d",
+              "decentralized-forge-live-adapter-prototype-2026-06-22"
+            ],
+            [
+              "name",
+              "Decentralized Forge prototype live-adapter test"
+            ],
+            [
+              "description",
+              "Prototype/research NIP-34 repository announcement for Decentralized Forge live-adapter publish/readback verification."
+            ],
+            [
+              "web",
+              "https://github.com/redclawanon-rgb/decentralized-forge"
+            ],
+            [
+              "clone",
+              "https://github.com/redclawanon-rgb/decentralized-forge.git"
+            ],
+            [
+              "relays",
+              "wss://relay.damus.io"
+            ],
+            [
+              "relays",
+              "wss://nos.lol"
+            ],
+            [
+              "t",
+              "decentralized-forge"
+            ],
+            [
+              "t",
+              "prototype"
+            ],
+            [
+              "t",
+              "research"
+            ],
+            [
+              "t",
+              "live-adapter-test"
+            ]
+          ]
+        }
+      ],
+      "events_returned": 1,
+      "field_match": true,
+      "matched": true,
+      "relay": "wss://nos.lol",
+      "returncode": 0,
+      "source": "loop25-selected",
+      "stderr": "connecting to nos.lol... ok.\n",
+      "stdout": "{\"kind\":30617,\"id\":\"4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba\",\"pubkey\":\"6669423ee76d9d5adc8e81df79286c2569edbe5ab84f3e35043db71a54eff5c8\",\"created_at\":1782142614,\"tags\":[[\"d\",\"decentralized-forge-live-adapter-prototype-2026-06-22\"],[\"name\",\"Decentralized Forge prototype live-adapter test\"],[\"description\",\"Prototype/research NIP-34 repository announcement for Decentralized Forge live-adapter publish/readback verification.\"],[\"web\",\"https://github.com/redclawanon-rgb/decentralized-forge\"],[\"clone\",\"https://github.com/redclawanon-rgb/decentralized-forge.git\"],[\"relays\",\"wss://relay.damus.io\"],[\"relays\",\"wss://nos.lol\"],[\"t\",\"decentralized-forge\"],[\"t\",\"prototype\"],[\"t\",\"research\"],[\"t\",\"live-adapter-test\"]],\"content\":\"Decentralized Forge prototype/research relay test. This event announces a local/static prototype and live-adapter evidence paths only. It does not claim production readiness, durability, censorship resistance, global propagation, identity trust, security guarantees, or full protocol compatibility.\",\"sig\":\"109b5458e25a36c84ef633480d20c179b58f0a6a3df9576304577fc15ae44edc9f4e06f03c956ef0aa0828d75b6dabeb55fb7c9e3ebe03689c828df2753847c3\"}\n",
+      "verify_readback": {
+        "cmd": [
+          "/home/openclaw/.local/bin/nak",
+          "verify"
+        ],
+        "returncode": 0,
+        "stderr": "",
+        "stdout": ""
+      }
+    },
+    {
+      "cmd": [
+        "/home/openclaw/.local/bin/nak",
+        "req",
+        "-i",
+        "4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba",
+        "wss://relay.primal.net"
+      ],
+      "events": [
+        {
+          "content": "Decentralized Forge prototype/research relay test. This event announces a local/static prototype and live-adapter evidence paths only. It does not claim production readiness, durability, censorship resistance, global propagation, identity trust, security guarantees, or full protocol compatibility.",
+          "created_at": 1782142614,
+          "id": "4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba",
+          "kind": 30617,
+          "pubkey": "6669423ee76d9d5adc8e81df79286c2569edbe5ab84f3e35043db71a54eff5c8",
+          "sig": "109b5458e25a36c84ef633480d20c179b58f0a6a3df9576304577fc15ae44edc9f4e06f03c956ef0aa0828d75b6dabeb55fb7c9e3ebe03689c828df2753847c3",
+          "tags": [
+            [
+              "d",
+              "decentralized-forge-live-adapter-prototype-2026-06-22"
+            ],
+            [
+              "name",
+              "Decentralized Forge prototype live-adapter test"
+            ],
+            [
+              "description",
+              "Prototype/research NIP-34 repository announcement for Decentralized Forge live-adapter publish/readback verification."
+            ],
+            [
+              "web",
+              "https://github.com/redclawanon-rgb/decentralized-forge"
+            ],
+            [
+              "clone",
+              "https://github.com/redclawanon-rgb/decentralized-forge.git"
+            ],
+            [
+              "relays",
+              "wss://relay.damus.io"
+            ],
+            [
+              "relays",
+              "wss://nos.lol"
+            ],
+            [
+              "t",
+              "decentralized-forge"
+            ],
+            [
+              "t",
+              "prototype"
+            ],
+            [
+              "t",
+              "research"
+            ],
+            [
+              "t",
+              "live-adapter-test"
+            ]
+          ]
+        }
+      ],
+      "events_returned": 1,
+      "field_match": true,
+      "matched": true,
+      "relay": "wss://relay.primal.net",
+      "returncode": 0,
+      "source": "permission-e-extra-readback-only",
+      "stderr": "connecting to relay.primal.net... ok.\n",
+      "stdout": "{\"kind\":30617,\"id\":\"4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba\",\"pubkey\":\"6669423ee76d9d5adc8e81df79286c2569edbe5ab84f3e35043db71a54eff5c8\",\"created_at\":1782142614,\"tags\":[[\"d\",\"decentralized-forge-live-adapter-prototype-2026-06-22\"],[\"name\",\"Decentralized Forge prototype live-adapter test\"],[\"description\",\"Prototype/research NIP-34 repository announcement for Decentralized Forge live-adapter publish/readback verification.\"],[\"web\",\"https://github.com/redclawanon-rgb/decentralized-forge\"],[\"clone\",\"https://github.com/redclawanon-rgb/decentralized-forge.git\"],[\"relays\",\"wss://relay.damus.io\"],[\"relays\",\"wss://nos.lol\"],[\"t\",\"decentralized-forge\"],[\"t\",\"prototype\"],[\"t\",\"research\"],[\"t\",\"live-adapter-test\"]],\"content\":\"Decentralized Forge prototype/research relay test. This event announces a local/static prototype and live-adapter evidence paths only. It does not claim production readiness, durability, censorship resistance, global propagation, identity trust, security guarantees, or full protocol compatibility.\",\"sig\":\"109b5458e25a36c84ef633480d20c179b58f0a6a3df9576304577fc15ae44edc9f4e06f03c956ef0aa0828d75b6dabeb55fb7c9e3ebe03689c828df2753847c3\"}\n",
+      "verify_readback": {
+        "cmd": [
+          "/home/openclaw/.local/bin/nak",
+          "verify"
+        ],
+        "returncode": 0,
+        "stderr": "",
+        "stdout": ""
+      }
+    },
+    {
+      "cmd": [
+        "/home/openclaw/.local/bin/nak",
+        "req",
+        "-i",
+        "4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba",
+        "wss://nostr.wine"
+      ],
+      "events": [],
+      "events_returned": 0,
+      "field_match": false,
+      "matched": false,
+      "relay": "wss://nostr.wine",
+      "returncode": 0,
+      "source": "permission-e-extra-readback-only",
+      "stderr": "connecting to nostr.wine... ok.\n",
+      "stdout": "",
+      "verify_readback": null
+    }
+  ],
+  "relays_checked": [
+    "wss://relay.damus.io",
+    "wss://nos.lol",
+    "wss://relay.primal.net",
+    "wss://nostr.wine"
+  ],
+  "selected_relays": [
+    "wss://relay.damus.io",
+    "wss://nos.lol"
+  ],
+  "verified_relays": [
+    "wss://relay.damus.io",
+    "wss://nos.lol",
+    "wss://relay.primal.net"
+  ]
+}

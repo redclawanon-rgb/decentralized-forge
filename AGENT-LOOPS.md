@@ -430,6 +430,10 @@ Completed as a public project-channel update. Drafted `docs/public-update-drafts
 
 **Goal:** Re-read the Loop 25 event after time has passed and record whether selected relays still return the same event.
 
+**Current result:**
+
+Completed as low-volume readback persistence/divergence evidence. Re-read event `4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba` from the Loop 25 selected relays `wss://relay.damus.io` and `wss://nos.lol` plus Permission-E extra readback-only relays `wss://relay.primal.net` and `wss://nostr.wine`. The selected relays and `wss://relay.primal.net` returned the exact event with fields matching the signed preview and `nak verify` passing; `wss://nostr.wine` did not return the event during this check. Evidence: `evidence/nostr-loop28-readback-check-2026-06-22.md` and `.json`. No new Nostr event was published, no secret key material was read/printed, and no paid/authenticated relay, production/private personal key, direct outreach, or Radicle public-network action was used.
+
 **Candidate tasks:**
 
 - Query `wss://relay.damus.io` and `wss://nos.lol` by Loop 25 event ID.
