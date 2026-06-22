@@ -411,6 +411,36 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertFalse(radicle_gate["direct_outreach_after_loop_34"])
             self.assertIn("no_broad_radicle_network_availability_claim", radicle_gate["non_claims_after_loop_34"])
 
+        if checklist["loop"] >= 35:
+            discovery = checklist["discovery"]
+            self.assertTrue(discovery["loop_35_consolidation_recorded"])
+            self.assertEqual(
+                discovery["loop_35_consolidation_evidence"],
+                "evidence/loop35-consolidation-2026-06-22.md",
+            )
+            self.assertFalse(discovery["new_network_or_storage_actions_after_loop_35"])
+            self.assertFalse(discovery["new_cron_jobs_after_loop_35"])
+            consolidation = checklist["loop_35_consolidation"]
+            self.assertEqual(
+                consolidation["status"],
+                "complete_as_docs_context_status_checklist_test_consolidation",
+            )
+            self.assertTrue((ROOT / consolidation["evidence"]).exists())
+            self.assertEqual(
+                consolidation["consolidated_loop_33_evidence"],
+                "evidence/local-car-cid-fixture-2026-06-22.json",
+            )
+            self.assertEqual(
+                consolidation["consolidated_loop_34_evidence"],
+                "evidence/radicle-public-network-smoke-2026-06-22.json",
+            )
+            self.assertFalse(consolidation["new_public_protocol_action"])
+            self.assertFalse(consolidation["new_storage_network_action"])
+            self.assertFalse(consolidation["new_public_update_posted"])
+            self.assertFalse(consolidation["new_cron_jobs_created"])
+            self.assertIn("paid_storage_or_wallet_actions", consolidation["remaining_gates"])
+            self.assertIn("preserves all non-claims", consolidation["claim_boundary"])
+
         required_global_gates = {
             "approved_tooling_path_required",
             "temporary_or_disposable_state_only",

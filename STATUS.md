@@ -832,6 +832,27 @@ Boundaries:
 - No production/private personal keys, paid infrastructure, spending, direct outreach, named external peer targeting, or persistent project state was used.
 - This proves only the exact disposable public Radicle smoke behavior in the evidence. It does not prove durability, censorship resistance, security, global replication, identity trust, production readiness, full Radicle compatibility, or broad Radicle network availability.
 
+### Loop 35: Consolidation/report
+
+Status: **complete as docs/context/status/checklist/test consolidation; no new live action**.
+
+Outputs:
+
+- `evidence/loop35-consolidation-2026-06-22.md` records the consolidated evidence paths, verified scope, non-claims, and remaining gates for Loops 33–34.
+- `fixtures/live-adapter-replay-checklist.json` now advances the controller state to Loop 35 and records that no new network/storage action, public update, or cron job occurred in the consolidation loop.
+- `tests/test_registry_fixture.py` now asserts the Loop 35 checklist/evidence state and preserved gates.
+- `STATUS.md`, `.hermes/context.md`, `AGENT-LOOPS.md`, and `docs/next-evidence-and-interoperability-loops.md` now mark Loop 35 complete and move further live/storage/public-update work back behind explicit approvals.
+
+Verified evidence:
+
+- Pre-edit consolidation verification passed: `npm run verify:car-cid`, `python3 -m unittest discover -s tests` (50 tests), `python3 scripts/preflight_static_artifact.py`, and the project artifact secret-marker scan excluding `.git`, `node_modules`, `tests`, and binary CAR artifacts.
+- Final post-edit verification/commit/push are recorded in the controller's final report for this run.
+
+Boundaries:
+
+- Loop 35 performed consolidation only. No new public protocol action, IPFS/storage action, gateway check, pinning, wallet, spending, paid infrastructure, production/private personal key use, direct outreach, public update, or new cron job occurred.
+- Further live storage, repeated/broader Radicle public-network testing, public updates about Loops 33–34, or stronger durability/censorship/security/production claims require a new explicit approval/target.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -856,20 +877,21 @@ Boundaries:
 - Keep the local registry JSON as the canonical control-plane object and the static renderer as the first user-visible surface.
 - Treat all current Nostr, Radicle, IPFS, ForgeFed, and provenance data as fixtures/mappings unless a future loop records live command/network verification.
 - Use the completed local NIP-34 parser/conformance adapter, repository state/status fixture, local NIP-01 conformance reports, adapter verification-state exports, and rendered fixture-adapter/conformance/verification sections as the seam for future Nostr UI/import work, while keeping relay publishing behind disposable-key and explicit relay gates.
-- Use the completed safe live-gated replay plan/checklist as the prerequisite gate for Radicle/Nostr live verification. As of Loop 23, `rad` and `nak` are installed user-locally, a disposable project Nostr key exists outside the repo, and a Radicle temporary-`RAD_HOME` disposable private replay succeeded locally. Nostr selected-relay publish/readback has been executed for one prototype event; public Radicle seed/network replication has still not been executed.
-- Treat Radicle as **local CLI verified** only for the narrow disposable private replay path; do not claim public network replication, seed availability, remote clone/fetch, durability, censorship resistance, or production readiness.
+- Use the completed safe live-gated replay plan/checklist as the prerequisite gate for Radicle/Nostr live verification. As of Loop 35, `rad` and `nak` are installed user-locally, a disposable project Nostr key exists outside the repo, a Radicle temporary-`RAD_HOME` disposable private replay succeeded locally, Nostr selected-relay publish/readback has been executed for one prototype event, and one disposable public Radicle seed/clone/readback smoke succeeded for exact RID `rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa`.
+- Treat Radicle as verified only for (a) the narrow disposable private local replay path and (b) the exact Loop 34 disposable public seed/clone/readback smoke; do not claim durable availability, censorship resistance, security, global replication, identity trust, production readiness, full Radicle compatibility, or broad Radicle network availability.
 - Keep ForgeFed as a later object-shape/federation bridge; do not run a public actor until moderation/security gates exist.
 - Keep IPFS/CIDs as artifact metadata until live add/fetch/pin verification is explicitly performed; defer Filecoin/Arweave because they imply spending/wallet decisions.
 - Keep Sigstore/in-toto/SLSA as release/build trust models; current provenance is synthetic and no SLSA level should be claimed.
 
 ## Next recommended loop
 
-**Next:** Loop 35 consolidation/report is the current next loop after completing approved Loops 33–34. Any further live storage (IPFS daemon/add/fetch/gateway/pinning/wallet), repeated or broader Radicle public-network testing, public update posting about these new results, or stronger durability/censorship/security/production claims requires a new explicit approval/target.
+**Next:** Loops 33–35 are complete. The next step is an explicit Eric approval/target before any further live storage (IPFS daemon/add/fetch/gateway/pinning/wallet), repeated or broader Radicle public-network testing, public update posting about these new results, or stronger durability/censorship/security/production claims.
 
 Recent completed loops:
 
 - Loop 33: local CAR/CID fixture verification — complete as project-scoped `@ipld/car`/`multiformats` evidence in `evidence/local-car-cid-fixture-2026-06-22.json`; no live storage action.
 - Loop 34: disposable public Radicle seed/remote-clone smoke — complete as exact bounded evidence in `evidence/radicle-public-network-smoke-2026-06-22.json`; RID `rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa`; no broad durability/censorship/security/production/network-availability claim.
+- Loop 35: consolidation/report — complete as `evidence/loop35-consolidation-2026-06-22.md` plus checklist/test/context/status updates; no new live protocol/storage action, public update, or cron job.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

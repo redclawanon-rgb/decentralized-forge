@@ -511,7 +511,7 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 
 ## Next loop-set setup
 
-`docs/next-evidence-and-interoperability-loops.md` records Loops 26–34. Eric approved Permission G and Permission I on 2026-06-22 via Telegram message: “G & I are approved to keep things moving along.”
+`docs/next-evidence-and-interoperability-loops.md` records Loops 26–35. Eric approved Permission G and Permission I on 2026-06-22 via Telegram message: “G & I are approved to keep things moving along.”
 
 ## Loop 33: Local CAR/CID fixture verification
 
@@ -529,6 +529,14 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 
 **Gate preserved:** No production/private personal keys, paid infrastructure, spending, direct outreach, named external peer targeting, or persistent state was used. Do not claim durability, censorship resistance, security, global replication, identity trust, production readiness, full Radicle compatibility, or broad Radicle network availability from this one smoke.
 
+## Loop 35: Consolidation/report
+
+**Goal:** Consolidate the Permission-I and Permission-G results into durable project state and stop at the next approval boundary.
+
+**Current result:** Complete as docs/context/status/checklist/test consolidation. Added `evidence/loop35-consolidation-2026-06-22.md`, advanced `fixtures/live-adapter-replay-checklist.json` to loop 35, and updated tests/status/context/loop docs. Loop 35 did not perform any new public protocol action, storage action, public update, spending, production/private personal key use, direct outreach, or cron creation.
+
+**Gate preserved:** Further live storage, broader/repeated Radicle public-network checks, public updates about Loops 33–34, or stronger durability/censorship/security/production claims need a new explicit approval/target.
+
 ## Next useful loop
 
-- Loop 35: consolidate docs/context/status/checklist/tests and report exact evidence paths, verified scope, remaining gates. Further live storage, broader/repeated Radicle network testing, or public updates about these new results need a new explicit approval/target.
+- Stop here until Eric supplies the next explicit approval/target. Candidate future lanes are live IPFS daemon/add/fetch/gateway checks, paid/wallet storage lanes, repeated/broader Radicle public-network checks, or a prototype-labeled public update about the exact Loop 33/34 evidence.

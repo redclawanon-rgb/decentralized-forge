@@ -1,7 +1,7 @@
 {
   "schema_version": "decentralized-forge.live-adapter-replay-checklist.v1",
-  "loop": 34,
-  "purpose": "Secret-free gates for future Radicle local CLI replay and Nostr disposable relay publish/readback verification.",
+  "loop": 35,
+  "purpose": "Secret-free gates and consolidation state for Radicle, Nostr, and local CAR/CID evidence loops.",
   "discovery": {
     "rad_command": "command -v rad",
     "rad_found_in_loop_20": false,
@@ -60,7 +60,11 @@
     "paid_storage_or_wallet_actions_after_loop_33": false,
     "loop_34_radicle_public_network_smoke_recorded": true,
     "loop_34_radicle_public_network_smoke_evidence": "evidence/radicle-public-network-smoke-2026-06-22.json",
-    "network_protocol_actions_used_after_loop_34": true
+    "network_protocol_actions_used_after_loop_34": true,
+    "loop_35_consolidation_recorded": true,
+    "loop_35_consolidation_evidence": "evidence/loop35-consolidation-2026-06-22.md",
+    "new_network_or_storage_actions_after_loop_35": false,
+    "new_cron_jobs_after_loop_35": false
   },
   "global_gates": [
     "approved_tooling_path_required",
@@ -371,6 +375,24 @@
       "relay_discovery_subscription_deletion_replacement_multi_client_behavior_not_verified"
     ],
     "claim_boundary_after_loop_29": "Loop 29 imports existing Loop 25 selected-relay readback evidence into the NIP-34 adapter/renderer only; no new publish/fetch/signing and no durability/global-propagation/censorship-resistance/identity-trust/security/production/full-compatibility claim."
+  },
+  "loop_35_consolidation": {
+    "status": "complete_as_docs_context_status_checklist_test_consolidation",
+    "evidence": "evidence/loop35-consolidation-2026-06-22.md",
+    "consolidated_loop_33_evidence": "evidence/local-car-cid-fixture-2026-06-22.json",
+    "consolidated_loop_34_evidence": "evidence/radicle-public-network-smoke-2026-06-22.json",
+    "new_public_protocol_action": false,
+    "new_storage_network_action": false,
+    "new_public_update_posted": false,
+    "new_cron_jobs_created": false,
+    "remaining_gates": [
+      "live_ipfs_daemon_add_fetch_gateway_or_pinning",
+      "paid_storage_or_wallet_actions",
+      "repeated_or_broader_radicle_public_network_checks",
+      "public_update_about_loop_33_34_results",
+      "stronger_durability_censorship_security_or_production_claims"
+    ],
+    "claim_boundary": "Loop 35 only consolidates already-recorded Loop 33 local CAR/CID evidence and Loop 34 disposable Radicle smoke evidence; it adds no new live protocol/storage actions and preserves all non-claims."
   },
   "secrets_policy": {
     "contains_secret_values": false,

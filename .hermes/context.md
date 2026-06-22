@@ -95,6 +95,8 @@ Loop 33 is complete as **Permission-I local CAR/CID fixture verification with pr
 
 Loop 34 is complete as **Permission-G disposable public Radicle seed/remote-clone smoke**. Evidence is `evidence/radicle-public-network-smoke-2026-06-22.json` and report `evidence/radicle-public-network-smoke-2026-06-22.md`. Disposable RID `rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa` was initialized public from temporary `/tmp` state, node start/seed/sync succeeded, a separate temporary Radicle profile/node connected to the disposable seed over localhost, `rad clone --seed <disposable NID>` succeeded, and README readback matched. Temporary state was removed and nodes stopped. This proves only the exact bounded disposable smoke; it does not prove durable availability, censorship resistance, global replication, identity trust, security, production readiness, full Radicle compatibility, or broad network availability.
 
+Loop 35 is complete as **docs/context/status/checklist/test consolidation; no new live action**. Evidence is `evidence/loop35-consolidation-2026-06-22.md`; checklist state is `fixtures/live-adapter-replay-checklist.json` at loop `35`; tests assert the consolidation state. No new public protocol action, storage action, gateway check, pinning, wallet, spending, paid infrastructure, production/private personal key use, direct outreach, public update, or cron job occurred. Further live storage, repeated/broader Radicle public-network testing, public updates about Loops 33–34, or stronger durability/censorship/security/production claims require a new explicit approval/target.
+
 Loop 4 outputs:
 
 - `docs/radicle-mapping.md`
@@ -214,4 +216,4 @@ Loop 20 outputs:
 
 ## Current next recommended loop
 
-**Next:** Loops 33–34 are complete under Eric's 2026-06-22 Permission I/G approval. Loop 33 verified the local artifact bytes/CID/CAR round trip with project-scoped `@ipld/car` and `multiformats` dev dependencies and no live storage action. Loop 34 verified one disposable public Radicle seed/sync/remote-clone/readback smoke for RID `rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa` with temporary state only. Next recommended loop is Loop 35 consolidation/report and then a new approval decision for any further live storage, repeated Radicle public-network checks, public update, or broader interoperability claim.
+**Next:** Loops 33–35 are complete. The next step is an explicit Eric approval/target before any further live storage, repeated/broader Radicle public-network checks, public update about the new results, or stronger durability/censorship/security/production claims.
