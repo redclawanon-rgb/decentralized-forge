@@ -323,15 +323,95 @@ Completed as safe planning only. `command -v rad` found no `rad` executable on `
 
 No Radicle replay, Radicle node start, Nostr relay publishing/readback, Radicle seed publishing, spending, production/private personal keys, unsupported claims, or direct outreach occurred.
 
-## Loop 22: Safe live-verification candidate
+## Loop 22: Radicle local replay preflight
 
-**Goal:** Convert one prerequisite-ready path into command/network evidence without overclaiming.
+**Goal:** Confirm exact safe local-only Radicle command surface before repository replay.
 
 **Candidate tasks:**
 
-- Run a safe Radicle local replay with temporary `RAD_HOME`, disposable Git repo, and no public seed publishing; record path/version/command output and cleanup.
-- Or select a public Nostr relay, review relay terms/rate limits/retention, publish one clearly prototype-labeled event with the disposable project key, read it back by event ID, and record evidence.
+- Read local `rad --help` and selected subcommand help/manpage output.
+- Create `evidence/radicle-local-replay-preflight-YYYY-MM-DD.md` with the smallest safe command sequence.
+- Update `docs/next-live-adapter-loops.md`, checklist/status/context if help output changes the plan.
 
 **Gate:**
 
-No production/private personal keys, paid infrastructure, specific-person outreach, unsupported security/durability/censorship-proof claims, or production-readiness claims. A single local replay or relay readback is evidence for that narrow check only.
+Stateful Radicle commands such as auth, identity generation, repository initialization, node start, seed publish, sync, announce, or remote peer configuration require Permission A from `docs/next-live-adapter-loops.md`.
+
+## Loop 23: Radicle temporary-`RAD_HOME` disposable repo replay
+
+**Goal:** Run a bounded local Radicle replay with disposable state and capture command evidence.
+
+**Requires:** Permission A.
+
+**Candidate tasks:**
+
+- Create temporary `RAD_HOME` and disposable Git repo.
+- Create a minimal disposable Git commit.
+- Run only the smallest local Radicle init/inspect commands confirmed by Loop 22.
+- Capture stdout/stderr into `evidence/` without secrets.
+- Update docs/tests to distinguish local CLI verification from public seed/network verification.
+
+**Gate:**
+
+Abort if the command asks for persistent personal identity, attempts node/seed/network actions, exposes secrets, or makes local-only behavior ambiguous.
+
+## Loop 24: Nostr relay selection and event payload review
+
+**Goal:** Choose safe public relay targets and finalize the exact prototype payload before publication.
+
+**Candidate tasks:**
+
+- Read relay info endpoints/docs and record terms/rate-limit/retention notes where discoverable.
+- Draft the exact prototype-labeled event payload locally.
+- Sign and verify locally only if it remains unpublished and secret-free.
+- Create `docs/nostr-relay-publish-readback-plan.md` and `evidence/nostr-relay-selection-YYYY-MM-DD.md`.
+
+**Gate:**
+
+Relay publication requires Permission B from `docs/next-live-adapter-loops.md` because Nostr events may be public and retained.
+
+## Loop 25: Nostr disposable publish/readback
+
+**Goal:** Publish a prototype-labeled event with the disposable project key and read it back by event ID.
+
+**Requires:** Permission B.
+
+**Candidate tasks:**
+
+- Sign event locally with `nak` using the project key.
+- Verify event ID/signature locally.
+- Publish to selected relay(s).
+- Read back by event ID and verify returned fields.
+- Record relay URLs, event IDs, publish responses, readback payloads, verification, and non-claims.
+
+**Gate:**
+
+Abort if relay requires payment/production credentials, rejects in a way that needs human choice, payload review finds overclaiming content, or secret-marker scan fails.
+
+## Loop 26: Live evidence import into adapter/renderer
+
+**Goal:** Import narrow live-evidence metadata into fixtures/renderer without replacing fixture-only claims improperly.
+
+**Candidate tasks:**
+
+- Add or update `fixtures/live-evidence-index.json` if useful.
+- Update `fixtures/live-adapter-replay-checklist.json` with verified evidence only.
+- Update renderer/tests only if a live/local/fixture distinction needs to be displayed.
+- Run tests, static preflight, and secret-marker scan.
+
+**Gate:**
+
+No claim may be upgraded to live-verified without command/network evidence from Loop 23 and/or Loop 25.
+
+## Loop 27: Public project update draft
+
+**Goal:** Draft a concise public status update for GitHub project channels explaining verified scope and next gates.
+
+**Candidate tasks:**
+
+- Draft locally in `docs/public-update-drafts/`.
+- Include exact non-claims and next gates.
+
+**Gate:**
+
+Posting the update publicly requires separate public-post approval unless Eric explicitly grants it with the permission bundle. No direct outreach or unsupported security/durability/censorship-proof claims.

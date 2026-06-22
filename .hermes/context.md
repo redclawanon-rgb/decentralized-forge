@@ -190,4 +190,4 @@ Loop 20 outputs:
 
 ## Current next recommended loop
 
-**Next:** Loop 22 should either run a safe Radicle temporary-`RAD_HOME` local replay using a disposable Git repo with no seed publishing, or complete a Nostr relay selection/publish-readback gate using the disposable project key. The tooling/key prerequisite is now satisfied, but live verification remains unclaimed until command/network evidence is captured. Do not use production/private personal keys, spend money, contact specific people, publish unsupported claims, or claim durability/censorship resistance/production readiness from a single local or relay check.
+**Next:** Loop 22 is Radicle local replay preflight. The full next loop set is defined in `docs/next-live-adapter-loops.md`: Loop 22 preflight, Loop 23 Radicle temporary-`RAD_HOME` replay (Permission A), Loop 24 Nostr relay selection/payload review, Loop 25 Nostr publish/readback (Permission B), Loop 26 live evidence import, and Loop 27 public update draft. Permission C would allow a low-noise durable cron controller to execute approved loops and stop at unapproved gates.

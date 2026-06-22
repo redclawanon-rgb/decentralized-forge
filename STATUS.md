@@ -557,9 +557,18 @@ Boundaries:
 
 ## Next recommended loop
 
-**Loop 22: safe Radicle temporary-`RAD_HOME` local replay or Nostr relay selection/readback gate.**
+**Loop 22: Radicle local replay preflight.**
 
-Loop 21 completed the hard prerequisite setup: `rad`/`radicle-node`/`git-remote-rad` and `nak` are installed user-locally, and a disposable project-scoped Nostr key exists outside the repo with public key recorded. The next bounded candidate is either a safe Radicle local replay using a temporary `RAD_HOME` and disposable Git repo with no seed publishing, or a Nostr relay-selection/publish-readback gate using the disposable key. Keep all outputs clearly prototype-labeled and do not claim live protocol verification until command/network evidence is captured.
+The next loop set is defined in `docs/next-live-adapter-loops.md` and `AGENT-LOOPS.md`:
+
+- Loop 22: Radicle local replay preflight — safe read-only help/manpage discovery; stateful commands need Permission A.
+- Loop 23: Radicle temporary-`RAD_HOME` disposable repo replay — requires Permission A.
+- Loop 24: Nostr relay selection and event payload review — publication needs Permission B.
+- Loop 25: Nostr disposable publish/readback — requires Permission B.
+- Loop 26: Live evidence import into adapter/renderer — can only upgrade claims backed by Loop 23/25 evidence.
+- Loop 27: Public project update draft — posting publicly requires separate public-post approval unless included in the permission bundle.
+
+Needed permission bundles before autonomous execution are recorded in `docs/next-live-adapter-loops.md`: Permission A (Radicle local replay), Permission B (Nostr public relay publish/readback), and Permission C (low-noise durable cron controller).
 
 ## Gates/blockers
 
