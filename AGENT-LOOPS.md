@@ -63,12 +63,24 @@ Inspired by Eric's X bookmark signal around loop engineering, subagents, scoping
 
 **Gate:**
 
-Do not publish to public relays without Eric approval.
+Public relay publishing for this project is now approved when accurate, non-spammy, and using disposable/project-scoped keys; do not use production/private personal keys.
 
-## Loop 4: Issue/patch collaboration spike
+## Loop 4: Radicle local integration spike
 
-**Goal:** Demonstrate issue/comment/patch objects independent from GitHub.
+**Goal:** Map Radicle's repository identity, delegates, issues, and patches into the local registry model without publishing.
+
+**Tasks:**
+
+- Install or locate Radicle tooling only through an approved safe path; do not run curl-pipe-shell installers.
+- If the CLI is unavailable, inspect official source/manpage/examples and mark outputs as source-inspected rather than live-tested.
+- Write `docs/radicle-mapping.md` mapping Radicle fields to `project-registry.schema.json`.
+- Add a synthetic Radicle-backed registry fixture with fake public IDs only.
+- Validate fixture JSON and run unit tests.
 
 **Gate:**
 
-Local/dev relay or dry-run fixture only unless Eric approves public relay usage.
+Public project repo/account creation and project updates are approved; still avoid spending, unsafe installs, unsupported claims, and production/private personal keys.
+
+**Current result:**
+
+Completed as a source-inspected local spike because `rad` was unavailable and the documented `curl https://radicle.dev/install | sh` path was not approved. Outputs are `docs/radicle-mapping.md`, `fixtures/radicle-backed-project.registry.json`, and expanded registry tests.

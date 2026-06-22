@@ -39,9 +39,11 @@ The winning design is likely a protocol-aggregating decentralized forge:
 - Optional user data portability: AT Protocol / PDS
 - Offline append-only inspiration: Hypercore, Secure Scuttlebutt
 
-## Hard boundaries / gates
+## Hard boundaries / gates for the current autonomous loop
 
-Allowed without Eric approval:
+Eric's current standing approval for this all-night controller run is local/reversible only. Do **not** infer public-release approval from older or unverified notes.
+
+Allowed without additional approval:
 
 - Local files/docs/specs/prototypes in this repo
 - Read-only web/X/API research
@@ -55,11 +57,23 @@ Requires Eric approval:
 - Creating public accounts/projects
 - Publishing to Nostr/X/GitHub/Codeberg/etc.
 - Spending money or provisioning paid infrastructure
-- Using private keys beyond local prototype keys
-- Making public claims/security guarantees
+- Using production/private keys for protocol actions
+- Contacting anyone
+- Making unsupported security/compliance/privacy claims
+- Claiming production readiness, censorship-proof guarantees, or live protocol verification that has not actually been tested
+
+## Current loop state
+
+Loops 1–3 are complete. Loop 4 (Radicle local integration spike) is complete as a **source-inspected local artifact**, not a live Radicle CLI run.
+
+Loop 4 outputs:
+
+- `docs/radicle-mapping.md`
+- `fixtures/radicle-backed-project.registry.json`
+- expanded `tests/test_registry_fixture.py`
+
+Radicle caveat: `rad` was unavailable in the environment, and the documented `curl https://radicle.dev/install | sh` installer was not used. The mapping was derived from official source/manpage/examples in `/tmp/radicle-heartwood` at commit `90aaec1c9eee77a0beebece48f460c1424c1c8bd`. Do not claim live Radicle verification until an approved binary/install path is available and a temporary local `RAD_HOME` replay has been run.
 
 ## Current next recommended loop
 
-**Loop 1: Research corpus and protocol matrix**
-
-Create pinned-source research notes for Radicle, ForgeFed, Nostr NIP-34/NIP-35, IPFS/IPLD, Sigstore/in-toto/SLSA, AT Protocol, Hypercore, and SSB. Produce a protocol matrix and first architecture recommendation.
+**Loop 5: Nostr local/dev relay spike or stronger dry-run issue/patch fixtures.** Do not publish to public relays. If no local relay is feasible, strengthen NIP-34/NIP-35 issue/patch fixtures and parser tests as a dry-run artifact.

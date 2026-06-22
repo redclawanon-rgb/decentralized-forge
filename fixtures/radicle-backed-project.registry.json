@@ -1,0 +1,146 @@
+{
+  "schema_version": "decentralized-forge.project-registry.v1",
+  "project": {
+    "id": "rad:zLoop4RadicleFixture1111111111111111111111111",
+    "name": "Loop 4 Synthetic Radicle-backed Project",
+    "description": "A local-only fixture mapping Radicle repository identity, delegates, issues, and patches into the project registry schema. The RID and DIDs are synthetic and were not published.",
+    "default_branch": "master",
+    "web_urls": [
+      "file://docs/radicle-mapping.md"
+    ]
+  },
+  "maintainers": [
+    {
+      "name": "Synthetic Radicle Delegate",
+      "id_type": "radicle",
+      "public_id": "did:key:z6MkLoop4SyntheticDelegate1111111111111111111111111111",
+      "role": "delegate"
+    }
+  ],
+  "clone_urls": [
+    {
+      "transport": "radicle",
+      "url": "rad:zLoop4RadicleFixture1111111111111111111111111",
+      "primary": true
+    },
+    {
+      "transport": "git",
+      "url": "file:///home/openclaw/projects/decentralized-forge"
+    }
+  ],
+  "issues": [
+    {
+      "id": "d87dcfe8c2b3200e78b128d9b959cfdf7063fefe",
+      "title": "Map Radicle issue COBs into registry issues",
+      "status": "open",
+      "author": "did:key:z6MkLoop4SyntheticDelegate1111111111111111111111111111",
+      "summary": "Synthetic issue modeled after source-inspected `rad issue open/list/show` examples."
+    }
+  ],
+  "patches": [
+    {
+      "id": "90c77f2c33b7e472e058de4a586156f8a7fec7d6",
+      "title": "Add Radicle-backed registry mapping",
+      "status": "review",
+      "author": "did:key:z6MkLoop4SyntheticContributor222222222222222222222222",
+      "summary": "Synthetic patch modeled after source-inspected `git push rad HEAD:refs/patches` and `rad patch show` flow."
+    }
+  ],
+  "releases": [
+    {
+      "version": "0.0.0-radicle-spike",
+      "tag": "v0.0.0-radicle-spike",
+      "artifacts": [
+        {
+          "name": "radicle-spike-source.tar.gz",
+          "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+          "uri": "file://output/radicle-spike-source.tar.gz",
+          "signature": "unsigned-fixture",
+          "attestation": "local-source-inspection-only"
+        }
+      ]
+    }
+  ],
+  "substrates": {
+    "radicle": {
+      "rid": "rad:zLoop4RadicleFixture1111111111111111111111111",
+      "rid_verified_by_live_cli": false,
+      "mapping_status": "source-inspected-synthetic-fixture",
+      "source_evidence": {
+        "repo_path": "/tmp/radicle-heartwood",
+        "commit": "90aaec1c9eee77a0beebece48f460c1424c1c8bd",
+        "files": [
+          "README.md",
+          "rad.1.adoc",
+          "rad-id.1.adoc",
+          "rad-patch.1.adoc",
+          "crates/radicle-cli/examples/rad-issue.md",
+          "crates/radicle-cli/examples/rad-issue-list.md"
+        ]
+      },
+      "local_verification": {
+        "source_inspected": true,
+        "cli_installed": false,
+        "live_cli_verified": false,
+        "published": false,
+        "install_blocker": "Unsafe curl-pipe-shell installer path was not used; no approved Radicle CLI binary was available in this run."
+      },
+      "identity_payload": {
+        "format": "canonical-json-projected",
+        "project_payload": "xyz.radicle.project",
+        "name": "Loop 4 Synthetic Radicle-backed Project",
+        "description": "Synthetic Radicle mapping fixture for local registry tests.",
+        "default_branch": "master",
+        "delegates": [
+          "did:key:z6MkLoop4SyntheticDelegate1111111111111111111111111111"
+        ],
+        "threshold": 1,
+        "visibility": "public-fixture-not-published",
+        "canonical_refs": {
+          "refs/heads/master": {
+            "threshold": 1,
+            "allow": "delegates"
+          },
+          "refs/tags/*": {
+            "threshold": 1,
+            "allow": "delegates"
+          }
+        }
+      },
+      "issues": [
+        {
+          "id": "d87dcfe8c2b3200e78b128d9b959cfdf7063fefe",
+          "radicle_status": "open",
+          "registry_status": "open",
+          "labels": [
+            "mapping",
+            "local-spike"
+          ],
+          "assignees": [
+            "did:key:z6MkLoop4SyntheticDelegate1111111111111111111111111111"
+          ],
+          "comments_modeled": true,
+          "source_command_shape": "rad issue open --title ... --description ... --no-announce"
+        }
+      ],
+      "patches": [
+        {
+          "id": "90c77f2c33b7e472e058de4a586156f8a7fec7d6",
+          "radicle_status": "open",
+          "registry_status": "review",
+          "source_ref": "refs/patches",
+          "open_command_shape": "git push rad HEAD:refs/patches",
+          "review_command_shape": "rad patch review <patch-id>",
+          "merge_command_shape": "git merge patch/<patch-id> && git push rad"
+        }
+      ]
+    }
+  },
+  "signature": {
+    "status": "unsigned-fixture",
+    "algorithm": "none",
+    "value": ""
+  },
+  "created_at": "2026-06-22T00:00:00Z",
+  "updated_at": "2026-06-22T00:00:00Z"
+}

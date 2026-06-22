@@ -48,14 +48,38 @@ Verified commands:
 - `python3 -m json.tool fixtures/nostr-repo-announcement.json` — passed.
 - No public relay publishing performed.
 
+### Loop 4: Radicle local integration spike
+
+Status: **complete as source-inspected local spike; live CLI not installed/verified**.
+
+Outputs:
+
+- `docs/radicle-mapping.md`
+- `fixtures/radicle-backed-project.registry.json`
+- `tests/test_registry_fixture.py` updated to validate all registry fixtures plus Radicle-specific mapping/verification flags.
+- README/context/loop notes updated to record local-only Radicle scope.
+
+Verified commands:
+
+- `python3 -m json.tool fixtures/radicle-backed-project.registry.json` — passed.
+- `python3 -m unittest discover -s tests` — passed, 10 tests.
+
+Notes:
+
+- Radicle CLI was not available in this environment.
+- The unsafe `curl https://radicle.dev/install | sh` installation path was not used.
+- Mapping evidence was inspected from `/tmp/radicle-heartwood` at commit `90aaec1c9eee77a0beebece48f460c1424c1c8bd`.
+- No `rad init`, network node, public seed connection, publish action, account creation, private key, or spending occurred.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
 - Research must separate observed facts from recommendations.
-- No public publishing.
+- Public building is now approved by Eric for this project: public repo creation, remote pushes, and public project updates are allowed when accurate and non-spammy.
 - No spending.
-- No production/private keys.
-- Local commits allowed.
+- No production/private keys for protocol actions.
+- No unsupported production/security/censorship-proof claims.
+- Local and remote commits/pushes allowed for this project.
 
 ## Latest parent-verified state
 
@@ -75,18 +99,13 @@ Verified commands:
 
 ## Next recommended loop
 
-If Loop 2 and Loop 3 complete in this run, next work should be **Loop 4: Radicle local integration spike**:
+**Loop 5: Nostr local/dev relay spike or stronger dry-run issue/patch fixtures.**
 
-1. Install or locate Radicle tooling without publishing anything.
-2. Create/import a local sample Git repo.
-3. Inspect Radicle project identity, issue, patch, and HTTP/API shapes.
-4. Write `docs/radicle-mapping.md` mapping Radicle fields to `project-registry.schema.json`.
-5. Add one fixture representing a Radicle-backed registry entry.
-6. Run tests and commit locally.
+Preferred local path: locate or install a free/safe local Nostr relay, publish only synthetic local/dev events, read them back, and keep all keys test-only. Fallback path: if no local relay is feasible, strengthen dry-run NIP-34/NIP-35 repository/issue/patch event fixtures plus parser/validation tests. Do not publish to public relays.
 
 ## Gates/blockers
 
-- Do not publish Nostr events to public relays without explicit approval.
-- Do not run a public ActivityPub/ForgeFed actor without explicit approval.
+- Public Nostr/GitHub/X project updates are approved when accurate, non-spammy, and clearly labeled as research/prototype work.
+- Public ActivityPub/ForgeFed actor deployment is allowed only if it is free/local/self-hosted and does not require paid infrastructure; otherwise stop.
 - Do not spend money or use Filecoin/Arweave wallets without explicit approval.
-- Do not use production/private keys; fixtures must use synthetic public identifiers only.
+- Do not use production/private personal keys for protocol actions; use disposable/project-scoped keys only if needed and document where they are stored without recording secret values.
