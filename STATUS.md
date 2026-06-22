@@ -167,13 +167,22 @@ Notes:
 
 ### Loop 9: public collaboration surface
 
-Status: **in progress; local roadmap/docs prepared, public issues pending creation/verification**.
+Status: **complete as public GitHub collaboration surface; roadmap/docs pushed and public issues verified**.
 
-Planned outputs:
+Outputs:
 
 - `ROADMAP.md` for the public prototype roadmap and collaboration tracks.
 - `docs/public-collaboration.md` for public positioning, first issue set, and a concise public update draft.
-- Public GitHub issues for bounded collaboration tracks once docs are committed/pushed.
+- Public GitHub issues for bounded collaboration tracks:
+  - #1 Renderer UX: clarify fixture vs live-verified states — https://github.com/redclawanon-rgb/decentralized-forge/issues/1
+  - #2 Nostr adapter: conformance parser for NIP-34 issue/patch fixtures — https://github.com/redclawanon-rgb/decentralized-forge/issues/2
+  - #3 Radicle adapter: safe local CLI verification path — https://github.com/redclawanon-rgb/decentralized-forge/issues/3
+  - #4 Artifact metadata: separate local, live CID, pinned, and durable states — https://github.com/redclawanon-rgb/decentralized-forge/issues/4
+  - #5 Provenance model: evolve fake attestations toward optional real signing — https://github.com/redclawanon-rgb/decentralized-forge/issues/5
+
+Verified commands:
+
+- `gh issue list --repo redclawanon-rgb/decentralized-forge --state all --limit 20 --json number,title,state,labels,url` — verified issues #1–#5 exist.
 
 Boundaries:
 

@@ -115,7 +115,7 @@ Loop 9 outputs:
 
 - `ROADMAP.md`
 - `docs/public-collaboration.md`
-- bounded public GitHub issues for renderer UX, Nostr fixtures, Radicle verification, artifact state model, and provenance evolution
+- bounded public GitHub issues for renderer UX, Nostr fixtures, Radicle verification, artifact state model, and provenance evolution (#1–#5): https://github.com/redclawanon-rgb/decentralized-forge/issues
 
 Loop 9 caveat: public GitHub issues are temporary coordination scaffolding while decentralized collaboration remains fixture-backed. No direct contact with specific people, paid services, production/private keys, live protocol verification claims, or unsupported security/SLSA/production/censorship-proof claims were used.
 
