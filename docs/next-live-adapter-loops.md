@@ -101,7 +101,7 @@ If provider auth/rate limits block a run, the controller should stop with a conc
 5. Update docs/tests to distinguish local CLI verification from public seed/network verification.
 6. Cleanup temp state unless a specific evidence path needs to remain.
 
-**Completed 2026-06-22:** Ran the bounded temporary-`RAD_HOME` replay with a disposable Git repository and disposable Radicle identity. `rad auth --stdin`, `rad init --private --no-confirm --no-seed`, and local `rad inspect` commands all exited 0. Evidence is recorded in `evidence/radicle-local-replay-2026-06-22.md`. Local RID: `rad:z2KV6f6WgrTFQFAyyZ8rGfnHNkFpK`; delegate DID: `did:key:z6MkqRUou9azzdHZJ6fJJT5KVdUpFPbNr9ZGGCcKouZHrot9`; visibility: `private`. No node start, seed publish, sync/announce, remote peer configuration, public network replication, paid infrastructure, production/private personal key use, or live public Radicle verification occurred.
+**Completed 2026-06-22:** Ran the bounded temporary-`RAD_HOME` replay with a disposable Git repository and disposable Radicle identity. `rad auth --stdin`, `rad init --private --no-confirm --no-seed`, and local `rad inspect` commands all exited 0. Evidence is recorded in `evidence/radicle-local-replay-2026-06-22.md`. Local RID: `rad:z33oByNZxkxXAChhD54B4XiSsQkao`; delegate DID: `did:key:z6MkutM4LWh4y9qdeSMTWW88pMDVJBBhnjkoGPgZq1aSYN2n`; visibility: `private`. No node start, seed publish, sync/announce, remote peer configuration, public network replication, paid infrastructure, production/private personal key use, or live public Radicle verification occurred.
 
 **Stop conditions:**
 

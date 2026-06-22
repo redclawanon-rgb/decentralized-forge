@@ -96,7 +96,7 @@
     "evidence_file_after_loop_23": "evidence/radicle-local-replay-2026-06-22.md",
     "rad_home_scope_after_loop_23": "temporary /tmp directory removed after evidence capture",
     "disposable_repo_scope_after_loop_23": "temporary /tmp repository removed after evidence capture",
-    "disposable_git_commit_after_loop_23": "c40a3f9bd6d3c39f5fe1f04a10af8bccdd373f2d",
+    "disposable_git_commit_after_loop_23": "dfa5aad01c1bad5d2b1cda9919251b41e14ee643",
     "local_rid_after_loop_23": "rad:z33oByNZxkxXAChhD54B4XiSsQkao",
     "local_delegate_did_after_loop_23": "did:key:z6MkutM4LWh4y9qdeSMTWW88pMDVJBBhnjkoGPgZq1aSYN2n",
     "visibility_after_loop_23": "private",

@@ -564,7 +564,7 @@ Verified commands/evidence:
 
 - `rad auth --alias decentralized-forge-replay --stdin` with a disposable passphrase and temporary `RAD_HOME` — exited 0.
 - `rad init --name decentralized-forge-disposable-replay --description ... --default-branch master --private --no-confirm --no-seed /tmp/<temp>/repo` — exited 0.
-- `rad inspect /tmp/<temp>/repo` — returned `rad:z2KV6f6WgrTFQFAyyZ8rGfnHNkFpK`.
+- `rad inspect --rid /tmp/<temp>/repo` — returned `rad:z33oByNZxkxXAChhD54B4XiSsQkao`.
 - `rad inspect --identity /tmp/<temp>/repo` — returned expected project payload, delegate DID, threshold 1, and private visibility.
 - `rad inspect --refs /tmp/<temp>/repo` — returned local refs tree.
 - `rad inspect --visibility /tmp/<temp>/repo` — returned `private`.

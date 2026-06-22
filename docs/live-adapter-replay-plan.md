@@ -39,6 +39,20 @@ Loop 22 completed read-only Radicle CLI help/version preflight and recorded evid
 - Candidate replay surface is temporary `RAD_HOME`, disposable Git repo, disposable `rad auth` only if required, `rad init --no-confirm --no-seed --private`, and local `rad inspect` commands.
 - Still not executed: `rad auth`, `rad init`, temporary-`RAD_HOME` replay, node start, publish/seed/sync/announce, peer/remote configuration, public network verification, spending, or production/private personal key use.
 
+## Loop 23 Radicle local replay update
+
+Loop 23 completed the approved temporary-`RAD_HOME` disposable repo replay and recorded evidence at `evidence/radicle-local-replay-2026-06-22.md`.
+
+- `command -v rad`: `/home/openclaw/.local/bin/rad`.
+- `rad --version`: `rad 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)`.
+- Disposable Git commit: `dfa5aad01c1bad5d2b1cda9919251b41e14ee643`.
+- `rad init` without auth failed inside the temporary `RAD_HOME` with the expected profile-not-found error.
+- `rad auth --alias decentralized-forge-replay --stdin` succeeded with a disposable passphrase that was not logged.
+- `rad init --private --no-confirm --no-seed` succeeded locally and created RID `rad:z33oByNZxkxXAChhD54B4XiSsQkao`.
+- `rad inspect --rid`, `--identity`, `--refs`, and `--visibility` succeeded; visibility was `private`.
+- Temporary Radicle and Git work directories were removed after evidence capture.
+- Still not executed: `rad node start`, `rad publish`, `rad sync`, seed publication, peer announce, remote peer configuration, public network replication verification, spending, paid infrastructure, production/private personal identity import, or unsupported durability/censorship-resistance/production-readiness claims.
+
 ## Hard gates for any future replay
 
 A future live replay must stop unless all relevant gates are satisfied and recorded in status docs:

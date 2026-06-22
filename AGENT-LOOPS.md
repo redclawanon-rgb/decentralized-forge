@@ -361,7 +361,7 @@ Abort if the command asks for persistent personal identity, attempts node/seed/n
 
 **Current result:**
 
-Completed as a bounded local CLI replay. Used temporary `RAD_HOME`, a disposable Git repo, disposable `rad auth --stdin`, `rad init --private --no-confirm --no-seed`, and local `rad inspect` commands. Evidence is `evidence/radicle-local-replay-2026-06-22.md`. Local RID `rad:z2KV6f6WgrTFQFAyyZ8rGfnHNkFpK`, delegate DID `did:key:z6MkqRUou9azzdHZJ6fJJT5KVdUpFPbNr9ZGGCcKouZHrot9`, visibility `private`. No node start, seed publish, sync/announce, remote peer configuration, paid infrastructure, production/private personal key use, direct outreach, public network replication, or live public Radicle verification occurred.
+Completed as a bounded local CLI replay. Used temporary `RAD_HOME`, a disposable Git repo, disposable `rad auth --stdin`, `rad init --private --no-confirm --no-seed`, and local `rad inspect` commands. Evidence is `evidence/radicle-local-replay-2026-06-22.md`. Local RID `rad:z33oByNZxkxXAChhD54B4XiSsQkao`, delegate DID `did:key:z6MkutM4LWh4y9qdeSMTWW88pMDVJBBhnjkoGPgZq1aSYN2n`, visibility `private`. No node start, seed publish, sync/announce, remote peer configuration, paid infrastructure, production/private personal key use, direct outreach, public network replication, or live public Radicle verification occurred.
 
 ## Loop 24: Nostr relay selection and event payload review
 
