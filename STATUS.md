@@ -786,6 +786,52 @@ Boundaries:
 
 - Loop 32 did not create any new cron jobs, run any public Radicle action, perform live storage action, spend money, use wallets/production keys, or make unsupported durability/security/production claims.
 
+### Loop 33: Local CAR/CID fixture verification
+
+Status: **complete as Permission-I local CAR/CID verification with project-scoped lockfile-backed dev dependencies; no live storage action**.
+
+Outputs:
+
+- `package.json` / `package-lock.json` with project-scoped dev dependencies: `@ipld/car@5.4.6` and `multiformats@14.0.0`.
+- `scripts/verify_car_cid_fixture.mjs` to derive the raw CID, write a local CAR, read it back, and emit evidence.
+- `evidence/local-car-cid-fixture-2026-06-22.json`.
+- `evidence/local-release-artifact-2026-06-22.car`.
+- `fixtures/live-adapter-replay-checklist.json` and tests updated for Loop 33.
+
+Verified evidence:
+
+- `npm run verify:car-cid` — passed; verified CID `bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua` for `fixtures/local-release-artifact.txt`.
+- Evidence records SHA-256 `3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0`, CAR size `338` bytes, one CAR root matching the CID, one block, block CID match, and block bytes matching the input fixture.
+
+Boundaries:
+
+- No IPFS daemon, IPFS add/fetch/pin, public gateway query, wallet, Filecoin/Arweave action, paid storage, spending, production/private key, direct outreach, durability/global-availability/censorship-resistance/security/production-readiness claim occurred.
+
+### Loop 34: Disposable public Radicle seed/remote-clone smoke
+
+Status: **complete as Permission-G disposable public Radicle smoke; exact bounded evidence only**.
+
+Outputs:
+
+- `scripts/run_radicle_public_smoke.py` for the bounded disposable smoke runner.
+- `evidence/radicle-public-network-smoke-2026-06-22.json`.
+- `evidence/radicle-public-network-smoke-2026-06-22.md`.
+- `fixtures/live-adapter-replay-checklist.json` and tests updated for Loop 34.
+
+Verified evidence:
+
+- `python3 scripts/run_radicle_public_smoke.py` — exited 0.
+- Disposable RID: `rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa`.
+- Public visibility verified by `rad inspect --visibility`.
+- Temporary seed node started on localhost; `rad seed <RID> --no-fetch` succeeded; `rad sync --announce <RID>` succeeded with `Synced with 2 seed(s)`.
+- A separate temporary Radicle profile/node connected to the disposable seed over localhost; `rad clone --seed <disposable NID> <RID>` succeeded; cloned README readback matched the disposable fixture text.
+- Nodes were stopped and temporary `/tmp/df-radicle-public-smoke-*` state was removed after evidence capture.
+
+Boundaries:
+
+- No production/private personal keys, paid infrastructure, spending, direct outreach, named external peer targeting, or persistent project state was used.
+- This proves only the exact disposable public Radicle smoke behavior in the evidence. It does not prove durability, censorship resistance, security, global replication, identity trust, production readiness, full Radicle compatibility, or broad Radicle network availability.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -818,9 +864,14 @@ Boundaries:
 
 ## Next recommended loop
 
-**Next:** Loop 33 candidate — local CAR/CID fixture verification, preferably with explicit approval to add project-scoped dev dependencies (`ipfs-car`, `@ipld/car`, and/or `multiformats`) if Eric wants dependency-backed CAR evidence. Without dependency approval, the safe fallback is stronger stdlib-only CID documentation/tests, which does not advance beyond local CID-compatible metadata.
+**Next:** Loop 35 consolidation/report is the current next loop after completing approved Loops 33–34. Any further live storage (IPFS daemon/add/fetch/gateway/pinning/wallet), repeated or broader Radicle public-network testing, public update posting about these new results, or stronger durability/censorship/security/production claims requires a new explicit approval/target.
 
-The just-completed loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
+Recent completed loops:
+
+- Loop 33: local CAR/CID fixture verification — complete as project-scoped `@ipld/car`/`multiformats` evidence in `evidence/local-car-cid-fixture-2026-06-22.json`; no live storage action.
+- Loop 34: disposable public Radicle seed/remote-clone smoke — complete as exact bounded evidence in `evidence/radicle-public-network-smoke-2026-06-22.json`; RID `rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa`; no broad durability/censorship/security/production/network-availability claim.
+
+The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 
 - Loop 26: Live evidence import into adapter/renderer — complete as `fixtures/live-evidence-index.json` plus renderer/preflight/test updates; no new live network action.
 - Loop 27: Public project update draft/post — complete as GitHub Discussion #6: https://github.com/redclawanon-rgb/decentralized-forge/discussions/6.

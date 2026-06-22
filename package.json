@@ -1,0 +1,19 @@
+{
+  "name": "decentralized-forge",
+  "version": "1.0.0",
+  "description": "A research and prototype project for a GitHub-class decentralized forge.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "verify:car-cid": "node scripts/verify_car_cid_fixture.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/redclawanon-rgb/decentralized-forge.git"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@ipld/car": "5.4.6",
+    "multiformats": "14.0.0"
+  }
+}

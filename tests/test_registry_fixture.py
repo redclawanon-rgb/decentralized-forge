@@ -339,6 +339,78 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn("ipfs-car", package_names)
             self.assertIn("@ipld/car", package_names)
 
+        if checklist["loop"] >= 33:
+            discovery = checklist["discovery"]
+            self.assertTrue(discovery["loop_33_local_car_cid_fixture_recorded"])
+            self.assertEqual(
+                discovery["loop_33_local_car_cid_evidence"],
+                "evidence/local-car-cid-fixture-2026-06-22.json",
+            )
+            self.assertFalse(discovery["storage_network_actions_used_after_loop_33"])
+            self.assertFalse(discovery["paid_storage_or_wallet_actions_after_loop_33"])
+            storage_gate = checklist["public_storage_preflight"]
+            self.assertEqual(
+                storage_gate["status_after_loop_33"],
+                "local_car_cid_fixture_verified_with_project_scoped_lockfile_dependencies",
+            )
+            self.assertTrue(storage_gate["permission_i_local_car_cid_completed_after_loop_33"])
+            self.assertEqual(
+                storage_gate["local_car_cid_evidence_after_loop_33"],
+                "evidence/local-car-cid-fixture-2026-06-22.json",
+            )
+            self.assertEqual(storage_gate["lockfile_after_loop_33"], "package-lock.json")
+            self.assertTrue(storage_gate["package_installed_after_loop_33"])
+            self.assertTrue(storage_gate["car_file_created_after_loop_33"])
+            self.assertEqual(
+                storage_gate["car_root_cid_after_loop_33"],
+                "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua",
+            )
+            self.assertEqual(storage_gate["car_block_count_after_loop_33"], 1)
+            self.assertTrue(storage_gate["car_block_bytes_match_input_after_loop_33"])
+            self.assertTrue(storage_gate["verification_passed_after_loop_33"])
+            self.assertFalse(storage_gate["ipfs_add_or_fetch_after_loop_33"])
+            self.assertFalse(storage_gate["ipfs_daemon_started_after_loop_33"])
+            self.assertFalse(storage_gate["public_gateway_checked_after_loop_33"])
+            self.assertFalse(storage_gate["paid_pinning_after_loop_33"])
+            self.assertFalse(storage_gate["filecoin_or_arweave_wallet_used_after_loop_33"])
+            self.assertFalse(storage_gate["paid_storage_used_after_loop_33"])
+            self.assertFalse(storage_gate["durability_claim_after_loop_33"])
+
+        if checklist["loop"] >= 34:
+            discovery = checklist["discovery"]
+            self.assertTrue(discovery["loop_34_radicle_public_network_smoke_recorded"])
+            self.assertEqual(
+                discovery["loop_34_radicle_public_network_smoke_evidence"],
+                "evidence/radicle-public-network-smoke-2026-06-22.json",
+            )
+            self.assertTrue(discovery["network_protocol_actions_used_after_loop_34"])
+            radicle_gate = checklist["radicle_local_replay"]
+            self.assertEqual(
+                radicle_gate["status_after_loop_34"],
+                "disposable_public_radicle_seed_and_remote_clone_smoke_verified",
+            )
+            self.assertTrue(radicle_gate["permission_g_public_smoke_completed_after_loop_34"])
+            self.assertEqual(
+                radicle_gate["public_network_smoke_evidence_after_loop_34"],
+                "evidence/radicle-public-network-smoke-2026-06-22.json",
+            )
+            self.assertRegex(radicle_gate["public_smoke_rid_after_loop_34"], r"^rad:z[0-9A-Za-z]+$")
+            self.assertEqual(radicle_gate["visibility_after_loop_34"], "public")
+            self.assertTrue(radicle_gate["node_started_after_loop_34"])
+            self.assertTrue(radicle_gate["publish_or_public_init_after_loop_34"])
+            self.assertTrue(radicle_gate["seed_policy_updated_after_loop_34"])
+            self.assertTrue(radicle_gate["sync_or_announce_after_loop_34"])
+            self.assertTrue(radicle_gate["clone_node_started_after_loop_34"])
+            self.assertTrue(radicle_gate["clone_node_connected_to_seed_after_loop_34"])
+            self.assertTrue(radicle_gate["remote_clone_or_fetch_after_loop_34"])
+            self.assertTrue(radicle_gate["readback_matches_after_loop_34"])
+            self.assertTrue(radicle_gate["verification_passed_after_loop_34"])
+            self.assertTrue(radicle_gate["temporary_state_removed_after_loop_34"])
+            self.assertFalse(radicle_gate["production_or_personal_key_used_after_loop_34"])
+            self.assertFalse(radicle_gate["paid_infrastructure_used_after_loop_34"])
+            self.assertFalse(radicle_gate["direct_outreach_after_loop_34"])
+            self.assertIn("no_broad_radicle_network_availability_claim", radicle_gate["non_claims_after_loop_34"])
+
         required_global_gates = {
             "approved_tooling_path_required",
             "temporary_or_disposable_state_only",
@@ -406,9 +478,9 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("No Radicle identity was created or reused", evidence)
         self.assertIn("rad publish --help", evidence)
         self.assertIn("rad clone --help", evidence)
-        self.assertIn("Permission G is not granted", plan)
-        self.assertIn("Do not execute this checklist unless Eric explicitly grants Permission G", plan)
-        self.assertIn("Radicle remains **local CLI/private replay verified only**", plan)
+        self.assertIn("Permission G was granted and one disposable smoke is complete", plan)
+        self.assertIn("Further Radicle public-network actions", plan)
+        self.assertIn("exact Loop 34 disposable public seed/clone/readback smoke", plan)
         combined = f"{evidence}\n{plan}".lower()
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, combined)
@@ -434,6 +506,99 @@ class RegistryFixtureTests(unittest.TestCase):
         combined = f"{evidence}\n{plan}".lower()
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, combined)
+
+    def test_loop33_local_car_cid_fixture_evidence_is_bounded(self):
+        checklist = self.live_replay_checklist
+        if checklist["loop"] < 33:
+            self.skipTest("Loop 33 local CAR/CID evidence not recorded yet")
+        storage_gate = checklist["public_storage_preflight"]
+        evidence_path = ROOT / storage_gate["local_car_cid_evidence_after_loop_33"]
+        car_path = ROOT / storage_gate["local_car_file_after_loop_33"]
+        evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+
+        self.assertEqual(evidence["schema_version"], "decentralized-forge.local-car-cid-fixture.v1")
+        self.assertEqual(evidence["loop"], 33)
+        self.assertTrue(evidence["verification_passed"])
+        self.assertEqual(evidence["input_artifact"], "fixtures/local-release-artifact.txt")
+        self.assertEqual(evidence["input_size_bytes"], LOCAL_RELEASE_ARTIFACT_PATH.stat().st_size)
+        self.assertEqual(evidence["input_sha256"], hashlib.sha256(LOCAL_RELEASE_ARTIFACT_PATH.read_bytes()).hexdigest())
+        self.assertEqual(evidence["cid"], storage_gate["car_root_cid_after_loop_33"])
+        self.assertEqual(evidence["car_root_cids"], [storage_gate["car_root_cid_after_loop_33"]])
+        self.assertEqual(evidence["car_block_count"], 1)
+        self.assertTrue(evidence["car_root_matches_cid"])
+        self.assertTrue(evidence["car_block_cid_matches"])
+        self.assertTrue(evidence["car_block_bytes_match_input"])
+        self.assertEqual(evidence["dependencies"]["@ipld/car"], "5.4.6")
+        self.assertEqual(evidence["dependencies"]["multiformats"], "14.0.0")
+        self.assertEqual(evidence["lockfile"], "package-lock.json")
+        self.assertTrue(car_path.is_file())
+        self.assertEqual(car_path.stat().st_size, evidence["car_size_bytes"])
+
+        evidence_blob = json.dumps(evidence).lower()
+        for action_not_taken in [
+            "no ipfs daemon was started",
+            "no ipfs add/fetch/pin command was run",
+            "no public gateway was queried",
+            "no wallet, filecoin, arweave, paid pinning, or paid storage action was used",
+        ]:
+            self.assertIn(action_not_taken, evidence_blob)
+        for required_non_claim in [
+            "no durability",
+            "global availability",
+            "censorship-resistance",
+            "security",
+            "production-readiness",
+        ]:
+            self.assertIn(required_non_claim, evidence_blob)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, evidence_blob)
+
+    def test_loop34_radicle_public_smoke_evidence_is_bounded(self):
+        checklist = self.live_replay_checklist
+        if checklist["loop"] < 34:
+            self.skipTest("Loop 34 Radicle public smoke evidence not recorded yet")
+        radicle_gate = checklist["radicle_local_replay"]
+        evidence_path = ROOT / radicle_gate["public_network_smoke_evidence_after_loop_34"]
+        report_path = ROOT / radicle_gate["public_network_smoke_report_after_loop_34"]
+        evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+        report = report_path.read_text(encoding="utf-8")
+
+        self.assertEqual(evidence["schema_version"], "decentralized-forge.radicle-public-network-smoke.v1")
+        self.assertEqual(evidence["loop"], 34)
+        self.assertTrue(evidence["verification_passed"])
+        self.assertEqual(evidence["rid"], radicle_gate["public_smoke_rid_after_loop_34"])
+        self.assertEqual(evidence["visibility"], "public")
+        self.assertTrue(evidence["node_started"])
+        self.assertTrue(evidence["publish_succeeded"])
+        self.assertTrue(evidence["seed_succeeded"])
+        self.assertTrue(evidence["sync_succeeded"])
+        self.assertTrue(evidence["clone_node_started"])
+        self.assertTrue(evidence["clone_node_connected_to_seed"])
+        self.assertTrue(evidence["remote_clone_succeeded"])
+        self.assertTrue(evidence["readme_readback_matches"])
+        self.assertIn("removed after evidence capture", evidence["temp_state_root_shape"])
+        self.assertIn("Overall verification passed: `True`", report)
+        self.assertIn(evidence["rid"], report)
+
+        evidence_blob = json.dumps(evidence).lower()
+        for action_not_taken in [
+            "no production/private personal keys were used",
+            "no paid infrastructure or spending was used",
+            "no direct outreach or named peer targeting was used",
+        ]:
+            self.assertIn(action_not_taken, evidence_blob)
+        for required_non_claim in [
+            "no durability",
+            "censorship-resistance",
+            "security",
+            "global replication",
+            "identity-trust",
+            "production-readiness",
+            "no broad radicle network availability claim",
+        ]:
+            self.assertIn(required_non_claim, evidence_blob)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "passphrase"]:
+            self.assertNotIn(accidental_secret_marker, evidence_blob)
 
     def test_loop24_nostr_signed_preview_is_bounded_and_unpublished(self):
         checklist = self.live_replay_checklist

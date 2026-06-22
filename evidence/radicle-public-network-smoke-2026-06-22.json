@@ -1,0 +1,336 @@
+{
+  "schema_version": "decentralized-forge.radicle-public-network-smoke.v1",
+  "loop": 34,
+  "created_utc": "2026-06-22T21:53:16Z",
+  "scope": "Permission G disposable public Radicle seed/remote-clone smoke",
+  "permission": "Permission G approved 2026-06-22 for one disposable public Radicle seed/remote-clone smoke using only disposable/project-scoped state.",
+  "temp_state_root_shape": "/tmp/df-radicle-public-smoke-* (removed after evidence capture)",
+  "rad_home_shape": "/tmp/df-radicle-public-smoke-*/rad-home (removed)",
+  "clone_rad_home_shape": "/tmp/df-radicle-public-smoke-*/clone-rad-home (removed)",
+  "rid": "rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa",
+  "visibility": "public",
+  "disposable_git_commit_summary": " create mode 100644 README.md",
+  "node_started": true,
+  "node_status_returncode": 0,
+  "publish_succeeded": true,
+  "seed_succeeded": true,
+  "sync_succeeded": true,
+  "clone_node_started": true,
+  "clone_node_connected_to_seed": true,
+  "remote_clone_succeeded": true,
+  "readme_readback_matches": true,
+  "verification_passed": true,
+  "commands": [
+    {
+      "cmd": [
+        "bash",
+        "-lc",
+        "command -v rad"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "/home/openclaw/.local/bin/rad\n",
+      "stderr": "",
+      "duration_seconds": 0.016
+    },
+    {
+      "cmd": [
+        "rad",
+        "--version"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "rad 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)\n",
+      "stderr": "",
+      "duration_seconds": 0.006
+    },
+    {
+      "cmd": [
+        "git",
+        "init",
+        "-b",
+        "master",
+        "/tmp/df-radicle-public-smoke-ldnseaws/seed-repo"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "Initialized empty Git repository in /tmp/df-radicle-public-smoke-ldnseaws/seed-repo/.git/\n",
+      "stderr": "",
+      "duration_seconds": 0.01
+    },
+    {
+      "cmd": [
+        "git",
+        "add",
+        "README.md"
+      ],
+      "cwd": "/tmp/df-radicle-public-smoke-ldnseaws/seed-repo",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 0.007
+    },
+    {
+      "cmd": [
+        "git",
+        "-c",
+        "user.name=Harry Radicle Smoke",
+        "-c",
+        "user.email=harry@example.invalid",
+        "commit",
+        "-m",
+        "docs: disposable radicle public smoke fixture"
+      ],
+      "cwd": "/tmp/df-radicle-public-smoke-ldnseaws/seed-repo",
+      "returncode": 0,
+      "stdout": "[master (root-commit) 461083a] docs: disposable radicle public smoke fixture\n 1 file changed, 4 insertions(+)\n create mode 100644 README.md\n",
+      "stderr": "",
+      "duration_seconds": 0.013
+    },
+    {
+      "cmd": [
+        "rad",
+        "auth",
+        "--alias",
+        "decentralized-forge-public-smoke",
+        "--stdin"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\nInitializing your Radicle \ud83d\udc7e identity\n\n\u2713 Creating your Ed25519 keypair...\n\u2713 Adding your Radicle key to ssh-agent...\n\u2713 Your Radicle DID is did:key:z6MkqHUvNuXmfFfiQhRMteg6Vmj4CXjUHPAsZBh6hhJzwdvY. This identifies your device. Run `rad self` to show it at all times.\n\u2713 You're all set.\n\nTo create a Radicle repository, run `rad init` from a Git repository with at least one commit.\nTo clone a repository, run `rad clone <rid>`. For example, `rad clone rad:z3gqcJUoA1n9HaHKufZs5FCSGazv5` clones the Radicle 'heartwood' repository.\nTo get a list of all commands, run `rad`.\n",
+      "stderr": "",
+      "duration_seconds": 0.494
+    },
+    {
+      "cmd": [
+        "rad",
+        "init",
+        "--name",
+        "decentralized-forge-public-smoke-2026-06-22",
+        "--description",
+        "Disposable Decentralized Forge prototype/research public Radicle smoke; no durability/security/production claims.",
+        "--default-branch",
+        "master",
+        "--public",
+        "--no-confirm",
+        "--no-seed",
+        "/tmp/df-radicle-public-smoke-ldnseaws/seed-repo"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\nInitializing public Radicle \ud83d\udc7e repository in /tmp/df-radicle-public-smoke-ldnseaws/seed-repo..\n\n\u2713 Repository decentralized-forge-public-smoke-2026-06-22 created.\n\nYour Repository ID (RID) is rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa.\nYou can show it any time by running `rad .` from /tmp/df-radicle-public-smoke-ldnseaws/seed-repo.\n\nYour repository will be announced to the network when you start your node.\nYou can start your node with `rad node start`.\nTo push changes, run `git push`.\n",
+      "stderr": "",
+      "duration_seconds": 0.282
+    },
+    {
+      "cmd": [
+        "rad",
+        "inspect",
+        "--rid",
+        "/tmp/df-radicle-public-smoke-ldnseaws/seed-repo"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa\n",
+      "stderr": "",
+      "duration_seconds": 0.005
+    },
+    {
+      "cmd": [
+        "rad",
+        "inspect",
+        "--identity",
+        "/tmp/df-radicle-public-smoke-ldnseaws/seed-repo"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "{\n  \"payload\": {\n    \"xyz.radicle.project\": {\n      \"defaultBranch\": \"master\",\n      \"description\": \"Disposable Decentralized Forge prototype/research public Radicle smoke; no durability/security/production claims.\",\n      \"name\": \"decentralized-forge-public-smoke-2026-06-22\"\n    }\n  },\n  \"delegates\": [\n    \"did:key:z6MkqHUvNuXmfFfiQhRMteg6Vmj4CXjUHPAsZBh6hhJzwdvY\"\n  ],\n  \"threshold\": 1\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.009
+    },
+    {
+      "cmd": [
+        "rad",
+        "inspect",
+        "--refs",
+        "/tmp/df-radicle-public-smoke-ldnseaws/seed-repo"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "z6MkqHUvNuXmfFfiQhRMteg6Vmj4CXjUHPAsZBh6hhJzwdvY\n\u2514\u2500\u2500 refs\n \u00a0\u00a0 \u251c\u2500\u2500 cobs\n \u00a0\u00a0 \u2502\u00a0\u00a0 \u2514\u2500\u2500 xyz.radicle.id\n \u00a0\u00a0 \u2502\u00a0\u00a0  \u00a0\u00a0 \u2514\u2500\u2500 bba00667a9e565d152a2808e2bb0c2ec188f5149\n \u00a0\u00a0 \u251c\u2500\u2500 heads\n \u00a0\u00a0 \u2502\u00a0\u00a0 \u2514\u2500\u2500 master\n \u00a0\u00a0 \u2514\u2500\u2500 rad\n \u00a0\u00a0  \u00a0\u00a0 \u251c\u2500\u2500 id\n \u00a0\u00a0  \u00a0\u00a0 \u251c\u2500\u2500 root\n \u00a0\u00a0  \u00a0\u00a0 \u2514\u2500\u2500 sigrefs\n",
+      "stderr": "",
+      "duration_seconds": 0.011
+    },
+    {
+      "cmd": [
+        "rad",
+        "inspect",
+        "--visibility",
+        "/tmp/df-radicle-public-smoke-ldnseaws/seed-repo"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "public\n",
+      "stderr": "",
+      "duration_seconds": 0.008
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "start",
+        "--",
+        "--listen",
+        "127.0.0.1:8776"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\u2713 Node started (2656737)\nTo stay in sync with the network, leave the node running in the background.\nTo learn more, run `rad node --help`.\n",
+      "stderr": "",
+      "duration_seconds": 0.372
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "status"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\u2713 Node is running with Node ID z6MkqHUvNuXmfFfiQhRMteg6Vmj4CXjUHPAsZBh6hhJzwdvY and listening for inbound connections on 127.0.0.1:8776.\n\n\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 Node ID                                            Address                                         ?   \u292d   Since            \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 z6Mku9wM5A2k6DAVwQnkKPVzX5XTy3z7oey7cksT3vwcwGkg   rad.cstef.dev:8776                              !   \u2197                    \u2502\n\u2502 z6MkrLMMsiPWUcNPHcRajuMi9mDfYckSoJyPwwnknocNYPm7   iris.radicle.network:8776                       \u2713   \u2197   13.691 second(s) \u2502\n\u2502 z6Mktw5sjZ3KD1fhDN33jhjAuBnQYUWgkjUPp1QQeUQVLm4d   [21b:3bf3:de79:21fb:6756:4ba0:36fd:c40d]:8776   !   \u2197                    \u2502\n\u2502 z6Mkmqogy2qEM2ummccUthFEaaHvyYmYBYh3dbe9W4ebScxo   rosa.radicle.network:8776                       \u2713   \u2197   14.691 second(s) \u2502\n\u2502 z6Mkv4cJuPNpjK33WiVhQYLBPpFirAPGdGV7A3mqcDUh8KSb   radicle.norman.life:58003                       !   \u2197                    \u2502\n\u2502 z6MktFcCMdoYSiShd8m2m5FodYw6Qo7V2pUt14tUb7wmSkye   vigil.intelfx.name:8776                         !   \u2197                    \u2502\n\u2502 z6MkhnbBw4n4Mhqv3joXvYmnDRMJtrY3dNpnbebaaD26N5ui   bakery.radicle.garden:58012                     !   \u2197                    \u2502\n\u2502 z6Mknt3TPebLzohYiH8iX3rVF7zhGdGdYPrx5JUXKXgcwZYu   44.33.3.132:8776                                !   \u2197                    \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\n\u2717 Hint: \n   ? \u2026 Status:\n       \u2713 \u2026 connected    \u2717 \u2026 disconnected\n       ! \u2026 attempted    \u2022 \u2026 initial\n   \u292d \u2026 Link Direction:\n       \u2198 \u2026 inbound      \u2197 \u2026 outbound\n\n2026-06-22T21:47:24.078Z INFO  service  Connected to z6MkrLMMsiPWUcNPHcRajuMi9mDfYckSoJyPwwnknocNYPm7 (iris.radicle.network:8776) (Outbound)\n2026-06-22T21:47:26.128Z INFO  service  Received command ListenAddrs\n2026-06-22T21:47:26.131Z WARN  wire     Failed to establish connection to seed.radicle.example:8776: failed to lookup address information: Name does not resolve\n2026-06-22T21:47:26.131Z INFO  service  Disconnected from z6MkwdjuDVzETP8FGYg3u9Fy8AZzYbJ6RcVAjBm9pg3toC41 (failed to lookup address information: Name does not resolve)\n2026-06-22T21:47:26.138Z WARN  wire     Failed to establish connection to seed.gaid.in:8776: failed to lookup address information: Name has no usable address\n2026-06-22T21:47:26.138Z INFO  service  Disconnected from z6MknEFxhhtnJHsYFE6st1V8rj2MBypRsG4Jtp3kwv2yL9pH (failed to lookup address information: Name has no usable address)\n2026-06-22T21:47:28.227Z INFO  service  Received command QueryState(..)\n2026-06-22T21:47:28.229Z INFO  service  Disconnected from z6MkfTioB7xdeXk8ud6RDEspxosu6JeirX9nhAB9foZRdrSQ (connection reset)\n2026-06-22T21:47:28.229Z INFO  service  Disconnected from z6MkehmTj7pAVnd7Y5kew5y3K6RkczMDQ3i59DbmDJ9YM5Rp (connection reset)\n2026-06-22T21:47:28.691Z INFO  service  Received command QueryState(..)\n",
+      "stderr": "",
+      "duration_seconds": 11.862
+    },
+    {
+      "cmd": [
+        "rad",
+        "publish",
+        "rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa"
+      ],
+      "cwd": null,
+      "returncode": 1,
+      "stdout": "\u2717 Error: repository is already public\n\u2717 Hint: to announce the repository to the network, run `rad sync --inventory`\n",
+      "stderr": "",
+      "duration_seconds": 0.149
+    },
+    {
+      "cmd": [
+        "rad",
+        "seed",
+        "rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa",
+        "--no-fetch"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\u2713 Inventory updated with rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa\n\u2713 Seeding policy updated for rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa with scope 'followed'\n",
+      "stderr": "",
+      "duration_seconds": 0.894
+    },
+    {
+      "cmd": [
+        "rad",
+        "sync",
+        "--announce",
+        "rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\u2713 Synced with 2 seed(s)\n",
+      "stderr": "",
+      "duration_seconds": 9.518
+    },
+    {
+      "cmd": [
+        "rad",
+        "auth",
+        "--alias",
+        "df-public-smoke-clone",
+        "--stdin"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\nInitializing your Radicle \ud83d\udc7e identity\n\n\u2713 Creating your Ed25519 keypair...\n\u2713 Adding your Radicle key to ssh-agent...\n\u2713 Your Radicle DID is did:key:z6MkrW6TFs7u9sfMVJ2Bq7LkvDynGhcCucDMEKLjvvsdBQwg. This identifies your device. Run `rad self` to show it at all times.\n\u2713 You're all set.\n\nTo create a Radicle repository, run `rad init` from a Git repository with at least one commit.\nTo clone a repository, run `rad clone <rid>`. For example, `rad clone rad:z3gqcJUoA1n9HaHKufZs5FCSGazv5` clones the Radicle 'heartwood' repository.\nTo get a list of all commands, run `rad`.\n",
+      "stderr": "",
+      "duration_seconds": 0.495
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "start",
+        "--",
+        "--listen",
+        "127.0.0.1:8777"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\u2713 Node started (2657003)\nTo stay in sync with the network, leave the node running in the background.\nTo learn more, run `rad node --help`.\n",
+      "stderr": "",
+      "duration_seconds": 0.377
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "connect",
+        "z6MkqHUvNuXmfFfiQhRMteg6Vmj4CXjUHPAsZBh6hhJzwdvY@127.0.0.1:8776"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\u2713 Connecting to z6MkqHU\u2026hJzwdvY@127.0.0.1:8776...\n",
+      "stderr": "",
+      "duration_seconds": 11.196
+    },
+    {
+      "cmd": [
+        "rad",
+        "clone",
+        "--timeout",
+        "20s",
+        "--seed",
+        "z6MkqHUvNuXmfFfiQhRMteg6Vmj4CXjUHPAsZBh6hhJzwdvY",
+        "rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa",
+        "/tmp/df-radicle-public-smoke-ldnseaws/clone-parent/cloned-repo"
+      ],
+      "cwd": "/tmp/df-radicle-public-smoke-ldnseaws/clone-parent",
+      "returncode": 0,
+      "stdout": "\u2713 Seeding policy updated for rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa with scope 'followed'\nFetching rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa from the network, found 2 potential seed(s).\n\u2713 Target met: 1 preferred seed(s).\n\u2713 Creating checkout in .//tmp/df-radicle-public-smoke-ldnseaws/clone-parent/cloned-repo..\n\u2713 Remote decentralized-forge-public-smoke@z6MkqHUvNuXmfFfiQhRMteg6Vmj4CXjUHPAsZBh6hhJzwdvY added\n\u2713 Remote-tracking branch decentralized-forge-public-smoke@z6MkqHUvNuXmfFfiQhRMteg6Vmj4CXjUHPAsZBh6hhJzwdvY/master created for z6MkqHUvNuXmfFfiQhRMteg6Vmj4CXjUHPAsZBh6hhJzwdvY\n\u2713 Repository successfully cloned under /tmp/df-radicle-public-smoke-ldnseaws/clone-parent/cloned-repo/\n\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 decentralized-forge-public-smoke-2026-06-22                                                                       \u2502\n\u2502 Disposable Decentralized Forge prototype/research public Radicle smoke; no durability/security/production claims. \u2502\n\u2502 0 issues \u00b7 0 patches                                                                                              \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\nRun `cd .//tmp/df-radicle-public-smoke-ldnseaws/clone-parent/cloned-repo` to go to the repository directory.\n",
+      "stderr": "",
+      "duration_seconds": 6.505
+    }
+  ],
+  "node_stop": [
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "stop"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\u2713 Node stopped\n",
+      "stderr": "",
+      "duration_seconds": 1.091
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "stop"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\u2713 Node stopped\n",
+      "stderr": "",
+      "duration_seconds": 1.104
+    }
+  ],
+  "actions_not_taken": [
+    "no production/private personal keys were used",
+    "no paid infrastructure or spending was used",
+    "no direct outreach or named peer targeting was used",
+    "no durability, censorship-resistance, security, global replication, identity-trust, or production-readiness claim is made",
+    "no broad Radicle network availability claim is made beyond this exact bounded smoke evidence"
+  ],
+  "claim_boundary": "This is a disposable prototype Radicle smoke only. It proves only the exact command outcomes recorded here at this time."
+}

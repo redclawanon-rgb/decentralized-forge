@@ -4,9 +4,9 @@ Created 2026-06-22 from Loop 31 Permission-H preflight.
 
 ## Status
 
-**Planning/preflight only.** Permission H allowed free/read-only storage/IPFS preflight, but did not authorize paid pinning, wallets, paid storage, Filecoin/Arweave use, public durability claims, or live storage claims.
+**Permission I local CAR/CID fixture verification is complete.** Permission H originally allowed free/read-only storage/IPFS preflight; Permission I later allowed one local CAR/CID fixture verification loop with project-scoped lockfile-backed dev dependencies. It still did not authorize paid pinning, wallets, paid storage, Filecoin/Arweave use, public gateway checks, public durability claims, or live storage claims.
 
-Evidence for this preflight is in `evidence/storage-tooling-preflight-2026-06-22.md`.
+Preflight evidence is in `evidence/storage-tooling-preflight-2026-06-22.md`. Loop 33 local CAR/CID evidence is in `evidence/local-car-cid-fixture-2026-06-22.json`; local CAR file is `evidence/local-release-artifact-2026-06-22.car`.
 
 ## Current verified baseline
 
@@ -16,6 +16,7 @@ Evidence for this preflight is in `evidence/storage-tooling-preflight-2026-06-22
 - Current fixtures explicitly keep `pinned: false`, `live_ipfs_verified: false`, `paid_storage: false`, and `durability_claim: false`.
 - Loop 31 found no installed IPFS/Kubo CLI, CAR CLI, IPLD CLI, or Python multiformats/CAR libraries on this host.
 - Node/npm/npx/corepack and uv are available, so a future local-only dependency-based CAR/CID smoke is feasible without root if explicitly chosen.
+- Loop 33 completed the dependency-backed local CAR/CID path with `@ipld/car@5.4.6` and `multiformats@14.0.0` in `package-lock.json`; `npm run verify:car-cid` passed. The generated CAR has one root matching `bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua`, one block, and block bytes matching `fixtures/local-release-artifact.txt`.
 
 ## What Loop 31 did not do
 
@@ -73,4 +74,4 @@ Do not proceed without Eric's explicit approval for each relevant lane:
 
 ## Current next roadblock
 
-The lowest-risk next step is a **local CAR/CID fixture verification loop**. It needs approval to add project-scoped dev dependencies if we choose the dependency-backed path. Otherwise, the no-new-dependency fallback can improve documentation/tests but will not advance beyond local CID-compatible metadata.
+The lowest-risk local CAR/CID step is complete. Remaining storage gates are live IPFS daemon/add/fetch/gateway checks, paid pinning/storage, and Filecoin/Arweave wallet lanes; each requires a new explicit approval/target. The project must still avoid durability, censorship-resistance, global availability, security, or production-readiness claims until backed by much stronger evidence.

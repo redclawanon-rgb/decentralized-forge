@@ -1,0 +1,44 @@
+{
+  "schema_version": "decentralized-forge.local-car-cid-fixture.v1",
+  "loop": 33,
+  "created_utc": "2026-06-22T21:53:16Z",
+  "scope": "local CAR/CID fixture verification only",
+  "permission": "Permission I approved 2026-06-22 for one local CAR/CID fixture verification loop with project-scoped lockfile-backed dev dependencies.",
+  "input_artifact": "fixtures/local-release-artifact.txt",
+  "input_size_bytes": 241,
+  "input_sha256": "3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0",
+  "cid": "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua",
+  "cid_version": 1,
+  "multibase": "base32",
+  "multicodec": "raw",
+  "multicodec_code": 85,
+  "multihash": "sha2-256",
+  "multihash_digest_hex": "3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0",
+  "expected_cid_from_loop_6": "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua",
+  "expected_sha256_from_loop_6": "3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0",
+  "expected_cid_matches": true,
+  "expected_sha256_matches": true,
+  "car_file": "evidence/local-release-artifact-2026-06-22.car",
+  "car_size_bytes": 338,
+  "car_root_cids": [
+    "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua"
+  ],
+  "car_block_count": 1,
+  "car_root_matches_cid": true,
+  "car_block_cid_matches": true,
+  "car_block_bytes_match_input": true,
+  "dependencies": {
+    "@ipld/car": "5.4.6",
+    "multiformats": "14.0.0"
+  },
+  "lockfile": "package-lock.json",
+  "verification_passed": true,
+  "actions_not_taken": [
+    "no IPFS daemon was started",
+    "no IPFS add/fetch/pin command was run",
+    "no public gateway was queried",
+    "no wallet, Filecoin, Arweave, paid pinning, or paid storage action was used",
+    "no durability, global availability, censorship-resistance, security, or production-readiness claim is made"
+  ],
+  "claim_boundary": "This verifies only that the local fixture bytes deterministically map to the recorded CID and can be packed into/read back from a local CAR file with project-scoped dev dependencies."
+}

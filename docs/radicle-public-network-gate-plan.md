@@ -4,16 +4,17 @@ Created 2026-06-22 from Loop 30 Permission-F preflight.
 
 ## Status
 
-**Planning/preflight only. Permission G is not granted.**
+**Permission G was granted and one disposable smoke is complete.**
 
-This file prepares a later public Radicle seed/publish/remote-clone smoke, but it does not authorize or record any public Radicle network action. Evidence for the help-only preflight is in `evidence/radicle-public-network-preflight-2026-06-22.md`.
+This file originally prepared a public Radicle seed/publish/remote-clone smoke. Eric approved Permission G on 2026-06-22 via Telegram message “G & I are approved to keep things moving along.” The bounded smoke evidence is in `evidence/radicle-public-network-smoke-2026-06-22.json` and `.md`; the help-only preflight remains in `evidence/radicle-public-network-preflight-2026-06-22.md`.
 
 ## Current verified baseline
 
 - Radicle CLI is installed user-locally at `/home/openclaw/.local/bin/rad`.
 - Version inspected in Loop 30: `rad 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)`.
 - Loop 23 already verified only a temporary private local replay with `rad init --private --no-confirm --no-seed` and `rad inspect`.
-- No public Radicle node, seed, publish, sync, remote clone, or network replication has been verified.
+- Before Loop 34, no public Radicle node, seed, publish, sync, remote clone, or network replication had been verified.
+- Loop 34 verified one exact disposable public Radicle smoke for RID `rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa`: public init/visibility, localhost node start, seed policy update, sync/announce, separate temporary clone node connection, `rad clone --seed <disposable NID>`, and README readback. This remains exact-smoke evidence only, not a durability/censorship-resistance/security/global-replication/production claim.
 
 ## Help-only findings that matter
 
@@ -86,4 +87,4 @@ Still not allowed without much more evidence:
 
 ## Current next gate
 
-Permission G remains the blocker for public Radicle seed/publish/sync/node/remote-clone execution. Until Eric grants it, Radicle remains **local CLI/private replay verified only** for this project.
+The single approved Permission-G disposable smoke is complete. Further Radicle public-network actions — for example repeated availability checks, broader peer/seed testing, long-running seed persistence, public claims beyond the exact smoke, or use of non-disposable identities/infrastructure — require a new explicit approval/target. Radicle is now verified only for (a) the Loop 23 local private replay and (b) the exact Loop 34 disposable public seed/clone/readback smoke.

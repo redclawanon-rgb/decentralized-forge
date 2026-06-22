@@ -511,9 +511,24 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 
 ## Next loop-set setup
 
-`docs/next-evidence-and-interoperability-loops.md` now records Loops 26–32 as complete. Eric approved Permission G and Permission I on 2026-06-22 via Telegram message: “G & I are approved to keep things moving along.”
+`docs/next-evidence-and-interoperability-loops.md` records Loops 26–34. Eric approved Permission G and Permission I on 2026-06-22 via Telegram message: “G & I are approved to keep things moving along.”
 
-Next useful loops:
+## Loop 33: Local CAR/CID fixture verification
 
-- Loop 33: local CAR/CID fixture verification with project-scoped dev dependencies (`ipfs-car`, `@ipld/car`, and/or `multiformats`) under Permission I. No daemon/gateway/pin/wallet/paid-storage/durability claims.
-- Loop 34: disposable public Radicle seed/remote-clone smoke under Permission G. Use only disposable/project-scoped state, no production/private personal keys, no paid infra, no unsupported durability/censorship/security/production claims.
+**Goal:** Strengthen artifact-storage evidence using only local/free tooling and exact local bytes.
+
+**Current result:** Completed as Permission-I local CAR/CID fixture verification. Added project-scoped lockfile-backed dev dependencies `@ipld/car@5.4.6` and `multiformats@14.0.0`, `scripts/verify_car_cid_fixture.mjs`, `evidence/local-car-cid-fixture-2026-06-22.json`, and `evidence/local-release-artifact-2026-06-22.car`. `npm run verify:car-cid` passed and verified the local artifact bytes map to CID `bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua`; CAR root/block/readback checks passed. No IPFS daemon, add/fetch/pin, gateway, wallet, paid storage, Filecoin/Arweave, or durability/security/production claim occurred.
+
+**Gate preserved:** This is local CAR/CID evidence only. Live IPFS add/fetch/gateway/pinning, Filecoin/Arweave, paid storage, durability/global-availability/censorship-resistance/security/production claims remain separately gated.
+
+## Loop 34: Disposable public Radicle seed/remote-clone smoke
+
+**Goal:** Run one bounded disposable public Radicle smoke under Permission G.
+
+**Current result:** Completed as exact bounded public Radicle evidence. `scripts/run_radicle_public_smoke.py` created temporary seed/clone Radicle profiles under `/tmp`, initialized disposable public RID `rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa`, started a localhost seed node, updated seed policy, ran sync/announce, started a separate temporary clone node, connected to the disposable seed over localhost, cloned with `rad clone --seed <disposable NID>`, and verified README readback. Evidence: `evidence/radicle-public-network-smoke-2026-06-22.json` and `.md`. Nodes were stopped and temporary state removed.
+
+**Gate preserved:** No production/private personal keys, paid infrastructure, spending, direct outreach, named external peer targeting, or persistent state was used. Do not claim durability, censorship resistance, security, global replication, identity trust, production readiness, full Radicle compatibility, or broad Radicle network availability from this one smoke.
+
+## Next useful loop
+
+- Loop 35: consolidate docs/context/status/checklist/tests and report exact evidence paths, verified scope, remaining gates. Further live storage, broader/repeated Radicle network testing, or public updates about these new results need a new explicit approval/target.

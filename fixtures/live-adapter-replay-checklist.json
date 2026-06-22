@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-adapter-replay-checklist.v1",
-  "loop": 31,
+  "loop": 34,
   "purpose": "Secret-free gates for future Radicle local CLI replay and Nostr disposable relay publish/readback verification.",
   "discovery": {
     "rad_command": "command -v rad",
@@ -53,7 +53,14 @@
     "loop_31_storage_gate_plan": "docs/public-storage-evidence-gate-plan.md",
     "loop_31_storage_preflight_evidence": "evidence/storage-tooling-preflight-2026-06-22.md",
     "storage_network_actions_used_after_loop_31": false,
-    "paid_storage_or_wallet_actions_after_loop_31": false
+    "paid_storage_or_wallet_actions_after_loop_31": false,
+    "loop_33_local_car_cid_fixture_recorded": true,
+    "loop_33_local_car_cid_evidence": "evidence/local-car-cid-fixture-2026-06-22.json",
+    "storage_network_actions_used_after_loop_33": false,
+    "paid_storage_or_wallet_actions_after_loop_33": false,
+    "loop_34_radicle_public_network_smoke_recorded": true,
+    "loop_34_radicle_public_network_smoke_evidence": "evidence/radicle-public-network-smoke-2026-06-22.json",
+    "network_protocol_actions_used_after_loop_34": true
   },
   "global_gates": [
     "approved_tooling_path_required",
@@ -202,7 +209,37 @@
       "rad_remote_add_or_sync",
       "rad_clone_or_remote_fetch"
     ],
-    "claim_boundary_after_loop_30": "Permission-F help-only public-network preflight; Permission G remains required before any public Radicle node/seed/publish/sync/remote clone/fetch action. Radicle remains local CLI/private replay verified only."
+    "claim_boundary_after_loop_30": "Permission-F help-only public-network preflight; Permission G remains required before any public Radicle node/seed/publish/sync/remote clone/fetch action. Radicle remains local CLI/private replay verified only.",
+    "status_after_loop_34": "disposable_public_radicle_seed_and_remote_clone_smoke_verified",
+    "permission_g_public_smoke_completed_after_loop_34": true,
+    "public_network_smoke_evidence_after_loop_34": "evidence/radicle-public-network-smoke-2026-06-22.json",
+    "public_network_smoke_report_after_loop_34": "evidence/radicle-public-network-smoke-2026-06-22.md",
+    "public_radicle_network_actions_after_loop_34": true,
+    "public_smoke_rid_after_loop_34": "rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa",
+    "visibility_after_loop_34": "public",
+    "node_started_after_loop_34": true,
+    "publish_or_public_init_after_loop_34": true,
+    "seed_policy_updated_after_loop_34": true,
+    "sync_or_announce_after_loop_34": true,
+    "clone_node_started_after_loop_34": true,
+    "clone_node_connected_to_seed_after_loop_34": true,
+    "remote_clone_or_fetch_after_loop_34": true,
+    "readback_matches_after_loop_34": true,
+    "verification_passed_after_loop_34": true,
+    "temporary_state_removed_after_loop_34": true,
+    "production_or_personal_key_used_after_loop_34": false,
+    "paid_infrastructure_used_after_loop_34": false,
+    "direct_outreach_after_loop_34": false,
+    "non_claims_after_loop_34": [
+      "no_durability_claim",
+      "no_censorship_resistance_claim",
+      "no_security_claim",
+      "no_global_replication_claim",
+      "no_identity_trust_claim",
+      "no_production_readiness_claim",
+      "no_broad_radicle_network_availability_claim"
+    ],
+    "claim_boundary_after_loop_34": "Disposable public Radicle smoke only: public init/seed/sync and separate temporary-state clone/readback succeeded for exact RID; no durability/censorship-resistance/security/global-replication/identity-trust/production-readiness claim."
   },
   "nostr_disposable_readback": {
     "status_after_loop_20": "planned_not_executed",
@@ -436,6 +473,29 @@
     "paid_storage_used_after_loop_31": false,
     "durability_claim_after_loop_31": false,
     "recommended_next_storage_loop": "local_car_cid_fixture_verification_with_project_scoped_dependencies_or_no-new-dependency_stdlib_fallback",
-    "claim_boundary_after_loop_31": "Permission-H preflight only; no live IPFS add/fetch/pin/gateway, no CAR generation, no paid storage or wallet, and no durability/global-availability/censorship-resistance/security/production-readiness claim."
+    "claim_boundary_after_loop_31": "Permission-H preflight only; no live IPFS add/fetch/pin/gateway, no CAR generation, no paid storage or wallet, and no durability/global-availability/censorship-resistance/security/production-readiness claim.",
+    "status_after_loop_33": "local_car_cid_fixture_verified_with_project_scoped_lockfile_dependencies",
+    "permission_i_local_car_cid_completed_after_loop_33": true,
+    "local_car_cid_evidence_after_loop_33": "evidence/local-car-cid-fixture-2026-06-22.json",
+    "local_car_file_after_loop_33": "evidence/local-release-artifact-2026-06-22.car",
+    "project_scoped_dev_dependencies_after_loop_33": [
+      "@ipld/car@5.4.6",
+      "multiformats@14.0.0"
+    ],
+    "lockfile_after_loop_33": "package-lock.json",
+    "package_installed_after_loop_33": true,
+    "car_file_created_after_loop_33": true,
+    "car_root_cid_after_loop_33": "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua",
+    "car_block_count_after_loop_33": 1,
+    "car_block_bytes_match_input_after_loop_33": true,
+    "verification_passed_after_loop_33": true,
+    "ipfs_add_or_fetch_after_loop_33": false,
+    "ipfs_daemon_started_after_loop_33": false,
+    "public_gateway_checked_after_loop_33": false,
+    "paid_pinning_after_loop_33": false,
+    "filecoin_or_arweave_wallet_used_after_loop_33": false,
+    "paid_storage_used_after_loop_33": false,
+    "durability_claim_after_loop_33": false,
+    "claim_boundary_after_loop_33": "Local CAR/CID fixture verification only; no IPFS daemon/add/fetch/pin/gateway, no wallet/paid storage, and no durability/global-availability/censorship-resistance/security/production-readiness claim."
   }
 }

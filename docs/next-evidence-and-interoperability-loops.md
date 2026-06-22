@@ -323,8 +323,10 @@ Permission I now allows one local CAR/CID fixture verification loop with project
 
 ## Next execution path
 
-Permission I and Permission G are now approved. The next bounded controller should run:
+Permission I and Permission G were approved and Loops 33–34 are now complete.
 
-1. **Loop 33:** local CAR/CID fixture verification with project-scoped dev dependencies; no daemon, gateway, pinning, wallet, paid storage, public storage, or durability/security/production claims.
-2. **Loop 34:** one disposable public Radicle seed/remote-clone smoke; no production/private personal keys, paid infrastructure, spending, direct outreach, or unsupported durability/censorship-resistance/security/production-readiness claims.
-3. **Loop 35:** consolidation/report with exact evidence paths, verified scope, remaining non-claims, tests, and next gates.
+1. **Loop 33:** complete — local CAR/CID fixture verification with project-scoped `@ipld/car@5.4.6` and `multiformats@14.0.0`; evidence `evidence/local-car-cid-fixture-2026-06-22.json`; local CAR `evidence/local-release-artifact-2026-06-22.car`; no daemon, gateway, pinning, wallet, paid storage, public storage, or durability/security/production claims.
+2. **Loop 34:** complete — one disposable public Radicle seed/remote-clone smoke; evidence `evidence/radicle-public-network-smoke-2026-06-22.json`; disposable RID `rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa`; no production/private personal keys, paid infrastructure, spending, direct outreach, or unsupported durability/censorship-resistance/security/production claims.
+3. **Loop 35:** current consolidation/report loop with exact evidence paths, verified scope, remaining non-claims, tests, and next gates.
+
+Further live storage, paid/wallet storage, repeated/broader Radicle public-network checks, or public updates about these new results require a new explicit approval/target.
