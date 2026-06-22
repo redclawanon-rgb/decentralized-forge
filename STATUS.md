@@ -215,7 +215,7 @@ Verified commands:
 Boundaries:
 
 - Loop 10 changed documentation only.
-- No spending, production/private keys, public protocol publishing, live Radicle/Nostr/IPFS/ForgeFed/Sigstore verification, public posts, commits, or pushes were performed.
+- No spending, production/private keys, public protocol publishing, live Radicle/Nostr/IPFS/ForgeFed/Sigstore verification, or public posts were performed. Local commits/pushes were performed only after parent verification and preflight.
 
 ### Loop 11: NIP-34 parser/conformance adapter and fixture round-trip tests
 
@@ -237,7 +237,7 @@ Verified commands:
 Boundaries:
 
 - Adapter is local fixture parsing/export only.
-- No relay publishing/readback, key use, event signing, event ID computation, public protocol verification, spending, production/private keys, unsupported live-protocol/security/durability/SLSA/censorship-proof claims, commits, or pushes were performed.
+- No relay publishing/readback, key use, event signing, event ID computation, public protocol verification, spending, production/private keys, or unsupported live-protocol/security/durability/SLSA/censorship-proof claims were performed. Local commits/pushes were performed only after parent verification and preflight.
 
 ### Loop 12: NIP-34 renderer/import follow-up
 
@@ -262,7 +262,7 @@ Verified commands:
 Boundaries:
 
 - Renderer import/display is local fixture parsing only.
-- No relay publishing/readback, relay fetching, key use, event signing, event ID computation, public protocol verification, spending, production/private keys, unsupported live-protocol/security/durability/SLSA/censorship-proof claims, commits, or pushes were performed.
+- No relay publishing/readback, relay fetching, key use, event signing, event ID computation, public protocol verification, spending, production/private keys, or unsupported live-protocol/security/durability/SLSA/censorship-proof claims were performed. Local commits/pushes were performed only after parent verification and preflight.
 
 ### Loop 13: NIP-34 repository state/status fixture follow-up
 
@@ -291,7 +291,7 @@ Boundaries:
 
 - Repository state/status evidence is local fixture parsing/display only.
 - No Radicle CLI was installed or run, because `rad` was unavailable in the parent check.
-- No relay publishing/readback, relay fetching, key use, event signing, event ID computation, public CI/status event creation, public protocol verification, spending, production/private keys, unsupported live-protocol/security/durability/SLSA/censorship-proof claims, commits, or pushes were performed.
+- No relay publishing/readback, relay fetching, key use, event signing, event ID computation, public CI/status event creation, public protocol verification, spending, production/private keys, or unsupported live-protocol/security/durability/SLSA/censorship-proof claims were performed. Local commits/pushes were performed only after parent verification and preflight.
 
 ## Verification requirements
 
