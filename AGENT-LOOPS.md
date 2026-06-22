@@ -272,3 +272,22 @@ No relay publishing, spending, production/private keys, unsupported live protoco
 **Gate:**
 
 No relay publishing, spending, production/private keys, unsupported live protocol/security/durability/censorship-proof claims, or direct outreach. Any live-verified row must be backed by actual command/network evidence recorded in docs/tests.
+
+**Current result:**
+
+Completed as local static renderer UX/status work. `scripts/render_project_page.py` now summarizes registry-level and adapter-level `verification_states[]` rows with total counts, live-verified counts, live-unverified/local counts, synthetic/non-synthetic counts, state chips, grouped rows by state, and claim-boundary summaries. CSS classes make local fixture, source-inspected mapping, synthetic fixture, live-unverified, and live-verified labels visible without JavaScript. `output/demo-project.html` was regenerated with all optional NIP-34 fixtures, and tests assert registry/adapter summary counts with current live-verified counts remaining zero. No relay publishing, signing, fixture ID replacement, live protocol verification, spending, or key use occurred.
+
+## Loop 19: Release/preflight polish for generated static artifact
+
+**Goal:** Make the generated static HTML artifact and public usage instructions easier to verify and consume without adding live protocol claims.
+
+**Candidate tasks:**
+
+- Polish README usage instructions around regenerating and opening `output/demo-project.html`.
+- Add a lightweight screenshot/HTML artifact checklist if feasible without new hosted services.
+- Confirm generated artifact freshness and public-facing non-claim wording before any push/release-oriented update.
+- Keep safe Radicle local CLI replay as an alternative only if an approved `rad` binary/install path appears.
+
+**Gate:**
+
+No relay publishing, spending, production/private keys, unsupported live protocol/security/durability/censorship-proof claims, or direct outreach. Any live-verified row must be backed by actual command/network evidence recorded in docs/tests.

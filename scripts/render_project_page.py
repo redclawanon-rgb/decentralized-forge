@@ -10,6 +10,7 @@ import argparse
 import html
 import json
 import sys
+from collections import Counter
 from pathlib import Path
 
 import nip34_adapter
@@ -24,6 +25,13 @@ REQUIRED_TOP_LEVEL = [
 ]
 REQUIRED_PROJECT = ["id", "name", "description", "default_branch"]
 EXPECTED_SCHEMA_VERSION = "decentralized-forge.project-registry.v1"
+VERIFICATION_STATE_ORDER = [
+    "local-fixture",
+    "source-inspected-mapping",
+    "synthetic-fixture",
+    "live-unverified",
+    "live-verified",
+]
 
 
 class RegistryError(ValueError):
@@ -86,6 +94,12 @@ def yes_no(value: object) -> str:
     if value is None:
         return '<span class="flag unknown">not listed</span>'
     return f'<span class="flag unknown">{esc(value)}</span>'
+
+
+def css_token(value: object) -> str:
+    """Return a conservative CSS class token for fixture-derived labels."""
+    token = "".join(ch if ch.isalnum() else "-" for ch in str(value).lower()).strip("-")
+    return token or "unknown"
 
 
 def field(label: str, value: object, code: bool = True) -> str:
@@ -191,12 +205,102 @@ def render_ci_check(check: dict) -> str:
     )
 
 
-def render_verification_state(state: dict) -> str:
+def ordered_count_items(counts: Counter, preferred_order: list[str]) -> list[tuple[str, int]]:
+    ordered = [(key, counts[key]) for key in preferred_order if counts.get(key, 0)]
+    ordered.extend((key, counts[key]) for key in sorted(counts) if key not in preferred_order)
+    return ordered
+
+
+def render_count_chips(items: list[tuple[str, int]], class_prefix: str) -> str:
+    if not items:
+        return "<p><em>None listed.</em></p>"
     return (
-        '<article class="verification-state">'
+        '<ul class="summary-chips">\n'
+        + "\n".join(
+            f'  <li class="summary-chip {esc(class_prefix)}-{esc(css_token(label))}">'
+            f'<span class="chip-label">{esc(label)}</span>: <strong>{esc(count)}</strong></li>'
+            for label, count in items
+        )
+        + "\n</ul>"
+    )
+
+
+def summarize_verification_states(states: list[dict]) -> dict:
+    state_counts = Counter(str(state.get("state", "unknown")) for state in states)
+    live_counts = Counter("live_verified=true" if state.get("live_verified") is True else "live_verified=false" for state in states)
+    synthetic_counts = Counter("synthetic=true" if state.get("synthetic") is True else "synthetic=false" for state in states)
+    boundary_counts = Counter(str(state.get("claim_boundary", "not listed")) for state in states)
+    return {
+        "total": len(states),
+        "state_counts": state_counts,
+        "live_counts": live_counts,
+        "synthetic_counts": synthetic_counts,
+        "boundary_counts": boundary_counts,
+    }
+
+
+def render_verification_summary(states: list[dict], label: str, css_scope: str) -> str:
+    summary = summarize_verification_states(states)
+    return (
+        f'<div class="verification-summary {esc(css_scope)}">'
+        f"<h3>{esc(label)} summary</h3>"
+        + '<dl class="metadata">'
+        + field("Verification row count", summary["total"])
+        + field("Live-verified row count", summary["live_counts"].get("live_verified=true", 0))
+        + field("Live-unverified or local row count", summary["live_counts"].get("live_verified=false", 0))
+        + field("Synthetic row count", summary["synthetic_counts"].get("synthetic=true", 0))
+        + field("Non-synthetic row count", summary["synthetic_counts"].get("synthetic=false", 0))
+        + "</dl>"
+        + "<h4>Counts by state</h4>"
+        + render_count_chips(ordered_count_items(summary["state_counts"], VERIFICATION_STATE_ORDER), "state")
+        + "<h4>Counts by live verification flag</h4>"
+        + render_count_chips(ordered_count_items(summary["live_counts"], ["live_verified=true", "live_verified=false"]), "live")
+        + "<h4>Counts by synthetic flag</h4>"
+        + render_count_chips(ordered_count_items(summary["synthetic_counts"], ["synthetic=true", "synthetic=false"]), "synthetic")
+        + "<h4>Claim-boundary summary</h4>"
+        + render_count_chips(ordered_count_items(summary["boundary_counts"], []), "boundary")
+        + "</div>"
+    )
+
+
+def render_verification_rows_grouped(states: list[dict]) -> str:
+    grouped = {state: [] for state in VERIFICATION_STATE_ORDER}
+    extra_groups: dict[str, list[dict]] = {}
+    for state in states:
+        state_label = str(state.get("state", "unknown"))
+        if state_label in grouped:
+            grouped[state_label].append(state)
+        else:
+            extra_groups.setdefault(state_label, []).append(state)
+
+    sections = []
+    for state_label in VERIFICATION_STATE_ORDER:
+        rows = grouped[state_label]
+        if rows:
+            sections.append(
+                f'<div class="verification-state-group verification-state-group-{esc(css_token(state_label))}">'
+                f"<h4>{esc(state_label)} ({esc(len(rows))})</h4>"
+                + list_items([render_verification_state(row) for row in rows])
+                + "</div>"
+            )
+    for state_label in sorted(extra_groups):
+        rows = extra_groups[state_label]
+        sections.append(
+            f'<div class="verification-state-group verification-state-group-{esc(css_token(state_label))}">'
+            f"<h4>{esc(state_label)} ({esc(len(rows))})</h4>"
+            + list_items([render_verification_state(row) for row in rows])
+            + "</div>"
+        )
+    return "".join(sections) if sections else "<p><em>None listed.</em></p>"
+
+
+def render_verification_state(state: dict) -> str:
+    state_label = state.get("state", "unknown")
+    return (
+        f'<article class="verification-state verification-state-{esc(css_token(state_label))}">'
         + '<dl class="metadata">'
         + field("Scope", state.get("scope"))
-        + field("State", state.get("state"))
+        + field("State", state_label)
         + f"<dt>Live verified</dt><dd>{yes_no(state.get('live_verified'))}</dd>"
         + f"<dt>Synthetic</dt><dd>{yes_no(state.get('synthetic'))}</dd>"
         + field("Evidence", state.get("evidence"), code=False)
@@ -283,20 +387,14 @@ def render_nip34_adapter_verification_states(states: list) -> str:
     state_dicts = [state for state in states if isinstance(state, dict)]
     if not state_dicts:
         return ""
-    live_count = sum(1 for state in state_dicts if state.get("live_verified") is True)
-    synthetic_count = sum(1 for state in state_dicts if state.get("synthetic") is True)
-    state_items = [render_verification_state(state) for state in state_dicts]
     return (
         "<h3>Adapter verification states</h3>"
         '<p class="notice"><strong>Adapter-local verification labels:</strong> these rows use the same '
         "<code>verification_states[]</code> vocabulary as the registry, but they describe only the optional NIP-34 fixture import below. "
         "They are separate from the top-level registry verification states and do not make live protocol claims.</p>"
-        + '<dl class="metadata">'
-        + field("Adapter verification row count", len(state_dicts))
-        + field("Adapter live-verified row count", live_count)
-        + field("Adapter synthetic row count", synthetic_count)
-        + "</dl>"
-        + list_items(state_items)
+        + render_verification_summary(state_dicts, "Adapter verification states", "adapter-verification-summary")
+        + "<h4>Adapter verification rows grouped by state</h4>"
+        + render_verification_rows_grouped(state_dicts)
     )
 
 
@@ -433,7 +531,13 @@ def render_registry(data: dict, nip34_adapter_export: dict | None = None) -> str
     for name, value in sorted(data.get("substrates", {}).items()):
         substrate_items.append(render_substrate(name, value))
     ci_items = [render_ci_check(check) for check in data.get("ci_checks", [])]
-    verification_state_items = [render_verification_state(state) for state in data.get("verification_states", [])]
+    verification_states = [state for state in data.get("verification_states", []) if isinstance(state, dict)]
+    verification_state_summary = render_verification_summary(
+        verification_states,
+        "Registry verification states",
+        "registry-verification-summary",
+    )
+    verification_state_groups = render_verification_rows_grouped(verification_states)
 
     return f"""<!doctype html>
 <html lang=\"en\">
@@ -453,6 +557,15 @@ def render_registry(data: dict, nip34_adapter_export: dict | None = None) -> str
     .flag.yes {{ background: #e4f7e7; color: #126422; }}
     .flag.no {{ background: #f8e1df; color: #8b1c10; }}
     .flag.unknown {{ background: #eee; color: #333; }}
+    .verification-summary {{ border: 1px solid #d7e0ef; border-radius: 0.4rem; padding: 0.75rem; margin: 0.75rem 0; background: #f8fbff; }}
+    .summary-chips {{ display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0; margin: 0.4rem 0 0.8rem; list-style: none; }}
+    .summary-chip {{ border: 1px solid #ddd; border-radius: 999px; padding: 0.15rem 0.6rem; background: #fff; }}
+    .summary-chip.state-local-fixture, .verification-state-local-fixture {{ border-color: #9cc3ff; }}
+    .summary-chip.state-source-inspected-mapping, .verification-state-source-inspected-mapping {{ border-color: #b49cff; }}
+    .summary-chip.state-synthetic-fixture, .verification-state-synthetic-fixture {{ border-color: #f0bd65; }}
+    .summary-chip.state-live-unverified, .verification-state-live-unverified {{ border-color: #d98b7f; }}
+    .summary-chip.state-live-verified, .verification-state-live-verified {{ border-color: #73bf7b; }}
+    .verification-state {{ border-left: 0.25rem solid #ddd; padding-left: 0.75rem; }}
   </style>
 </head>
 <body>
@@ -469,7 +582,7 @@ def render_registry(data: dict, nip34_adapter_export: dict | None = None) -> str
   <section><h2>Patches / PRs</h2>{list_items(patch_items)}</section>
   <section><h2>Releases</h2>{list_items(release_items)}</section>
   <section><h2>CI / provenance checks</h2>{list_items(ci_items)}</section>
-  <section><h2>Verification states</h2><p class="notice"><strong>Verification labels:</strong> these records separate local fixtures, source-inspected mappings, synthetic fixtures, live-unverified scopes, and live-verified evidence. A scope is not live-verified unless its row says so explicitly.</p>{list_items(verification_state_items)}</section>
+  <section><h2>Verification states</h2><p class="notice"><strong>Verification labels:</strong> these records separate local fixtures, source-inspected mappings, synthetic fixtures, live-unverified scopes, and live-verified evidence. A scope is not live-verified unless its row says so explicitly.</p>{verification_state_summary}<h3>Registry verification rows grouped by state</h3>{verification_state_groups}</section>
   <section><h2>Protocol substrate details</h2>{list_items(substrate_items)}</section>
   {render_nip34_adapter_section(nip34_adapter_export)}
   <section><h2>Signature status</h2><p><code>{esc(json.dumps(data.get('signature', {}), sort_keys=True))}</code></p></section>
