@@ -253,6 +253,17 @@ This is selected/limited relay readback evidence only. It is not a durability gu
 
 ## Loop 30 — Radicle public-network gate plan
 
+**Status:** Complete 2026-06-22 as Permission-F help-only public-network preflight; Permission G remains ungranted/blocked.
+
+**Result:**
+
+1. Added `docs/radicle-public-network-gate-plan.md` with a draft Permission-G disposable public seed/remote-clone smoke checklist.
+2. Added `evidence/radicle-public-network-preflight-2026-06-22.md` with help-only command-surface findings.
+3. Inspected `rad publish`, `rad seed`, `rad sync`, `rad sync status`, `rad node`, `rad node start`, `rad node status`, `rad node connect`, `rad remote`, `rad remote add`, `rad remote list`, `rad clone`, `rad fetch`, `rad unseed`, and `rad follow` via `--help` only.
+4. Recorded that `rad publish` makes a repository public/discoverable, `rad sync` defaults to fetch+announce, `rad remote add` defaults may fetch/sync, `rad clone` uses local node routing or explicit seeds, and `rad fetch` is not a known command in Radicle 1.9.1.
+
+**Boundary preserved:** No `RAD_HOME` was created, no Radicle identity was created/reused, no node was started, no repository was published/seeded/synced/announced/cloned/fetched/connected/followed/remotely configured, and no public Radicle network action occurred. Permission G remains required before any public Radicle seed/publish/sync/node/remote clone/fetch action.
+
 **Goal:** Prepare a no-surprises plan for the next major Radicle milestone: public seed/publish/remote clone verification.
 
 **Approval needed:** Permission F for preflight. Permission G is required before any public seed/publish/sync/node/remote clone action.

@@ -479,6 +479,10 @@ Completed as selected-relay readback evidence import. Added `fixtures/nostr-live
 
 Permission F covers preflight only. Permission G is required before any public Radicle seed/publish/sync/node/remote clone action.
 
+**Current result:**
+
+Completed as Permission-F help-only preflight. Added `docs/radicle-public-network-gate-plan.md` and `evidence/radicle-public-network-preflight-2026-06-22.md`. Inspected only `--help` surfaces for `rad publish`, `rad seed`, `rad sync`, `rad sync status`, `rad node`, `rad node start`, `rad node status`, `rad node connect`, `rad remote`, `rad remote add`, `rad remote list`, `rad clone`, `rad fetch`, `rad unseed`, and `rad follow`. Findings: `rad publish` makes a repository public/discoverable; `rad sync` defaults to fetch+announce; `rad remote add` defaults may fetch/sync; `rad clone` uses local node routing or explicit seeds; `rad fetch` is not a known command in Radicle 1.9.1. No `RAD_HOME` was created, no Radicle identity was created/reused, no node was started, no repo was published/seeded/synced/announced/cloned/fetched/connected/followed/remotely configured, and no public Radicle network action occurred. Permission G remains required before the public seed/remote-clone smoke.
+
 ## Loop 31: Public storage/IPFS evidence gate plan
 
 **Goal:** Plan the next artifact-storage verification step without spending money or claiming durability.

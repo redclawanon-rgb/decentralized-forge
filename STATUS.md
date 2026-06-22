@@ -727,6 +727,29 @@ Boundaries:
 - It does not verify durability, global propagation, censorship resistance, identity trust, security, production readiness, full NIP-34/forge compatibility, issue/patch readback, repository-state readback, status semantics, relay discovery, subscription behavior, deletion/replacement behavior, or multi-client behavior.
 - No spending, paid infrastructure, production/private personal key use, direct outreach, Radicle public-network action, Filecoin/Arweave wallet/pinning/storage action, or new Nostr event occurred.
 
+### Loop 30: Radicle public-network gate plan/preflight
+
+Status: **complete as Permission-F help-only public-network preflight; Permission G remains blocked**.
+
+Outputs:
+
+- `docs/radicle-public-network-gate-plan.md` drafts the later Permission-G disposable public seed/remote-clone smoke checklist without executing it.
+- `evidence/radicle-public-network-preflight-2026-06-22.md` records inspected Radicle help surfaces and non-actions.
+- `fixtures/live-adapter-replay-checklist.json` and tests now record Loop 30 state.
+
+Verified evidence:
+
+- `command -v rad` — `/home/openclaw/.local/bin/rad`.
+- `rad --version` — `rad 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)`.
+- Help-only inspection covered `rad publish`, `rad seed`, `rad sync`, `rad sync status`, `rad node`, `rad node start`, `rad node status`, `rad node connect`, `rad remote`, `rad remote add`, `rad remote list`, `rad clone`, `rad fetch`, `rad unseed`, and `rad follow`.
+- Findings: `rad publish` makes a repo public/discoverable; `rad sync` defaults to fetch+announce; `rad remote add` defaults may fetch/sync unless disabled; `rad clone` uses local node routing or explicit seeds; `rad fetch` is not a known command in Radicle 1.9.1.
+
+Boundaries:
+
+- Loop 30 performed help/docs preflight only.
+- No `RAD_HOME` was created, no Radicle identity was created/reused, no node was started, no repository was published/seeded/synced/announced/cloned/fetched/connected/followed/remotely configured, and no public Radicle network action occurred.
+- Permission G remains required before any public Radicle seed/publish/sync/node/remote clone/fetch action.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -759,15 +782,15 @@ Boundaries:
 
 ## Next recommended loop
 
-**Loop 30: Radicle public-network gate plan/preflight.**
+**Loop 31: Public storage/IPFS evidence gate plan/preflight.**
 
 The next loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 
 - Loop 26: Live evidence import into adapter/renderer — complete as `fixtures/live-evidence-index.json` plus renderer/preflight/test updates; no new live network action.
 - Loop 27: Public project update draft/post — complete as GitHub Discussion #6: https://github.com/redclawanon-rgb/decentralized-forge/discussions/6.
 - Loop 28: Nostr readback persistence/divergence check — complete as readback-only evidence in `evidence/nostr-loop28-readback-check-2026-06-22.md`/`.json`; selected Loop 25 relays still returned and verified the event; `wss://relay.primal.net` also returned it; `wss://nostr.wine` did not during this check.
-- Loop 29: NIP-34 live-event adapter import — import selected-relay readback evidence without claiming full protocol compatibility.
-- Loop 30: Radicle public-network gate plan — Permission F for preflight only; Permission G required before public seed/publish/sync/node/remote clone.
+- Loop 29: NIP-34 live-event adapter import — complete as selected-relay readback evidence import without full protocol compatibility claims.
+- Loop 30: Radicle public-network gate plan — complete as Permission-F help-only preflight; Permission G still required before public seed/publish/sync/node/remote clone.
 - Loop 31: Public storage/IPFS evidence gate plan — Permission H for no-spend preflight only; paid pinning/wallet/storage remains blocked.
 - Loop 32: Next controller/report consolidation — Permission D if run by a new low-noise controller.
 

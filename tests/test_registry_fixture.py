@@ -278,6 +278,33 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertFalse(nostr_gate["paid_infrastructure_used_after_loop_29"])
             self.assertFalse(nostr_gate["direct_outreach_after_loop_29"])
 
+        if checklist["loop"] >= 30:
+            discovery = checklist["discovery"]
+            self.assertTrue(discovery["loop_30_radicle_public_network_preflight_recorded"])
+            self.assertFalse(discovery["network_protocol_actions_used_after_loop_30"])
+            radicle_gate = checklist["radicle_local_replay"]
+            self.assertEqual(
+                radicle_gate["status_after_loop_30"],
+                "public_network_gate_preflight_help_inspected_permission_g_blocked",
+            )
+            self.assertEqual(
+                radicle_gate["public_network_preflight_evidence_after_loop_30"],
+                "evidence/radicle-public-network-preflight-2026-06-22.md",
+            )
+            self.assertEqual(
+                radicle_gate["public_network_gate_plan_after_loop_30"],
+                "docs/radicle-public-network-gate-plan.md",
+            )
+            self.assertTrue(radicle_gate["permission_f_preflight_completed_after_loop_30"])
+            self.assertFalse(radicle_gate["permission_g_granted_after_loop_30"])
+            self.assertFalse(radicle_gate["public_radicle_network_actions_after_loop_30"])
+            self.assertFalse(radicle_gate["node_started_after_loop_30"])
+            self.assertFalse(radicle_gate["publish_or_seed_after_loop_30"])
+            self.assertFalse(radicle_gate["sync_or_announce_after_loop_30"])
+            self.assertFalse(radicle_gate["remote_clone_or_fetch_after_loop_30"])
+            self.assertIn("rad publish --help", radicle_gate["help_surfaces_inspected_after_loop_30"])
+            self.assertIn("rad_clone_or_remote_fetch", radicle_gate["permission_g_forbidden_until_approved"])
+
         required_global_gates = {
             "approved_tooling_path_required",
             "temporary_or_disposable_state_only",
@@ -331,6 +358,26 @@ class RegistryFixtureTests(unittest.TestCase):
         evidence_blob = evidence.lower()
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, evidence_blob)
+
+    def test_loop30_radicle_public_network_preflight_is_help_only(self):
+        checklist = self.live_replay_checklist
+        if checklist["loop"] < 30:
+            self.skipTest("Loop 30 Radicle public-network preflight not recorded yet")
+        radicle_gate = checklist["radicle_local_replay"]
+        evidence_path = ROOT / radicle_gate["public_network_preflight_evidence_after_loop_30"]
+        plan_path = ROOT / radicle_gate["public_network_gate_plan_after_loop_30"]
+        evidence = evidence_path.read_text(encoding="utf-8")
+        plan = plan_path.read_text(encoding="utf-8")
+        self.assertIn("Permission F only", evidence)
+        self.assertIn("No Radicle identity was created or reused", evidence)
+        self.assertIn("rad publish --help", evidence)
+        self.assertIn("rad clone --help", evidence)
+        self.assertIn("Permission G is not granted", plan)
+        self.assertIn("Do not execute this checklist unless Eric explicitly grants Permission G", plan)
+        self.assertIn("Radicle remains **local CLI/private replay verified only**", plan)
+        combined = f"{evidence}\n{plan}".lower()
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, combined)
 
     def test_loop24_nostr_signed_preview_is_bounded_and_unpublished(self):
         checklist = self.live_replay_checklist
