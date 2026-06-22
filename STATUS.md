@@ -207,7 +207,7 @@ Boundaries:
 - This run observed no uncommitted user changes before editing.
 - Public GitHub repo created and verified: `https://github.com/redclawanon-rgb/decentralized-forge`.
 - Public settings verified: visibility PUBLIC, default branch `main`, Issues enabled, Discussions enabled, Wiki disabled.
-- Local `HEAD` matched remote `origin/main` at `7abb2e0a47ab3b186538150213663cad69c68787` after pushing Loops 5–9, public issues/status updates, and public-gate updates.
+- Remote sync is verified in the final controller report with `git rev-parse HEAD` and `git ls-remote origin refs/heads/main`; keep this line non-SHA-specific to avoid making the status-only commit stale.
 
 ## Current architecture recommendation
 
