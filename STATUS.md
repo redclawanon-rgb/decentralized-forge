@@ -525,6 +525,31 @@ Boundaries:
 - No curl-pipe-shell installer was executed.
 - No Radicle identity/repo replay, temporary `RAD_HOME` replay, Radicle node start, public seed publishing, Nostr relay publishing/readback, paid infrastructure, production/private personal key use, direct outreach, or live protocol verification occurred.
 
+### Loop 22: Radicle local replay preflight
+
+Status: **complete as read-only CLI help/version preflight; no stateful Radicle replay**.
+
+Outputs:
+
+- Added `evidence/radicle-local-replay-preflight-2026-06-22.md` with inspected help output, safe Loop 23 command path, and explicit non-actions.
+- Updated `fixtures/live-adapter-replay-checklist.json` to record Loop 22 preflight state and keep Radicle replay unexecuted.
+- Updated tests so the machine-readable checklist asserts Loop 22 evidence, safe command-surface labels, and first-replay forbidden actions.
+
+Verified commands:
+
+- `command -v rad` — `/home/openclaw/.local/bin/rad`.
+- `rad --version` — `rad 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)`.
+- `rad --help` — passed; top-level command list inspected.
+- `rad init --help` — passed; `--no-confirm`, `--no-seed`, `--private`, and default-branch options inspected.
+- `rad inspect --help` — passed; `--rid`, `--identity`, `--refs`, and `--visibility` options inspected.
+- `rad auth --help`, `rad self --help`, `rad id --help`, `rad node --help`, and `rad path --help` — passed as help-only preflight.
+- `rad status --help` — failed as expected because `rad status` is not a known command in Radicle 1.9.1; use `rad inspect` instead.
+
+Boundaries:
+
+- Loop 22 did not run `rad auth`, `rad init`, create temporary Radicle state, start a node, publish/seed/sync/announce, configure remotes/peers, use production/private personal keys, spend money, or verify public Radicle networking.
+- Loop 23 may run the approved temporary-`RAD_HOME` disposable replay, but must abort if local-only behavior becomes ambiguous or a command attempts node/network/seed/publish/sync/announce behavior.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -557,12 +582,12 @@ Boundaries:
 
 ## Next recommended loop
 
-**Loop 22: Radicle local replay preflight.**
+**Loop 23: Radicle temporary-`RAD_HOME` disposable repo replay.**
 
 The next loop set is defined in `docs/next-live-adapter-loops.md` and `AGENT-LOOPS.md`:
 
-- Loop 22: Radicle local replay preflight — safe read-only help/manpage discovery; stateful commands need Permission A.
-- Loop 23: Radicle temporary-`RAD_HOME` disposable repo replay — requires Permission A.
+- Loop 22: Radicle local replay preflight — complete as read-only help/version discovery; no stateful replay performed.
+- Loop 23: Radicle temporary-`RAD_HOME` disposable repo replay — requires Permission A, which Eric granted on 2026-06-22.
 - Loop 24: Nostr relay selection and event payload review — publication needs Permission B.
 - Loop 25: Nostr disposable publish/readback — requires Permission B.
 - Loop 26: Live evidence import into adapter/renderer — can only upgrade claims backed by Loop 23/25 evidence.

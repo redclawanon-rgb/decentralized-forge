@@ -337,6 +337,10 @@ No Radicle replay, Radicle node start, Nostr relay publishing/readback, Radicle 
 
 Stateful Radicle commands such as auth, identity generation, repository initialization, node start, seed publish, sync, announce, or remote peer configuration require Permission A from `docs/next-live-adapter-loops.md`.
 
+**Current result:**
+
+Completed as read-only CLI help/version preflight. Added `evidence/radicle-local-replay-preflight-2026-06-22.md`, recording `rad` path/version, inspected `rad --help`, `rad init --help`, `rad inspect --help`, identity/node-related help surfaces, and the fact that `rad status` is not a known command in Radicle 1.9.1. The smallest Loop 23 path is temporary `RAD_HOME`, disposable Git repo, disposable `rad auth` only if required, `rad init --no-confirm --no-seed --private`, and local `rad inspect` commands. No `rad auth`, `rad init`, node start, seed/publish/sync/announce, peer configuration, production/private personal key use, spending, or public Radicle network verification occurred.
+
 ## Loop 23: Radicle temporary-`RAD_HOME` disposable repo replay
 
 **Goal:** Run a bounded local Radicle replay with disposable state and capture command evidence.

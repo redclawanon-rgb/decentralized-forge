@@ -135,6 +135,31 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertFalse(nostr_gate["relay_published_after_loop_21"])
             self.assertFalse(nostr_gate["relay_readback_after_loop_21"])
 
+        if checklist["loop"] >= 22:
+            discovery = checklist["discovery"]
+            self.assertTrue(discovery["loop_22_preflight_recorded"])
+            self.assertTrue(discovery["rad_version_checked_after_loop_22"])
+            self.assertTrue(discovery["rad_help_checked_after_loop_22"])
+            self.assertTrue(discovery["rad_init_help_checked_after_loop_22"])
+            self.assertTrue(discovery["rad_inspect_help_checked_after_loop_22"])
+            self.assertFalse(discovery["rad_status_command_available_after_loop_22"])
+            self.assertFalse(discovery["network_protocol_actions_used_after_loop_22"])
+            radicle_gate = checklist["radicle_local_replay"]
+            self.assertEqual(
+                radicle_gate["status_after_loop_22"],
+                "preflight_help_inspected_replay_ready_under_permission_a_not_executed",
+            )
+            self.assertEqual(
+                radicle_gate["preflight_evidence"],
+                "evidence/radicle-local-replay-preflight-2026-06-22.md",
+            )
+            self.assertIn(
+                "rad_init_with_no_confirm_no_seed_private_and_disposable_repo",
+                radicle_gate["safe_local_replay_command_surface_after_loop_22"],
+            )
+            self.assertIn("rad_node_start", radicle_gate["forbidden_in_first_replay_after_loop_22"])
+            self.assertFalse(radicle_gate["replay_executed_after_loop_22"])
+
         required_global_gates = {
             "approved_tooling_path_required",
             "temporary_or_disposable_state_only",

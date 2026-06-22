@@ -15,6 +15,7 @@ This document intentionally separates **loop creation** from **live execution**.
 - A disposable/project-scoped Nostr secret key exists outside this repository at `~/.hermes/keys/decentralized-forge/nostr-project.nsec` with `0600` permissions.
 - Public Nostr key only: `npub1ve55y0h8dkw44hyws80hj2rvy457m0j6hp8nudgy8km354807hyqp97suy` / `6669423ee76d9d5adc8e81df79286c2569edbe5ab84f3e35043db71a54eff5c8`.
 - Offline proof event exists at `evidence/nostr-offline-key-proof-2026-06-22.json` and verifies locally.
+- Loop 22 Radicle preflight evidence exists at `evidence/radicle-local-replay-preflight-2026-06-22.md`; it inspected help/version output only and did not execute `rad auth`, `rad init`, node/network commands, or a temporary-`RAD_HOME` replay.
 
 ## Permission bundles requested before autonomous execution
 
@@ -83,6 +84,8 @@ If provider auth/rate limits block a run, the controller should stop with a conc
 - tests remain green
 - secret-marker scan passes
 
+**Completed 2026-06-22:** Read-only help/version preflight recorded `rad 1.9.1`, confirmed `rad init --no-confirm --no-seed --private` and `rad inspect` as the safe candidate Loop 23 surface, noted that `rad status` is not available in this version, and kept all stateful Radicle actions unexecuted.
+
 ## Loop 23 — Radicle temporary-`RAD_HOME` disposable repo replay
 
 **Goal:** Run a bounded local Radicle replay with disposable state and capture command evidence.
@@ -93,7 +96,7 @@ If provider auth/rate limits block a run, the controller should stop with a conc
 
 1. Create temp `RAD_HOME` and temp Git repo.
 2. Create a minimal disposable Git commit.
-3. Run only the smallest local Radicle init/inspect commands confirmed by Loop 22.
+3. Run only the smallest local Radicle init/inspect commands confirmed by Loop 22: disposable auth only if required, `rad init --no-confirm --no-seed --private`, and local `rad inspect` commands.
 4. Capture stdout/stderr into `evidence/` without secrets.
 5. Update docs/tests to distinguish local CLI verification from public seed/network verification.
 6. Cleanup temp state unless a specific evidence path needs to remain.

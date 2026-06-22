@@ -28,6 +28,17 @@ Eric approved installing needed tooling and generating Harry-owned Nostr keys on
 
 This update promotes prerequisites from "missing" to "installed/key-ready" only. Radicle temporary-`RAD_HOME` replay and Nostr public relay publish/readback remain separate gates with evidence requirements below.
 
+## Loop 22 Radicle preflight update
+
+Loop 22 completed read-only Radicle CLI help/version preflight and recorded evidence at `evidence/radicle-local-replay-preflight-2026-06-22.md`.
+
+- `command -v rad`: `/home/openclaw/.local/bin/rad`.
+- `rad --version`: `rad 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)`.
+- Help inspected: `rad --help`, `rad init --help`, `rad inspect --help`, `rad auth --help`, `rad self --help`, `rad id --help`, `rad node --help`, and `rad path --help`.
+- `rad status --help` is not available in Radicle 1.9.1; use `rad inspect` for repository inspection.
+- Candidate replay surface is temporary `RAD_HOME`, disposable Git repo, disposable `rad auth` only if required, `rad init --no-confirm --no-seed --private`, and local `rad inspect` commands.
+- Still not executed: `rad auth`, `rad init`, temporary-`RAD_HOME` replay, node start, publish/seed/sync/announce, peer/remote configuration, public network verification, spending, or production/private personal key use.
+
 ## Hard gates for any future replay
 
 A future live replay must stop unless all relevant gates are satisfied and recorded in status docs:
@@ -71,10 +82,14 @@ git config user.email "replay@example.invalid"
 printf '# disposable replay\n' > README.md
 git add README.md
 git commit -m 'chore: disposable radicle replay fixture'
-# Only after confirming local-only behavior from installed rad help/docs:
-# RAD_HOME="$RAD_HOME" rad init --help
-# RAD_HOME="$RAD_HOME" rad init ...local-only flags...
-# RAD_HOME="$RAD_HOME" rad inspect/show/status ...
+# Only under Permission A, after Loop 22 preflight:
+# If required, generate a disposable passphrase outside the repo/logs and pipe it to this command via stdin; do not record the value.
+# RAD_HOME="$RAD_HOME" rad auth --alias decentralized-forge-replay --stdin
+# RAD_HOME="$RAD_HOME" rad init --name decentralized-forge-disposable-replay --description "Disposable local-only Radicle replay for Decentralized Forge prototype evidence" --default-branch master --private --no-confirm --no-seed "$WORKDIR/repo"
+# RAD_HOME="$RAD_HOME" rad inspect --rid "$WORKDIR/repo"
+# RAD_HOME="$RAD_HOME" rad inspect --identity "$WORKDIR/repo"
+# RAD_HOME="$RAD_HOME" rad inspect --refs "$WORKDIR/repo"
+# RAD_HOME="$RAD_HOME" rad inspect --visibility "$WORKDIR/repo"
 ```
 
 Do not run `rad node start`, seed setup, public announce/sync/push, remote peer configuration, or identity import in the first replay unless the future loop explicitly expands scope and records why it is safe.

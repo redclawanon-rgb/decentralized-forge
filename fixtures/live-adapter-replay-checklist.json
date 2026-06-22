@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-adapter-replay-checklist.v1",
-  "loop": 21,
+  "loop": 22,
   "purpose": "Secret-free gates for future Radicle local CLI replay and Nostr disposable relay publish/readback verification.",
   "discovery": {
     "rad_command": "command -v rad",
@@ -16,7 +16,15 @@
     "nak_found_after_loop_21": true,
     "nak_path_after_loop_21": "/home/openclaw/.local/bin/nak",
     "nak_version_after_loop_21": "nak version v0.20.0",
-    "binary_install_scope_after_loop_21": "User-local binaries under ~/.local/bin; no sudo/root package install; no curl-pipe-shell execution."
+    "binary_install_scope_after_loop_21": "User-local binaries under ~/.local/bin; no sudo/root package install; no curl-pipe-shell execution.",
+    "loop_22_preflight_recorded": true,
+    "loop_22_preflight_evidence": "evidence/radicle-local-replay-preflight-2026-06-22.md",
+    "rad_version_checked_after_loop_22": true,
+    "rad_help_checked_after_loop_22": true,
+    "rad_init_help_checked_after_loop_22": true,
+    "rad_inspect_help_checked_after_loop_22": true,
+    "rad_status_command_available_after_loop_22": false,
+    "network_protocol_actions_used_after_loop_22": false
   },
   "global_gates": [
     "approved_tooling_path_required",
@@ -60,7 +68,26 @@
     "installed_binary_path": "/home/openclaw/.local/bin/rad",
     "installed_version": "rad 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)",
     "replay_executed_after_loop_21": false,
-    "reason_replay_not_executed_after_loop_21": "Loop 21 satisfied the tooling prerequisite only; temporary RAD_HOME replay remains a separate local-only execution gate."
+    "reason_replay_not_executed_after_loop_21": "Loop 21 satisfied the tooling prerequisite only; temporary RAD_HOME replay remains a separate local-only execution gate.",
+    "status_after_loop_22": "preflight_help_inspected_replay_ready_under_permission_a_not_executed",
+    "preflight_evidence": "evidence/radicle-local-replay-preflight-2026-06-22.md",
+    "safe_local_replay_command_surface_after_loop_22": [
+      "temporary_RAD_HOME_required",
+      "disposable_git_repo_required",
+      "rad_auth_only_with_disposable_temporary_state_if_required",
+      "rad_init_with_no_confirm_no_seed_private_and_disposable_repo",
+      "rad_inspect_rid_identity_refs_visibility_for_local_evidence"
+    ],
+    "forbidden_in_first_replay_after_loop_22": [
+      "rad_node_start",
+      "rad_publish",
+      "rad_sync",
+      "public_seed_publish",
+      "peer_announce_or_remote_peer_configuration",
+      "production_or_personal_identity_import"
+    ],
+    "replay_executed_after_loop_22": false,
+    "reason_replay_not_executed_after_loop_22": "Loop 22 was preflight/help discovery only; Loop 23 is the approved stateful temporary-RAD_HOME replay."
   },
   "nostr_disposable_readback": {
     "status_after_loop_20": "planned_not_executed",
