@@ -459,6 +459,67 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn("sigstore_slsa", html)
             self.assertIn("local-release-artifact.txt", html)
 
+    def test_renderer_can_include_local_nip34_adapter_fixture_section(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output = Path(tmpdir) / "demo.html"
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(RENDERER),
+                    str(FIXTURE_PATH),
+                    str(output),
+                    "--nip34-repo-fixture",
+                    str(NOSTR_REPO_FIXTURE_PATH),
+                    "--nip34-collaboration-fixture",
+                    str(NOSTR_COLLAB_FIXTURE_PATH),
+                ],
+                cwd=ROOT,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            html = output.read_text(encoding="utf-8")
+            self.assertIn("NIP-34 fixture adapter", html)
+            self.assertIn("local parser/conformance output", html)
+            self.assertIn("No relay publishing, signing, event ID computation, relay fetching, or live verification is performed or claimed", html)
+            self.assertIn("Repo ID", html)
+            self.assertIn("demo-project", html)
+            self.assertIn("wss://relay.example.invalid", html)
+            self.assertIn("Issue count", html)
+            self.assertIn("Patch count", html)
+            self.assertIn("Define portable project identity", html)
+            self.assertIn("Add static registry renderer", html)
+            self.assertIn("dry-run-issue-event-id-not-computed", html)
+            self.assertIn("dry-run-patch-event-id-not-computed", html)
+            self.assertIn("usable_local_relay_found", html)
+            self.assertIn("dry-run-fixtures", html)
+            self.assertIn("private_keys", html)
+            self.assertIn("none", html)
+            self.assertIn("documented-no-collaboration-event", html)
+
+    def test_renderer_requires_nip34_fixture_args_as_a_pair(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output = Path(tmpdir) / "demo.html"
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(RENDERER),
+                    str(FIXTURE_PATH),
+                    str(output),
+                    "--nip34-repo-fixture",
+                    str(NOSTR_REPO_FIXTURE_PATH),
+                ],
+                cwd=ROOT,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 2)
+            self.assertIn("must be provided together", result.stderr)
+
     def test_renderer_escapes_fixture_values_in_new_sections(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             tmp = Path(tmpdir)

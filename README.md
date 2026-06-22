@@ -28,7 +28,7 @@ This repository is a **local registry/static renderer prototype** with protocol-
 | Area | Current state | Not claimed |
 |---|---|---|
 | Registry/UI | Local JSON schema, fixtures, stdlib renderer, generated demo HTML | Production forge, hosted service, signed authority |
-| Nostr NIP-34 | Dry-run repository/issue/patch fixtures plus local stdlib parser round-trip tests | Relay publishing/readback, real keys, valid signatures |
+| Nostr NIP-34 | Dry-run repository/issue/patch fixtures plus local stdlib parser round-trip tests and a rendered fixture-adapter section | Relay publishing/readback, real keys, valid signatures, live relay verification |
 | Radicle | Source-inspected mapping and synthetic fixture | Live `rad` CLI verification, real RID, public seed publish |
 | Artifacts | Local SHA-256 and CIDv1 raw/base32-compatible metadata | IPFS availability, pinning, Filecoin/Arweave durability |
 | CI/provenance | Synthetic local CI/provenance display fields | Hosted CI, real signing, Sigstore/in-toto verification, Rekor upload, SLSA compliance |
@@ -54,17 +54,19 @@ This repository is a **local registry/static renderer prototype** with protocol-
 - `fixtures/local-release-artifact.txt` — local-only release artifact fixture with stdlib-tested SHA-256/CIDv1 metadata
 - `fixtures/radicle-backed-project.registry.json` — synthetic local-only Radicle-backed registry fixture
 - `scripts/nip34_adapter.py` — stdlib parser/export helper that round-trips dry-run NIP-34 repository, issue, and patch fixtures back to registry-shaped concepts without relay publishing
-- `scripts/render_project_page.py` — stdlib renderer for static project pages, including artifact availability, content-address, CI/provenance, and substrate detail sections
+- `scripts/render_project_page.py` — stdlib renderer for static project pages, including artifact availability, content-address, CI/provenance, substrate detail sections, and optional local NIP-34 fixture adapter import/display
 - `output/demo-project.html` — generated demo project page
 - `tests/test_registry_fixture.py` — stdlib verification tests for the registry fixture and renderer
 
 ## Local prototype verification
 
 ```sh
-python3 scripts/render_project_page.py fixtures/example-project.registry.json output/demo-project.html
+python3 scripts/render_project_page.py fixtures/example-project.registry.json output/demo-project.html \
+  --nip34-repo-fixture fixtures/nostr-repo-announcement.json \
+  --nip34-collaboration-fixture fixtures/nostr-collaboration-events.json
 python3 -m unittest discover -s tests
 ```
 
-The prototype is local-only: it does not publish to relays, run a public federation actor, spend money, or use private/production keys. The NIP-34 adapter only parses local dry-run fixtures and preserves placeholder IDs/signatures plus `published: false` non-claim fields; it does not sign, compute event IDs, connect to relays, or verify relay read/write compatibility. Release artifact metadata can carry local hashes and CID-compatible identifiers, but Loop 6 did not pin, upload, fetch from IPFS, use wallets, spend on Filecoin/Arweave, or make durability claims. CI/provenance fields and renderer sections are synthetic/local fixture displays only; they do not claim real hosted CI, public commit status, artifact signing, Sigstore/cosign/in-toto verification, Rekor upload, SLSA compliance, or production supply-chain trust.
+The prototype is local-only: it does not publish to relays, run a public federation actor, spend money, or use private/production keys. The NIP-34 adapter only parses local dry-run fixtures and preserves placeholder IDs/signatures plus `published: false` non-claim fields; the renderer can display that imported fixture output, but it does not sign, compute event IDs, connect to relays, fetch relay state, publish events, or verify relay read/write compatibility. Release artifact metadata can carry local hashes and CID-compatible identifiers, but Loop 6 did not pin, upload, fetch from IPFS, use wallets, spend on Filecoin/Arweave, or make durability claims. CI/provenance fields and renderer sections are synthetic/local fixture displays only; they do not claim real hosted CI, public commit status, artifact signing, Sigstore/cosign/in-toto verification, Rekor upload, SLSA compliance, or production supply-chain trust.
 
 Loop 4's Radicle artifact is also local-only. It was mapped from the official Radicle source tree available at `/tmp/radicle-heartwood` in this run; no Radicle CLI install, `rad init`, network node, public seed, or publish action was performed.

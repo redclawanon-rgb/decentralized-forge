@@ -12,6 +12,8 @@ import json
 import sys
 from pathlib import Path
 
+import nip34_adapter
+
 REQUIRED_TOP_LEVEL = [
     "schema_version",
     "project",
@@ -203,7 +205,79 @@ def render_substrate(name: str, value: object) -> str:
     return f"<strong>{esc(name)}</strong><dl class=\"metadata\">{''.join(rows)}</dl>"
 
 
-def render_registry(data: dict) -> str:
+def render_nip34_adapter_item(kind_label: str, item: dict) -> str:
+    return (
+        '<article class="adapter-item">'
+        f"<h4>{esc(kind_label)}: {esc(item.get('title', 'Untitled'))}</h4>"
+        + '<dl class="metadata">'
+        + field("ID", item.get("id"))
+        + field("Status", item.get("status"))
+        + field("Source event kind", item.get("source_event_kind"))
+        + field("Repository address", item.get("repository"))
+        + field("Mapped registry path", item.get("mapped_registry_path"))
+        + field("Summary", item.get("summary"), code=False)
+        + "</dl>"
+        + "</article>"
+    )
+
+
+def render_json_block(value: object) -> str:
+    return f"<pre><code>{esc(json.dumps(value, indent=2, sort_keys=True))}</code></pre>"
+
+
+def render_nip34_adapter_section(exported: dict | None) -> str:
+    if not exported:
+        return ""
+
+    project = exported.get("project", {})
+    nip34 = exported.get("substrates", {}).get("nip34", {})
+    dry_run = exported.get("dry_run", {})
+    collaboration = dry_run.get("collaboration", {}) if isinstance(dry_run, dict) else {}
+    relay_tool_check = collaboration.get("relay_tool_check", {}) if isinstance(collaboration, dict) else {}
+    synthetic_key_policy = collaboration.get("synthetic_key_policy", {}) if isinstance(collaboration, dict) else {}
+    nip35_boundary = collaboration.get("nip35_boundary", {}) if isinstance(collaboration, dict) else {}
+    issues = exported.get("issues", [])
+    patches = exported.get("patches", [])
+    repository_dry_run = dry_run.get("repository", {}) if isinstance(dry_run, dict) else {}
+
+    issue_items = [render_nip34_adapter_item("Issue", issue) for issue in issues]
+    patch_items = [render_nip34_adapter_item("Patch", patch) for patch in patches]
+
+    return (
+        "<section>"
+        "<h2>NIP-34 fixture adapter</h2>"
+        '<p class="notice"><strong>NIP-34 local parser/conformance output:</strong> '
+        "this section is generated from local NIP-34 fixture files via <code>scripts/nip34_adapter.py</code>. "
+        "No relay publishing, signing, event ID computation, relay fetching, or live verification is performed or claimed. "
+        "Dry-run placeholders are displayed so these fixtures cannot be mistaken for live Nostr events.</p>"
+        '<dl class="metadata">'
+        + field("Repo ID", project.get("id"))
+        + field("Repo name", project.get("name"), code=False)
+        + field("Repository kind", nip34.get("repository_kind"))
+        + field("Repo ID tag", nip34.get("repo_id_tag"))
+        + field("Relay hints", json.dumps(nip34.get("relay_hints", []), sort_keys=True))
+        + field("Publish status", nip34.get("publish_status"))
+        + field("Issue count", len(issues))
+        + field("Patch count", len(patches))
+        + field("Repository dry-run event ID", repository_dry_run.get("id"))
+        + field("Repository dry-run signature", repository_dry_run.get("sig"))
+        + "</dl>"
+        "<h3>Imported issues</h3>"
+        + list_items(issue_items)
+        + "<h3>Imported patches</h3>"
+        + list_items(patch_items)
+        + "<h3>Dry-run / non-claim fields</h3>"
+        + "<h4>Relay tool check</h4>"
+        + render_json_block(relay_tool_check)
+        + "<h4>Synthetic key policy</h4>"
+        + render_json_block(synthetic_key_policy)
+        + "<h4>NIP-35 boundary</h4>"
+        + render_json_block(nip35_boundary)
+        + "</section>"
+    )
+
+
+def render_registry(data: dict, nip34_adapter_export: dict | None = None) -> str:
     project = data["project"]
     maintainer_items = [
         f"<strong>{esc(m['name'])}</strong> — {esc(m['id_type'])}: <code>{esc(m['public_id'])}</code> ({esc(m.get('role', 'maintainer'))})"
@@ -268,6 +342,7 @@ def render_registry(data: dict) -> str:
   <section><h2>Releases</h2>{list_items(release_items)}</section>
   <section><h2>CI / provenance checks</h2>{list_items(ci_items)}</section>
   <section><h2>Protocol substrate details</h2>{list_items(substrate_items)}</section>
+  {render_nip34_adapter_section(nip34_adapter_export)}
   <section><h2>Signature status</h2><p><code>{esc(json.dumps(data.get('signature', {}), sort_keys=True))}</code></p></section>
 </body>
 </html>
@@ -278,13 +353,23 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("registry", type=Path, help="Input project registry JSON")
     parser.add_argument("output", type=Path, help="Output HTML path")
+    parser.add_argument("--nip34-repo-fixture", type=Path, help="Optional local NIP-34 repository announcement fixture JSON")
+    parser.add_argument("--nip34-collaboration-fixture", type=Path, help="Optional local NIP-34 collaboration events fixture JSON")
     args = parser.parse_args(argv)
+    if bool(args.nip34_repo_fixture) != bool(args.nip34_collaboration_fixture):
+        parser.error("--nip34-repo-fixture and --nip34-collaboration-fixture must be provided together")
     try:
         data = load_registry(args.registry)
-        rendered = render_registry(data)
+        nip34_export = None
+        if args.nip34_repo_fixture and args.nip34_collaboration_fixture:
+            nip34_export = nip34_adapter.export_fixture_pair(
+                nip34_adapter.load_json(args.nip34_repo_fixture),
+                nip34_adapter.load_json(args.nip34_collaboration_fixture),
+            )
+        rendered = render_registry(data, nip34_export)
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(rendered, encoding="utf-8")
-    except RegistryError as exc:
+    except (RegistryError, ValueError, OSError, json.JSONDecodeError) as exc:
         print(f"registry error: {exc}", file=sys.stderr)
         return 2
     return 0

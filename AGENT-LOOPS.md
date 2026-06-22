@@ -174,3 +174,15 @@ Completed as a local stdlib parser/conformance adapter. `scripts/nip34_adapter.p
 **Gate:**
 
 Keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, storage location, and public protocol gates are explicitly satisfied. No production/private keys, paid services, unsupported live-verification claims, or direct outreach.
+
+## Loop 12: NIP-34 renderer/import follow-up
+
+**Goal:** Wire the completed local NIP-34 adapter into the static renderer without external services.
+
+**Current result:**
+
+Completed as a local renderer/import surface. `scripts/render_project_page.py` now accepts paired `--nip34-repo-fixture` and `--nip34-collaboration-fixture` arguments, imports them through `scripts/nip34_adapter.py`, and renders a **NIP-34 fixture adapter** section in `output/demo-project.html`. The section displays local parser/conformance output including repository id/name/kind, relay hints, dry-run publish status, imported issue/patch counts/titles/statuses/summaries/source kinds, and relay/key/NIP-35 dry-run non-claim fields. Tests assert the rendered section, boundary language, placeholder IDs/signatures, and required paired arguments. No relay publishing/readback, relay fetching, key use, signing, event-id computation, live protocol verification, spending, public post, commit, or push was performed.
+
+**Gate:**
+
+Keep this as local fixture import/display only. Do not claim Nostr relay compatibility until a disposable-key relay publish/readback path is explicitly approved and verified.

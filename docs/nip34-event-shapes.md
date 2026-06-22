@@ -9,7 +9,7 @@ This document maps the local project registry fixture to NIP-34-style event bodi
 - No event is published to public relays.
 - Relay URLs in fixtures are examples/hints only.
 
-Loop 11 adds a stdlib-only local parser/export seam in `scripts/nip34_adapter.py`. The adapter reads the repository announcement and collaboration fixtures and round-trips them back into registry-shaped concepts for tests and future UI integration. It does not compute Nostr event IDs, sign events, verify keys, connect to relays, or publish anything.
+Loop 11 adds a stdlib-only local parser/export seam in `scripts/nip34_adapter.py`. The adapter reads the repository announcement and collaboration fixtures and round-trips them back into registry-shaped concepts for tests and future UI integration. Loop 12 wires that adapter into the static renderer through paired optional fixture arguments. Neither path computes Nostr event IDs, signs events, verifies keys, connects to relays, fetches relay state, or publishes anything.
 
 Loop 5 local relay/tool check:
 
@@ -109,6 +109,20 @@ The Loop 11 helper accepts the two dry-run fixture JSON objects (or paths via it
 - `dry_run` metadata preserving fixture notices, placeholder IDs/signatures, relay-tool fallback state, synthetic key policy, NIP-35 boundary, and `published: false` for each event.
 
 This is conformance/round-trip evidence for local fixtures only. It is not a live Nostr adapter and does not claim relay read/write compatibility.
+
+## Local renderer/import surface
+
+Loop 12 extends `scripts/render_project_page.py` with paired optional arguments:
+
+```sh
+python3 scripts/render_project_page.py fixtures/example-project.registry.json output/demo-project.html \
+  --nip34-repo-fixture fixtures/nostr-repo-announcement.json \
+  --nip34-collaboration-fixture fixtures/nostr-collaboration-events.json
+```
+
+When both arguments are provided, the renderer imports the fixture pair through `scripts/nip34_adapter.py` and adds a **NIP-34 fixture adapter** section to the generated HTML. The section displays repository id/name/kind, relay hints, dry-run publish status, imported issue and patch counts/titles/statuses/summaries/source kinds, placeholder event IDs/signatures, relay-tool fallback, synthetic key policy, and NIP-35 boundary fields.
+
+The arguments must be provided together so the renderer cannot accidentally display a partial repository or collaboration import. The output is labeled as local parser/conformance data and explicitly states that no relay publishing, signing, event ID computation, relay fetching, or live verification is performed or claimed.
 
 ## NIP-35 boundary
 
