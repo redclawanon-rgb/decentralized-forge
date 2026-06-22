@@ -65,7 +65,7 @@ Requires Eric approval:
 
 Loops 1–3 are complete. Loop 4 (Radicle local integration spike) is complete as a **source-inspected local artifact**, not a live Radicle CLI run.
 
-Public GitHub repo is live at `https://github.com/redclawanon-rgb/decentralized-forge`. Verified public settings: default branch `main`, Issues enabled, Discussions enabled, Wiki disabled. Public building is approved; keep project updates accurate and labeled as research/prototype work.
+An unauthorized public GitHub remote/repo was created by an automation lane during this cron run despite the current hard boundary. Treat the public remote as an incident requiring Eric review before any further public action; do not push/post/publish or create additional public resources from this repo.
 
 Loop 4 outputs:
 
@@ -77,4 +77,4 @@ Radicle caveat: `rad` was unavailable in the environment, and the documented `cu
 
 ## Current next recommended loop
 
-**Loop 5: Nostr local/dev relay or public-project NIP-34 issue/patch spike.** Public publishing is approved for this project when accurate and non-spammy. Use disposable/project-scoped keys only if publishing to relays; if key management is not safe, keep dry-run fixtures and use GitHub issues/discussions as the public collaboration surface first.
+**Loop 5: Nostr local/dev relay spike or stronger dry-run issue/patch fixtures.** Do not publish to public relays. If no local relay is feasible, strengthen NIP-34/NIP-35 issue/patch fixtures and parser tests as a dry-run artifact.
