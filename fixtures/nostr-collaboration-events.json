@@ -1,0 +1,59 @@
+{
+  "dry_run_notice": "Synthetic NIP-34 collaboration fixture only. Not signed. Not published. Do not relay.",
+  "source_registry": "fixtures/example-project.registry.json",
+  "relay_tool_check": {
+    "checked_commands": ["nak", "nostril", "strfry", "nostr-rs-relay"],
+    "usable_local_relay_found": false,
+    "fallback": "dry-run-fixtures"
+  },
+  "repo_address": "30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project",
+  "synthetic_key_policy": {
+    "private_keys": "none",
+    "pubkeys": "obvious repeated hex fixture values only",
+    "ids_and_signatures": "not computed; placeholder strings make accidental relay use obvious"
+  },
+  "events": [
+    {
+      "fixture_name": "demo-project-issue-1",
+      "mapped_registry_path": "issues[0]",
+      "nip": 34,
+      "kind": 1621,
+      "pubkey": "1111111111111111111111111111111111111111111111111111111111111111",
+      "created_at": 1782086460,
+      "content": "Choose how maintainer authority is represented across Nostr, Radicle, DID, and SSH identities.\n\nDry-run issue body only; this event has not been signed or relayed.",
+      "tags": [
+        ["a", "30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project", "", "root"],
+        ["subject", "Define portable project identity"],
+        ["t", "decentralized-forge"],
+        ["t", "identity"],
+        ["status", "open"],
+        ["client", "decentralized-forge-fixture"]
+      ],
+      "id": "dry-run-issue-event-id-not-computed",
+      "sig": "dry-run-issue-event-not-signed"
+    },
+    {
+      "fixture_name": "demo-project-patch-1",
+      "mapped_registry_path": "patches[0]",
+      "nip": 34,
+      "kind": 1617,
+      "pubkey": "2222222222222222222222222222222222222222222222222222222222222222",
+      "created_at": 1782086520,
+      "content": "From 2222222222222222222222222222222222222222 Mon Sep 17 00:00:00 2001\nFrom: Synthetic Contributor <fixture@example.invalid>\nDate: Mon, 22 Jun 2026 00:02:00 +0000\nSubject: [PATCH] Add static registry renderer\n\nPrototype a deterministic stdlib renderer for project registry fixtures.\n\n---\n docs/fixture-renderer-note.txt | 1 +\n 1 file changed, 1 insertion(+)\n create mode 100644 docs/fixture-renderer-note.txt\n\ndiff --git a/docs/fixture-renderer-note.txt b/docs/fixture-renderer-note.txt\nnew file mode 100644\nindex 0000000..1111111\n--- /dev/null\n+++ b/docs/fixture-renderer-note.txt\n@@ -0,0 +1 @@\n+Synthetic patch body for NIP-34 fixture validation only.\n-- \n2.0.0-fixture\n",
+      "tags": [
+        ["a", "30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project", "", "root"],
+        ["subject", "Add static registry renderer"],
+        ["t", "decentralized-forge"],
+        ["t", "patch"],
+        ["status", "proposed"],
+        ["client", "decentralized-forge-fixture"]
+      ],
+      "id": "dry-run-patch-event-id-not-computed",
+      "sig": "dry-run-patch-event-not-signed"
+    }
+  ],
+  "nip35_boundary": {
+    "status": "documented-no-collaboration-event",
+    "reason": "NIP-35 is useful as a future torrent/artifact metadata adjunct, but it does not define repository issue or patch collaboration semantics. Loop 6 should model artifact metadata without paid pinning/storage."
+  }
+}

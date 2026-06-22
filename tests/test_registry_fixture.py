@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_PATH = ROOT / "schemas" / "project-registry.schema.json"
 FIXTURE_PATH = ROOT / "fixtures" / "example-project.registry.json"
 RADICLE_FIXTURE_PATH = ROOT / "fixtures" / "radicle-backed-project.registry.json"
+NOSTR_COLLAB_FIXTURE_PATH = ROOT / "fixtures" / "nostr-collaboration-events.json"
 FIXTURE_PATHS = [FIXTURE_PATH, RADICLE_FIXTURE_PATH]
 RENDERER = ROOT / "scripts" / "render_project_page.py"
 
@@ -18,6 +19,7 @@ class RegistryFixtureTests(unittest.TestCase):
         self.schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
         self.fixture = json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
         self.radicle_fixture = json.loads(RADICLE_FIXTURE_PATH.read_text(encoding="utf-8"))
+        self.nostr_collab_fixture = json.loads(NOSTR_COLLAB_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.fixtures = [json.loads(path.read_text(encoding="utf-8")) for path in FIXTURE_PATHS]
 
     def test_schema_and_fixtures_are_valid_json_objects(self):
@@ -117,6 +119,51 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertEqual(patch["source_ref"], "refs/patches")
         self.assertEqual(patch["registry_status"], self.radicle_fixture["patches"][0]["status"])
         self.assertIn("git push rad", patch["open_command_shape"])
+
+    def _tags_by_name(self, event):
+        grouped = {}
+        for tag in event["tags"]:
+            self.assertIsInstance(tag, list)
+            self.assertGreaterEqual(len(tag), 2)
+            grouped.setdefault(tag[0], []).append(tag)
+        return grouped
+
+    def test_nostr_collaboration_fixture_preserves_issue_and_patch_shapes(self):
+        fixture = self.nostr_collab_fixture
+        self.assertEqual(fixture["source_registry"], "fixtures/example-project.registry.json")
+        self.assertEqual(fixture["relay_tool_check"]["fallback"], "dry-run-fixtures")
+        self.assertFalse(fixture["relay_tool_check"]["usable_local_relay_found"])
+        self.assertEqual(fixture["synthetic_key_policy"]["private_keys"], "none")
+
+        events = fixture["events"]
+        self.assertEqual([event["kind"] for event in events], [1621, 1617])
+        self.assertEqual([event["mapped_registry_path"] for event in events], ["issues[0]", "patches[0]"])
+
+        registry_issue = self.fixture["issues"][0]
+        registry_patch = self.fixture["patches"][0]
+        issue_event, patch_event = events
+
+        self.assertIn(registry_issue["summary"], issue_event["content"])
+        self.assertIn(registry_patch["summary"], patch_event["content"])
+        self.assertIn("diff --git", patch_event["content"])
+
+        for event in events:
+            tags = self._tags_by_name(event)
+            self.assertEqual(event["nip"], 34)
+            self.assertIn("a", tags)
+            self.assertIn(fixture["repo_address"], [tag[1] for tag in tags["a"]])
+            self.assertIn("subject", tags)
+            self.assertIn("status", tags)
+            self.assertTrue(event["id"].startswith("dry-run-"))
+            self.assertTrue(event["sig"].startswith("dry-run-"))
+            self.assertRegex(event["pubkey"], r"^[012]+$")
+            self.assertEqual(len(event["pubkey"]), 64)
+
+    def test_nostr_fixture_documents_nip35_boundary(self):
+        boundary = self.nostr_collab_fixture["nip35_boundary"]
+        self.assertEqual(boundary["status"], "documented-no-collaboration-event")
+        self.assertIn("artifact metadata", boundary["reason"])
+        self.assertIn("does not define repository issue or patch", boundary["reason"])
 
     def test_renderer_outputs_expected_html(self):
         with tempfile.TemporaryDirectory() as tmpdir:

@@ -71,6 +71,28 @@ Notes:
 - Mapping evidence was inspected from `/tmp/radicle-heartwood` at commit `90aaec1c9eee77a0beebece48f460c1424c1c8bd`.
 - No `rad init`, network node, public seed connection, publish action, account creation, private key, or spending occurred.
 
+### Loop 5: Nostr local/dev relay or stronger dry-run issue/patch fixtures
+
+Status: **complete as dry-run collaboration fixtures; local relay/tool not installed/verified**.
+
+Outputs:
+
+- `fixtures/nostr-collaboration-events.json`
+- `docs/nip34-event-shapes.md` expanded with Loop 5 local relay check, issue/patch fixture semantics, and NIP-35 boundary.
+- `tests/test_registry_fixture.py` updated to validate NIP-34 issue (`kind: 1621`) and patch (`kind: 1617`) dry-run event shapes and NIP-35 non-collaboration boundary.
+
+Verified commands:
+
+- `command -v nak`, `command -v nostril`, `command -v strfry`, and `command -v nostr-rs-relay` — no installed tool found in this environment.
+- `python3 -m json.tool fixtures/nostr-collaboration-events.json` — passed.
+- `python3 -m unittest discover -s tests` — passed, 12 tests.
+
+Notes:
+
+- No local relay was started because no free/safe relay or Nostr CLI was already installed and usable.
+- No unsafe installer, paid service, production/private key, public relay, or public post was used.
+- Collaboration events use obvious repeated-hex synthetic pubkeys and non-computed dry-run IDs/signatures only.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -102,9 +124,9 @@ Notes:
 
 ## Next recommended loop
 
-**Loop 5: Nostr local/dev relay spike or stronger dry-run issue/patch fixtures.**
+**Loop 6: release/artifact metadata and IPFS-CID-compatible fixture.**
 
-Preferred local path: locate or install a free/safe local Nostr relay, publish only synthetic local/dev events, read them back, and keep all keys test-only. Public relay publishing is allowed only with disposable/project-scoped keys and a documented key storage location; if key management is not safe in this environment, strengthen dry-run NIP-34/NIP-35 repository/issue/patch fixtures plus parser/validation tests and use GitHub issues/discussions as the public collaboration surface first.
+Keep this local/free: add release artifact metadata that can carry content-addressed CIDs and hashes, validate the shape with stdlib tests, and avoid paid pinning/storage, wallets, Filecoin/Arweave spending, or durability claims unless actually verified.
 
 ## Gates/blockers
 

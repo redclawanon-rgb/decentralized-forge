@@ -63,7 +63,7 @@ Requires Eric approval or a separate explicit target:
 - Claiming production readiness, censorship-proof guarantees, or live protocol verification that has not actually been tested
 ## Current loop state
 
-Loops 1–3 are complete. Loop 4 (Radicle local integration spike) is complete as a **source-inspected local artifact**, not a live Radicle CLI run.
+Loops 1–5 are complete. Loop 4 (Radicle local integration spike) is complete as a **source-inspected local artifact**, not a live Radicle CLI run. Loop 5 is complete as **dry-run Nostr collaboration fixtures**, not a live Nostr relay run.
 
 Public GitHub repo is live at `https://github.com/redclawanon-rgb/decentralized-forge`. Verified public settings: default branch `main`, Issues enabled, Discussions enabled, Wiki disabled. Public building is approved; keep project updates accurate and labeled as research/prototype work.
 
@@ -73,8 +73,16 @@ Loop 4 outputs:
 - `fixtures/radicle-backed-project.registry.json`
 - expanded `tests/test_registry_fixture.py`
 
+Loop 5 outputs:
+
+- `fixtures/nostr-collaboration-events.json`
+- expanded `docs/nip34-event-shapes.md`
+- parser/shape checks in `tests/test_registry_fixture.py`
+
+Nostr caveat: no local relay/client tool (`nak`, `nostril`, `strfry`, or `nostr-rs-relay`) was installed or immediately usable, so Loop 5 used dry-run fixtures only. No public relay post, private key, production key, or unsafe installer was used. The synthetic issue (`kind: 1621`) and patch (`kind: 1617`) events have placeholder IDs/signatures and repeated-hex pubkeys.
+
 Radicle caveat: `rad` was unavailable in the environment, and the documented `curl https://radicle.dev/install | sh` installer was not used. The mapping was derived from official source/manpage/examples in `/tmp/radicle-heartwood` at commit `90aaec1c9eee77a0beebece48f460c1424c1c8bd`. Do not claim live Radicle verification until an approved binary/install path is available and a temporary local `RAD_HOME` replay has been run.
 
 ## Current next recommended loop
 
-**Loop 5: Nostr local/dev relay or public-project NIP-34 issue/patch spike.** Public publishing is approved for this project when accurate and non-spammy. Use disposable/project-scoped keys only if publishing to relays; if key management is not safe, keep dry-run fixtures and use GitHub issues/discussions as the public collaboration surface first.
+**Loop 6: release/artifact metadata and IPFS-CID-compatible fixture.** Keep it free/local: validate artifact hash/CID fields and optional NIP-35-inspired artifact metadata without paid pinning/storage, wallets, or durability claims.
