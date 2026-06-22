@@ -460,6 +460,10 @@ Extra relays or any additional Nostr publish require Permission E. Stop if a rel
 
 No new live publish is allowed unless Permission E is granted. Abort if renderer wording blurs fixture-only, local CLI, selected-relay readback, or full protocol compatibility.
 
+**Current result:**
+
+Completed as selected-relay readback evidence import. Added `fixtures/nostr-live-readback-events.json`; `scripts/nip34_adapter.py` now imports the recorded Loop 25 kind `30617` event separately from dry-run fixtures, recomputes the NIP-01 event ID locally, and emits a narrowly scoped `live-verified` adapter row for selected-relay readback only. `scripts/render_project_page.py` renders a separate **NIP-34 live readback import** subsection, and static preflight/tests/checklist/output were updated. No new relay publish, relay fetch, signing, key read, spending, direct outreach, Radicle public-network action, or unsupported durability/global-propagation/censorship-resistance/identity-trust/security/production/full-compatibility claim occurred.
+
 ## Loop 30: Radicle public-network gate plan
 
 **Goal:** Prepare a no-surprises plan for a later public Radicle seed/publish/remote clone verification.

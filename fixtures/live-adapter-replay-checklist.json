@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-adapter-replay-checklist.v1",
-  "loop": 28,
+  "loop": 29,
   "purpose": "Secret-free gates for future Radicle local CLI replay and Nostr disposable relay publish/readback verification.",
   "discovery": {
     "rad_command": "command -v rad",
@@ -41,7 +41,10 @@
     "loop_28_nostr_readback_check_recorded": true,
     "loop_28_nostr_readback_check_evidence": "evidence/nostr-loop28-readback-check-2026-06-22.md",
     "loop_28_nostr_readback_check_json": "evidence/nostr-loop28-readback-check-2026-06-22.json",
-    "network_protocol_actions_used_after_loop_28": true
+    "network_protocol_actions_used_after_loop_28": true,
+    "loop_29_nip34_live_event_import_recorded": true,
+    "loop_29_nip34_live_event_fixture": "fixtures/nostr-live-readback-events.json",
+    "network_protocol_actions_used_after_loop_29": false
   },
   "global_gates": [
     "approved_tooling_path_required",
@@ -264,7 +267,23 @@
     "production_or_personal_key_used_after_loop_28": false,
     "paid_infrastructure_used_after_loop_28": false,
     "direct_outreach_after_loop_28": false,
-    "claim_boundary_after_loop_28": "readback persistence/divergence evidence only; selected relays plus one extra relay returned and verified the exact event, one extra relay did not return it; no durability/global-propagation/censorship-resistance/identity-trust/production-readiness/full-compatibility claim"
+    "claim_boundary_after_loop_28": "readback persistence/divergence evidence only; selected relays plus one extra relay returned and verified the exact event, one extra relay did not return it; no durability/global-propagation/censorship-resistance/identity-trust/production-readiness/full-compatibility claim",
+    "status_after_loop_29": "selected_relay_readback_evidence_imported_into_nip34_adapter_no_new_publish",
+    "live_readback_fixture_after_loop_29": "fixtures/nostr-live-readback-events.json",
+    "adapter_import_state_after_loop_29": "live-verified-selected-relay-readback-only",
+    "new_event_published_after_loop_29": false,
+    "relay_fetch_performed_after_loop_29": false,
+    "production_or_personal_key_used_after_loop_29": false,
+    "paid_infrastructure_used_after_loop_29": false,
+    "direct_outreach_after_loop_29": false,
+    "missing_nip34_semantics_after_loop_29": [
+      "issue_event_readback_not_verified",
+      "patch_event_readback_not_verified",
+      "repository_state_event_readback_not_verified",
+      "status_event_semantics_not_verified",
+      "relay_discovery_subscription_deletion_replacement_multi_client_behavior_not_verified"
+    ],
+    "claim_boundary_after_loop_29": "Loop 29 imports existing Loop 25 selected-relay readback evidence into the NIP-34 adapter/renderer only; no new publish/fetch/signing and no durability/global-propagation/censorship-resistance/identity-trust/security/production/full-compatibility claim."
   },
   "secrets_policy": {
     "contains_secret_values": false,

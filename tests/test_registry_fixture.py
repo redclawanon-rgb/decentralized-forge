@@ -20,6 +20,7 @@ RADICLE_FIXTURE_PATH = ROOT / "fixtures" / "radicle-backed-project.registry.json
 NOSTR_REPO_FIXTURE_PATH = ROOT / "fixtures" / "nostr-repo-announcement.json"
 NOSTR_COLLAB_FIXTURE_PATH = ROOT / "fixtures" / "nostr-collaboration-events.json"
 NOSTR_STATE_STATUS_FIXTURE_PATH = ROOT / "fixtures" / "nostr-repo-state-status.json"
+NOSTR_LIVE_READBACK_FIXTURE_PATH = ROOT / "fixtures" / "nostr-live-readback-events.json"
 LIVE_REPLAY_CHECKLIST_PATH = ROOT / "fixtures" / "live-adapter-replay-checklist.json"
 LIVE_EVIDENCE_INDEX_PATH = ROOT / "fixtures" / "live-evidence-index.json"
 LOCAL_RELEASE_ARTIFACT_PATH = ROOT / "fixtures" / "local-release-artifact.txt"
@@ -38,6 +39,7 @@ class RegistryFixtureTests(unittest.TestCase):
         self.nostr_repo_fixture = json.loads(NOSTR_REPO_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.nostr_collab_fixture = json.loads(NOSTR_COLLAB_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.nostr_state_status_fixture = json.loads(NOSTR_STATE_STATUS_FIXTURE_PATH.read_text(encoding="utf-8"))
+        self.nostr_live_readback_fixture = json.loads(NOSTR_LIVE_READBACK_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.live_replay_checklist = json.loads(LIVE_REPLAY_CHECKLIST_PATH.read_text(encoding="utf-8"))
         self.live_evidence_index = json.loads(LIVE_EVIDENCE_INDEX_PATH.read_text(encoding="utf-8"))
         self.fixtures = [json.loads(path.read_text(encoding="utf-8")) for path in FIXTURE_PATHS]
@@ -259,6 +261,23 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertFalse(nostr_gate["paid_infrastructure_used_after_loop_28"])
             self.assertFalse(nostr_gate["direct_outreach_after_loop_28"])
 
+        if checklist["loop"] >= 29:
+            discovery = checklist["discovery"]
+            self.assertTrue(discovery["loop_29_nip34_live_event_import_recorded"])
+            self.assertFalse(discovery["network_protocol_actions_used_after_loop_29"])
+            nostr_gate = checklist["nostr_disposable_readback"]
+            self.assertEqual(
+                nostr_gate["status_after_loop_29"],
+                "selected_relay_readback_evidence_imported_into_nip34_adapter_no_new_publish",
+            )
+            self.assertEqual(nostr_gate["live_readback_fixture_after_loop_29"], "fixtures/nostr-live-readback-events.json")
+            self.assertFalse(nostr_gate["new_event_published_after_loop_29"])
+            self.assertFalse(nostr_gate["relay_fetch_performed_after_loop_29"])
+            self.assertIn("issue_event_readback_not_verified", nostr_gate["missing_nip34_semantics_after_loop_29"])
+            self.assertFalse(nostr_gate["production_or_personal_key_used_after_loop_29"])
+            self.assertFalse(nostr_gate["paid_infrastructure_used_after_loop_29"])
+            self.assertFalse(nostr_gate["direct_outreach_after_loop_29"])
+
         required_global_gates = {
             "approved_tooling_path_required",
             "temporary_or_disposable_state_only",
@@ -399,6 +418,57 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn(action_not_taken, evidence_blob)
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, evidence_blob)
+
+    def test_loop29_nostr_live_readback_fixture_import_is_bounded(self):
+        fixture = self.nostr_live_readback_fixture
+        self.assertEqual(fixture["schema_version"], "decentralized-forge.nostr-live-readback-events.v1")
+        self.assertEqual(fixture["loop"], 29)
+        self.assertEqual(fixture["source_evidence"], "evidence/nostr-loop25-publish-readback-2026-06-22.json")
+        self.assertIn("selected-relay readback evidence only", fixture["claim_boundary"])
+        self.assertEqual(len(fixture["events"]), 1)
+        entry = fixture["events"][0]
+        event = entry["event"]
+        self.assertEqual(event["id"], entry["source_event_id"])
+        self.assertEqual(event["pubkey"], entry["source_pubkey"])
+        self.assertEqual(event["kind"], 30617)
+        self.assertTrue(entry["selected_relay_readback_verified"])
+        self.assertFalse(entry["new_event_published_in_loop_29"])
+        self.assertIn("does not verify NIP-34 issue", json.dumps(entry["non_claims"]))
+
+        parsed = nip34_adapter.parse_live_readback_fixture(fixture)
+        self.assertEqual(parsed["events"][0]["event_id"], event["id"])
+        self.assertEqual(parsed["events"][0]["readback_verified_relays"], ["wss://relay.damus.io", "wss://nos.lol"])
+        report = parsed["conformance_reports"][0]
+        self.assertTrue(report["event_id_computed"])
+        self.assertTrue(report["event_id_matches_recorded_id"])
+        self.assertTrue(report["signed"])
+        self.assertTrue(report["published"])
+        state = parsed["verification_states"][0]
+        self.assertEqual(state["scope"], "nip34.adapter.live_repository_announcement_readback")
+        self.assertEqual(state["state"], "live-verified")
+        self.assertTrue(state["live_verified"])
+        self.assertFalse(state["synthetic"])
+        self.assertIn("selected-relay readback evidence only", state["claim_boundary"])
+
+        exported = nip34_adapter.export_fixture_pair(
+            self.nostr_repo_fixture,
+            self.nostr_collab_fixture,
+            self.nostr_state_status_fixture,
+            fixture,
+        )
+        live_states = [state for state in exported["verification_states"] if state["scope"] == "nip34.adapter.live_repository_announcement_readback"]
+        self.assertEqual(len(live_states), 1)
+        self.assertEqual(exported["live_readback"]["events"][0]["event_id"], event["id"])
+        blob = json.dumps(exported).lower()
+        for required_non_claim in [
+            "not proof of global propagation",
+            "not proof of censorship resistance",
+            "not production readiness",
+            "not full nip-34 or forge protocol compatibility",
+        ]:
+            self.assertIn(required_non_claim, blob)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, blob)
 
     def test_loop26_live_evidence_index_imports_only_bounded_evidence(self):
         index = self.live_evidence_index
@@ -1179,6 +1249,8 @@ class RegistryFixtureTests(unittest.TestCase):
                     str(NOSTR_COLLAB_FIXTURE_PATH),
                     "--nip34-state-status-fixture",
                     str(NOSTR_STATE_STATUS_FIXTURE_PATH),
+                    "--nip34-live-readback-fixture",
+                    str(NOSTR_LIVE_READBACK_FIXTURE_PATH),
                     "--live-evidence-index",
                     str(LIVE_EVIDENCE_INDEX_PATH),
                 ],
@@ -1192,27 +1264,29 @@ class RegistryFixtureTests(unittest.TestCase):
             html = output.read_text(encoding="utf-8")
             self.assertIn("NIP-34 fixture adapter", html)
             self.assertIn("local parser/conformance output", html)
-            self.assertIn("No relay publishing, signing, fixture ID replacement, relay fetching, or live verification is performed or claimed", html)
+            self.assertIn("Dry-run rows do not perform relay publishing, signing, fixture ID replacement, relay fetching, or live verification", html)
             self.assertIn("possible_event_id values are local reference hashes only", html)
             self.assertIn("Local NIP-34 conformance summary", html)
             self.assertIn("Adapter verification states", html)
             self.assertIn("Adapter-local verification labels", html)
             self.assertIn("Adapter verification states summary", html)
             self.assertIn("Adapter verification rows grouped by state", html)
-            self.assertIn("<dt>Verification row count</dt><dd><code>5</code></dd>", html)
-            self.assertIn("<dt>Live-verified row count</dt><dd><code>0</code></dd>", html)
+            self.assertIn("<dt>Verification row count</dt><dd><code>6</code></dd>", html)
+            self.assertIn("<dt>Live-verified row count</dt><dd><code>1</code></dd>", html)
             self.assertIn("<dt>Live-unverified or local row count</dt><dd><code>5</code></dd>", html)
             self.assertIn("<dt>Synthetic row count</dt><dd><code>5</code></dd>", html)
             self.assertIn("local-fixture</span>: <strong>3</strong>", html)
             self.assertIn("source-inspected-mapping</span>: <strong>1</strong>", html)
             self.assertIn("synthetic-fixture</span>: <strong>1</strong>", html)
+            self.assertIn("live-verified</span>: <strong>1</strong>", html)
+            self.assertIn("live_verified=true</span>: <strong>1</strong>", html)
             self.assertIn("live_verified=false</span>: <strong>5</strong>", html)
-            self.assertNotIn("live_verified=true</span>: <strong>1</strong>", html)
             self.assertIn("nip34.adapter.repository_announcement", html)
             self.assertIn("nip34.adapter.collaboration_events", html)
             self.assertIn("nip34.adapter.conformance_reports", html)
             self.assertIn("nip34.adapter.repository_state", html)
             self.assertIn("nip34.adapter.status_checks", html)
+            self.assertIn("nip34.adapter.live_repository_announcement_readback", html)
             self.assertIn("They are separate from the top-level registry verification states", html)
             self.assertIn("dry_run.conformance.reports[]", html)
             self.assertIn("Conformance report count", html)
@@ -1274,6 +1348,12 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn("not proof of global propagation", html)
             self.assertIn("Permission G remains required", html)
             self.assertIn("Contains secret values", html)
+            self.assertIn("NIP-34 live readback import", html)
+            self.assertIn("Selected-relay readback only", html)
+            self.assertIn("Loop 29 performs no new relay publish/fetch/signing", html)
+            self.assertIn("Live readback event: loop25-live-repository-announcement", html)
+            self.assertIn("New event published in Loop 29", html)
+            self.assertIn("decentralized-forge-live-adapter-prototype-2026-06-22", html)
 
     def test_renderer_requires_nip34_fixture_args_as_a_pair(self):
         with tempfile.TemporaryDirectory() as tmpdir:

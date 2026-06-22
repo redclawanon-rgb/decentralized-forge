@@ -141,6 +141,40 @@ def conformance_report(event: dict[str, Any], *, label: str = "") -> dict[str, A
     }
 
 
+def live_event_conformance_report(event: dict[str, Any], *, label: str = "") -> dict[str, Any]:
+    """Describe a signed/readback NIP-34 event imported from recorded evidence.
+
+    This function does not publish, fetch, or cryptographically verify the event.
+    It validates the NIP-01 shape and recomputes the NIP-01 event id locally so
+    recorded Loop 25 readback evidence can be imported without blurring it with
+    dry-run fixture rows.
+    """
+    shape = validate_nip01_event_shape(event)
+    serialized_payload = None
+    computed_reference = None
+    event_id_matches = False
+    if shape["valid_for_local_fixture"] and shape["pubkey_is_lower_hex_64"]:
+        serialized_payload = nip01_serialized_event_payload(event)
+        computed_reference = hashlib.sha256(serialized_payload.encode("utf-8")).hexdigest()
+        event_id_matches = computed_reference == event.get("id")
+    event_id = event.get("id", "")
+    sig = event.get("sig", "")
+    return {
+        "label": label or "live_readback_event",
+        "kind": event.get("kind"),
+        "nip34_kind_known": event.get("kind") in {REPOSITORY_KIND, REPOSITORY_STATE_KIND, ISSUE_KIND, PATCH_KIND},
+        "shape": shape,
+        "id_is_placeholder": False,
+        "sig_is_placeholder": False,
+        "event_id_computed": computed_reference is not None,
+        "event_id_matches_recorded_id": event_id_matches,
+        "signed": isinstance(event_id, str) and bool(LOWER_HEX_64_RE.fullmatch(event_id)) and isinstance(sig, str) and len(sig) == 128,
+        "published": True,
+        "serialized_event_payload": serialized_payload,
+        "possible_event_id": computed_reference,
+    }
+
+
 def verification_state(
     *,
     scope: str,
@@ -165,6 +199,32 @@ def verification_state(
         "synthetic": synthetic,
         "claim_boundary": claim_boundary
         or "Local dry-run fixture parsed by scripts/nip34_adapter.py only; no relay, signing, key, public status, durability, or production claim.",
+        "last_checked_at": "2026-06-22",
+        "notes": notes,
+    }
+
+
+def live_verification_state(
+    *,
+    scope: str,
+    state: str,
+    evidence: str,
+    claim_boundary: str,
+    notes: str = "",
+) -> dict[str, Any]:
+    """Return a live-evidence adapter verification row.
+
+    Live here means the exact recorded public Nostr relay readback evidence was
+    imported. It deliberately does not mean durability, global propagation,
+    identity trust, security, production readiness, or full NIP-34 compatibility.
+    """
+    return {
+        "scope": scope,
+        "state": state,
+        "evidence": evidence,
+        "live_verified": True,
+        "synthetic": False,
+        "claim_boundary": claim_boundary,
         "last_checked_at": "2026-06-22",
         "notes": notes,
     }
@@ -522,15 +582,102 @@ def parse_state_status_fixture(fixture: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def parse_live_readback_fixture(fixture: dict[str, Any]) -> dict[str, Any]:
+    """Parse recorded Nostr selected-relay readback evidence for adapter display.
+
+    The fixture is evidence imported from prior Loop 25 commands. This parser is
+    intentionally read-only: it does not contact relays, publish, sign, or read
+    secret key material.
+    """
+    if fixture.get("schema_version") != "decentralized-forge.nostr-live-readback-events.v1":
+        raise ValueError("unsupported Nostr live readback fixture schema_version")
+    events = fixture.get("events")
+    if not isinstance(events, list):
+        raise ValueError("Nostr live readback fixture events must be a list")
+
+    parsed_events: list[dict[str, Any]] = []
+    reports: list[dict[str, Any]] = []
+    states: list[dict[str, Any]] = []
+    for index, entry in enumerate(events):
+        if not isinstance(entry, dict):
+            raise ValueError("Nostr live readback entries must be objects")
+        event = entry.get("event")
+        if not isinstance(event, dict):
+            raise ValueError("Nostr live readback entry requires event object")
+        if event.get("kind") != REPOSITORY_KIND:
+            raise ValueError("Loop 29 live import currently accepts only NIP-34 repository announcement events")
+        if event.get("id") != entry.get("source_event_id"):
+            raise ValueError("live readback source_event_id must match event.id")
+        if event.get("pubkey") != entry.get("source_pubkey"):
+            raise ValueError("live readback source_pubkey must match event.pubkey")
+
+        report = live_event_conformance_report(event, label=entry.get("label", f"live_readback_{index}"))
+        if not report["event_id_matches_recorded_id"]:
+            raise ValueError("live readback event id does not match local NIP-01 recomputation")
+        repo = parse_repository_announcement(event)
+        readback_relays = entry.get("readback_verified_relays", [])
+        if not isinstance(readback_relays, list) or not readback_relays:
+            raise ValueError("live readback entry requires non-empty readback_verified_relays")
+        parsed_events.append(
+            {
+                "label": entry.get("label", f"live_readback_{index}"),
+                "event_id": event.get("id"),
+                "kind": event.get("kind"),
+                "pubkey": event.get("pubkey"),
+                "project": repo["project"],
+                "clone_urls": repo["clone_urls"],
+                "relay_hints": repo["substrates"]["nip34"]["relay_hints"],
+                "topics": repo["substrates"]["nip34"].get("topics", []),
+                "publish_relays": entry.get("publish_relays", []),
+                "readback_verified_relays": readback_relays,
+                "readback_field_match": bool(entry.get("readback_field_match")),
+                "local_signature_verified_by_nak": bool(entry.get("local_signature_verified_by_nak")),
+                "readback_signature_verified_by_nak": bool(entry.get("readback_signature_verified_by_nak")),
+                "selected_relay_readback_verified": bool(entry.get("selected_relay_readback_verified")),
+                "new_event_published_in_loop_29": bool(entry.get("new_event_published_in_loop_29")),
+                "non_claims": entry.get("non_claims", []),
+            }
+        )
+        reports.append(report)
+        states.append(
+            live_verification_state(
+                scope="nip34.adapter.live_repository_announcement_readback",
+                state="live-verified",
+                evidence=(
+                    f"Imported Loop 25 event {event.get('id')} as selected-relay readback evidence from "
+                    f"{', '.join(readback_relays)}; local event-id recomputation matched recorded id."
+                ),
+                claim_boundary=fixture.get(
+                    "claim_boundary",
+                    "Selected-relay readback evidence only; no durability, global propagation, identity-trust, security, production-readiness, or full NIP-34 compatibility claim.",
+                ),
+                notes="No relay publish/fetch/signing was performed in Loop 29; this row imports already-recorded evidence only.",
+            )
+        )
+
+    return {
+        "schema_version": fixture.get("schema_version"),
+        "loop": fixture.get("loop"),
+        "source_evidence": fixture.get("source_evidence"),
+        "scope": fixture.get("scope"),
+        "claim_boundary": fixture.get("claim_boundary"),
+        "events": parsed_events,
+        "conformance_reports": reports,
+        "verification_states": states,
+    }
+
+
 def export_fixture_pair(
     repo_event: dict[str, Any],
     collaboration_fixture: dict[str, Any],
     state_status_fixture: dict[str, Any] | None = None,
+    live_readback_fixture: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Round-trip local NIP-34 fixtures back to registry-shaped concepts."""
     repo = parse_repository_announcement(repo_event)
     collaboration = parse_collaboration_fixture(collaboration_fixture)
     state_status = parse_state_status_fixture(state_status_fixture) if state_status_fixture else None
+    live_readback = parse_live_readback_fixture(live_readback_fixture) if live_readback_fixture else None
 
     conformance_reports = [
         conformance_report(repo_event, label="repository_announcement"),
@@ -575,19 +722,32 @@ def export_fixture_pair(
         exported["status_checks"] = state_status["status_checks"]
         exported["dry_run"]["state_status"] = state_status["dry_run"]["state_status"]
         exported["dry_run"]["repository_state_event"] = state_status["dry_run"]["repository_state_event"]
+    if live_readback:
+        exported["live_readback"] = {
+            "schema_version": live_readback["schema_version"],
+            "loop": live_readback["loop"],
+            "source_evidence": live_readback["source_evidence"],
+            "scope": live_readback["scope"],
+            "claim_boundary": live_readback["claim_boundary"],
+            "events": live_readback["events"],
+            "conformance_reports": live_readback["conformance_reports"],
+        }
+        exported["verification_states"].extend(live_readback["verification_states"])
     return exported
 
 
 def main(argv: list[str]) -> int:
-    if len(argv) not in {3, 4}:
+    if len(argv) not in {3, 4, 5}:
         print(
             "usage: nip34_adapter.py fixtures/nostr-repo-announcement.json "
-            "fixtures/nostr-collaboration-events.json [fixtures/nostr-repo-state-status.json]",
+            "fixtures/nostr-collaboration-events.json [fixtures/nostr-repo-state-status.json] "
+            "[fixtures/nostr-live-readback-events.json]",
             file=sys.stderr,
         )
         return 2
-    state_status = load_json(argv[3]) if len(argv) == 4 else None
-    exported = export_fixture_pair(load_json(argv[1]), load_json(argv[2]), state_status)
+    state_status = load_json(argv[3]) if len(argv) >= 4 else None
+    live_readback = load_json(argv[4]) if len(argv) == 5 else None
+    exported = export_fixture_pair(load_json(argv[1]), load_json(argv[2]), state_status, live_readback)
     print(json.dumps(exported, indent=2, sort_keys=True))
     return 0
 

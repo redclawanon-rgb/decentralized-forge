@@ -212,6 +212,17 @@ This is selected/limited relay readback evidence only. It is not a durability gu
 
 ## Loop 29 — NIP-34 live-event adapter import
 
+**Status:** Complete 2026-06-22 as selected-relay readback evidence import; no new Nostr publish/fetch/signing.
+
+**Result:**
+
+1. Added `fixtures/nostr-live-readback-events.json` referencing Loop 25 evidence.
+2. Updated `scripts/nip34_adapter.py` to import the recorded kind `30617` live event separately from dry-run fixtures, recompute the NIP-01 event ID locally, and emit a narrowly scoped `live-verified` adapter row for selected-relay readback only.
+3. Updated `scripts/render_project_page.py`, static preflight, tests, checklist, and `output/demo-project.html` to show **NIP-34 live readback import** without broad compatibility claims.
+4. No new relay publish, relay fetch, signing, key read, or live network action occurred in Loop 29.
+
+**Boundary preserved:** selected-relay readback evidence only. This does not verify durability, global propagation, censorship resistance, identity trust, security, production readiness, full NIP-34/forge compatibility, issue/patch readback, repository-state readback, status semantics, relay discovery, subscription behavior, deletion/replacement behavior, or multi-client behavior.
+
 **Goal:** Convert the verified live Nostr event/readback evidence into the local NIP-34 adapter path without pretending it is full forge compatibility.
 
 **Approval needed:** none if using existing evidence only; Permission E if a new event is published for adapter coverage.

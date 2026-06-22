@@ -705,6 +705,28 @@ Boundaries:
 - This remains selected/limited relay evidence only. It is not a durability guarantee, global propagation proof, censorship-resistance proof, identity-trust proof, production-readiness claim, security guarantee, or full NIP-34/forge compatibility claim.
 - No spending, paid/authenticated relay, production/private personal key, direct outreach, or Radicle public-network action occurred.
 
+### Loop 29: NIP-34 live-event adapter import
+
+Status: **complete as selected-relay readback evidence import; no new Nostr publish/fetch/signing**.
+
+Outputs:
+
+- `fixtures/nostr-live-readback-events.json` records the Loop 25 kind `30617` event as a live-readback adapter fixture with explicit non-claims and missing-semantics notes.
+- `scripts/nip34_adapter.py` imports the recorded live event separately from dry-run fixtures, recomputes the NIP-01 event ID locally, and emits one `live-verified` adapter row scoped only to selected-relay readback evidence.
+- `scripts/render_project_page.py` and `output/demo-project.html` now render a **NIP-34 live readback import** subsection separate from the dry-run fixture adapter.
+- `scripts/preflight_static_artifact.py`, `fixtures/live-adapter-replay-checklist.json`, and `tests/test_registry_fixture.py` were updated for the Loop 29 import.
+
+Verified evidence:
+
+- The imported event ID is `4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba`; local NIP-01 event-id recomputation in `scripts/nip34_adapter.py` matches the recorded ID.
+- Source evidence remains `evidence/nostr-loop25-publish-readback-2026-06-22.json`; Loop 29 did not perform any new relay publish, relay fetch, or signing.
+
+Boundaries:
+
+- Loop 29 imports only the already-recorded Loop 25 selected-relay readback evidence.
+- It does not verify durability, global propagation, censorship resistance, identity trust, security, production readiness, full NIP-34/forge compatibility, issue/patch readback, repository-state readback, status semantics, relay discovery, subscription behavior, deletion/replacement behavior, or multi-client behavior.
+- No spending, paid infrastructure, production/private personal key use, direct outreach, Radicle public-network action, Filecoin/Arweave wallet/pinning/storage action, or new Nostr event occurred.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -737,7 +759,7 @@ Boundaries:
 
 ## Next recommended loop
 
-**Loop 29: NIP-34 live-event adapter import.**
+**Loop 30: Radicle public-network gate plan/preflight.**
 
 The next loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

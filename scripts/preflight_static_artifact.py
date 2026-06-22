@@ -23,6 +23,7 @@ NIP34_REPO_FIXTURE = ROOT / "fixtures" / "nostr-repo-announcement.json"
 NIP34_COLLAB_FIXTURE = ROOT / "fixtures" / "nostr-collaboration-events.json"
 NIP34_STATE_STATUS_FIXTURE = ROOT / "fixtures" / "nostr-repo-state-status.json"
 LIVE_EVIDENCE_INDEX = ROOT / "fixtures" / "live-evidence-index.json"
+NIP34_LIVE_READBACK_FIXTURE = ROOT / "fixtures" / "nostr-live-readback-events.json"
 
 RENDER_COMMAND = [
     sys.executable,
@@ -35,6 +36,8 @@ RENDER_COMMAND = [
     str(NIP34_COLLAB_FIXTURE),
     "--nip34-state-status-fixture",
     str(NIP34_STATE_STATUS_FIXTURE),
+    "--nip34-live-readback-fixture",
+    str(NIP34_LIVE_READBACK_FIXTURE),
     "--live-evidence-index",
     str(LIVE_EVIDENCE_INDEX),
 ]
@@ -46,9 +49,12 @@ REQUIRED_PHRASES = [
     "Registry verification states summary",
     "Live-verified row count</dt><dd><code>0</code></dd>",
     "NIP-34 fixture adapter",
-    "No relay publishing, signing, fixture ID replacement, relay fetching, or live verification is performed or claimed",
+    "Dry-run rows do not perform relay publishing, signing, fixture ID replacement, relay fetching, or live verification",
     "Adapter verification states summary",
     "Local NIP-34 conformance summary",
+    "NIP-34 live readback import",
+    "Selected-relay readback only",
+    "Loop 29 performs no new relay publish/fetch/signing",
     "Possible event ID (local reference only)",
     "Repository state fixture",
     "Fixture-only status/check projections",

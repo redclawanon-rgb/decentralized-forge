@@ -1,0 +1,55 @@
+{
+  "schema_version": "decentralized-forge.nostr-live-readback-events.v1",
+  "loop": 29,
+  "created_at": "2026-06-22",
+  "source_evidence": "evidence/nostr-loop25-publish-readback-2026-06-22.json",
+  "source_signed_preview": "evidence/nostr-loop24-signed-event-preview-2026-06-22.json",
+  "scope": "selected-relay-readback-only",
+  "claim_boundary": "Imports one verified Loop 25 NIP-34 repository announcement event into the local adapter as selected-relay readback evidence only. This is not durability, global propagation, identity trust, production readiness, security, or full NIP-34/forge compatibility evidence.",
+  "events": [
+    {
+      "label": "loop25-live-repository-announcement",
+      "source_event_id": "4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba",
+      "source_kind": 30617,
+      "source_pubkey": "6669423ee76d9d5adc8e81df79286c2569edbe5ab84f3e35043db71a54eff5c8",
+      "event": {
+        "kind": 30617,
+        "id": "4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba",
+        "pubkey": "6669423ee76d9d5adc8e81df79286c2569edbe5ab84f3e35043db71a54eff5c8",
+        "created_at": 1782142614,
+        "tags": [
+          ["d", "decentralized-forge-live-adapter-prototype-2026-06-22"],
+          ["name", "Decentralized Forge prototype live-adapter test"],
+          ["description", "Prototype/research NIP-34 repository announcement for Decentralized Forge live-adapter publish/readback verification."],
+          ["web", "https://github.com/redclawanon-rgb/decentralized-forge"],
+          ["clone", "https://github.com/redclawanon-rgb/decentralized-forge.git"],
+          ["relays", "wss://relay.damus.io"],
+          ["relays", "wss://nos.lol"],
+          ["t", "decentralized-forge"],
+          ["t", "prototype"],
+          ["t", "research"],
+          ["t", "live-adapter-test"]
+        ],
+        "content": "Decentralized Forge prototype/research relay test. This event announces a local/static prototype and live-adapter evidence paths only. It does not claim production readiness, durability, censorship resistance, global propagation, identity trust, security guarantees, or full protocol compatibility.",
+        "sig": "109b5458e25a36c84ef633480d20c179b58f0a6a3df9576304577fc15ae44edc9f4e06f03c956ef0aa0828d75b6dabeb55fb7c9e3ebe03689c828df2753847c3"
+      },
+      "publish_relays": ["wss://relay.damus.io", "wss://nos.lol"],
+      "readback_verified_relays": ["wss://relay.damus.io", "wss://nos.lol"],
+      "readback_field_match": true,
+      "local_signature_verified_by_nak": true,
+      "readback_signature_verified_by_nak": true,
+      "selected_relay_readback_verified": true,
+      "new_event_published_in_loop_29": false,
+      "non_claims": [
+        "not a durability guarantee",
+        "not proof of global propagation",
+        "not proof of censorship resistance",
+        "not proof of identity trust",
+        "not production readiness",
+        "not a security guarantee",
+        "not full NIP-34 or forge protocol compatibility",
+        "does not verify NIP-34 issue, patch, repository-state, status, relay-discovery, subscription, deletion, replacement, or multi-client behavior"
+      ]
+    }
+  ]
+}

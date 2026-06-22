@@ -420,6 +420,55 @@ def render_nip34_conformance_summary(conformance: dict) -> str:
     )
 
 
+def render_nip34_live_readback_event(event: dict) -> str:
+    project = event.get("project", {}) if isinstance(event.get("project", {}), dict) else {}
+    return (
+        '<article class="adapter-item live-readback-event">'
+        f"<h4>Live readback event: {esc(event.get('label', 'event'))}</h4>"
+        + '<dl class="metadata">'
+        + field("Event ID", event.get("event_id"))
+        + field("Kind", event.get("kind"))
+        + field("Pubkey", event.get("pubkey"))
+        + field("Imported project ID", project.get("id"))
+        + field("Imported project name", project.get("name"), code=False)
+        + field("Readback verified relays", json.dumps(event.get("readback_verified_relays", []), sort_keys=True))
+        + field("Publish relays", json.dumps(event.get("publish_relays", []), sort_keys=True))
+        + f"<dt>Selected-relay readback verified</dt><dd>{yes_no(event.get('selected_relay_readback_verified'))}</dd>"
+        + f"<dt>Readback fields match</dt><dd>{yes_no(event.get('readback_field_match'))}</dd>"
+        + f"<dt>Local signature verified by nak</dt><dd>{yes_no(event.get('local_signature_verified_by_nak'))}</dd>"
+        + f"<dt>Readback signature verified by nak</dt><dd>{yes_no(event.get('readback_signature_verified_by_nak'))}</dd>"
+        + f"<dt>New event published in Loop 29</dt><dd>{yes_no(event.get('new_event_published_in_loop_29'))}</dd>"
+        + "</dl>"
+        + "<h5>Live readback non-claims</h5>"
+        + list_items([esc(non_claim) for non_claim in event.get("non_claims", [])])
+        + "</article>"
+    )
+
+
+def render_nip34_live_readback_section(live_readback: dict) -> str:
+    if not isinstance(live_readback, dict) or not live_readback:
+        return ""
+    events = [event for event in live_readback.get("events", []) if isinstance(event, dict)]
+    reports = [report for report in live_readback.get("conformance_reports", []) if isinstance(report, dict)]
+    return (
+        "<h3>NIP-34 live readback import</h3>"
+        '<p class="notice"><strong>Selected-relay readback only:</strong> this subsection imports recorded Loop 25 Nostr evidence. '
+        "It is separate from dry-run fixtures and does not claim durability, global propagation, censorship resistance, identity trust, security guarantees, production readiness, or full NIP-34/forge compatibility. "
+        "Loop 29 performs no new relay publish/fetch/signing.</p>"
+        + '<dl class="metadata">'
+        + field("Live fixture schema", live_readback.get("schema_version"))
+        + field("Source evidence", live_readback.get("source_evidence"), code=False)
+        + field("Scope", live_readback.get("scope"))
+        + field("Claim boundary", live_readback.get("claim_boundary"), code=False)
+        + field("Live readback event count", len(events))
+        + field("Live readback conformance report count", len(reports))
+        + "</dl>"
+        + list_items([render_nip34_live_readback_event(event) for event in events])
+        + "<h4>Live readback conformance reports</h4>"
+        + list_items([render_nip34_conformance_report(report) for report in reports])
+    )
+
+
 def render_json_block(value: object) -> str:
     return f"<pre><code>{esc(json.dumps(value, indent=2, sort_keys=True))}</code></pre>"
 
@@ -515,6 +564,7 @@ def render_nip34_adapter_section(exported: dict | None) -> str:
     repository_state_event = dry_run.get("repository_state_event", {}) if isinstance(dry_run, dict) else {}
     conformance = dry_run.get("conformance", {}) if isinstance(dry_run, dict) else {}
     adapter_verification_states = exported.get("verification_states", [])
+    live_readback = exported.get("live_readback", {}) if isinstance(exported.get("live_readback", {}), dict) else {}
 
     issue_items = [render_nip34_adapter_item("Issue", issue) for issue in issues]
     patch_items = [render_nip34_adapter_item("Patch", patch) for patch in patches]
@@ -525,9 +575,9 @@ def render_nip34_adapter_section(exported: dict | None) -> str:
         "<h2>NIP-34 fixture adapter</h2>"
         '<p class="notice"><strong>NIP-34 local parser/conformance output:</strong> '
         "this section is generated from local NIP-34 fixture files via <code>scripts/nip34_adapter.py</code>. "
-        "No relay publishing, signing, fixture ID replacement, relay fetching, or live verification is performed or claimed; "
+        "Dry-run rows do not perform relay publishing, signing, fixture ID replacement, relay fetching, or live verification; "
         "possible_event_id values are local reference hashes only, not signed or relay-accepted event ID claims. "
-        "Dry-run placeholders are displayed so these fixtures cannot be mistaken for live Nostr events.</p>"
+        "If a live readback fixture is supplied, it is displayed separately as selected-relay evidence only. Dry-run placeholders remain visible so fixture rows cannot be mistaken for live Nostr events.</p>"
         '<dl class="metadata">'
         + field("Repo ID", project.get("id"))
         + field("Repo name", project.get("name"), code=False)
@@ -542,6 +592,7 @@ def render_nip34_adapter_section(exported: dict | None) -> str:
         + "</dl>"
         + render_nip34_adapter_verification_states(adapter_verification_states)
         + render_nip34_conformance_summary(conformance)
+        + render_nip34_live_readback_section(live_readback)
         + "<h3>Repository state fixture</h3>"
         + '<dl class="metadata">'
         + field("State kind", repository_state.get("kind"))
@@ -670,21 +721,26 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--nip34-repo-fixture", type=Path, help="Optional local NIP-34 repository announcement fixture JSON")
     parser.add_argument("--nip34-collaboration-fixture", type=Path, help="Optional local NIP-34 collaboration events fixture JSON")
     parser.add_argument("--nip34-state-status-fixture", type=Path, help="Optional local NIP-34 repository state/status fixture JSON")
+    parser.add_argument("--nip34-live-readback-fixture", type=Path, help="Optional recorded NIP-34 live readback evidence fixture JSON")
     parser.add_argument("--live-evidence-index", type=Path, help="Optional live/local evidence index JSON")
     args = parser.parse_args(argv)
     if bool(args.nip34_repo_fixture) != bool(args.nip34_collaboration_fixture):
         parser.error("--nip34-repo-fixture and --nip34-collaboration-fixture must be provided together")
     if args.nip34_state_status_fixture and not (args.nip34_repo_fixture and args.nip34_collaboration_fixture):
         parser.error("--nip34-state-status-fixture requires the paired NIP-34 repository and collaboration fixtures")
+    if args.nip34_live_readback_fixture and not (args.nip34_repo_fixture and args.nip34_collaboration_fixture):
+        parser.error("--nip34-live-readback-fixture requires the paired NIP-34 repository and collaboration fixtures")
     try:
         data = load_registry(args.registry)
         nip34_export = None
         if args.nip34_repo_fixture and args.nip34_collaboration_fixture:
             state_status_fixture = nip34_adapter.load_json(args.nip34_state_status_fixture) if args.nip34_state_status_fixture else None
+            live_readback_fixture = nip34_adapter.load_json(args.nip34_live_readback_fixture) if args.nip34_live_readback_fixture else None
             nip34_export = nip34_adapter.export_fixture_pair(
                 nip34_adapter.load_json(args.nip34_repo_fixture),
                 nip34_adapter.load_json(args.nip34_collaboration_fixture),
                 state_status_fixture,
+                live_readback_fixture,
             )
         live_evidence_index = load_live_evidence_index(args.live_evidence_index) if args.live_evidence_index else None
         rendered = render_registry(data, nip34_export, live_evidence_index)
