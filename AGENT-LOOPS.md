@@ -422,6 +422,10 @@ No claim may be upgraded to live-verified without command/network evidence from 
 
 Posting the update publicly requires separate public-post approval unless Eric explicitly grants it with the permission bundle. No direct outreach or unsupported security/durability/censorship-proof claims.
 
+**Current result:**
+
+Completed as a public project-channel update. Drafted `docs/public-update-drafts/2026-06-22-live-adapter-evidence-update.md` and posted it to GitHub Discussions / Announcements: https://github.com/redclawanon-rgb/decentralized-forge/discussions/6. The update is explicitly research/prototype-labeled and distinguishes Radicle local CLI/private replay from Nostr selected-relay acceptance/readback evidence. No direct outreach, spending, production/private key use, Radicle public-network action, paid storage/wallet action, or unsupported durability/global-propagation/censorship-resistance/security/production-readiness/full-compatibility claim occurred.
+
 ## Loop 28: Nostr readback persistence/divergence check
 
 **Goal:** Re-read the Loop 25 event after time has passed and record whether selected relays still return the same event.

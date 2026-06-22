@@ -79,6 +79,8 @@ Loop 25 is complete as **selected public Nostr relay acceptance/readback for one
 
 Loop 26 is complete as **bounded live/local evidence import into fixtures/renderer**. Evidence/index is `fixtures/live-evidence-index.json`; renderer support is `scripts/render_project_page.py --live-evidence-index`; static preflight now includes this index and `output/demo-project.html` was regenerated. It imports Loop 23 Radicle as `local-cli-verified` only and Loop 25 Nostr as `selected-relay-readback-verified` only. No new live network action, Nostr publish/readback, Radicle node/seed/sync/publish/remote clone, spending, production/private personal key use, direct outreach, or unsupported durability/global-propagation/censorship-resistance/security/production-readiness/full-compatibility claim occurred.
 
+Loop 27 is complete as a **prototype/research-labeled public project-channel update**. Draft is `docs/public-update-drafts/2026-06-22-live-adapter-evidence-update.md`; posted discussion is https://github.com/redclawanon-rgb/decentralized-forge/discussions/6. The update keeps claims narrow: Radicle local CLI/private replay only and Nostr selected-relay acceptance/readback only. No direct outreach, spending, paid infrastructure, production/private personal key use, Radicle public-network action, paid storage/wallet action, or unsupported durability/global-propagation/censorship-resistance/security/production-readiness/full-compatibility claim occurred.
+
 Loop 4 outputs:
 
 - `docs/radicle-mapping.md`
@@ -198,4 +200,4 @@ Loop 20 outputs:
 
 ## Current next recommended loop
 
-**Next:** Loop 27 is public project update draft/post. Loop 26 is complete as bounded live/local evidence import (`fixtures/live-evidence-index.json`, renderer/preflight/test updates, regenerated `output/demo-project.html`). The remaining loop set is planned in `docs/next-evidence-and-interoperability-loops.md`: Loop 27 public update draft/post, Loop 28 Nostr readback persistence/divergence check, Loop 29 NIP-34 live-event adapter import, Loop 30 Radicle public-network preflight plan, Loop 31 public storage/IPFS evidence gate plan, and Loop 32 controller/report consolidation. Eric approved D + E + F + H on 2026-06-22 via Telegram voice and explicitly held off on G; public Radicle seed/remote-clone smoke remains blocked until separately approved.
+**Next:** Loop 28 is Nostr readback persistence/divergence check. Loop 27 is complete as GitHub Discussion #6. The remaining loop set is planned in `docs/next-evidence-and-interoperability-loops.md`: Loop 28 Nostr readback persistence/divergence check, Loop 29 NIP-34 live-event adapter import, Loop 30 Radicle public-network preflight plan, Loop 31 public storage/IPFS evidence gate plan, and Loop 32 controller/report consolidation. Eric approved D + E + F + H on 2026-06-22 via Telegram voice and explicitly held off on G; public Radicle seed/remote-clone smoke remains blocked until separately approved.

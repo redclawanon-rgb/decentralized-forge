@@ -665,6 +665,24 @@ Boundaries:
 - Nostr is only selected-relay acceptance/readback verified for one exact prototype event on `wss://relay.damus.io` and `wss://nos.lol`.
 - No new Nostr publish/readback, Radicle node start, Radicle seed/publish/sync/remote clone, public Radicle network replication, spending, paid infrastructure, production/private personal key use, direct outreach, wallet/pinning/storage action, or unsupported durability/global-propagation/censorship-resistance/security/production-readiness/full-compatibility claim occurred.
 
+### Loop 27: Public project update draft/post
+
+Status: **complete as a prototype/research-labeled public project-channel update**.
+
+Outputs:
+
+- `docs/public-update-drafts/2026-06-22-live-adapter-evidence-update.md` records the exact public update body and posting result.
+- GitHub Discussion #6 was created in the project Announcements channel: https://github.com/redclawanon-rgb/decentralized-forge/discussions/6.
+
+Verified evidence:
+
+- `gh api graphql ... createDiscussion` returned Discussion #6 with the expected title and URL.
+
+Boundaries:
+
+- The update preserves narrow claims: Radicle remains local CLI/private replay only; Nostr remains selected-relay acceptance/readback only for the exact prototype event.
+- No direct outreach, spending, paid infrastructure, production/private personal key use, Radicle node/seed/publish/sync/remote clone, Filecoin/Arweave wallet/pinning/storage action, or unsupported durability/global-propagation/censorship-resistance/security/production-readiness/full-compatibility claim occurred.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -697,12 +715,12 @@ Boundaries:
 
 ## Next recommended loop
 
-**Loop 27: Public project update draft/post.**
+**Loop 28: Nostr readback persistence/divergence check.**
 
 The next loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 
 - Loop 26: Live evidence import into adapter/renderer — complete as `fixtures/live-evidence-index.json` plus renderer/preflight/test updates; no new live network action.
-- Loop 27: Public project update draft/post — next; approved if accurate, non-spammy, and prototype/research-labeled.
+- Loop 27: Public project update draft/post — complete as GitHub Discussion #6: https://github.com/redclawanon-rgb/decentralized-forge/discussions/6.
 - Loop 28: Nostr readback persistence/divergence check — re-read Loop 25 event from selected relays; extra relays or additional publish need Permission E.
 - Loop 29: NIP-34 live-event adapter import — import selected-relay readback evidence without claiming full protocol compatibility.
 - Loop 30: Radicle public-network gate plan — Permission F for preflight only; Permission G required before public seed/publish/sync/node/remote clone.

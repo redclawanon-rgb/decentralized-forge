@@ -120,6 +120,19 @@ No claim was upgraded beyond Loop 23/25 evidence. No new Nostr publish/readback,
 
 ## Loop 27 — Public project update draft/post
 
+**Status:** Complete 2026-06-22 as a prototype/research-labeled public GitHub Discussion update.
+
+**Result:**
+
+1. Drafted `docs/public-update-drafts/2026-06-22-live-adapter-evidence-update.md`.
+2. Posted it to the public project GitHub Discussions / Announcements channel.
+3. Posted URL: <https://github.com/redclawanon-rgb/decentralized-forge/discussions/6>.
+4. Wording preserves narrow claims: Radicle local CLI/private replay only; Nostr selected-relay acceptance/readback only; no durability/global-propagation/censorship-resistance/security/production-readiness/full-compatibility claim.
+
+**Boundary preserved:**
+
+No direct outreach, spending, paid infrastructure, production/private personal key use, Radicle node/seed/publish/sync/remote clone, Filecoin/Arweave wallet/pinning/storage action, or unsupported claim occurred.
+
 **Goal:** Publish or at least draft a concise public project update that accurately reports the prototype/research evidence and next gates.
 
 **Approval needed:** existing public update approval is sufficient if the update is accurate, non-spammy, and prototype/research-labeled. If confidence is low, draft locally only and ask Eric.
