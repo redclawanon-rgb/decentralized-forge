@@ -9,7 +9,7 @@ This document maps the local project registry fixture to NIP-34-style event bodi
 - No event is published to public relays.
 - Relay URLs in fixtures are examples/hints only.
 
-Loop 11 adds a stdlib-only local parser/export seam in `scripts/nip34_adapter.py`. The adapter reads the repository announcement and collaboration fixtures and round-trips them back into registry-shaped concepts for tests and future UI integration. Loop 12 wires that adapter into the static renderer through paired optional fixture arguments. Neither path computes Nostr event IDs, signs events, verifies keys, connects to relays, fetches relay state, or publishes anything.
+Loop 11 adds a stdlib-only local parser/export seam in `scripts/nip34_adapter.py`. The adapter reads the repository announcement and collaboration fixtures and round-trips them back into registry-shaped concepts for tests and future UI integration. Loop 12 wires that adapter into the static renderer through paired optional fixture arguments. Loop 13 adds a local repository state/status fixture generated from the recorded local Git HEAD at fixture creation time; later commits may make that recorded SHA an ancestor rather than current `HEAD`. None of these paths compute Nostr event IDs, sign events, verify keys, connect to relays, fetch relay state, or publish anything.
 
 Loop 5 local relay/tool check:
 
@@ -35,7 +35,7 @@ NIP-34 defines repository announcements as addressable events. The MVP registry 
 
 ## Repository state announcement: `kind: 30618`
 
-Later fixture target. This should map Git refs to event tags:
+Loop 13 adds `fixtures/nostr-repo-state-status.json` with a dry-run repository state event generated from `git rev-parse HEAD` in this repository at fixture creation time. In this fixture, the recorded source commit is `32f88a7a42498328a515e4763e28d84216420a98`; after subsequent commits, it is expected to be an ancestor rather than the current `HEAD`.
 
 ```json
 {
@@ -44,12 +44,21 @@ Later fixture target. This should map Git refs to event tags:
   "tags": [
     ["d", "demo-project"],
     ["HEAD", "ref: refs/heads/main"],
-    ["refs/heads/main", "<commit-sha>"]
+    ["refs/heads/main", "32f88a7a42498328a515e4763e28d84216420a98"],
+    ["a", "30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project"]
   ]
 }
 ```
 
-Acceptance gate: generate this only from an actual local Git commit SHA.
+Acceptance gate: generate this only from an actual local Git commit SHA. The fixture keeps obvious placeholder `id`, `sig`, and `pubkey` values and records `published: false` through the adapter output. It is local state-shape evidence only, not a relay-published repository state.
+
+`scripts/nip34_adapter.py` maps the fixture to:
+
+- `repository_state.kind` = `30618`
+- `repository_state.repo_id_tag` from the `d` tag
+- `repository_state.head`, `head_ref`, and `head_commit` from the `HEAD` and ref tags
+- `repository_state.refs` as a local map of Git refs to commit SHAs
+- `dry_run.repository_state_event` with placeholder id/signature/pubkey and `published: false`
 
 ## Issues
 
@@ -117,10 +126,11 @@ Loop 12 extends `scripts/render_project_page.py` with paired optional arguments:
 ```sh
 python3 scripts/render_project_page.py fixtures/example-project.registry.json output/demo-project.html \
   --nip34-repo-fixture fixtures/nostr-repo-announcement.json \
-  --nip34-collaboration-fixture fixtures/nostr-collaboration-events.json
+  --nip34-collaboration-fixture fixtures/nostr-collaboration-events.json \
+  --nip34-state-status-fixture fixtures/nostr-repo-state-status.json
 ```
 
-When both arguments are provided, the renderer imports the fixture pair through `scripts/nip34_adapter.py` and adds a **NIP-34 fixture adapter** section to the generated HTML. The section displays repository id/name/kind, relay hints, dry-run publish status, imported issue and patch counts/titles/statuses/summaries/source kinds, placeholder event IDs/signatures, relay-tool fallback, synthetic key policy, and NIP-35 boundary fields.
+When the repository and collaboration arguments are provided, the renderer imports the fixture pair through `scripts/nip34_adapter.py` and adds a **NIP-34 fixture adapter** section to the generated HTML. Loop 13's optional state/status argument extends that section with the `kind: 30618` state, HEAD ref/commit, local refs, fixture-only status/check projections, and explicit state/status non-claims. The section displays repository id/name/kind, relay hints, dry-run publish status, imported issue and patch counts/titles/statuses/summaries/source kinds, placeholder event IDs/signatures, relay-tool fallback, synthetic key policy, NIP-35 boundary fields, and repository state/status dry-run fields.
 
 The arguments must be provided together so the renderer cannot accidentally display a partial repository or collaboration import. The output is labeled as local parser/conformance data and explicitly states that no relay publishing, signing, event ID computation, relay fetching, or live verification is performed or claimed.
 
@@ -132,13 +142,19 @@ Loop 6 keeps artifact distribution metadata in the project registry instead of i
 
 ## Status/check events
 
-The local registry can later model patch checks/statuses. Candidate fields:
+Loop 13 also records fixture-only status/check projections in `fixtures/nostr-repo-state-status.json`. They are deliberately **not** claimed as standardized/live NIP status behavior; they preserve the existing synthetic CI/provenance names and conclusions while tying them to the local repository state commit.
 
-- `target_patch_id`
-- `state`: pending/success/failure/error
-- `description`
-- `log_uri`
-- `attestation_uri`
+Current local fields:
+
+- `source_ci_check_id`: existing registry synthetic CI check id (`local-fake-ci-001`, `local-fake-ci-002`)
+- `target_type`: `repository_state`
+- `target_ref`: `refs/heads/main`
+- `target_commit`: the same recorded local Git SHA used in the `kind: 30618` event
+- `provider`: `local-fixture-projection`
+- `status`/`conclusion`: copied as local fixture display fields
+- `synthetic: true` and `published: false`
+
+The fixture has explicit non-claims for no relay publish/fetch, no event ID computation, no signing/private keys, no public CI status creation, and no live NIP status semantics claim.
 
 ## Open decisions before public NIP-34 publishing
 

@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 REPOSITORY_KIND = 30617
+REPOSITORY_STATE_KIND = 30618
 ISSUE_KIND = 1621
 PATCH_KIND = 1617
 
@@ -215,10 +216,117 @@ def parse_collaboration_fixture(fixture: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def export_fixture_pair(repo_event: dict[str, Any], collaboration_fixture: dict[str, Any]) -> dict[str, Any]:
+def parse_repository_state_event(event: dict[str, Any], repo_address: str | None = None) -> dict[str, Any]:
+    """Map a local NIP-34 repository state fixture to registry concepts.
+
+    This accepts only the dry-run fixture shape. It records refs and the HEAD
+    symbolic ref but does not verify relay state, sign anything, or infer live
+    NIP behavior beyond the tag values present in the JSON file.
+    """
+    if event.get("kind") != REPOSITORY_STATE_KIND:
+        raise ValueError(f"expected NIP-34 repository state kind {REPOSITORY_STATE_KIND}")
+
+    tags = tags_by_name(event)
+    repo_id = _single_value(tags, "d")
+    linked_repos = [tag[1] for tag in tags.get("a", [])]
+    if repo_address and linked_repos and repo_address not in linked_repos:
+        raise ValueError(f"state event does not reference repository address {repo_address!r}")
+
+    refs: dict[str, str] = {}
+    for tag_name, tag_values in tags.items():
+        if tag_name.startswith("refs/"):
+            refs[tag_name] = tag_values[0][1]
+
+    head = _single_value(tags, "HEAD", required=False) or ""
+    head_ref = head.removeprefix("ref: ") if head.startswith("ref: ") else head
+    head_commit = refs.get(head_ref, "") if head_ref else ""
+
+    return {
+        "kind": REPOSITORY_STATE_KIND,
+        "repo_id_tag": repo_id,
+        "repository_address": linked_repos[0] if linked_repos else repo_address or "",
+        "head": head,
+        "head_ref": head_ref,
+        "head_commit": head_commit,
+        "refs": refs,
+        "fixture_name": event.get("fixture_name", ""),
+    }
+
+
+def parse_state_status_fixture(fixture: dict[str, Any]) -> dict[str, Any]:
+    """Parse the local repository state/status dry-run fixture."""
+    state_event = fixture.get("repository_state_event")
+    if not isinstance(state_event, dict):
+        raise ValueError("state/status fixture requires repository_state_event")
+    repo_address = fixture.get("repo_address")
+    if repo_address is not None and not isinstance(repo_address, str):
+        raise ValueError("repo_address must be a string when present")
+
+    state = parse_repository_state_event(state_event, repo_address)
+    source_git_head = fixture.get("source_git_head", "")
+    if source_git_head and state["head_commit"] and source_git_head != state["head_commit"]:
+        raise ValueError("source_git_head does not match repository state HEAD commit")
+
+    checks = fixture.get("status_checks", [])
+    if not isinstance(checks, list):
+        raise ValueError("status_checks must be a list")
+    parsed_checks: list[dict[str, Any]] = []
+    for check in checks:
+        if not isinstance(check, dict):
+            raise ValueError("status check entries must be objects")
+        target_commit = check.get("target_commit", "")
+        target_ref = check.get("target_ref", "")
+        if target_commit and state["head_commit"] and target_commit != state["head_commit"]:
+            raise ValueError("status check target_commit does not match repository state HEAD commit")
+        if target_ref and state["head_ref"] and target_ref != state["head_ref"]:
+            raise ValueError("status check target_ref does not match repository state HEAD ref")
+        parsed_checks.append(
+            {
+                "fixture_name": check.get("fixture_name", ""),
+                "mapped_registry_path": check.get("mapped_registry_path", ""),
+                "source_ci_check_id": check.get("source_ci_check_id", ""),
+                "target_type": check.get("target_type", ""),
+                "target_commit": target_commit,
+                "target_ref": target_ref,
+                "name": check.get("name", ""),
+                "provider": check.get("provider", ""),
+                "status": check.get("status", ""),
+                "conclusion": check.get("conclusion", ""),
+                "synthetic": bool(check.get("synthetic", False)),
+                "published": bool(check.get("published", False)),
+                "notes": check.get("notes", ""),
+            }
+        )
+
+    return {
+        "repository_state": state,
+        "status_checks": parsed_checks,
+        "dry_run": {
+            "state_status": {
+                "notice": fixture.get("dry_run_notice", ""),
+                "source_git_head": source_git_head,
+                "non_claims": fixture.get("non_claims", {}),
+            },
+            "repository_state_event": {
+                "kind": state_event.get("kind"),
+                "id": state_event.get("id", ""),
+                "sig": state_event.get("sig", ""),
+                "pubkey": state_event.get("pubkey", ""),
+                "published": False,
+            },
+        },
+    }
+
+
+def export_fixture_pair(
+    repo_event: dict[str, Any],
+    collaboration_fixture: dict[str, Any],
+    state_status_fixture: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """Round-trip local NIP-34 fixtures back to registry-shaped concepts."""
     repo = parse_repository_announcement(repo_event)
     collaboration = parse_collaboration_fixture(collaboration_fixture)
+    state_status = parse_state_status_fixture(state_status_fixture) if state_status_fixture else None
 
     exported = {
         "project": repo["project"],
@@ -233,18 +341,24 @@ def export_fixture_pair(repo_event: dict[str, Any], collaboration_fixture: dict[
             "events": collaboration["dry_run"]["events"],
         },
     }
+    if state_status:
+        exported["repository_state"] = state_status["repository_state"]
+        exported["status_checks"] = state_status["status_checks"]
+        exported["dry_run"]["state_status"] = state_status["dry_run"]["state_status"]
+        exported["dry_run"]["repository_state_event"] = state_status["dry_run"]["repository_state_event"]
     return exported
 
 
 def main(argv: list[str]) -> int:
-    if len(argv) != 3:
+    if len(argv) not in {3, 4}:
         print(
             "usage: nip34_adapter.py fixtures/nostr-repo-announcement.json "
-            "fixtures/nostr-collaboration-events.json",
+            "fixtures/nostr-collaboration-events.json [fixtures/nostr-repo-state-status.json]",
             file=sys.stderr,
         )
         return 2
-    exported = export_fixture_pair(load_json(argv[1]), load_json(argv[2]))
+    state_status = load_json(argv[3]) if len(argv) == 4 else None
+    exported = export_fixture_pair(load_json(argv[1]), load_json(argv[2]), state_status)
     print(json.dumps(exported, indent=2, sort_keys=True))
     return 0
 

@@ -181,8 +181,20 @@ Keep relay publishing out of scope unless disposable/project-scoped keys, relay 
 
 **Current result:**
 
-Completed as a local renderer/import surface. `scripts/render_project_page.py` now accepts paired `--nip34-repo-fixture` and `--nip34-collaboration-fixture` arguments, imports them through `scripts/nip34_adapter.py`, and renders a **NIP-34 fixture adapter** section in `output/demo-project.html`. The section displays local parser/conformance output including repository id/name/kind, relay hints, dry-run publish status, imported issue/patch counts/titles/statuses/summaries/source kinds, and relay/key/NIP-35 dry-run non-claim fields. Tests assert the rendered section, boundary language, placeholder IDs/signatures, and required paired arguments. No relay publishing/readback, relay fetching, key use, signing, event-id computation, live protocol verification, spending, public post, commit, or push was performed.
+Completed as a local renderer/import surface. `scripts/render_project_page.py` now accepts paired `--nip34-repo-fixture` and `--nip34-collaboration-fixture` arguments plus optional `--nip34-state-status-fixture`, imports them through `scripts/nip34_adapter.py`, and renders a **NIP-34 fixture adapter** section in `output/demo-project.html`. The section displays local parser/conformance output including repository id/name/kind, relay hints, dry-run publish status, imported issue/patch counts/titles/statuses/summaries/source kinds, repository state HEAD ref/commit/refs, fixture-only status/check projections, and relay/key/NIP-35/state-status dry-run non-claim fields. Tests assert the rendered section, boundary language, placeholder IDs/signatures, current Git HEAD mapping, and required paired arguments. No relay publishing/readback, relay fetching, key use, signing, event-id computation, live protocol verification, spending, public post, commit, or push was performed.
 
 **Gate:**
 
 Keep this as local fixture import/display only. Do not claim Nostr relay compatibility until a disposable-key relay publish/readback path is explicitly approved and verified.
+
+## Loop 13: Local NIP-34 repository state/status fixture follow-up
+
+**Goal:** Extend local NIP-34 fixture coverage to repository state and fixture-only status/check display without publishing or signing.
+
+**Current result:**
+
+Completed as a local fixture follow-up because `rad` was unavailable for a safe CLI replay path. Added `fixtures/nostr-repo-state-status.json` with a dry-run `kind: 30618` repository state event generated from the local `git rev-parse HEAD` recorded at fixture creation time (`32f88a7a42498328a515e4763e28d84216420a98`) plus fixture-only status/check projections tied to that state and existing synthetic CI names. Later commits may make this recorded SHA an ancestor rather than current `HEAD`. `scripts/nip34_adapter.py` parses the state refs/HEAD commit and preserves placeholder id/signature/pubkey plus `published: false`; `scripts/render_project_page.py` displays the repository state, status/check projections, and explicit state/status non-claims. Tests validate the recorded Git SHA mapping and no relay/signing/public-status claims.
+
+**Gate:**
+
+Keep repository state/status evidence local until a future loop explicitly approves disposable/project-scoped keys, relay selection, signing, publish/readback verification, and public status semantics. No production/private keys, paid services, unsupported live-verification claims, or direct outreach.

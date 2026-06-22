@@ -1,0 +1,64 @@
+{
+  "dry_run_notice": "Synthetic local NIP-34 repository state/status fixture only. Generated from the local git HEAD recorded in source_git_head at fixture creation time; later commits may make it an ancestor rather than current HEAD. Not signed. Not published. Do not relay.",
+  "source_registry": "fixtures/example-project.registry.json",
+  "source_git_head": "32f88a7a42498328a515e4763e28d84216420a98",
+  "repo_address": "30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project",
+  "repository_state_event": {
+    "fixture_name": "demo-project-repo-state-main",
+    "nip": 34,
+    "kind": 30618,
+    "pubkey": "0000000000000000000000000000000000000000000000000000000000000000",
+    "created_at": 1782086580,
+    "content": "",
+    "tags": [
+      ["d", "demo-project"],
+      ["HEAD", "ref: refs/heads/main"],
+      ["refs/heads/main", "32f88a7a42498328a515e4763e28d84216420a98"],
+      ["a", "30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project"]
+    ],
+    "id": "dry-run-repo-state-id-not-computed",
+    "sig": "dry-run-repo-state-not-signed"
+  },
+  "status_checks": [
+    {
+      "fixture_name": "demo-project-repo-state-check-stdlib-fixture-validation",
+      "mapped_registry_path": "ci_checks[0]",
+      "source_ci_check_id": "local-fake-ci-001",
+      "target_type": "repository_state",
+      "target_commit": "32f88a7a42498328a515e4763e28d84216420a98",
+      "target_ref": "refs/heads/main",
+      "name": "stdlib fixture validation",
+      "provider": "local-fixture-projection",
+      "status": "completed",
+      "conclusion": "success",
+      "synthetic": true,
+      "published": false,
+      "notes": "Fixture-only projection of an existing local-fake CI record onto the dry-run repository state commit; no public CI status, relay status event, signature, or live NIP behavior is claimed."
+    },
+    {
+      "fixture_name": "demo-project-repo-state-check-artifact-hash-provenance-dry-run",
+      "mapped_registry_path": "ci_checks[1]",
+      "source_ci_check_id": "local-fake-ci-002",
+      "target_type": "repository_state",
+      "target_commit": "32f88a7a42498328a515e4763e28d84216420a98",
+      "target_ref": "refs/heads/main",
+      "name": "artifact hash provenance dry run",
+      "provider": "local-fixture-projection",
+      "status": "completed",
+      "conclusion": "success",
+      "synthetic": true,
+      "published": false,
+      "notes": "Fixture-only projection of an existing local-fake provenance check onto the dry-run repository state commit; no Sigstore, in-toto, SLSA, public CI, relay publication, or live NIP status semantics are claimed."
+    }
+  ],
+  "non_claims": {
+    "published": false,
+    "relay_published": false,
+    "relay_fetched": false,
+    "event_id_computed": false,
+    "signed": false,
+    "private_keys_used": false,
+    "public_ci_status_created": false,
+    "live_nip_status_semantics_claimed": false
+  }
+}

@@ -221,6 +221,27 @@ def render_nip34_adapter_item(kind_label: str, item: dict) -> str:
     )
 
 
+def render_nip34_status_check(check: dict) -> str:
+    return (
+        '<article class="adapter-item">'
+        f"<h4>Status/check: {esc(check.get('name', 'Untitled'))}</h4>"
+        + '<dl class="metadata">'
+        + field("Source CI check", check.get("source_ci_check_id"))
+        + field("Mapped registry path", check.get("mapped_registry_path"))
+        + field("Provider", check.get("provider"))
+        + field("Status", check.get("status"))
+        + field("Conclusion", check.get("conclusion"))
+        + field("Target type", check.get("target_type"))
+        + field("Target ref", check.get("target_ref"))
+        + field("Target commit", check.get("target_commit"))
+        + f"<dt>Synthetic</dt><dd>{yes_no(check.get('synthetic'))}</dd>"
+        + f"<dt>Published</dt><dd>{yes_no(check.get('published'))}</dd>"
+        + field("Notes", check.get("notes"), code=False)
+        + "</dl>"
+        + "</article>"
+    )
+
+
 def render_json_block(value: object) -> str:
     return f"<pre><code>{esc(json.dumps(value, indent=2, sort_keys=True))}</code></pre>"
 
@@ -238,10 +259,15 @@ def render_nip34_adapter_section(exported: dict | None) -> str:
     nip35_boundary = collaboration.get("nip35_boundary", {}) if isinstance(collaboration, dict) else {}
     issues = exported.get("issues", [])
     patches = exported.get("patches", [])
+    repository_state = exported.get("repository_state", {})
+    status_checks = exported.get("status_checks", [])
     repository_dry_run = dry_run.get("repository", {}) if isinstance(dry_run, dict) else {}
+    state_status_dry_run = dry_run.get("state_status", {}) if isinstance(dry_run, dict) else {}
+    repository_state_event = dry_run.get("repository_state_event", {}) if isinstance(dry_run, dict) else {}
 
     issue_items = [render_nip34_adapter_item("Issue", issue) for issue in issues]
     patch_items = [render_nip34_adapter_item("Patch", patch) for patch in patches]
+    status_items = [render_nip34_status_check(check) for check in status_checks]
 
     return (
         "<section>"
@@ -262,10 +288,24 @@ def render_nip34_adapter_section(exported: dict | None) -> str:
         + field("Repository dry-run event ID", repository_dry_run.get("id"))
         + field("Repository dry-run signature", repository_dry_run.get("sig"))
         + "</dl>"
+        + "<h3>Repository state fixture</h3>"
+        + '<dl class="metadata">'
+        + field("State kind", repository_state.get("kind"))
+        + field("State repo ID tag", repository_state.get("repo_id_tag"))
+        + field("Repository address", repository_state.get("repository_address"))
+        + field("HEAD", repository_state.get("head"))
+        + field("HEAD ref", repository_state.get("head_ref"))
+        + field("HEAD commit", repository_state.get("head_commit"))
+        + field("Refs", json.dumps(repository_state.get("refs", {}), sort_keys=True))
+        + field("State dry-run event ID", repository_state_event.get("id"))
+        + field("State dry-run signature", repository_state_event.get("sig"))
+        + "</dl>"
         "<h3>Imported issues</h3>"
         + list_items(issue_items)
         + "<h3>Imported patches</h3>"
         + list_items(patch_items)
+        + "<h3>Fixture-only status/check projections</h3>"
+        + list_items(status_items)
         + "<h3>Dry-run / non-claim fields</h3>"
         + "<h4>Relay tool check</h4>"
         + render_json_block(relay_tool_check)
@@ -273,6 +313,8 @@ def render_nip34_adapter_section(exported: dict | None) -> str:
         + render_json_block(synthetic_key_policy)
         + "<h4>NIP-35 boundary</h4>"
         + render_json_block(nip35_boundary)
+        + "<h4>Repository state/status non-claims</h4>"
+        + render_json_block(state_status_dry_run)
         + "</section>"
     )
 
@@ -355,16 +397,21 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("output", type=Path, help="Output HTML path")
     parser.add_argument("--nip34-repo-fixture", type=Path, help="Optional local NIP-34 repository announcement fixture JSON")
     parser.add_argument("--nip34-collaboration-fixture", type=Path, help="Optional local NIP-34 collaboration events fixture JSON")
+    parser.add_argument("--nip34-state-status-fixture", type=Path, help="Optional local NIP-34 repository state/status fixture JSON")
     args = parser.parse_args(argv)
     if bool(args.nip34_repo_fixture) != bool(args.nip34_collaboration_fixture):
         parser.error("--nip34-repo-fixture and --nip34-collaboration-fixture must be provided together")
+    if args.nip34_state_status_fixture and not (args.nip34_repo_fixture and args.nip34_collaboration_fixture):
+        parser.error("--nip34-state-status-fixture requires the paired NIP-34 repository and collaboration fixtures")
     try:
         data = load_registry(args.registry)
         nip34_export = None
         if args.nip34_repo_fixture and args.nip34_collaboration_fixture:
+            state_status_fixture = nip34_adapter.load_json(args.nip34_state_status_fixture) if args.nip34_state_status_fixture else None
             nip34_export = nip34_adapter.export_fixture_pair(
                 nip34_adapter.load_json(args.nip34_repo_fixture),
                 nip34_adapter.load_json(args.nip34_collaboration_fixture),
+                state_status_fixture,
             )
         rendered = render_registry(data, nip34_export)
         args.output.parent.mkdir(parents=True, exist_ok=True)

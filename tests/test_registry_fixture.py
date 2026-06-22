@@ -18,6 +18,7 @@ FIXTURE_PATH = ROOT / "fixtures" / "example-project.registry.json"
 RADICLE_FIXTURE_PATH = ROOT / "fixtures" / "radicle-backed-project.registry.json"
 NOSTR_REPO_FIXTURE_PATH = ROOT / "fixtures" / "nostr-repo-announcement.json"
 NOSTR_COLLAB_FIXTURE_PATH = ROOT / "fixtures" / "nostr-collaboration-events.json"
+NOSTR_STATE_STATUS_FIXTURE_PATH = ROOT / "fixtures" / "nostr-repo-state-status.json"
 LOCAL_RELEASE_ARTIFACT_PATH = ROOT / "fixtures" / "local-release-artifact.txt"
 FIXTURE_PATHS = [FIXTURE_PATH, RADICLE_FIXTURE_PATH]
 RENDERER = ROOT / "scripts" / "render_project_page.py"
@@ -31,6 +32,7 @@ class RegistryFixtureTests(unittest.TestCase):
         self.radicle_fixture = json.loads(RADICLE_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.nostr_repo_fixture = json.loads(NOSTR_REPO_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.nostr_collab_fixture = json.loads(NOSTR_COLLAB_FIXTURE_PATH.read_text(encoding="utf-8"))
+        self.nostr_state_status_fixture = json.loads(NOSTR_STATE_STATUS_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.fixtures = [json.loads(path.read_text(encoding="utf-8")) for path in FIXTURE_PATHS]
 
     def iter_artifacts(self):
@@ -49,6 +51,40 @@ class RegistryFixtureTests(unittest.TestCase):
         digest = hashlib.sha256(content).digest()
         cid_bytes = bytes([0x01, 0x55, 0x12, 0x20]) + digest
         return "b" + base64.b32encode(cid_bytes).decode("ascii").lower().rstrip("=")
+
+    def current_git_head(self):
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=ROOT,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=True,
+        )
+        return result.stdout.strip()
+
+    def git_commit_exists(self, commit):
+        subprocess.run(
+            ["git", "cat-file", "-e", f"{commit}^{{commit}}"],
+            cwd=ROOT,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=True,
+        )
+
+    def assert_fixture_head_is_current_or_ancestor(self, fixture_head):
+        current_head = self.current_git_head()
+        if fixture_head == current_head:
+            return
+        subprocess.run(
+            ["git", "merge-base", "--is-ancestor", fixture_head, current_head],
+            cwd=ROOT,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=True,
+        )
 
     def test_schema_and_fixtures_are_valid_json_objects(self):
         self.assertIsInstance(self.schema, dict)
@@ -459,6 +495,90 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn("sigstore_slsa", html)
             self.assertIn("local-release-artifact.txt", html)
 
+    def test_nip34_repository_state_fixture_maps_recorded_git_head(self):
+        fixture = self.nostr_state_status_fixture
+        fixture_head = fixture["source_git_head"]
+        self.assertRegex(fixture_head, r"^[0-9a-f]{40}$")
+        self.git_commit_exists(fixture_head)
+        self.assert_fixture_head_is_current_or_ancestor(fixture_head)
+        event = fixture["repository_state_event"]
+        tags = self._tags_by_name(event)
+
+        self.assertEqual(event["kind"], 30618)
+        self.assertEqual(tags["d"][0][1], self.fixture["project"]["id"])
+        self.assertEqual(tags["HEAD"][0][1], "ref: refs/heads/main")
+        self.assertEqual(tags["refs/heads/main"][0][1], fixture_head)
+        self.assertIn(fixture["repo_address"], [tag[1] for tag in tags["a"]])
+
+        exported = nip34_adapter.export_fixture_pair(
+            self.nostr_repo_fixture,
+            self.nostr_collab_fixture,
+            self.nostr_state_status_fixture,
+        )
+        state = exported["repository_state"]
+        self.assertEqual(state["kind"], 30618)
+        self.assertEqual(state["repo_id_tag"], self.fixture["project"]["id"])
+        self.assertEqual(state["head"], "ref: refs/heads/main")
+        self.assertEqual(state["head_ref"], "refs/heads/main")
+        self.assertEqual(state["head_commit"], fixture_head)
+        self.assertEqual(state["refs"], {"refs/heads/main": fixture_head})
+
+    def test_nip34_state_status_fixture_preserves_local_only_non_claims(self):
+        exported = nip34_adapter.export_fixture_pair(
+            self.nostr_repo_fixture,
+            self.nostr_collab_fixture,
+            self.nostr_state_status_fixture,
+        )
+        dry_run = exported["dry_run"]
+        state_event = dry_run["repository_state_event"]
+        state_status = dry_run["state_status"]
+        non_claims = state_status["non_claims"]
+
+        self.assertEqual(state_event["id"], "dry-run-repo-state-id-not-computed")
+        self.assertEqual(state_event["sig"], "dry-run-repo-state-not-signed")
+        self.assertFalse(state_event["published"])
+        self.assertIn("Not published", state_status["notice"])
+        for field in [
+            "published",
+            "relay_published",
+            "relay_fetched",
+            "event_id_computed",
+            "signed",
+            "private_keys_used",
+            "public_ci_status_created",
+            "live_nip_status_semantics_claimed",
+        ]:
+            self.assertFalse(non_claims[field])
+
+        checks = exported["status_checks"]
+        self.assertEqual([check["source_ci_check_id"] for check in checks], ["local-fake-ci-001", "local-fake-ci-002"])
+        for check in checks:
+            self.assertEqual(check["target_commit"], exported["repository_state"]["head_commit"])
+            self.assertEqual(check["target_ref"], "refs/heads/main")
+            self.assertTrue(check["synthetic"])
+            self.assertFalse(check["published"])
+            self.assertIn("Fixture-only", check["notes"])
+            self.assertIn("no", check["notes"].lower())
+
+    def test_nip34_state_status_rejects_status_checks_for_other_commits_or_refs(self):
+        mismatched_commit = json.loads(json.dumps(self.nostr_state_status_fixture))
+        mismatched_commit["status_checks"][0]["target_commit"] = "f" * 40
+        with self.assertRaisesRegex(ValueError, "target_commit"):
+            nip34_adapter.export_fixture_pair(
+                self.nostr_repo_fixture,
+                self.nostr_collab_fixture,
+                mismatched_commit,
+            )
+
+        mismatched_ref = json.loads(json.dumps(self.nostr_state_status_fixture))
+        mismatched_ref["status_checks"][0]["target_ref"] = "refs/heads/other"
+        with self.assertRaisesRegex(ValueError, "target_ref"):
+            nip34_adapter.export_fixture_pair(
+                self.nostr_repo_fixture,
+                self.nostr_collab_fixture,
+                mismatched_ref,
+            )
+
     def test_renderer_can_include_local_nip34_adapter_fixture_section(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             output = Path(tmpdir) / "demo.html"
@@ -472,6 +592,8 @@ class RegistryFixtureTests(unittest.TestCase):
                     str(NOSTR_REPO_FIXTURE_PATH),
                     "--nip34-collaboration-fixture",
                     str(NOSTR_COLLAB_FIXTURE_PATH),
+                    "--nip34-state-status-fixture",
+                    str(NOSTR_STATE_STATUS_FIXTURE_PATH),
                 ],
                 cwd=ROOT,
                 text=True,
@@ -498,6 +620,15 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn("private_keys", html)
             self.assertIn("none", html)
             self.assertIn("documented-no-collaboration-event", html)
+            self.assertIn("Repository state fixture", html)
+            self.assertIn("State kind", html)
+            self.assertIn("30618", html)
+            fixture_head = self.nostr_state_status_fixture["source_git_head"]
+            self.assertIn(fixture_head, html)
+            self.assertIn("Fixture-only status/check projections", html)
+            self.assertIn("local-fixture-projection", html)
+            self.assertIn("public_ci_status_created", html)
+            self.assertIn("live_nip_status_semantics_claimed", html)
 
     def test_renderer_requires_nip34_fixture_args_as_a_pair(self):
         with tempfile.TemporaryDirectory() as tmpdir:
