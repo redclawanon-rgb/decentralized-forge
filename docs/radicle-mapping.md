@@ -47,6 +47,11 @@ From `/tmp/radicle-heartwood/rad-patch.1.adoc`:
 - `rad patch review`, `rad patch comment`, `rad patch checkout`, `rad patch set`, and `rad patch ready` support review, comments, branch checkout, upstream association, and draft/open transitions.
 - Merging is performed with normal Git merge followed by `git push rad`, after which Radicle reports the patch merged.
 
+HTTP/API shape note:
+
+- The source tree inspected in this run did not contain a `radicle-httpd` or OpenAPI-style HTTP service artifact under the shallow `/tmp/radicle-heartwood` checkout, and `rad` was not installed to inspect any local HTTP output.
+- Therefore this Loop 4 fixture maps CLI/source concepts only. Any future HTTP/API adapter should be treated as a separate source-pinned spike and must not be claimed as verified by this document.
+
 ## Mapping to `project-registry.schema.json`
 
 | Registry field | Radicle source concept | Mapping rule for fixtures/prototypes |

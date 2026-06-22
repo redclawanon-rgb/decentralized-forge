@@ -63,7 +63,7 @@ Inspired by Eric's X bookmark signal around loop engineering, subagents, scoping
 
 **Gate:**
 
-Public relay publishing for this project is now approved when accurate, non-spammy, and using disposable/project-scoped keys; do not use production/private personal keys.
+Do not publish to public relays without explicit approval. Use only test keys for local/dev relay or dry-run fixtures.
 
 ## Loop 4: Radicle local integration spike
 
@@ -79,8 +79,23 @@ Public relay publishing for this project is now approved when accurate, non-spam
 
 **Gate:**
 
-Public project repo/account creation and project updates are approved; still avoid spending, unsafe installs, unsupported claims, and production/private personal keys.
+No public seed publishing, public repo/account creation, public project updates, production/private keys, unsafe installs, contacting anyone, or spending without explicit approval.
 
 **Current result:**
 
 Completed as a source-inspected local spike because `rad` was unavailable and the documented `curl https://radicle.dev/install | sh` path was not approved. Outputs are `docs/radicle-mapping.md`, `fixtures/radicle-backed-project.registry.json`, and expanded registry tests.
+
+## Loop 5: Nostr local/dev relay or stronger dry-run collaboration fixtures
+
+**Goal:** Demonstrate repository issue/patch announcement mechanics without using public relays.
+
+**Tasks:**
+
+- Prefer a free/safe local relay if available; publish only synthetic test-key events and read them back locally.
+- If no local relay is feasible, expand NIP-34/NIP-35 dry-run fixtures for issue and patch collaboration events.
+- Add parser/validation tests that prove the local registry can ingest or preserve the event shapes.
+- Update `STATUS.md`, `.hermes/context.md`, and docs with verification evidence.
+
+**Gate:**
+
+No public relay publishing, production/private keys, public claims, paid services, public repo/account creation, remote pushes, or contacting anyone without Eric approval.

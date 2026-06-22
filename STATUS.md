@@ -75,11 +75,11 @@ Notes:
 
 - Each protocol claim should include source URL and retrieval date where possible.
 - Research must separate observed facts from recommendations.
-- Public building is now approved by Eric for this project: public repo creation, remote pushes, and public project updates are allowed when accurate and non-spammy.
+- No public publishing/posting, public repo/account creation, or public remote pushes without explicit approval in the current run.
 - No spending.
 - No production/private keys for protocol actions.
 - No unsupported production/security/censorship-proof claims.
-- Local and remote commits/pushes allowed for this project.
+- Local commits allowed; remote pushes are gated.
 
 ## Latest parent-verified state
 
@@ -106,6 +106,8 @@ Preferred local path: locate or install a free/safe local Nostr relay, publish o
 ## Gates/blockers
 
 - Public Nostr/GitHub/X project updates are approved when accurate, non-spammy, and clearly labeled as research/prototype work.
+- Public repo creation/pushes and public project accounts are approved for this project.
 - Public ActivityPub/ForgeFed actor deployment is allowed only if it is free/local/self-hosted and does not require paid infrastructure; otherwise stop.
 - Do not spend money or use Filecoin/Arweave wallets without explicit approval.
 - Do not use production/private personal keys for protocol actions; use disposable/project-scoped keys only if needed and document where they are stored without recording secret values.
+- Do not directly contact specific people outside public project channels unless separately approved.
