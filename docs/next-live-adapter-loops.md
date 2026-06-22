@@ -114,22 +114,24 @@ If provider auth/rate limits block a run, the controller should stop with a conc
 
 **Goal:** Choose safe public relay target(s) and finalize the exact prototype payload before publication.
 
-**Allowed without Permission B:** read relay info docs/endpoints and draft payload locally.
+**Completed 2026-06-22:** Selected `wss://relay.damus.io` and `wss://nos.lol` after NIP-11 checks with `nak relay` showed reachable relay info and no advertised payment/auth/restricted-write requirement. Drafted and locally signed a prototype/research-labeled kind `30617` repository announcement using only the disposable project key. Signed event preview: `evidence/nostr-loop24-signed-event-preview-2026-06-22.json`; event ID: `4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba`; plan/evidence: `docs/nostr-relay-publish-readback-plan.md` and `evidence/nostr-relay-selection-2026-06-22.md`. `nak verify` passed locally. No relay publication/readback occurred.
 
-**Requires Permission B before publication.**
+**Loop 25 publication input:** Publish/read back the exact signed preview event unless the plan is updated and reverified first.
 
 **Artifacts:**
 
 - `docs/nostr-relay-publish-readback-plan.md`
-- `evidence/nostr-relay-selection-YYYY-MM-DD.md`
+- `evidence/nostr-relay-selection-2026-06-22.md`
+- `evidence/nostr-loop24-unsigned-payload-2026-06-22.json`
+- `evidence/nostr-loop24-signed-event-preview-2026-06-22.json`
 - fixture/checklist updates
 
 **Verification:**
 
-- relay URL(s), terms/rate-limit/retention notes where discoverable;
-- exact unsigned/signed event preview without secret values;
-- local `nak verify` on signed event;
-- tests and secret-marker scan.
+- relay URLs and advertised auth/payment/write restrictions recorded;
+- exact signed event preview recorded without secret values;
+- local `nak verify` on signed event passed;
+- tests and secret-marker scan required before commit/push.
 
 ## Loop 25 — Nostr disposable publish/readback
 

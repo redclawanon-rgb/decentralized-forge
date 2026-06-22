@@ -1,0 +1,19 @@
+{
+  "kind": 30617,
+  "created_at": 1782142614,
+  "content": "Decentralized Forge prototype/research relay test. This event announces a local/static prototype and live-adapter evidence paths only. It does not claim production readiness, durability, censorship resistance, global propagation, identity trust, security guarantees, or full protocol compatibility.",
+  "tags": [
+    ["d", "decentralized-forge-live-adapter-prototype-2026-06-22"],
+    ["name", "Decentralized Forge prototype live-adapter test"],
+    ["description", "Prototype/research NIP-34 repository announcement for Decentralized Forge live-adapter publish/readback verification."],
+    ["web", "https://github.com/redclawanon-rgb/decentralized-forge"],
+    ["clone", "https://github.com/redclawanon-rgb/decentralized-forge.git"],
+    ["relays", "wss://relay.damus.io"],
+    ["relays", "wss://nos.lol"],
+    ["t", "decentralized-forge"],
+    ["t", "prototype"],
+    ["t", "research"],
+    ["t", "live-adapter-test"]
+  ],
+  "loop24_notice": "Unsigned local payload preview only. Publication is reserved for Loop 25. No secret key material is stored in this file."
+}

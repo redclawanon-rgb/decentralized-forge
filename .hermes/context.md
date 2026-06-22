@@ -194,4 +194,4 @@ Loop 20 outputs:
 
 ## Current next recommended loop
 
-**Next:** Loop 24 is Nostr relay selection and event payload review. Loop 23 completed a bounded Radicle temporary-`RAD_HOME` private replay and promoted Radicle only to local CLI verified for that narrow path. Nostr relay publish/readback remains next under Permission B; public Radicle seed/network replication remains unverified and out of scope unless separately planned.
+**Next:** Loop 25 is Nostr disposable publish/readback. Loop 24 completed relay selection and local signed payload review: selected `wss://relay.damus.io` and `wss://nos.lol`, signed local kind `30617` preview event `4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba`, and verified it locally with `nak verify`; no relay publication/readback occurred. Under Permission B, Loop 25 may publish/read back the exact signed preview in `evidence/nostr-loop24-signed-event-preview-2026-06-22.json`, record relay responses/readback evidence, and preserve non-claims about durability/global propagation/censorship resistance/identity trust/production readiness/full compatibility.

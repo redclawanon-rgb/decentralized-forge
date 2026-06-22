@@ -367,16 +367,13 @@ Completed as a bounded local CLI replay. Used temporary `RAD_HOME`, a disposable
 
 **Goal:** Choose safe public relay targets and finalize the exact prototype payload before publication.
 
-**Candidate tasks:**
+**Current result:**
 
-- Read relay info endpoints/docs and record terms/rate-limit/retention notes where discoverable.
-- Draft the exact prototype-labeled event payload locally.
-- Sign and verify locally only if it remains unpublished and secret-free.
-- Create `docs/nostr-relay-publish-readback-plan.md` and `evidence/nostr-relay-selection-YYYY-MM-DD.md`.
+Completed as relay/payload selection plus local signature verification. Selected `wss://relay.damus.io` and `wss://nos.lol` after `nak relay` NIP-11 checks showed both reachable and reported `auth_required: false`, `payment_required: false`, and `restricted_writes: false`. Added `docs/nostr-relay-publish-readback-plan.md`, `evidence/nostr-relay-selection-2026-06-22.md`, `evidence/nostr-loop24-unsigned-payload-2026-06-22.json`, and `evidence/nostr-loop24-signed-event-preview-2026-06-22.json`. The signed local event preview is a prototype/research-labeled kind `30617` repository announcement with event ID `4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba`, using only the disposable project pubkey `6669423ee76d9d5adc8e81df79286c2569edbe5ab84f3e35043db71a54eff5c8`; `nak verify` exited 0. No relay publication/readback occurred in Loop 24.
 
 **Gate:**
 
-Relay publication requires Permission B from `docs/next-live-adapter-loops.md` because Nostr events may be public and retained.
+Loop 25 may publish/read back the exact signed event preview under Permission B. Treat publication as public/irreversible. Abort if a relay requires payment/production credentials, if readback ambiguity requires human choice, or if any secret marker appears in evidence. Do not claim durability, global propagation, censorship resistance, identity trust, production readiness, or full protocol compatibility from relay acceptance/readback.
 
 ## Loop 25: Nostr disposable publish/readback
 

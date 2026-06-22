@@ -53,6 +53,22 @@ Loop 23 completed the approved temporary-`RAD_HOME` disposable repo replay and r
 - Temporary Radicle and Git work directories were removed after evidence capture.
 - Still not executed: `rad node start`, `rad publish`, `rad sync`, seed publication, peer announce, remote peer configuration, public network replication verification, spending, paid infrastructure, production/private personal identity import, or unsupported durability/censorship-resistance/production-readiness claims.
 
+## Loop 24 Nostr relay selection update
+
+Loop 24 completed Nostr relay selection and local signed payload review without publishing to any relay.
+
+- Relay info checked with `~/.local/bin/nak relay wss://relay.damus.io` and `~/.local/bin/nak relay wss://nos.lol`.
+- Selected relays for Loop 25: `wss://relay.damus.io`, `wss://nos.lol`.
+- Both relay info responses reported `auth_required: false`, `payment_required: false`, and `restricted_writes: false`.
+- Signed local event preview: `evidence/nostr-loop24-signed-event-preview-2026-06-22.json`.
+- Unsigned payload preview: `evidence/nostr-loop24-unsigned-payload-2026-06-22.json`.
+- Relay/publish plan: `docs/nostr-relay-publish-readback-plan.md`.
+- Relay selection evidence: `evidence/nostr-relay-selection-2026-06-22.md`.
+- Event kind: `30617`.
+- Event ID: `4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba`.
+- `nak verify < evidence/nostr-loop24-signed-event-preview-2026-06-22.json` exited 0.
+- Still not executed: relay publication, relay readback, paid infrastructure, production/private personal keys, direct outreach, durability/global-propagation/censorship-resistance/identity-trust/production-readiness/full-compatibility claims.
+
 ## Hard gates for any future replay
 
 A future live replay must stop unless all relevant gates are satisfied and recorded in status docs:

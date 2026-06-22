@@ -180,6 +180,28 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertFalse(radicle_gate["remote_peer_config_after_loop_23"])
             self.assertFalse(radicle_gate["public_network_replication_verified_after_loop_23"])
 
+        if checklist["loop"] >= 24:
+            discovery = checklist["discovery"]
+            self.assertTrue(discovery["loop_24_nostr_relay_selection_recorded"])
+            self.assertFalse(discovery["network_protocol_actions_used_after_loop_24"])
+            nostr_gate = checklist["nostr_disposable_readback"]
+            self.assertEqual(
+                nostr_gate["status_after_loop_24"],
+                "relay_selected_payload_signed_locally_not_published",
+            )
+            self.assertEqual(
+                nostr_gate["selected_relays_after_loop_24"],
+                ["wss://relay.damus.io", "wss://nos.lol"],
+            )
+            self.assertTrue(nostr_gate["relay_info_checked_after_loop_24"])
+            self.assertFalse(nostr_gate["relay_payment_required_after_loop_24"])
+            self.assertFalse(nostr_gate["relay_auth_required_after_loop_24"])
+            self.assertEqual(nostr_gate["event_kind_after_loop_24"], 30617)
+            self.assertRegex(nostr_gate["signed_event_id_after_loop_24"], r"^[0-9a-f]{64}$")
+            self.assertTrue(nostr_gate["local_signature_verified_after_loop_24"])
+            self.assertFalse(nostr_gate["relay_published_after_loop_24"])
+            self.assertFalse(nostr_gate["relay_readback_after_loop_24"])
+
         required_global_gates = {
             "approved_tooling_path_required",
             "temporary_or_disposable_state_only",
@@ -233,6 +255,26 @@ class RegistryFixtureTests(unittest.TestCase):
         evidence_blob = evidence.lower()
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, evidence_blob)
+
+    def test_loop24_nostr_signed_preview_is_bounded_and_unpublished(self):
+        checklist = self.live_replay_checklist
+        if checklist["loop"] < 24:
+            self.skipTest("Loop 24 Nostr relay selection evidence not recorded yet")
+        nostr_gate = checklist["nostr_disposable_readback"]
+        signed_path = ROOT / nostr_gate["signed_event_preview_after_loop_24"]
+        signed_event = json.loads(signed_path.read_text(encoding="utf-8"))
+        self.assertEqual(signed_event["id"], nostr_gate["signed_event_id_after_loop_24"])
+        self.assertEqual(signed_event["pubkey"], nostr_gate["public_key_hex"])
+        self.assertEqual(signed_event["kind"], 30617)
+        self.assertIn("prototype/research", signed_event["content"])
+        self.assertIn("does not claim production readiness", signed_event["content"])
+        self.assertFalse(nostr_gate["relay_published_after_loop_24"])
+        self.assertFalse(nostr_gate["relay_readback_after_loop_24"])
+        relay_tags = [tag[1] for tag in signed_event["tags"] if tag and tag[0] == "relays"]
+        self.assertEqual(relay_tags, nostr_gate["selected_relays_after_loop_24"])
+        event_blob = json.dumps(signed_event).lower()
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, event_blob)
 
     def test_required_top_level_fields(self):
         for fixture in self.fixtures:

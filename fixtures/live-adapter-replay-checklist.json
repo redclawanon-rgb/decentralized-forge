@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-adapter-replay-checklist.v1",
-  "loop": 23,
+  "loop": 24,
   "purpose": "Secret-free gates for future Radicle local CLI replay and Nostr disposable relay publish/readback verification.",
   "discovery": {
     "rad_command": "command -v rad",
@@ -27,7 +27,11 @@
     "network_protocol_actions_used_after_loop_22": false,
     "loop_23_radicle_replay_recorded": true,
     "loop_23_radicle_replay_evidence": "evidence/radicle-local-replay-2026-06-22.md",
-    "network_protocol_actions_used_after_loop_23": false
+    "network_protocol_actions_used_after_loop_23": false,
+    "loop_24_nostr_relay_selection_recorded": true,
+    "loop_24_nostr_relay_selection_evidence": "evidence/nostr-relay-selection-2026-06-22.md",
+    "loop_24_nostr_publish_plan": "docs/nostr-relay-publish-readback-plan.md",
+    "network_protocol_actions_used_after_loop_24": false
   },
   "global_gates": [
     "approved_tooling_path_required",
@@ -174,7 +178,25 @@
     "offline_signature_event_id": "129cc3a22b3da01ad92eefd6cf56ebfdad64ecc657f7d373e21d6c3a8d51fe22",
     "local_signature_verified": true,
     "relay_published_after_loop_21": false,
-    "relay_readback_after_loop_21": false
+    "relay_readback_after_loop_21": false,
+    "status_after_loop_24": "relay_selected_payload_signed_locally_not_published",
+    "relay_selection_evidence_after_loop_24": "evidence/nostr-relay-selection-2026-06-22.md",
+    "publish_readback_plan_after_loop_24": "docs/nostr-relay-publish-readback-plan.md",
+    "selected_relays_after_loop_24": [
+      "wss://relay.damus.io",
+      "wss://nos.lol"
+    ],
+    "relay_info_checked_after_loop_24": true,
+    "relay_payment_required_after_loop_24": false,
+    "relay_auth_required_after_loop_24": false,
+    "event_kind_after_loop_24": 30617,
+    "event_payload_preview_after_loop_24": "evidence/nostr-loop24-unsigned-payload-2026-06-22.json",
+    "signed_event_preview_after_loop_24": "evidence/nostr-loop24-signed-event-preview-2026-06-22.json",
+    "signed_event_id_after_loop_24": "4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba",
+    "local_signature_verified_after_loop_24": true,
+    "relay_published_after_loop_24": false,
+    "relay_readback_after_loop_24": false,
+    "claim_boundary_after_loop_24": "local signed preview and relay selection only; no relay publication/readback or durability/global-propagation/censorship-resistance/production-readiness claim"
   },
   "secrets_policy": {
     "contains_secret_values": false,

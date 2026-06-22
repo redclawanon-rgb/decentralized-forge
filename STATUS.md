@@ -575,6 +575,38 @@ Boundaries:
 - No `rad node start`, `rad publish`, `rad sync`, `rad seed`, peer announce, remote peer configuration, paid infrastructure, production/private personal key use, direct outreach, or public network verification occurred.
 - This promotes Radicle only to **local CLI verified** for the narrow disposable replay path; public seed/network replication, remote clone/fetch, durability, censorship resistance, and production readiness remain unverified.
 
+### Loop 24: Nostr relay selection and event payload review
+
+Status: **complete as relay/payload selection plus local signature verification; no relay publication/readback**.
+
+Outputs:
+
+- `docs/nostr-relay-publish-readback-plan.md` records selected relays, disposable-key boundary, exact event ID, and Loop 25 publish/readback commands.
+- `evidence/nostr-relay-selection-2026-06-22.md` records NIP-11 relay info and the local signing/verification evidence.
+- `evidence/nostr-loop24-unsigned-payload-2026-06-22.json` stores the exact unsigned payload preview.
+- `evidence/nostr-loop24-signed-event-preview-2026-06-22.json` stores the signed public event preview; it contains no secret key material.
+- `fixtures/live-adapter-replay-checklist.json` and tests now record Loop 24 state.
+
+Verified commands/evidence:
+
+- `~/.local/bin/nak relay wss://relay.damus.io` — NIP-11 info reachable; reports `auth_required: false`, `payment_required: false`, and `restricted_writes: false`.
+- `~/.local/bin/nak relay wss://nos.lol` — NIP-11 info reachable; reports `auth_required: false`, `payment_required: false`, and `restricted_writes: false`.
+- `~/.local/bin/nak event --force-sign ...` — created signed local event preview using only the disposable project key from `~/.hermes/keys/decentralized-forge/nostr-project.nsec`; the secret value was not logged.
+- `~/.local/bin/nak verify < evidence/nostr-loop24-signed-event-preview-2026-06-22.json` — exited 0.
+- `python3 -m json.tool evidence/nostr-loop24-signed-event-preview-2026-06-22.json` — passed.
+
+Selected event:
+
+- Kind: `30617` NIP-34 repository announcement.
+- Event ID: `4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba`.
+- Public key: `6669423ee76d9d5adc8e81df79286c2569edbe5ab84f3e35043db71a54eff5c8`.
+- Target relays for Loop 25: `wss://relay.damus.io`, `wss://nos.lol`.
+
+Boundaries:
+
+- Loop 24 did not publish to relays, perform relay readback, spend money, use production/private personal keys, contact specific people, or claim durability/global propagation/censorship resistance/identity trust/production readiness/full protocol compatibility.
+- Loop 25 may publish/read back the exact signed event under Permission B, treating publication as public/irreversible and preserving all non-claims.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -607,14 +639,14 @@ Boundaries:
 
 ## Next recommended loop
 
-**Loop 24: Nostr relay selection and event payload review.**
+**Loop 25: Nostr disposable publish/readback.**
 
 The next loop set is defined in `docs/next-live-adapter-loops.md` and `AGENT-LOOPS.md`:
 
 - Loop 22: Radicle local replay preflight — complete as read-only help/version discovery; no stateful replay performed.
 - Loop 23: Radicle temporary-`RAD_HOME` disposable repo replay — complete as local CLI verification only; no node/seed/network action.
-- Loop 24: Nostr relay selection and event payload review — next.
-- Loop 25: Nostr disposable publish/readback — requires the relay/payload selected in Loop 24.
+- Loop 24: Nostr relay selection and event payload review — complete as relay/payload selection plus local signature verification; no relay publication/readback.
+- Loop 25: Nostr disposable publish/readback — next under Permission B; publish/read back the exact signed event preview from `evidence/nostr-loop24-signed-event-preview-2026-06-22.json` to `wss://relay.damus.io` and `wss://nos.lol`, then verify returned event fields/signature and record evidence.
 - Loop 26: Live evidence import into adapter/renderer — can only upgrade claims backed by Loop 23/25 evidence.
 - Loop 27: Public project update draft/post — approved if accurate, non-spammy, and prototype/research-labeled.
 
