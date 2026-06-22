@@ -464,6 +464,38 @@ Boundaries:
 - The generated HTML is a local file artifact, not a hosted release page or signed authority.
 - No relay publishing/readback, relay fetching, key use, event signing, fixture ID replacement, public CI/status event creation, live Radicle/IPFS/Sigstore verification, paid screenshot/hosting tooling, spending, production/private keys, direct outreach, or unsupported security/durability/censorship-proof claims were performed.
 
+### Loop 20: Safe live-gated adapter replay planning
+
+Status: **complete as planning/checklist only; no live protocol actions**.
+
+Outputs:
+
+- `docs/live-adapter-replay-plan.md` added with Radicle local replay prerequisites, temporary `RAD_HOME` guidance, disposable repo flow, evidence capture, failure/rollback, promotion criteria, and explicit no-public-seed-publish default.
+- The same plan includes a Nostr disposable/project-scoped publish/readback checklist covering key storage without recording secret values, relay selection, signing, publish, readback, event ID verification, fixture-to-live transition criteria, rollback, and non-claims.
+- `fixtures/live-adapter-replay-checklist.json` added as a secret-free machine-readable gate checklist.
+- `tests/test_registry_fixture.py` validates the checklist remains non-live, secret-free, and blocked on the missing Radicle CLI prerequisite.
+- README, `.hermes/context.md`, and `AGENT-LOOPS.md` updated for Loop 20 completion and Loop 21 gating.
+
+Verified commands:
+
+- `command -v rad` — no `rad` executable found on `PATH`; `rad --version` was not run.
+- `python3 -m json.tool schemas/project-registry.schema.json` — passed.
+- `python3 -m json.tool fixtures/example-project.registry.json` — passed.
+- `python3 -m json.tool fixtures/radicle-backed-project.registry.json` — passed.
+- `python3 -m json.tool fixtures/nostr-repo-announcement.json` — passed.
+- `python3 -m json.tool fixtures/nostr-collaboration-events.json` — passed.
+- `python3 -m json.tool fixtures/nostr-repo-state-status.json` — passed.
+- `python3 -m json.tool fixtures/live-adapter-replay-checklist.json` — passed.
+- `python3 scripts/render_project_page.py fixtures/example-project.registry.json output/demo-project.html --nip34-repo-fixture fixtures/nostr-repo-announcement.json --nip34-collaboration-fixture fixtures/nostr-collaboration-events.json --nip34-state-status-fixture fixtures/nostr-repo-state-status.json` — passed.
+- `python3 scripts/nip34_adapter.py fixtures/nostr-repo-announcement.json fixtures/nostr-collaboration-events.json fixtures/nostr-repo-state-status.json` — passed.
+- `python3 scripts/preflight_static_artifact.py` — passed.
+- `python3 -m unittest discover -s tests` — passed, 39 tests.
+
+Boundaries:
+
+- Loop 20 performed safe local discovery and documentation/checklist work only.
+- No unsafe installer, package install, Radicle CLI action, `RAD_HOME` replay, public seed publishing, Nostr key generation, event signing, relay publishing/readback, public CI/status event creation, spending, production/private key use, direct outreach, or live protocol verification occurred.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -488,16 +520,17 @@ Boundaries:
 - Keep the local registry JSON as the canonical control-plane object and the static renderer as the first user-visible surface.
 - Treat all current Nostr, Radicle, IPFS, ForgeFed, and provenance data as fixtures/mappings unless a future loop records live command/network verification.
 - Use the completed local NIP-34 parser/conformance adapter, repository state/status fixture, local NIP-01 conformance reports, adapter verification-state exports, and rendered fixture-adapter/conformance/verification sections as the seam for future Nostr UI/import work, while keeping relay publishing behind disposable-key and explicit relay gates.
-- Run a safe Radicle local CLI replay when an approved binary/install path is available; use a temporary `RAD_HOME`, disposable repo, and no public seed publishing by default.
+- Use the completed safe live-gated replay plan/checklist as the prerequisite gate for Radicle/Nostr live verification; do not execute live replay while `rad` is unavailable or Nostr disposable-key/relay prerequisites are unmet.
+- Run a safe Radicle local CLI replay only after an approved binary/install path is available; use a temporary `RAD_HOME`, disposable repo, and no public seed publishing by default.
 - Keep ForgeFed as a later object-shape/federation bridge; do not run a public actor until moderation/security gates exist.
 - Keep IPFS/CIDs as artifact metadata until live add/fetch/pin verification is explicitly performed; defer Filecoin/Arweave because they imply spending/wallet decisions.
 - Keep Sigstore/in-toto/SLSA as release/build trust models; current provenance is synthetic and no SLSA level should be claimed.
 
 ## Next recommended loop
 
-**Loop 20: safe live-gated adapter replay planning, starting with Radicle CLI discovery or Nostr disposable-key relay plan only if prerequisites are explicitly satisfied.**
+**Loop 21: prerequisite gate or local docs/test cleanup while Radicle CLI remains unavailable.**
 
-Loop 19 is complete locally. The next bounded candidate is to prepare a safe live-verification replay plan for one protocol seam without executing public protocol actions by default: discover an approved `rad` binary/install path for a temporary local `RAD_HOME` replay, or draft a disposable/project-scoped Nostr relay publish/readback checklist. Keep all live protocol claims gated by actual command/network verification, and keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, storage location, signing, publish/readback, and public protocol gates are explicitly satisfied.
+Loop 20 is complete locally as planning/checklist work only. `command -v rad` found no approved Radicle CLI on `PATH`, so no live Radicle replay is possible in this environment yet. The next bounded candidate is a hard prerequisite gate: either discover an approved `rad` binary and record only path/version evidence first, or keep work purely local by tightening the live replay checklist, renderer/preflight wording, or protocol mapping docs/tests. Do not execute Radicle replay, Nostr signing/publishing/readback, relay publishing, public seed publishing, spending, production/private key use, direct outreach, or live-verification claims unless the documented prerequisites are satisfied and evidence is recorded.
 
 ## Gates/blockers
 

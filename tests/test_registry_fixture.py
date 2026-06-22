@@ -20,6 +20,7 @@ RADICLE_FIXTURE_PATH = ROOT / "fixtures" / "radicle-backed-project.registry.json
 NOSTR_REPO_FIXTURE_PATH = ROOT / "fixtures" / "nostr-repo-announcement.json"
 NOSTR_COLLAB_FIXTURE_PATH = ROOT / "fixtures" / "nostr-collaboration-events.json"
 NOSTR_STATE_STATUS_FIXTURE_PATH = ROOT / "fixtures" / "nostr-repo-state-status.json"
+LIVE_REPLAY_CHECKLIST_PATH = ROOT / "fixtures" / "live-adapter-replay-checklist.json"
 LOCAL_RELEASE_ARTIFACT_PATH = ROOT / "fixtures" / "local-release-artifact.txt"
 FIXTURE_PATHS = [FIXTURE_PATH, RADICLE_FIXTURE_PATH]
 RENDERER = ROOT / "scripts" / "render_project_page.py"
@@ -36,6 +37,7 @@ class RegistryFixtureTests(unittest.TestCase):
         self.nostr_repo_fixture = json.loads(NOSTR_REPO_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.nostr_collab_fixture = json.loads(NOSTR_COLLAB_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.nostr_state_status_fixture = json.loads(NOSTR_STATE_STATUS_FIXTURE_PATH.read_text(encoding="utf-8"))
+        self.live_replay_checklist = json.loads(LIVE_REPLAY_CHECKLIST_PATH.read_text(encoding="utf-8"))
         self.fixtures = [json.loads(path.read_text(encoding="utf-8")) for path in FIXTURE_PATHS]
 
     def iter_artifacts(self):
@@ -94,6 +96,46 @@ class RegistryFixtureTests(unittest.TestCase):
         for fixture in self.fixtures:
             self.assertIsInstance(fixture, dict)
             self.assertEqual(fixture["schema_version"], "decentralized-forge.project-registry.v1")
+
+    def test_live_replay_checklist_is_secret_free_and_gated(self):
+        checklist = self.live_replay_checklist
+        self.assertEqual(
+            checklist["schema_version"],
+            "decentralized-forge.live-adapter-replay-checklist.v1",
+        )
+        self.assertEqual(checklist["loop"], 20)
+        self.assertFalse(checklist["discovery"]["rad_found_in_loop_20"])
+        self.assertFalse(checklist["discovery"]["rad_version_checked"])
+        self.assertFalse(checklist["discovery"]["unsafe_installers_used"])
+        self.assertFalse(checklist["discovery"]["network_protocol_actions_used"])
+        self.assertEqual(
+            checklist["radicle_local_replay"]["status_after_loop_20"],
+            "blocked_no_approved_rad_binary_found",
+        )
+        self.assertEqual(checklist["nostr_disposable_readback"]["status_after_loop_20"], "planned_not_executed")
+
+        required_global_gates = {
+            "approved_tooling_path_required",
+            "temporary_or_disposable_state_only",
+            "no_production_or_private_personal_keys",
+            "no_spending_or_paid_infrastructure",
+            "no_public_seed_publishing_by_default",
+            "no_relay_publishing_or_signing_until_prerequisites_met",
+            "no_direct_outreach",
+            "no_unsupported_security_censorship_durability_or_production_claims",
+        }
+        self.assertLessEqual(required_global_gates, set(checklist["global_gates"]))
+        self.assertIn("use_temp_RAD_HOME", checklist["radicle_local_replay"]["required_before_replay"])
+        self.assertIn(
+            "disposable_project_scoped_key_storage_documented_without_secret_values",
+            checklist["nostr_disposable_readback"]["required_before_publish"],
+        )
+        self.assertFalse(checklist["secrets_policy"]["contains_secret_values"])
+        forbidden_blob = json.dumps(checklist).lower()
+        for forbidden in ["secret_key", "seed_phrase", "production_private", "paid_service_token"]:
+            self.assertIn(forbidden, forbidden_blob)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, forbidden_blob)
 
     def test_required_top_level_fields(self):
         for fixture in self.fixtures:

@@ -1,0 +1,98 @@
+{
+  "schema_version": "decentralized-forge.live-adapter-replay-checklist.v1",
+  "loop": 20,
+  "purpose": "Secret-free gates for future Radicle local CLI replay and Nostr disposable relay publish/readback verification.",
+  "discovery": {
+    "rad_command": "command -v rad",
+    "rad_found_in_loop_20": false,
+    "rad_version_checked": false,
+    "reason_rad_version_not_checked": "No rad executable was found on PATH during safe discovery.",
+    "unsafe_installers_used": false,
+    "network_protocol_actions_used": false
+  },
+  "global_gates": [
+    "approved_tooling_path_required",
+    "temporary_or_disposable_state_only",
+    "no_production_or_private_personal_keys",
+    "no_spending_or_paid_infrastructure",
+    "no_public_seed_publishing_by_default",
+    "no_relay_publishing_or_signing_until_prerequisites_met",
+    "no_public_ci_or_status_events_without_separate_scope",
+    "no_direct_outreach",
+    "no_unsupported_security_censorship_durability_or_production_claims"
+  ],
+  "radicle_local_replay": {
+    "status_after_loop_20": "blocked_no_approved_rad_binary_found",
+    "required_before_replay": [
+      "record_command_v_rad_path",
+      "record_rad_version_output",
+      "use_temp_RAD_HOME",
+      "use_disposable_git_repo",
+      "confirm_local_only_rad_init_or_equivalent_from_help_output",
+      "avoid_public_seed_publish_peer_announce_or_sync"
+    ],
+    "evidence_to_capture": [
+      "approved_binary_path",
+      "version_output",
+      "temp_RAD_HOME_path_shape_no_secrets",
+      "disposable_repo_path_shape",
+      "git_commit_sha",
+      "exact_commands_stdout_stderr",
+      "local_radicle_identifier_if_created",
+      "negative_evidence_no_seed_publish_no_external_replication_no_spending"
+    ],
+    "promotion_criteria": [
+      "approved_cli_path_and_version_recorded",
+      "commands_run_with_temp_RAD_HOME_and_disposable_repo",
+      "local_radicle_output_recorded",
+      "no_public_seed_or_external_replication_performed",
+      "docs_and_tests_distinguish_local_cli_from_public_network_replication"
+    ]
+  },
+  "nostr_disposable_readback": {
+    "status_after_loop_20": "planned_not_executed",
+    "required_before_publish": [
+      "disposable_project_scoped_key_storage_documented_without_secret_values",
+      "relay_selection_documented",
+      "relay_terms_rate_limits_and_retention_reviewed",
+      "event_payloads_reviewed_for_prototype_label_and_no_secrets",
+      "local_event_id_and_signature_verification_available",
+      "explicit_publish_readback_gate_approved"
+    ],
+    "evidence_to_capture": [
+      "tool_versions",
+      "relay_urls",
+      "public_key_only",
+      "event_ids",
+      "signed_event_payloads_without_secret_keys",
+      "publish_result",
+      "readback_result",
+      "event_id_pubkey_signature_kind_tags_content_verification"
+    ],
+    "promotion_criteria": [
+      "event_signed_by_disposable_project_key",
+      "event_id_computed_and_signature_verified_locally",
+      "selected_relay_accepts_event",
+      "readback_returns_same_event_id_and_payload",
+      "renderer_adapter_docs_distinguish_live_readback_from_fixture_metadata",
+      "non_claims_for_durability_global_propagation_censorship_resistance_and_production_trust_preserved"
+    ]
+  },
+  "secrets_policy": {
+    "contains_secret_values": false,
+    "allowed_in_repo": [
+      "public_keys",
+      "tool_versions",
+      "relay_urls",
+      "event_ids_after_public_publish",
+      "non-secret command transcripts"
+    ],
+    "forbidden_in_repo": [
+      "secret_keys",
+      "seed_phrases",
+      "production_private_keys",
+      "personal_credentials",
+      "paid_service_tokens"
+    ]
+  }
+}

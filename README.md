@@ -23,7 +23,7 @@ This repo starts as a research/spec/prototype workspace. The first milestone is 
 
 ## Current status
 
-This repository is a **local registry/static renderer prototype** with protocol-mapping fixtures. It is public for collaboration, but the decentralized protocol integrations are not live-verified yet.
+This repository is a **local registry/static renderer prototype** with protocol-mapping fixtures. It is public for collaboration, but the decentralized protocol integrations are not live-verified yet. Loop 20 added a safe live-gated replay plan/checklist; `command -v rad` found no Radicle CLI on `PATH`, so live Radicle replay remains blocked in this environment.
 
 | Area | Current state | Not claimed |
 |---|---|---|
@@ -33,6 +33,7 @@ This repository is a **local registry/static renderer prototype** with protocol-
 | Artifacts | Local SHA-256 and CIDv1 raw/base32-compatible metadata | IPFS availability, pinning, Filecoin/Arweave durability |
 | CI/provenance | Synthetic local CI/provenance display fields | Hosted CI, real signing, Sigstore/in-toto verification, Rekor upload, SLSA compliance |
 | Verification labels | Top-level and NIP-34 adapter `verification_states[]` records identify local fixtures, source-inspected mappings, synthetic fixtures, live-unverified scopes, future live-verified evidence, rendered counts by state/live/synthetic flag, and claim-boundary summaries | Implicit live verification, production trust, censorship-proof/durability/security guarantees |
+| Live replay gates | Safe Radicle/Nostr replay plan plus secret-free checklist fixture; Radicle CLI discovery currently blocked because `rad` is absent from `PATH` | Executed Radicle replay, Nostr signing/publishing/readback, live protocol verification |
 | Public collaboration | GitHub issues/discussions for temporary coordination | Decentralized issue/patch federation running in production |
 
 ## Docs
@@ -49,9 +50,11 @@ This repository is a **local registry/static renderer prototype** with protocol-
 - `docs/artifact-metadata.md` — Loop 6 release artifact metadata, local CID fixture, and no-pinning/no-durability boundaries
 - `docs/ci-provenance-model.md` — Loop 7 synthetic local CI/provenance model and no-Sigstore/no-SLSA-claim boundaries
 - `docs/public-collaboration.md` — Loop 9 public collaboration stance, first issue set, and public update draft
+- `docs/live-adapter-replay-plan.md` — Loop 20 safe live-gated Radicle/Nostr replay prerequisites, evidence checklist, rollback, and non-claim gates
 - `ROADMAP.md` — public prototype roadmap, verification-state labels, and collaboration tracks
 - `schemas/project-registry.schema.json` — MVP project registry schema
 - `fixtures/example-project.registry.json` — local-only demo project registry fixture
+- `fixtures/live-adapter-replay-checklist.json` — secret-free Loop 20 machine-readable gates for future live adapter replay
 - `fixtures/local-release-artifact.txt` — local-only release artifact fixture with stdlib-tested SHA-256/CIDv1 metadata
 - `fixtures/nostr-repo-state-status.json` — local-only `kind: 30618` repository state fixture generated from the recorded local Git HEAD at fixture creation time plus fixture-only synthetic status/check projections
 - `fixtures/radicle-backed-project.registry.json` — synthetic local-only Radicle-backed registry fixture
@@ -95,6 +98,7 @@ python3 -m json.tool fixtures/radicle-backed-project.registry.json
 python3 -m json.tool fixtures/nostr-repo-announcement.json
 python3 -m json.tool fixtures/nostr-collaboration-events.json
 python3 -m json.tool fixtures/nostr-repo-state-status.json
+python3 -m json.tool fixtures/live-adapter-replay-checklist.json
 python3 scripts/nip34_adapter.py fixtures/nostr-repo-announcement.json fixtures/nostr-collaboration-events.json fixtures/nostr-repo-state-status.json
 python3 scripts/preflight_static_artifact.py
 python3 -m unittest discover -s tests
@@ -102,4 +106,4 @@ python3 -m unittest discover -s tests
 
 The prototype is local-only: it does not publish to relays, run a public federation actor, spend money, or use private/production keys. Top-level `verification_states[]` records make each scope's evidence and claim boundary explicit; current protocol scopes are local fixtures, source-inspected mappings, synthetic fixtures, or live-unverified, not live-verified. Release artifact metadata can carry local hashes and CID-compatible identifiers, but it is not pinned, uploaded, fetched from IPFS, wallet-backed, paid-storage-backed, or durable-storage verified. CI/provenance fields and renderer sections remain synthetic/local display data unless separately verified. The NIP-34 adapter only parses local dry-run fixtures and preserves placeholder IDs/signatures plus `published: false` non-claim fields; its conformance reports compute possible NIP-01 reference event IDs only as local metadata and do not replace fixture IDs, sign, or publish. Adapter `verification_states[]` rows for repository announcement, collaboration events, conformance reports, repository state, and synthetic status/check projections are rendered separately from the registry-level states and all remain non-live local/synthetic evidence. The renderer summarizes both registry-level and adapter-level verification rows: total row counts, live-verified false/true counts, synthetic false/true counts, state chips, grouped rows by state, and claim-boundary summaries. It also displays a concise conformance summary (report counts, known NIP-34 kind counts, placeholder flags, signed/published false, and possible-event-ID local references) without dumping full serialized event payloads by default. The optional adapter section includes the `kind: 30618` repository state fixture generated from recorded local Git commit `32f88a7a42498328a515e4763e28d84216420a98` at fixture creation time and fixture-only status/check projections. Later commits may make that recorded fixture commit an ancestor of current `HEAD`; tests account for that. The renderer does not sign, connect to relays, fetch relay state, publish events, create public CI/status events, or verify relay read/write behavior.
 
-Loop 4's Radicle artifact is also local-only. It was mapped from the official Radicle source tree available at `/tmp/radicle-heartwood` in this run; no Radicle CLI install, `rad init`, network node, public seed, or publish action was performed.
+Loop 4's Radicle artifact is also local-only. It was mapped from the official Radicle source tree available at `/tmp/radicle-heartwood` in this run; no Radicle CLI install, `rad init`, network node, public seed, or publish action was performed. Loop 20 rechecked `command -v rad`; no `rad` executable was found, so `docs/live-adapter-replay-plan.md` and `fixtures/live-adapter-replay-checklist.json` remain prerequisite gates rather than live replay evidence.

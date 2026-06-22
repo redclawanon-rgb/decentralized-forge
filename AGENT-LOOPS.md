@@ -302,3 +302,21 @@ No relay publishing, spending, production/private keys, unsupported live protoco
 **Gate:**
 
 Do not publish to relays, spend money, use production/private keys, contact specific people directly, claim live verification, or create public CI/status events unless the documented prerequisite gates are satisfied and command/network evidence is recorded.
+
+**Current result:**
+
+Completed as safe planning only. `command -v rad` found no `rad` executable on `PATH`, so `rad --version` and any local Radicle replay were not run. Added `docs/live-adapter-replay-plan.md` and `fixtures/live-adapter-replay-checklist.json` to capture Radicle temporary-`RAD_HOME` prerequisites, Nostr disposable-key publish/readback prerequisites, evidence capture, rollback, promotion criteria, and hard non-claim gates. Tests validate the checklist remains secret-free, non-live, and blocked on the missing Radicle binary. No Radicle CLI action, relay publishing/readback, key generation, signing, public status event, spending, direct outreach, or live protocol verification occurred.
+
+## Loop 21: Prerequisite gate or local docs/test cleanup
+
+**Goal:** Avoid claiming live replay readiness while `rad` is unavailable; either satisfy a safe CLI prerequisite outside the repo or continue purely local cleanup.
+
+**Candidate tasks:**
+
+- If an approved `rad` binary path becomes available, run only the discovery/version portion first and update `docs/live-adapter-replay-plan.md` before any replay.
+- Otherwise keep work local: tighten tests/docs around the live replay checklist, renderer/preflight wording, or protocol mapping consistency.
+- Do not execute Nostr signing/publishing/readback or Radicle seed/network actions without the Loop 20 gates being explicitly satisfied.
+
+**Gate:**
+
+No live replay, signing, relay publishing/readback, Radicle seed publishing, spending, production/private keys, unsupported claims, or direct outreach unless prerequisites are met and evidence is recorded.
