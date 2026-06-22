@@ -676,16 +676,27 @@ Boundaries:
 
 **Loop 26: Live evidence import into adapter/renderer.**
 
-The next loop set is defined in `docs/next-live-adapter-loops.md` and `AGENT-LOOPS.md`:
+The next loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 
-- Loop 22: Radicle local replay preflight — complete as read-only help/version discovery; no stateful replay performed.
-- Loop 23: Radicle temporary-`RAD_HOME` disposable repo replay — complete as local CLI verification only; no node/seed/network action.
-- Loop 24: Nostr relay selection and event payload review — complete as relay/payload selection plus local signature verification; no relay publication/readback.
-- Loop 25: Nostr disposable publish/readback — complete as selected-relay acceptance/readback for the exact prototype event using the disposable project key. Evidence: `evidence/nostr-loop25-publish-readback-2026-06-22.md`; verified relays: `wss://relay.damus.io`, `wss://nos.lol`.
 - Loop 26: Live evidence import into adapter/renderer — next; can only upgrade claims backed by Loop 23/25 evidence.
 - Loop 27: Public project update draft/post — approved if accurate, non-spammy, and prototype/research-labeled.
+- Loop 28: Nostr readback persistence/divergence check — re-read Loop 25 event from selected relays; extra relays or additional publish need Permission E.
+- Loop 29: NIP-34 live-event adapter import — import selected-relay readback evidence without claiming full protocol compatibility.
+- Loop 30: Radicle public-network gate plan — Permission F for preflight only; Permission G required before public seed/publish/sync/node/remote clone.
+- Loop 31: Public storage/IPFS evidence gate plan — Permission H for no-spend preflight only; paid pinning/wallet/storage remains blocked.
+- Loop 32: Next controller/report consolidation — Permission D if run by a new low-noise controller.
 
-Needed permission bundles before autonomous execution are recorded in `docs/next-live-adapter-loops.md`: Permission A (Radicle local replay), Permission B (Nostr public relay publish/readback), and Permission C (low-noise durable cron controller). Eric granted A+B+C plus public update posting on 2026-06-22 via Telegram, while preserving gates against spending, production/private personal keys, paid infrastructure, direct person outreach, and unsupported security/durability/censorship-proof/production-readiness claims.
+## Next approval bundles to remove roadblocks
+
+- **Permission D:** Renew low-noise controller for Loops 26–32.
+- **Permission E:** Nostr follow-up live evidence using only the disposable project key; covers extra relay readback checks and at most low-volume prototype/research-labeled follow-up events.
+- **Permission F:** Radicle public-network preflight only; inspect/draft commands, no node/seed/publish/sync/remote clone.
+- **Permission G:** Radicle public seed/remote clone smoke; not recommended by default yet, but available if Eric wants to remove the next major Radicle roadblock.
+- **Permission H:** Public immutable storage/IPFS preflight only; no paid pinning, wallets, Filecoin/Arweave spend, paid storage, or durability claims.
+
+Recommended low-friction approval bundle: **D + E + F + H, not G yet**. This lets the next controller keep moving while stopping before the riskier public Radicle seed/remote-clone gate.
+
+Needed permission bundles already granted before autonomous execution are recorded in `docs/next-live-adapter-loops.md`: Permission A (Radicle local replay), Permission B (Nostr public relay publish/readback), and Permission C (low-noise durable cron controller). Eric granted A+B+C plus public update posting on 2026-06-22 via Telegram, while preserving gates against spending, production/private personal keys, paid infrastructure, direct person outreach, and unsupported security/durability/censorship-proof/production-readiness claims.
 
 ## Gates/blockers
 

@@ -424,3 +424,82 @@ No claim may be upgraded to live-verified without command/network evidence from 
 **Gate:**
 
 Posting the update publicly requires separate public-post approval unless Eric explicitly grants it with the permission bundle. No direct outreach or unsupported security/durability/censorship-proof claims.
+
+## Loop 28: Nostr readback persistence/divergence check
+
+**Goal:** Re-read the Loop 25 event after time has passed and record whether selected relays still return the same event.
+
+**Candidate tasks:**
+
+- Query `wss://relay.damus.io` and `wss://nos.lol` by Loop 25 event ID.
+- Optionally query a small number of extra free public relays if Permission E is granted.
+- Verify returned event IDs/signatures with `nak verify`.
+- Record relay divergence: returned/not returned, fields match, verify pass/fail.
+
+**Gate:**
+
+Extra relays or any additional Nostr publish require Permission E. Stop if a relay requires payment/auth/production credentials or if checks become broad/spammy.
+
+## Loop 29: NIP-34 live-event adapter import
+
+**Goal:** Convert verified live Nostr event/readback evidence into the local NIP-34 adapter path without pretending it is full forge compatibility.
+
+**Candidate tasks:**
+
+- Add a live-event fixture or index entry referencing Loop 25 evidence.
+- Show the event as selected-relay-readback verified, separate from fixture-only rows.
+- Keep dry-run fixtures separate from live readback evidence.
+- Document missing NIP-34 semantics that remain unverified.
+
+**Gate:**
+
+No new live publish is allowed unless Permission E is granted. Abort if renderer wording blurs fixture-only, local CLI, selected-relay readback, or full protocol compatibility.
+
+## Loop 30: Radicle public-network gate plan
+
+**Goal:** Prepare a no-surprises plan for a later public Radicle seed/publish/remote clone verification.
+
+**Candidate tasks:**
+
+- Inspect `rad publish`, `rad seed`, `rad sync`, `rad node`, `rad remote`, clone/fetch help/docs.
+- Identify exact disposable public seed/clone smoke commands.
+- Identify identity persistence, network publication, cleanup, peer visibility, and non-claim risks.
+- Draft Permission G execution checklist without executing it.
+
+**Gate:**
+
+Permission F covers preflight only. Permission G is required before any public Radicle seed/publish/sync/node/remote clone action.
+
+## Loop 31: Public storage/IPFS evidence gate plan
+
+**Goal:** Plan the next artifact-storage verification step without spending money or claiming durability.
+
+**Candidate tasks:**
+
+- Inventory installed local IPFS/IPLD/CAR tooling if any.
+- Decide whether local-only CAR/CID verification is enough for next step.
+- Draft a free/local add-fetch plan if tooling is safe or user-local installable.
+- Keep Filecoin/Arweave/pinning as future paid/wallet gates.
+
+**Gate:**
+
+Permission H covers preflight only. Separate explicit approval is required for paid pinning, wallet use, Filecoin/Arweave, paid storage, or durability claims.
+
+## Loop 32: Next controller/report consolidation
+
+**Goal:** Consolidate Loop 26–31 outcomes into project status/context and a concise next-roadblock report.
+
+**Candidate tasks:**
+
+- Update `STATUS.md`, `.hermes/context.md`, and `AGENT-LOOPS.md` with results.
+- Run full verification.
+- Commit/push if all checks pass.
+- Report completed loops, evidence paths, remaining gates, and exact next approval request.
+
+**Gate:**
+
+Permission D is required to run this via a new low-noise controller; local/manual docs consolidation is allowed.
+
+## Next loop-set setup
+
+`docs/next-evidence-and-interoperability-loops.md` defines Loops 26–32 and permission bundles D–H. Recommended low-friction approval bundle: approve D + E + F + H, do not approve G yet. Add G only when Eric wants one disposable public Radicle seed/remote-clone smoke.

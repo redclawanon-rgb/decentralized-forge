@@ -196,4 +196,4 @@ Loop 20 outputs:
 
 ## Current next recommended loop
 
-**Next:** Loop 26 is live evidence import into adapter/renderer. Loop 25 published and read back the exact prototype/research-labeled kind `30617` event `4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba` from `wss://relay.damus.io` and `wss://nos.lol` using only the disposable project key. Loop 26 may import this evidence narrowly while keeping fixture/local/live states visually and semantically separate and preserving all non-claims.
+**Next:** Loop 26 is live evidence import into adapter/renderer. The next six-loop set is now planned in `docs/next-evidence-and-interoperability-loops.md`: Loop 26 evidence import, Loop 27 public update draft/post, Loop 28 Nostr readback persistence/divergence check, Loop 29 NIP-34 live-event adapter import, Loop 30 Radicle public-network preflight plan, Loop 31 public storage/IPFS evidence gate plan, and Loop 32 controller/report consolidation. Recommended approval bundle to remove roadblocks: D + E + F + H, not G yet. Permission G is the later riskier public Radicle seed/remote-clone smoke gate.
