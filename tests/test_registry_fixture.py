@@ -103,7 +103,7 @@ class RegistryFixtureTests(unittest.TestCase):
             checklist["schema_version"],
             "decentralized-forge.live-adapter-replay-checklist.v1",
         )
-        self.assertEqual(checklist["loop"], 20)
+        self.assertGreaterEqual(checklist["loop"], 20)
         self.assertFalse(checklist["discovery"]["rad_found_in_loop_20"])
         self.assertFalse(checklist["discovery"]["rad_version_checked"])
         self.assertFalse(checklist["discovery"]["unsafe_installers_used"])
@@ -113,6 +113,27 @@ class RegistryFixtureTests(unittest.TestCase):
             "blocked_no_approved_rad_binary_found",
         )
         self.assertEqual(checklist["nostr_disposable_readback"]["status_after_loop_20"], "planned_not_executed")
+
+        if checklist["loop"] >= 21:
+            self.assertTrue(checklist["discovery"]["rad_found_after_loop_21"])
+            self.assertIn("rad 1.", checklist["discovery"]["rad_version_after_loop_21"])
+            self.assertTrue(checklist["discovery"]["nak_found_after_loop_21"])
+            self.assertIn("v0.", checklist["discovery"]["nak_version_after_loop_21"])
+            self.assertEqual(
+                checklist["radicle_local_replay"]["status_after_loop_21"],
+                "tooling_installed_version_recorded_replay_not_executed",
+            )
+            nostr_gate = checklist["nostr_disposable_readback"]
+            self.assertEqual(
+                nostr_gate["status_after_loop_21"],
+                "project_key_generated_offline_signed_event_verified_not_published",
+            )
+            self.assertRegex(nostr_gate["public_key_hex"], r"^[0-9a-f]{64}$")
+            self.assertTrue(nostr_gate["public_key_npub"].startswith("npub1"))
+            self.assertRegex(nostr_gate["offline_signature_event_id"], r"^[0-9a-f]{64}$")
+            self.assertTrue(nostr_gate["local_signature_verified"])
+            self.assertFalse(nostr_gate["relay_published_after_loop_21"])
+            self.assertFalse(nostr_gate["relay_readback_after_loop_21"])
 
         required_global_gates = {
             "approved_tooling_path_required",
@@ -136,6 +157,21 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn(forbidden, forbidden_blob)
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, forbidden_blob)
+
+    def test_loop21_offline_nostr_proof_is_public_and_unpublished(self):
+        checklist = self.live_replay_checklist
+        if checklist["loop"] < 21:
+            self.skipTest("Loop 21 Nostr proof not recorded yet")
+        nostr_gate = checklist["nostr_disposable_readback"]
+        proof_path = ROOT / nostr_gate["offline_signature_proof"]
+        proof = json.loads(proof_path.read_text(encoding="utf-8"))
+        self.assertEqual(proof["id"], nostr_gate["offline_signature_event_id"])
+        self.assertEqual(proof["pubkey"], nostr_gate["public_key_hex"])
+        self.assertEqual(proof["kind"], 1)
+        self.assertIn("Not published to any relay", proof["content"])
+        proof_blob = json.dumps(proof).lower()
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, proof_blob)
 
     def test_required_top_level_fields(self):
         for fixture in self.fixtures:

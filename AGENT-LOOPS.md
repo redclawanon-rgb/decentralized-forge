@@ -307,16 +307,31 @@ Do not publish to relays, spend money, use production/private keys, contact spec
 
 Completed as safe planning only. `command -v rad` found no `rad` executable on `PATH`, so `rad --version` and any local Radicle replay were not run. Added `docs/live-adapter-replay-plan.md` and `fixtures/live-adapter-replay-checklist.json` to capture Radicle temporary-`RAD_HOME` prerequisites, Nostr disposable-key publish/readback prerequisites, evidence capture, rollback, promotion criteria, and hard non-claim gates. Tests validate the checklist remains secret-free, non-live, and blocked on the missing Radicle binary. No Radicle CLI action, relay publishing/readback, key generation, signing, public status event, spending, direct outreach, or live protocol verification occurred.
 
-## Loop 21: Prerequisite gate or local docs/test cleanup
+## Loop 21: Approved tooling install and disposable Nostr key prerequisite
 
-**Goal:** Avoid claiming live replay readiness while `rad` is unavailable; either satisfy a safe CLI prerequisite outside the repo or continue purely local cleanup.
+**Goal:** Satisfy the missing CLI/key prerequisite without performing Radicle replay or Nostr relay publication.
+
+**Completed:**
+
+- Installed Radicle user-local binaries under `~/.local/bin`: `rad`, `radicle-node`, and `git-remote-rad` version 1.9.1.
+- Installed Nostr CLI `nak` under `~/.local/bin` version v0.20.0.
+- Generated a disposable/project-scoped Nostr secret key outside the repo at `~/.hermes/keys/decentralized-forge/nostr-project.nsec` with `0600` permissions; only public identifiers are recorded in project docs.
+- Added offline signed proof event `evidence/nostr-offline-key-proof-2026-06-22.json`; verified locally with `nak verify`; not published.
+- Updated the live replay plan, machine-readable checklist, status, context, and tests for the installed/key-ready but still non-live state.
+
+**Gate preserved:**
+
+No Radicle replay, Radicle node start, Nostr relay publishing/readback, Radicle seed publishing, spending, production/private personal keys, unsupported claims, or direct outreach occurred.
+
+## Loop 22: Safe live-verification candidate
+
+**Goal:** Convert one prerequisite-ready path into command/network evidence without overclaiming.
 
 **Candidate tasks:**
 
-- If an approved `rad` binary path becomes available, run only the discovery/version portion first and update `docs/live-adapter-replay-plan.md` before any replay.
-- Otherwise keep work local: tighten tests/docs around the live replay checklist, renderer/preflight wording, or protocol mapping consistency.
-- Do not execute Nostr signing/publishing/readback or Radicle seed/network actions without the Loop 20 gates being explicitly satisfied.
+- Run a safe Radicle local replay with temporary `RAD_HOME`, disposable Git repo, and no public seed publishing; record path/version/command output and cleanup.
+- Or select a public Nostr relay, review relay terms/rate limits/retention, publish one clearly prototype-labeled event with the disposable project key, read it back by event ID, and record evidence.
 
 **Gate:**
 
-No live replay, signing, relay publishing/readback, Radicle seed publishing, spending, production/private keys, unsupported claims, or direct outreach unless prerequisites are met and evidence is recorded.
+No production/private personal keys, paid infrastructure, specific-person outreach, unsupported security/durability/censorship-proof claims, or production-readiness claims. A single local replay or relay readback is evidence for that narrow check only.

@@ -496,6 +496,35 @@ Boundaries:
 - Loop 20 performed safe local discovery and documentation/checklist work only.
 - No unsafe installer, package install, Radicle CLI action, `RAD_HOME` replay, public seed publishing, Nostr key generation, event signing, relay publishing/readback, public CI/status event creation, spending, production/private key use, direct outreach, or live protocol verification occurred.
 
+### Loop 21: approved tooling install and disposable Nostr key prerequisite
+
+Status: **complete as prerequisite-only tooling/key setup; no live relay or Radicle replay**.
+
+Eric approved installing needed tooling and generating Harry-owned Nostr keys via Telegram on 2026-06-22.
+
+Outputs:
+
+- Installed Radicle user-local binaries under `~/.local/bin`: `rad`, `radicle-node`, and `git-remote-rad`.
+- Installed Nostr CLI `nak` as `~/.local/bin/nak`.
+- Generated a disposable/project-scoped Nostr secret key outside the repo at `~/.hermes/keys/decentralized-forge/nostr-project.nsec` with `0600` permissions; the secret value is not recorded in repo docs, fixtures, evidence, or status.
+- Recorded public key only: `npub1ve55y0h8dkw44hyws80hj2rvy457m0j6hp8nudgy8km354807hyqp97suy` / `6669423ee76d9d5adc8e81df79286c2569edbe5ab84f3e35043db71a54eff5c8`.
+- Added offline signed proof event at `evidence/nostr-offline-key-proof-2026-06-22.json`; verified locally, not published.
+- Updated `docs/live-adapter-replay-plan.md`, `fixtures/live-adapter-replay-checklist.json`, and tests for the installed/key-ready prerequisite state.
+
+Verified commands:
+
+- `rad --version` — `rad 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)`.
+- `radicle-node --version` — `radicle-node 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)`.
+- `git-remote-rad --version` — `git-remote-rad 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)`.
+- `nak --version` — `nak version v0.20.0`.
+- `nak verify < evidence/nostr-offline-key-proof-2026-06-22.json` — passed with no output.
+
+Boundaries:
+
+- No `sudo`/root package install was possible or used; installs are user-local.
+- No curl-pipe-shell installer was executed.
+- No Radicle identity/repo replay, temporary `RAD_HOME` replay, Radicle node start, public seed publishing, Nostr relay publishing/readback, paid infrastructure, production/private personal key use, direct outreach, or live protocol verification occurred.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -520,17 +549,17 @@ Boundaries:
 - Keep the local registry JSON as the canonical control-plane object and the static renderer as the first user-visible surface.
 - Treat all current Nostr, Radicle, IPFS, ForgeFed, and provenance data as fixtures/mappings unless a future loop records live command/network verification.
 - Use the completed local NIP-34 parser/conformance adapter, repository state/status fixture, local NIP-01 conformance reports, adapter verification-state exports, and rendered fixture-adapter/conformance/verification sections as the seam for future Nostr UI/import work, while keeping relay publishing behind disposable-key and explicit relay gates.
-- Use the completed safe live-gated replay plan/checklist as the prerequisite gate for Radicle/Nostr live verification; do not execute live replay while `rad` is unavailable or Nostr disposable-key/relay prerequisites are unmet.
-- Run a safe Radicle local CLI replay only after an approved binary/install path is available; use a temporary `RAD_HOME`, disposable repo, and no public seed publishing by default.
+- Use the completed safe live-gated replay plan/checklist as the prerequisite gate for Radicle/Nostr live verification. As of Loop 21, `rad` and `nak` are installed user-locally and a disposable project Nostr key exists outside the repo, but Radicle temporary-`RAD_HOME` replay and Nostr relay publish/readback have still not been executed.
+- Run a safe Radicle local CLI replay only with a temporary `RAD_HOME`, disposable repo, and no public seed publishing by default.
 - Keep ForgeFed as a later object-shape/federation bridge; do not run a public actor until moderation/security gates exist.
 - Keep IPFS/CIDs as artifact metadata until live add/fetch/pin verification is explicitly performed; defer Filecoin/Arweave because they imply spending/wallet decisions.
 - Keep Sigstore/in-toto/SLSA as release/build trust models; current provenance is synthetic and no SLSA level should be claimed.
 
 ## Next recommended loop
 
-**Loop 21: prerequisite gate or local docs/test cleanup while Radicle CLI remains unavailable.**
+**Loop 22: safe Radicle temporary-`RAD_HOME` local replay or Nostr relay selection/readback gate.**
 
-Loop 20 is complete locally as planning/checklist work only. `command -v rad` found no approved Radicle CLI on `PATH`, so no live Radicle replay is possible in this environment yet. The next bounded candidate is a hard prerequisite gate: either discover an approved `rad` binary and record only path/version evidence first, or keep work purely local by tightening the live replay checklist, renderer/preflight wording, or protocol mapping docs/tests. Do not execute Radicle replay, Nostr signing/publishing/readback, relay publishing, public seed publishing, spending, production/private key use, direct outreach, or live-verification claims unless the documented prerequisites are satisfied and evidence is recorded.
+Loop 21 completed the hard prerequisite setup: `rad`/`radicle-node`/`git-remote-rad` and `nak` are installed user-locally, and a disposable project-scoped Nostr key exists outside the repo with public key recorded. The next bounded candidate is either a safe Radicle local replay using a temporary `RAD_HOME` and disposable Git repo with no seed publishing, or a Nostr relay-selection/publish-readback gate using the disposable key. Keep all outputs clearly prototype-labeled and do not claim live protocol verification until command/network evidence is captured.
 
 ## Gates/blockers
 

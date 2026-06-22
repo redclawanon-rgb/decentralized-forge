@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-adapter-replay-checklist.v1",
-  "loop": 20,
+  "loop": 21,
   "purpose": "Secret-free gates for future Radicle local CLI replay and Nostr disposable relay publish/readback verification.",
   "discovery": {
     "rad_command": "command -v rad",
@@ -8,7 +8,15 @@
     "rad_version_checked": false,
     "reason_rad_version_not_checked": "No rad executable was found on PATH during safe discovery.",
     "unsafe_installers_used": false,
-    "network_protocol_actions_used": false
+    "network_protocol_actions_used": false,
+    "loop_21_approval_recorded": "Eric approved installing needed tooling and generating Harry-owned disposable Nostr keys on 2026-06-22 via Telegram.",
+    "rad_found_after_loop_21": true,
+    "rad_path_after_loop_21": "/home/openclaw/.local/bin/rad",
+    "rad_version_after_loop_21": "rad 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)",
+    "nak_found_after_loop_21": true,
+    "nak_path_after_loop_21": "/home/openclaw/.local/bin/nak",
+    "nak_version_after_loop_21": "nak version v0.20.0",
+    "binary_install_scope_after_loop_21": "User-local binaries under ~/.local/bin; no sudo/root package install; no curl-pipe-shell execution."
   },
   "global_gates": [
     "approved_tooling_path_required",
@@ -47,7 +55,12 @@
       "local_radicle_output_recorded",
       "no_public_seed_or_external_replication_performed",
       "docs_and_tests_distinguish_local_cli_from_public_network_replication"
-    ]
+    ],
+    "status_after_loop_21": "tooling_installed_version_recorded_replay_not_executed",
+    "installed_binary_path": "/home/openclaw/.local/bin/rad",
+    "installed_version": "rad 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)",
+    "replay_executed_after_loop_21": false,
+    "reason_replay_not_executed_after_loop_21": "Loop 21 satisfied the tooling prerequisite only; temporary RAD_HOME replay remains a separate local-only execution gate."
   },
   "nostr_disposable_readback": {
     "status_after_loop_20": "planned_not_executed",
@@ -76,7 +89,19 @@
       "readback_returns_same_event_id_and_payload",
       "renderer_adapter_docs_distinguish_live_readback_from_fixture_metadata",
       "non_claims_for_durability_global_propagation_censorship_resistance_and_production_trust_preserved"
-    ]
+    ],
+    "status_after_loop_21": "project_key_generated_offline_signed_event_verified_not_published",
+    "tool_path": "/home/openclaw/.local/bin/nak",
+    "tool_version": "nak version v0.20.0",
+    "secret_storage_location_no_value": "~/.hermes/keys/decentralized-forge/nostr-project.nsec",
+    "secret_file_permissions": "0600",
+    "public_key_hex": "6669423ee76d9d5adc8e81df79286c2569edbe5ab84f3e35043db71a54eff5c8",
+    "public_key_npub": "npub1ve55y0h8dkw44hyws80hj2rvy457m0j6hp8nudgy8km354807hyqp97suy",
+    "offline_signature_proof": "evidence/nostr-offline-key-proof-2026-06-22.json",
+    "offline_signature_event_id": "129cc3a22b3da01ad92eefd6cf56ebfdad64ecc657f7d373e21d6c3a8d51fe22",
+    "local_signature_verified": true,
+    "relay_published_after_loop_21": false,
+    "relay_readback_after_loop_21": false
   },
   "secrets_policy": {
     "contains_secret_values": false,

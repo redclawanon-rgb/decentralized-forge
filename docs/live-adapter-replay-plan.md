@@ -9,7 +9,24 @@ Loop 20 prepares replay checklists for future Radicle and Nostr adapter verifica
 - Follow-up: `rad --version` was not run because no approved local binary path was discovered.
 - Installers were not run. In particular, no curl-pipe-shell installer, package install, network node startup, seed publish, relay publish, key generation, signing, or spending occurred.
 
-Because the Radicle CLI is unavailable, this plan is a prerequisite checklist only. It does not promote any Radicle or Nostr scope to `live-verified`.
+Because the Radicle CLI was unavailable during Loop 20, this plan began as a prerequisite checklist only. It did not promote any Radicle or Nostr scope to `live-verified`.
+
+## Loop 21 prerequisite update
+
+Eric approved installing needed tooling and generating Harry-owned Nostr keys on 2026-06-22 via Telegram. Loop 21 satisfied the tooling/key prerequisite only:
+
+- Radicle CLI installed as user-local binaries under `~/.local/bin`; no sudo/root package install and no curl-pipe-shell execution.
+- `rad --version`: `rad 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)`.
+- `radicle-node --version`: `radicle-node 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)`.
+- `git-remote-rad --version`: `git-remote-rad 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)`.
+- Nostr CLI installed as `~/.local/bin/nak`.
+- `nak --version`: `nak version v0.20.0`.
+- Disposable/project-scoped Nostr secret key generated outside the repository at `~/.hermes/keys/decentralized-forge/nostr-project.nsec` with `0600` permissions. Do not record the secret value in repo docs, logs, fixtures, screenshots, or chat.
+- Public Nostr key: `npub1ve55y0h8dkw44hyws80hj2rvy457m0j6hp8nudgy8km354807hyqp97suy` / `6669423ee76d9d5adc8e81df79286c2569edbe5ab84f3e35043db71a54eff5c8`.
+- Offline signed proof event saved at `evidence/nostr-offline-key-proof-2026-06-22.json` and verified locally with `nak verify`; event ID `129cc3a22b3da01ad92eefd6cf56ebfdad64ecc657f7d373e21d6c3a8d51fe22`.
+- No Radicle identity/repo replay, Radicle node start, seed publishing, Nostr relay publishing, relay readback, paid infrastructure, production/private personal keys, or live protocol verification occurred.
+
+This update promotes prerequisites from "missing" to "installed/key-ready" only. Radicle temporary-`RAD_HOME` replay and Nostr public relay publish/readback remain separate gates with evidence requirements below.
 
 ## Hard gates for any future replay
 
