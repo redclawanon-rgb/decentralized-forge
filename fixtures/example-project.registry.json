@@ -180,6 +180,58 @@
       "production_claim": "none"
     }
   },
+  "verification_states": [
+    {
+      "scope": "registry.renderer",
+      "state": "local-fixture",
+      "evidence": "fixtures/example-project.registry.json rendered by scripts/render_project_page.py and covered by stdlib tests",
+      "live_verified": false,
+      "synthetic": false,
+      "claim_boundary": "Local static registry fixture only; not a hosted production forge or signed authority.",
+      "last_checked_at": "2026-06-22T00:00:00Z",
+      "notes": "Renderer output is deterministic local HTML from fixture data."
+    },
+    {
+      "scope": "nostr.nip34.repository-collaboration-state-status",
+      "state": "synthetic-fixture",
+      "evidence": "fixtures/nostr-repo-announcement.json, fixtures/nostr-collaboration-events.json, and fixtures/nostr-repo-state-status.json parsed locally by scripts/nip34_adapter.py",
+      "live_verified": false,
+      "synthetic": true,
+      "claim_boundary": "Dry-run NIP-34/NIP-01 shapes only; no relay publish/readback, live relay fetch, signing, event-id replacement, or public status semantics claim.",
+      "last_checked_at": "2026-06-22T00:00:00Z",
+      "notes": "Possible event IDs in conformance reports are local references only."
+    },
+    {
+      "scope": "radicle.mapping",
+      "state": "source-inspected-mapping",
+      "evidence": "Radicle source/manpage/examples inspected from /tmp/radicle-heartwood at commit 90aaec1c9eee77a0beebece48f460c1424c1c8bd",
+      "live_verified": false,
+      "synthetic": true,
+      "claim_boundary": "Mapping placeholder only; no rad CLI replay, real RID verification, seed publish, or network verification.",
+      "last_checked_at": "2026-06-22T00:00:00Z",
+      "notes": "Kept as a bridge to the dedicated Radicle-backed fixture."
+    },
+    {
+      "scope": "artifact-metadata.ipfs",
+      "state": "local-fixture",
+      "evidence": "SHA-256 and CIDv1 raw/base32-compatible value computed from fixtures/local-release-artifact.txt by local tests",
+      "live_verified": false,
+      "synthetic": false,
+      "claim_boundary": "Local content-address metadata only; no IPFS add/fetch/pin/gateway availability, paid storage, or durability claim.",
+      "last_checked_at": "2026-06-22T00:00:00Z",
+      "notes": "CID shape matches fixture bytes but network availability is unverified."
+    },
+    {
+      "scope": "ci.provenance",
+      "state": "synthetic-fixture",
+      "evidence": "local-fake CI records and fake provenance/attestation strings in fixtures/example-project.registry.json",
+      "live_verified": false,
+      "synthetic": true,
+      "claim_boundary": "Synthetic local schema data only; no hosted CI, public commit status, real signature, Sigstore/cosign/in-toto verification, Rekor upload, or SLSA claim.",
+      "last_checked_at": "2026-06-22T00:00:00Z",
+      "notes": "The fake attestation repeats fixture coordinates for parser/renderer tests."
+    }
+  ],
   "signature": {
     "status": "unsigned-fixture",
     "algorithm": "none",

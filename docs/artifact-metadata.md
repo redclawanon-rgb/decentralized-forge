@@ -17,6 +17,7 @@ Release artifacts may include:
   - `multihash: "sha2-256"`
   - `verification_status`
 - `availability` — explicit non-claim flags for pinning, live IPFS verification, paid storage, and durability.
+- Top-level `verification_states[]` records may summarize artifact/IPFS scope as `local-fixture`, `synthetic-fixture`, `live-unverified`, or `live-verified` with explicit evidence and claim boundaries. Current fixtures keep artifact/IPFS scopes non-live-verified.
 
 ## Local fixture
 
@@ -47,5 +48,7 @@ Loop 7 does **not** claim the artifact is signed, produced by real hosted CI, Si
 No live IPFS add/fetch/pin was performed. No paid storage, wallet, Filecoin spend, Arweave spend, CI secret, production/private key, real signing key, public CI status publication, or public infrastructure was used.
 
 Allowed claim: the fixture carries a CIDv1/base32-compatible content address computed from local bytes plus synthetic CI/provenance metadata verified for internal consistency by local stdlib tests.
+
+Loop 16 allowed claim: `verification_states[]` makes the artifact/IPFS status explicit as local or synthetic fixture evidence unless a future row is backed by live add/fetch/pin verification.
 
 Not allowed claim: the artifact is pinned, durable, censorship-proof, replicated, gateway-reachable, Filecoin-backed, Arweave-backed, production-secure, signed, SLSA-compliant, Sigstore-verified, or in-toto-verified.

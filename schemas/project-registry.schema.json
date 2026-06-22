@@ -600,6 +600,56 @@
           }
         }
       }
+    },
+    "verification_states": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "scope",
+          "state",
+          "evidence",
+          "live_verified",
+          "synthetic",
+          "claim_boundary"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "state": {
+            "enum": [
+              "local-fixture",
+              "source-inspected-mapping",
+              "synthetic-fixture",
+              "live-unverified",
+              "live-verified"
+            ]
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          },
+          "live_verified": {
+            "type": "boolean"
+          },
+          "synthetic": {
+            "type": "boolean"
+          },
+          "claim_boundary": {
+            "type": "string",
+            "minLength": 1
+          },
+          "last_checked_at": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
     }
   }
 }

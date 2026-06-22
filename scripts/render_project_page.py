@@ -191,6 +191,23 @@ def render_ci_check(check: dict) -> str:
     )
 
 
+def render_verification_state(state: dict) -> str:
+    return (
+        '<article class="verification-state">'
+        + '<dl class="metadata">'
+        + field("Scope", state.get("scope"))
+        + field("State", state.get("state"))
+        + f"<dt>Live verified</dt><dd>{yes_no(state.get('live_verified'))}</dd>"
+        + f"<dt>Synthetic</dt><dd>{yes_no(state.get('synthetic'))}</dd>"
+        + field("Evidence", state.get("evidence"), code=False)
+        + field("Claim boundary", state.get("claim_boundary"), code=False)
+        + field("Last checked", state.get("last_checked_at"))
+        + field("Notes", state.get("notes"), code=False)
+        + "</dl>"
+        + "</article>"
+    )
+
+
 def render_substrate(name: str, value: object) -> str:
     if not isinstance(value, dict):
         return f"<strong>{esc(name)}</strong>: <code>{esc(json.dumps(value, sort_keys=True))}</code>"
@@ -393,6 +410,7 @@ def render_registry(data: dict, nip34_adapter_export: dict | None = None) -> str
     for name, value in sorted(data.get("substrates", {}).items()):
         substrate_items.append(render_substrate(name, value))
     ci_items = [render_ci_check(check) for check in data.get("ci_checks", [])]
+    verification_state_items = [render_verification_state(state) for state in data.get("verification_states", [])]
 
     return f"""<!doctype html>
 <html lang=\"en\">
@@ -428,6 +446,7 @@ def render_registry(data: dict, nip34_adapter_export: dict | None = None) -> str
   <section><h2>Patches / PRs</h2>{list_items(patch_items)}</section>
   <section><h2>Releases</h2>{list_items(release_items)}</section>
   <section><h2>CI / provenance checks</h2>{list_items(ci_items)}</section>
+  <section><h2>Verification states</h2><p class="notice"><strong>Verification labels:</strong> these records separate local fixtures, source-inspected mappings, synthetic fixtures, live-unverified scopes, and live-verified evidence. A scope is not live-verified unless its row says so explicitly.</p>{list_items(verification_state_items)}</section>
   <section><h2>Protocol substrate details</h2>{list_items(substrate_items)}</section>
   {render_nip34_adapter_section(nip34_adapter_export)}
   <section><h2>Signature status</h2><p><code>{esc(json.dumps(data.get('signature', {}), sort_keys=True))}</code></p></section>

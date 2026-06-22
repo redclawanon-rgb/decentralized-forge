@@ -346,6 +346,32 @@ Boundaries:
 - NIP-01 possible event IDs are displayed as local references only, not fixture IDs and not proof of signing or relay acceptance.
 - No relay publishing/readback, relay fetching, key use, event signing, fixture ID replacement, public CI/status event creation, public protocol verification, spending, production/private keys, or unsupported live-protocol/security/durability/SLSA/censorship-proof claims were performed.
 
+### Loop 16: Verification-state label schema/fixture cleanup
+
+Status: **complete as local schema/fixture/renderer cleanup; no live protocol verification or publishing**.
+
+Outputs:
+
+- `schemas/project-registry.schema.json` now allows optional top-level `verification_states[]` records with explicit `scope`, `state`, `evidence`, `live_verified`, `synthetic`, `claim_boundary`, `last_checked_at`, and `notes` fields.
+- `fixtures/example-project.registry.json` and `fixtures/radicle-backed-project.registry.json` now include compact verification-state rows for registry/renderer, NIP-34, Radicle, artifact/IPFS, and CI/provenance scopes as applicable.
+- `scripts/render_project_page.py` now renders a **Verification states** section before substrate details.
+- `output/demo-project.html` regenerated with all optional local NIP-34 fixtures and the new verification-state section.
+- `tests/test_registry_fixture.py` now verifies schema enum coverage, explicit fixture states, no `live_verified: true` for unverified protocol scopes, renderer display, and absence of unsupported claim phrases in verification-state rows.
+- README, `.hermes/context.md`, `AGENT-LOOPS.md`, `docs/artifact-metadata.md`, and `docs/ci-provenance-model.md` updated for the new labels and boundaries.
+
+Verified commands:
+
+- `python3 -m json.tool schemas/project-registry.schema.json` — passed.
+- `python3 -m json.tool fixtures/example-project.registry.json` — passed.
+- `python3 -m json.tool fixtures/radicle-backed-project.registry.json` — passed.
+- `python3 scripts/render_project_page.py fixtures/example-project.registry.json output/demo-project.html --nip34-repo-fixture fixtures/nostr-repo-announcement.json --nip34-collaboration-fixture fixtures/nostr-collaboration-events.json --nip34-state-status-fixture fixtures/nostr-repo-state-status.json` — passed.
+- `python3 -m unittest discover -s tests` — passed, 34 tests.
+
+Boundaries:
+
+- Verification-state labels are descriptive local metadata only; no row claims live verification unless backed by future command/network evidence.
+- No relay publishing/readback, relay fetching, key use, event signing, fixture ID replacement, public CI/status event creation, live Radicle/IPFS/Sigstore verification, spending, production/private keys, or unsupported security/durability/censorship-proof claims were performed.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -377,9 +403,9 @@ Boundaries:
 
 ## Next recommended loop
 
-**Loop 16: Further schema/fixture cleanup around verification-state labels.**
+**Loop 17: consume verification-state labels in adapters/docs or run a safe live-gated replay if approved.**
 
-Loop 15 was parent-verified and pushed to the public GitHub remote. The next bounded local candidate is schema/fixture cleanup around fixture-vs-live verification labels and status consistency. A safe Radicle local CLI replay remains a candidate only if an approved `rad` binary/install path is available. Keep all live protocol claims gated by actual command/network verification, and keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, and public protocol gates are explicitly satisfied.
+Loop 16 is complete locally. The next bounded candidate is to make NIP-34/Radicle adapter exports consume or emit the same `verification_states[]` vocabulary, or to attempt a safe Radicle local CLI replay only if an approved `rad` binary/install path is available. Keep all live protocol claims gated by actual command/network verification, and keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, and public protocol gates are explicitly satisfied.
 
 ## Gates/blockers
 

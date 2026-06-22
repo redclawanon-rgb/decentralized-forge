@@ -236,3 +236,21 @@ Keep the summary as local fixture metadata only. Do not replace dry-run fixture 
 **Gate:**
 
 Keep all live protocol claims gated by actual command/network verification. No relay publishing, spending, production/private keys, unsupported security/durability/censorship-proof claims, or direct outreach without the existing project gates being satisfied.
+
+**Current result:**
+
+Completed as local schema/fixture/renderer cleanup. `schemas/project-registry.schema.json` now allows top-level `verification_states[]`; both registry fixtures include explicit rows for local fixture, source-inspected mapping, synthetic fixture, and live-unverified scopes as applicable; `scripts/render_project_page.py` renders a **Verification states** section; tests assert the schema enum, explicit fixture rows, no live-verified claims for unverified protocol scopes, renderer output, and absence of unsupported claim phrases. No relay publishing, live protocol verification, spending, production/private keys, or unsupported security/durability/censorship-proof claims were introduced.
+
+## Loop 17: Verification-state vocabulary follow-up or safe live-gated replay
+
+**Goal:** Reuse the new verification-state labels in adapter outputs/docs, or run a safe local live-verification replay only if prerequisites are explicitly satisfied.
+
+**Candidate tasks:**
+
+- Make `scripts/nip34_adapter.py` exports consume or emit `verification_states[]`-compatible records for imported fixture evidence.
+- Align any remaining docs/status tables on the same state vocabulary.
+- Attempt a Radicle local CLI replay only if an approved `rad` binary/install path is available; use temporary local state and avoid public seed publishing by default.
+
+**Gate:**
+
+No relay publishing, spending, production/private keys, unsupported live protocol/security/durability/censorship-proof claims, or direct outreach. Any live-verified row must be backed by actual command/network evidence recorded in docs/tests.

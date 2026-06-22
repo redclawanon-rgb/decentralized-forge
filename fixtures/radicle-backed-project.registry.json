@@ -159,6 +159,48 @@
       "notes": "Loop 4 fixture remains source-inspection-only and does not carry artifact-byte provenance."
     }
   },
+  "verification_states": [
+    {
+      "scope": "registry.renderer",
+      "state": "local-fixture",
+      "evidence": "fixtures/radicle-backed-project.registry.json is parsed by local registry tests",
+      "live_verified": false,
+      "synthetic": true,
+      "claim_boundary": "Synthetic Radicle-backed registry fixture only; not a live project, hosted forge, or signed authority.",
+      "last_checked_at": "2026-06-22T00:00:00Z",
+      "notes": "Fixture is retained for parser and schema coverage."
+    },
+    {
+      "scope": "radicle.mapping",
+      "state": "source-inspected-mapping",
+      "evidence": "Radicle source/manpage/examples inspected from /tmp/radicle-heartwood at commit 90aaec1c9eee77a0beebece48f460c1424c1c8bd",
+      "live_verified": false,
+      "synthetic": true,
+      "claim_boundary": "Source-inspected mapping only; no approved rad CLI binary was used, no RAD_HOME replay occurred, no real RID was verified, and nothing was published to a seed.",
+      "last_checked_at": "2026-06-22T00:00:00Z",
+      "notes": "Matches existing substrates.radicle.local_verification false live flags."
+    },
+    {
+      "scope": "artifact-metadata.ipfs",
+      "state": "synthetic-fixture",
+      "evidence": "Illustrative radicle-spike-source.tar.gz metadata in the fixture without backing artifact bytes or CID",
+      "live_verified": false,
+      "synthetic": true,
+      "claim_boundary": "Parser coverage only; no artifact file, IPFS CID, pin, paid storage, or durability claim exists.",
+      "last_checked_at": "2026-06-22T00:00:00Z",
+      "notes": "availability.local_fixture is false for this artifact."
+    },
+    {
+      "scope": "ci.provenance",
+      "state": "live-unverified",
+      "evidence": "substrates.sigstore_slsa marks provenance_status as absent-synthetic-placeholder with all real verification flags false",
+      "live_verified": false,
+      "synthetic": true,
+      "claim_boundary": "No hosted CI, public status, signing, Sigstore/cosign/in-toto verification, Rekor upload, or SLSA level claim.",
+      "last_checked_at": "2026-06-22T00:00:00Z",
+      "notes": "The fixture intentionally has no ci_checks array."
+    }
+  ],
   "signature": {
     "status": "unsigned-fixture",
     "algorithm": "none",

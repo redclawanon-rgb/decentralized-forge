@@ -20,6 +20,7 @@ Loop 7 adds a local-only model for CI check status and release provenance so fut
   - verification flags proving this is local schema data only
   - boundaries such as `no-real-signature`, `no-private-key`, and `no-slsa-level-claim`
 - `substrates.sigstore_slsa` — explicit non-claim flags for Sigstore/cosign/in-toto/SLSA status.
+- Top-level `verification_states[]` — compact scope labels for renderer/docs consumers. Current CI/provenance rows are `synthetic-fixture` or `live-unverified` with `live_verified: false`; they do not upgrade fake attestations into real supply-chain evidence.
 
 The JSON Schema allows these optional fields while retaining the older artifact `signature` and `attestation` string fields for compatibility.
 
@@ -50,6 +51,8 @@ Loop 7 does **not** perform or claim any of the following:
 - paid CI minutes, paid storage, wallets, or public infrastructure provisioning
 
 Allowed claim: the project has a local synthetic schema/fixture for CI status and artifact provenance, and stdlib tests validate internal consistency and non-claim flags.
+
+Loop 16 allowed claim: `verification_states[]` consistently labels CI/provenance scopes as synthetic or live-unverified until real hosted CI/signing/verifier evidence exists.
 
 Not allowed claim: the artifact is signed, SLSA-compliant, Sigstore-verified, in-toto-verified, produced by real CI, secured by production keys, or suitable for production supply-chain trust.
 

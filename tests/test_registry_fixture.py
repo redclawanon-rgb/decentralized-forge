@@ -104,6 +104,61 @@ class RegistryFixtureTests(unittest.TestCase):
             with self.subTest(project=fixture["project"]["id"]):
                 self.assertLessEqual(set(fixture), allowed)
 
+    def test_schema_allows_explicit_verification_state_labels(self):
+        verification_states = self.schema["properties"].get("verification_states")
+        self.assertIsInstance(verification_states, dict)
+        self.assertEqual(verification_states["type"], "array")
+        item_schema = verification_states["items"]
+        for field in ["scope", "state", "evidence", "live_verified", "synthetic", "claim_boundary"]:
+            self.assertIn(field, item_schema["required"])
+            self.assertIn(field, item_schema["properties"])
+        self.assertEqual(
+            set(item_schema["properties"]["state"]["enum"]),
+            {"local-fixture", "source-inspected-mapping", "synthetic-fixture", "live-unverified", "live-verified"},
+        )
+
+    def test_fixtures_include_non_overclaiming_verification_states(self):
+        allowed_states = {"local-fixture", "source-inspected-mapping", "synthetic-fixture", "live-unverified", "live-verified"}
+        for fixture in self.fixtures:
+            with self.subTest(project=fixture["project"]["id"]):
+                states = fixture.get("verification_states", [])
+                self.assertGreaterEqual(len(states), 3)
+                by_scope = {state["scope"]: state for state in states}
+                self.assertIn("registry.renderer", by_scope)
+                self.assertIn("radicle.mapping", by_scope)
+                self.assertIn("artifact-metadata.ipfs", by_scope)
+                self.assertIn("ci.provenance", by_scope)
+                for state in states:
+                    self.assertIn(state["state"], allowed_states)
+                    self.assertIsInstance(state["live_verified"], bool)
+                    self.assertIsInstance(state["synthetic"], bool)
+                    self.assertTrue(state["evidence"])
+                    self.assertTrue(state["claim_boundary"])
+                    if state["state"] != "live-verified":
+                        self.assertFalse(state["live_verified"])
+
+    def test_protocol_verification_states_do_not_claim_unverified_live_support(self):
+        protocol_scopes = ("nostr", "nip34", "radicle", "ipfs", "artifact-metadata", "ci.provenance", "sigstore")
+        forbidden_claims = [
+            "censorship-proof",
+            "production ready",
+            "slsa-compliant",
+            "sigstore-verified",
+            "in-toto-verified",
+            "durably stored",
+            "pinned and available",
+            "relay-accepted",
+        ]
+        for fixture in self.fixtures:
+            for state in fixture.get("verification_states", []):
+                with self.subTest(project=fixture["project"]["id"], scope=state["scope"]):
+                    if any(marker in state["scope"] for marker in protocol_scopes):
+                        self.assertFalse(state["live_verified"])
+                        self.assertNotEqual(state["state"], "live-verified")
+                    text = json.dumps(state).lower()
+                    for claim in forbidden_claims:
+                        self.assertNotIn(claim, text)
+
     def test_required_project_fields(self):
         for fixture in self.fixtures:
             with self.subTest(project=fixture["project"]["id"]):
@@ -594,6 +649,10 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn("Clone URLs", html)
             self.assertIn("Protocol substrate details", html)
             self.assertIn("CI / provenance checks", html)
+            self.assertIn("Verification states", html)
+            self.assertIn("Verification labels", html)
+            self.assertIn("artifact-metadata.ipfs", html)
+            self.assertIn("A scope is not live-verified unless its row says so explicitly", html)
             self.assertIn("Artifact availability", html)
             self.assertIn("Content addresses", html)
             self.assertIn("Provenance / attestation", html)
