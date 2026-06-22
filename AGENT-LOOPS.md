@@ -10,8 +10,8 @@ Inspired by Eric's X bookmark signal around loop engineering, subagents, scoping
 2. Every loop has gates and stop conditions.
 3. Every loop writes/updates docs before moving on.
 4. Every subagent result is parent-verified with files, source links, tests, or git state.
-5. A loop can continue overnight only if it is local, reversible, and bounded.
-6. Public actions are hard gates.
+5. A loop can continue overnight if it is bounded, reversible, or covered by the standing public-build approval.
+6. Public actions are allowed for this project when accurate, non-spammy, prototype-labeled, and not dependent on paid infrastructure or production/private keys.
 
 ## Loop 1: Research corpus and protocol matrix
 
@@ -63,7 +63,7 @@ Inspired by Eric's X bookmark signal around loop engineering, subagents, scoping
 
 **Gate:**
 
-Do not publish to public relays without explicit approval. Use only test keys for local/dev relay or dry-run fixtures.
+Public relay publishing is now approved for this project only with disposable/project-scoped keys, documented storage locations, and prototype labeling. Use only test keys for local/dev relay or dry-run fixtures; never use production/private personal keys.
 
 ## Loop 4: Radicle local integration spike
 
@@ -79,7 +79,7 @@ Do not publish to public relays without explicit approval. Use only test keys fo
 
 **Gate:**
 
-No public seed publishing, public repo/account creation, public project updates, production/private keys, unsafe installs, contacting anyone, or spending without explicit approval.
+No public seed publishing unless it is an accurate prototype-labeled project update covered by the public-build approval. No production/private keys, unsafe installs, contacting specific people outside public channels, or spending without explicit approval.
 
 **Current result:**
 
@@ -98,4 +98,4 @@ Completed as a source-inspected local spike because `rad` was unavailable and th
 
 **Gate:**
 
-No public relay publishing, production/private keys, public claims, paid services, public repo/account creation, remote pushes, or contacting anyone without Eric approval.
+Public relay publishing is allowed only with disposable/project-scoped keys and documented storage; otherwise keep dry-run fixtures and use GitHub issues/discussions as the public collaboration surface first. No production/private keys, unsupported public claims, paid services, or contacting specific people outside public channels.

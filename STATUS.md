@@ -75,11 +75,11 @@ Notes:
 
 - Each protocol claim should include source URL and retrieval date where possible.
 - Research must separate observed facts from recommendations.
-- No public publishing/posting, public repo/account creation, or public remote pushes without explicit approval in the current run.
+- Public building is approved for this project in the current all-night controller run: GitHub publishing/pushes, public project updates, and public collaboration surfaces are allowed when accurate, non-spammy, and labeled as research/prototype work.
 - No spending.
 - No production/private keys for protocol actions.
 - No unsupported production/security/censorship-proof claims.
-- Local commits allowed; remote pushes are gated.
+- Local commits and public GitHub pushes are allowed after tests/preflight pass.
 
 ## Latest parent-verified state
 
@@ -104,14 +104,13 @@ Notes:
 
 **Loop 5: Nostr local/dev relay spike or stronger dry-run issue/patch fixtures.**
 
-Preferred local path: locate or install a free/safe local Nostr relay, publish only synthetic local/dev events, read them back, and keep all keys test-only. Fallback path: if no local relay is feasible, strengthen dry-run NIP-34/NIP-35 repository/issue/patch event fixtures plus parser/validation tests. Do not publish to public relays.
+Preferred local path: locate or install a free/safe local Nostr relay, publish only synthetic local/dev events, read them back, and keep all keys test-only. Public relay publishing is allowed only with disposable/project-scoped keys and a documented key storage location; if key management is not safe in this environment, strengthen dry-run NIP-34/NIP-35 repository/issue/patch fixtures plus parser/validation tests and use GitHub issues/discussions as the public collaboration surface first.
 
 ## Gates/blockers
 
-- Do not publish Nostr events to public relays without explicit approval.
-- Do not publish/post/push to GitHub/X/Nostr/public remotes or public relays without explicit approval.
-- Do not create public accounts/projects without explicit approval.
-- Do not run a public ActivityPub/ForgeFed actor without explicit approval.
+- Public publishing/posting/pushing and public account/project creation are approved for this project when accurate, non-spammy, and labeled research/prototype.
+- Public Nostr relay publishing requires disposable/project-scoped keys only; do not use production/private personal keys.
+- Do not run a public ActivityPub/ForgeFed actor unless it is free, clearly prototype-labeled, and does not require paid infrastructure or production credentials.
 - Do not spend money or use Filecoin/Arweave wallets without explicit approval.
 - Do not use production/private keys; fixtures must use synthetic public identifiers only.
-- Do not contact anyone.
+- Do not contact specific people outside public project channels.

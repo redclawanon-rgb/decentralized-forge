@@ -41,7 +41,7 @@ The winning design is likely a protocol-aggregating decentralized forge:
 
 ## Hard boundaries / gates for the current autonomous loop
 
-Eric's current standing approval for this all-night controller run is local/reversible only. Do **not** infer public-release approval from older or unverified notes.
+Eric's current standing approval for this all-night controller run includes building in public for this project: public GitHub publishing/pushes, public project updates, public accounts/projects, and Nostr/X/GitHub posts are allowed when accurate, non-spammy, and clearly labeled as research/prototype work.
 
 Allowed without additional approval:
 
@@ -50,15 +50,15 @@ Allowed without additional approval:
 - Local code prototypes
 - Local tests
 - Local git commits
+- Public GitHub repo pushes for this project after tests/preflight pass
+- Public collaboration surfaces and project updates for this project when accurate and prototype-labeled
+- Public Nostr relay publishing only with disposable/project-scoped keys and documented storage locations
 
-Requires Eric approval:
+Requires Eric approval or a separate explicit target:
 
-- Posting publicly
-- Creating public accounts/projects
-- Publishing to Nostr/X/GitHub/Codeberg/etc.
 - Spending money or provisioning paid infrastructure
-- Using production/private keys for protocol actions
-- Contacting anyone
+- Using production/private personal keys for protocol actions
+- Contacting specific people outside public project channels
 - Making unsupported security/compliance/privacy claims
 - Claiming production readiness, censorship-proof guarantees, or live protocol verification that has not actually been tested
 ## Current loop state
