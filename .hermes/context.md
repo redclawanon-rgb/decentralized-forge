@@ -153,4 +153,4 @@ Loop 15 outputs:
 
 ## Current next recommended loop
 
-**Next:** parent should choose Loop 16 after reviewing Loop 15. Good candidates are further schema/fixture cleanup, parent push/review if not yet pushed, or safe Radicle local CLI replay only if an approved `rad` binary/install path appears. Keep all live protocol claims gated by actual local command/network verification and continue avoiding spending, production/private keys, and unsupported security/durability/censorship-proof claims.
+**Next:** Loop 16 should focus on further schema/fixture cleanup around fixture-vs-live verification labels and status consistency now that Loop 15 has been parent-verified and pushed. A safe Radicle local CLI replay remains a candidate only if an approved `rad` binary/install path appears. Keep all live protocol claims gated by actual local command/network verification and continue avoiding spending, production/private keys, and unsupported security/durability/censorship-proof claims.

@@ -377,9 +377,9 @@ Boundaries:
 
 ## Next recommended loop
 
-**Loop 16: Parent-selected bounded follow-up after Loop 15 review.**
+**Loop 16: Further schema/fixture cleanup around verification-state labels.**
 
-Good candidates are further schema/fixture cleanup, public push/review if Loop 15 has not yet been pushed by the parent, or a safe Radicle local CLI replay if an approved `rad` binary/install path is available. Keep all live protocol claims gated by actual command/network verification, and keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, and public protocol gates are explicitly satisfied.
+Loop 15 was parent-verified and pushed to the public GitHub remote. The next bounded local candidate is schema/fixture cleanup around fixture-vs-live verification labels and status consistency. A safe Radicle local CLI replay remains a candidate only if an approved `rad` binary/install path is available. Keep all live protocol claims gated by actual command/network verification, and keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, and public protocol gates are explicitly satisfied.
 
 ## Gates/blockers
 

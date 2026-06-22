@@ -223,14 +223,14 @@ Completed as a local renderer follow-up. `scripts/render_project_page.py` now di
 
 Keep the summary as local fixture metadata only. Do not replace dry-run fixture IDs/signatures or claim live Nostr compatibility until disposable/project-scoped keys, relay selection, signing, publish/readback, and verification are explicitly approved and completed.
 
-## Loop 16: Parent-selected bounded follow-up
+## Loop 16: Further schema/fixture cleanup around verification-state labels
 
-**Goal:** Choose the next bounded improvement after reviewing Loop 15.
+**Goal:** Tighten schema/fixture/status consistency now that Loop 15 has been parent-verified and pushed.
 
 **Candidate tasks:**
 
 - Further schema/fixture cleanup around fixture-vs-live verification labels.
-- Parent push/review if Loop 15 has not yet been pushed.
+- Make local-only/live-unverified status fields easier to consume consistently across registry, renderer, and docs.
 - Safe Radicle local CLI replay only if an approved `rad` binary/install path appears.
 
 **Gate:**
