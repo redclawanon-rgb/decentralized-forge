@@ -182,7 +182,7 @@ Notes:
 - This run observed no uncommitted user changes before editing.
 - Public GitHub repo created and verified: `https://github.com/redclawanon-rgb/decentralized-forge`.
 - Public settings verified: visibility PUBLIC, default branch `main`, Issues enabled, Discussions enabled, Wiki disabled.
-- Local `HEAD` matched remote `origin/main` at `7941b9ee4558b644a01d63c481b2b09cca91a9e5` after first public push.
+- Local `HEAD` matched remote `origin/main` at `c74b62f245bc681fca873a125a07130979b46988` after pushing Loops 5–8 and public-gate updates.
 
 ## Current architecture recommendation
 
