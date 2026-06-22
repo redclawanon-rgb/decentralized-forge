@@ -691,10 +691,12 @@ The next loop set is defined in `docs/next-evidence-and-interoperability-loops.m
 - **Permission D:** Renew low-noise controller for Loops 26–32.
 - **Permission E:** Nostr follow-up live evidence using only the disposable project key; covers extra relay readback checks and at most low-volume prototype/research-labeled follow-up events.
 - **Permission F:** Radicle public-network preflight only; inspect/draft commands, no node/seed/publish/sync/remote clone.
-- **Permission G:** Radicle public seed/remote clone smoke; not recommended by default yet, but available if Eric wants to remove the next major Radicle roadblock.
+- **Permission G:** Radicle public seed/remote clone smoke; **not granted** as of 2026-06-22 and must remain blocked until Eric explicitly approves it later.
 - **Permission H:** Public immutable storage/IPFS preflight only; no paid pinning, wallets, Filecoin/Arweave spend, paid storage, or durability claims.
 
-Recommended low-friction approval bundle: **D + E + F + H, not G yet**. This lets the next controller keep moving while stopping before the riskier public Radicle seed/remote-clone gate.
+**Granted 2026-06-22 via Telegram voice:** Eric approved **D + E + F + H** and explicitly held off on **G** per Harry's recommendation.
+
+Recommended low-friction approval bundle has therefore been granted except G. The next controller may keep moving through Loops 26–32, but must stop before the riskier public Radicle seed/remote-clone gate.
 
 Needed permission bundles already granted before autonomous execution are recorded in `docs/next-live-adapter-loops.md`: Permission A (Radicle local replay), Permission B (Nostr public relay publish/readback), and Permission C (low-noise durable cron controller). Eric granted A+B+C plus public update posting on 2026-06-22 via Telegram, while preserving gates against spending, production/private personal keys, paid infrastructure, direct person outreach, and unsupported security/durability/censorship-proof/production-readiness claims.
 

@@ -34,6 +34,12 @@ Still forbidden unless Eric explicitly grants a new approval:
 - public Radicle seed/publish/sync/remote replication beyond local replay;
 - IPFS/Filecoin/Arweave pinning, wallet use, or paid storage.
 
+## New approval recorded for this loop set
+
+**Granted 2026-06-22 via Telegram voice:** Eric approved Permission D + Permission E + Permission F + Permission H for Loops 26–32. Per Harry's recommendation, Eric explicitly chose to hold Permission G for now and see where the preflight work lands.
+
+This means the next controller may run Loops 26–32 within D/E/F/H, but must stop before any public Radicle seed/publish/sync/node/remote clone action, spending, paid infrastructure, production/private personal keys, direct outreach, paid storage/wallet use, or unsupported security/durability/censorship-resistance/production-readiness claims.
+
 ## New/renewed permission bundles to remove roadblocks
 
 Eric can approve these individually or as a bundle before execution.
