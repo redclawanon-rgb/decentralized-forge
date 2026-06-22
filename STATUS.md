@@ -190,6 +190,33 @@ Boundaries:
 - Do not contact specific people directly.
 - Do not make unsupported security, SLSA, production-readiness, censorship-proof, live IPFS, or live protocol-verification claims.
 
+### Loop 10: final architecture/roadmap/decision matrix cleanup
+
+Status: **complete as documentation consolidation; no new live protocol verification or public push performed by this subagent**.
+
+Outputs:
+
+- `README.md` now includes a public current-status table separating local fixtures, dry-run/source-inspected mappings, synthetic provenance, and live-unverified protocol support.
+- `ARCHITECTURE.md` consolidated the post-Loop-9 architecture, verification-state boundaries, live adapter gates, and next implementation decision matrix.
+- `PROTOCOL-MATRIX.md` now includes current repo status per protocol plus a next-step decision matrix and promotion gates.
+- `ROADMAP.md` now includes verification-state labels, Loop 10 completion, and recommended next implementation order.
+- `docs/public-collaboration.md` now points at the verified public issue set and states that GitHub issues are temporary coordination scaffolding, not decentralized federation evidence.
+- `AGENT-LOOPS.md` now records Loop 10 and a bounded Loop 11 recommendation.
+
+Verified commands:
+
+- `python3 -m unittest discover -s tests` — passed, 19 tests.
+- `python3 -m json.tool schemas/project-registry.schema.json` — passed.
+- `python3 -m json.tool fixtures/example-project.registry.json` — passed.
+- `python3 -m json.tool fixtures/radicle-backed-project.registry.json` — passed.
+- `python3 -m json.tool fixtures/nostr-repo-announcement.json` — passed.
+- `python3 -m json.tool fixtures/nostr-collaboration-events.json` — passed.
+
+Boundaries:
+
+- Loop 10 changed documentation only.
+- No spending, production/private keys, public protocol publishing, live Radicle/Nostr/IPFS/ForgeFed/Sigstore verification, public posts, commits, or pushes were performed.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -211,19 +238,19 @@ Boundaries:
 
 ## Current architecture recommendation
 
-- Build a local registry + static renderer first.
-- Model Nostr NIP-34 repository announcements as the first external event shape.
-- Spike Radicle locally next as the likely strongest integrated substrate.
-- Treat ForgeFed as the primary future cross-forge federation bridge.
-- Use IPFS/CIDs only as optional artifact metadata until pinning/durability is explicitly chosen.
-- Use Sigstore/in-toto/SLSA as release/build trust models after local release metadata exists.
-- Defer Filecoin/Arweave because they imply spending/wallet decisions.
+- Keep the local registry JSON as the canonical control-plane object and the static renderer as the first user-visible surface.
+- Treat all current Nostr, Radicle, IPFS, ForgeFed, and provenance data as fixtures/mappings unless a future loop records live command/network verification.
+- Build a Nostr NIP-34 parser/conformance adapter next because it is low-risk and strengthens existing dry-run repository/issue/patch fixtures without requiring public relays.
+- Run a safe Radicle local CLI replay when an approved binary/install path is available; use a temporary `RAD_HOME`, disposable repo, and no public seed publishing by default.
+- Keep ForgeFed as a later object-shape/federation bridge; do not run a public actor until moderation/security gates exist.
+- Keep IPFS/CIDs as artifact metadata until live add/fetch/pin verification is explicitly performed; defer Filecoin/Arweave because they imply spending/wallet decisions.
+- Keep Sigstore/in-toto/SLSA as release/build trust models; current provenance is synthetic and no SLSA level should be claimed.
 
 ## Next recommended loop
 
-**Loop 10: final architecture/roadmap/decision matrix cleanup.**
+**Loop 11: NIP-34 parser/conformance adapter and fixture round-trip tests.**
 
-Consolidate architecture, protocol matrix, roadmap, and status docs after the public collaboration setup; ensure all public-facing docs consistently distinguish local fixtures from live-verified protocol support. If public issue creation failed or remained partial, finish/verify the Loop 9 issue set before broader cleanup.
+Implement a local stdlib parser/export seam for the existing NIP-34 repository announcement plus issue/patch fixtures. The loop should round-trip fixture fields back to registry concepts and keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, and public protocol gates are explicitly satisfied.
 
 ## Gates/blockers
 

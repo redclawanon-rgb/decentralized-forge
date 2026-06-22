@@ -132,3 +132,41 @@ Completed as local static renderer/UI work. `scripts/render_project_page.py` now
 **Gate:**
 
 Public collaboration surfaces and updates are approved for this project when accurate, non-spammy, and clearly labeled research/prototype. Do not contact specific people directly. Do not spend money, use production/private keys, or claim production readiness, censorship-proof guarantees, live IPFS availability, real signing/Sigstore/in-toto verification, SLSA compliance, or live protocol verification unless actually verified.
+
+**Current result:**
+
+Completed as a public GitHub collaboration surface. Roadmap/docs were updated and public issues #1–#5 were verified for renderer UX, Nostr parser/conformance, Radicle safe local verification, artifact state modeling, and provenance evolution. GitHub remains temporary coordination scaffolding while decentralized collaboration is fixture-backed.
+
+## Loop 10: final architecture/roadmap/decision matrix cleanup
+
+**Goal:** Consolidate public-facing architecture, roadmap, status, and protocol decision docs after Loop 9.
+
+**Tasks:**
+
+- Update README/architecture/protocol matrix/roadmap/status docs so they consistently distinguish local fixtures, dry-run protocol shapes, source-inspected mappings, synthetic provenance, and live-verified support.
+- Add or tighten a next-step decision matrix for the next implementation loops.
+- Keep edits documentation-bounded and secret-free.
+- Run stdlib tests and JSON validation for touched/related fixtures.
+
+**Gate:**
+
+Do not add new live protocol claims, public posts, spending, production/private keys, or infrastructure. If JSON fixtures/schemas are touched, validate them with `python3 -m json.tool` and run `python3 -m unittest discover -s tests`.
+
+**Current result:**
+
+Completed as documentation consolidation. `README.md`, `ARCHITECTURE.md`, `PROTOCOL-MATRIX.md`, `ROADMAP.md`, `STATUS.md`, `AGENT-LOOPS.md`, and `docs/public-collaboration.md` now align on fixture-vs-live boundaries and recommend Loop 11 as a local NIP-34 parser/conformance adapter.
+
+## Loop 11: NIP-34 parser/conformance adapter and fixture round-trip tests
+
+**Goal:** Turn existing NIP-34 dry-run fixtures into a reusable local adapter seam without publishing to relays.
+
+**Tasks:**
+
+- Add a small stdlib parser/export helper for `fixtures/nostr-repo-announcement.json` and `fixtures/nostr-collaboration-events.json`.
+- Round-trip repository id/name/clone URLs/maintainers plus issue and patch title/status/content mappings back to registry concepts.
+- Add unit tests proving fixture conformance and preserving dry-run non-claim fields.
+- Update `docs/nip34-event-shapes.md`, `STATUS.md`, and README if behavior or verification states change.
+
+**Gate:**
+
+Keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, storage location, and public protocol gates are explicitly satisfied. No production/private keys, paid services, unsupported live-verification claims, or direct outreach.

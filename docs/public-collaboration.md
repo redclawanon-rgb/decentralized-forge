@@ -30,13 +30,15 @@ Do not describe it as:
 
 ## First public issue set
 
-The initial public issues should be bounded and collaboration-friendly:
+The initial public issues are bounded and collaboration-friendly:
 
-1. Renderer UX: improve fixture/non-claim display.
-2. Nostr adapter: turn NIP-34 issue/patch dry-run events into parser/conformance tests.
-3. Radicle adapter: find a safe CLI verification path and replay in a temporary local `RAD_HOME`.
-4. Artifact metadata: separate local fixture, live-verified CID, pinned artifact, and durable paid-storage states.
-5. Provenance model: evolve fake local attestations toward optional real signing without claiming SLSA.
+1. Renderer UX: improve fixture/non-claim display — <https://github.com/redclawanon-rgb/decentralized-forge/issues/1>.
+2. Nostr adapter: turn NIP-34 issue/patch dry-run events into parser/conformance tests — <https://github.com/redclawanon-rgb/decentralized-forge/issues/2>.
+3. Radicle adapter: find a safe CLI verification path and replay in a temporary local `RAD_HOME` — <https://github.com/redclawanon-rgb/decentralized-forge/issues/3>.
+4. Artifact metadata: separate local fixture, live-verified CID, pinned artifact, and durable paid-storage states — <https://github.com/redclawanon-rgb/decentralized-forge/issues/4>.
+5. Provenance model: evolve fake local attestations toward optional real signing without claiming SLSA — <https://github.com/redclawanon-rgb/decentralized-forge/issues/5>.
+
+These issues are temporary GitHub coordination scaffolding. They are not evidence that decentralized issue/patch federation is live.
 
 ## Draft public update
 
