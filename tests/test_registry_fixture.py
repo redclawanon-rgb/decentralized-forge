@@ -33,6 +33,12 @@ class RegistryFixtureTests(unittest.TestCase):
                 for artifact in release.get("artifacts", []):
                     yield fixture, release, artifact
 
+    def fixture_file_uri_path(self, uri):
+        self.assertTrue(uri.startswith("file://"))
+        relative_path = uri.removeprefix("file://")
+        self.assertFalse(relative_path.startswith("/"), "fixture artifact URIs must be repository-relative")
+        return ROOT / relative_path
+
     def local_raw_cidv1_for_bytes(self, content):
         digest = hashlib.sha256(content).digest()
         cid_bytes = bytes([0x01, 0x55, 0x12, 0x20]) + digest
@@ -102,6 +108,29 @@ class RegistryFixtureTests(unittest.TestCase):
                 self.assertFalse(availability["live_ipfs_verified"])
                 self.assertFalse(availability["paid_storage"])
                 self.assertFalse(availability["durability_claim"])
+
+    def test_local_fixture_file_artifacts_exist_and_hashes_match(self):
+        for fixture, release, artifact in self.iter_artifacts():
+            with self.subTest(project=fixture["project"]["id"], release=release["version"], artifact=artifact["name"]):
+                availability = artifact["availability"]
+
+                if not availability["local_fixture"]:
+                    self.assertFalse(availability["pinned"])
+                    self.assertFalse(availability["live_ipfs_verified"])
+                    self.assertFalse(availability["paid_storage"])
+                    self.assertFalse(availability["durability_claim"])
+                    continue
+
+                uri = artifact["uri"]
+                if not uri.startswith("file://"):
+                    continue
+
+                artifact_path = self.fixture_file_uri_path(uri)
+                self.assertTrue(artifact_path.is_file(), f"missing local fixture artifact: {artifact_path}")
+
+                actual_sha256 = hashlib.sha256(artifact_path.read_bytes()).hexdigest()
+                self.assertEqual(artifact["sha256"], actual_sha256)
+                self.assertEqual(artifact["hashes"]["sha256"], actual_sha256)
 
     def test_local_release_fixture_hash_and_cid_are_computed_but_not_published(self):
         content = LOCAL_RELEASE_ARTIFACT_PATH.read_bytes()

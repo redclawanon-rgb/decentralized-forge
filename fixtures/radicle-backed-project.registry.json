@@ -59,12 +59,12 @@
           },
           "uri": "file://output/radicle-spike-source.tar.gz",
           "availability": {
-            "local_fixture": true,
+            "local_fixture": false,
             "pinned": false,
             "live_ipfs_verified": false,
             "paid_storage": false,
             "durability_claim": false,
-            "notes": "Synthetic Loop 4 artifact metadata retained for parser coverage only; no artifact file, IPFS CID, pin, paid storage, wallet, or durability claim."
+            "notes": "Synthetic non-byte-backed Loop 4 artifact metadata retained for parser coverage only; the file URI is illustrative and no local artifact file, IPFS CID, pin, paid storage, wallet, or durability claim exists."
           },
           "signature": "unsigned-fixture",
           "attestation": "local-source-inspection-only"
