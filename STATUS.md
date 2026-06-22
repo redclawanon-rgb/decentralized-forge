@@ -550,6 +550,31 @@ Boundaries:
 - Loop 22 did not run `rad auth`, `rad init`, create temporary Radicle state, start a node, publish/seed/sync/announce, configure remotes/peers, use production/private personal keys, spend money, or verify public Radicle networking.
 - Loop 23 may run the approved temporary-`RAD_HOME` disposable replay, but must abort if local-only behavior becomes ambiguous or a command attempts node/network/seed/publish/sync/announce behavior.
 
+### Loop 23: Radicle temporary-`RAD_HOME` disposable repo replay
+
+Status: **complete as local CLI verification only; no public Radicle network action**.
+
+Outputs:
+
+- `evidence/radicle-local-replay-2026-06-22.md` records the bounded replay evidence.
+- `fixtures/live-adapter-replay-checklist.json` records Loop 23 state.
+- `tests/test_registry_fixture.py` validates Loop 23 evidence remains bounded/secret-free and does not claim public network replication.
+
+Verified commands/evidence:
+
+- `rad auth --alias decentralized-forge-replay --stdin` with a disposable passphrase and temporary `RAD_HOME` — exited 0.
+- `rad init --name decentralized-forge-disposable-replay --description ... --default-branch master --private --no-confirm --no-seed /tmp/<temp>/repo` — exited 0.
+- `rad inspect /tmp/<temp>/repo` — returned `rad:z2KV6f6WgrTFQFAyyZ8rGfnHNkFpK`.
+- `rad inspect --identity /tmp/<temp>/repo` — returned expected project payload, delegate DID, threshold 1, and private visibility.
+- `rad inspect --refs /tmp/<temp>/repo` — returned local refs tree.
+- `rad inspect --visibility /tmp/<temp>/repo` — returned `private`.
+
+Boundaries:
+
+- Temporary `RAD_HOME` and disposable repo were removed after evidence capture.
+- No `rad node start`, `rad publish`, `rad sync`, `rad seed`, peer announce, remote peer configuration, paid infrastructure, production/private personal key use, direct outreach, or public network verification occurred.
+- This promotes Radicle only to **local CLI verified** for the narrow disposable replay path; public seed/network replication, remote clone/fetch, durability, censorship resistance, and production readiness remain unverified.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -574,24 +599,24 @@ Boundaries:
 - Keep the local registry JSON as the canonical control-plane object and the static renderer as the first user-visible surface.
 - Treat all current Nostr, Radicle, IPFS, ForgeFed, and provenance data as fixtures/mappings unless a future loop records live command/network verification.
 - Use the completed local NIP-34 parser/conformance adapter, repository state/status fixture, local NIP-01 conformance reports, adapter verification-state exports, and rendered fixture-adapter/conformance/verification sections as the seam for future Nostr UI/import work, while keeping relay publishing behind disposable-key and explicit relay gates.
-- Use the completed safe live-gated replay plan/checklist as the prerequisite gate for Radicle/Nostr live verification. As of Loop 21, `rad` and `nak` are installed user-locally and a disposable project Nostr key exists outside the repo, but Radicle temporary-`RAD_HOME` replay and Nostr relay publish/readback have still not been executed.
-- Run a safe Radicle local CLI replay only with a temporary `RAD_HOME`, disposable repo, and no public seed publishing by default.
+- Use the completed safe live-gated replay plan/checklist as the prerequisite gate for Radicle/Nostr live verification. As of Loop 23, `rad` and `nak` are installed user-locally, a disposable project Nostr key exists outside the repo, and a Radicle temporary-`RAD_HOME` disposable private replay succeeded locally. Nostr relay publish/readback and public Radicle seed/network replication have still not been executed.
+- Treat Radicle as **local CLI verified** only for the narrow disposable private replay path; do not claim public network replication, seed availability, remote clone/fetch, durability, censorship resistance, or production readiness.
 - Keep ForgeFed as a later object-shape/federation bridge; do not run a public actor until moderation/security gates exist.
 - Keep IPFS/CIDs as artifact metadata until live add/fetch/pin verification is explicitly performed; defer Filecoin/Arweave because they imply spending/wallet decisions.
 - Keep Sigstore/in-toto/SLSA as release/build trust models; current provenance is synthetic and no SLSA level should be claimed.
 
 ## Next recommended loop
 
-**Loop 23: Radicle temporary-`RAD_HOME` disposable repo replay.**
+**Loop 24: Nostr relay selection and event payload review.**
 
 The next loop set is defined in `docs/next-live-adapter-loops.md` and `AGENT-LOOPS.md`:
 
 - Loop 22: Radicle local replay preflight — complete as read-only help/version discovery; no stateful replay performed.
-- Loop 23: Radicle temporary-`RAD_HOME` disposable repo replay — requires Permission A, which Eric granted on 2026-06-22.
-- Loop 24: Nostr relay selection and event payload review — publication needs Permission B.
-- Loop 25: Nostr disposable publish/readback — requires Permission B.
+- Loop 23: Radicle temporary-`RAD_HOME` disposable repo replay — complete as local CLI verification only; no node/seed/network action.
+- Loop 24: Nostr relay selection and event payload review — next.
+- Loop 25: Nostr disposable publish/readback — requires the relay/payload selected in Loop 24.
 - Loop 26: Live evidence import into adapter/renderer — can only upgrade claims backed by Loop 23/25 evidence.
-- Loop 27: Public project update draft — posting publicly requires separate public-post approval unless included in the permission bundle.
+- Loop 27: Public project update draft/post — approved if accurate, non-spammy, and prototype/research-labeled.
 
 Needed permission bundles before autonomous execution are recorded in `docs/next-live-adapter-loops.md`: Permission A (Radicle local replay), Permission B (Nostr public relay publish/readback), and Permission C (low-noise durable cron controller). Eric granted A+B+C plus public update posting on 2026-06-22 via Telegram, while preserving gates against spending, production/private personal keys, paid infrastructure, direct person outreach, and unsupported security/durability/censorship-proof/production-readiness claims.
 

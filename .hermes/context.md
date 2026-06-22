@@ -192,4 +192,4 @@ Loop 20 outputs:
 
 ## Current next recommended loop
 
-**Next:** Loop 23 is Radicle temporary-`RAD_HOME` disposable repo replay under already granted Permission A. The full next loop set is defined in `docs/next-live-adapter-loops.md`: Loop 23 Radicle temporary-`RAD_HOME` replay, Loop 24 Nostr relay selection/payload review, Loop 25 Nostr publish/readback (Permission B), Loop 26 live evidence import, and Loop 27 public update draft. Eric granted Permission A+B+C plus public update posting on 2026-06-22 via Telegram; still stop before spending, using production/private personal keys, provisioning paid infrastructure, direct person outreach, or unsupported security/durability/censorship-proof/production-readiness claims.
+**Next:** Loop 24 is Nostr relay selection and event payload review. Loop 23 completed a bounded Radicle temporary-`RAD_HOME` private replay and promoted Radicle only to local CLI verified for that narrow path. Nostr relay publish/readback remains next under Permission B; public Radicle seed/network replication remains unverified and out of scope unless separately planned.

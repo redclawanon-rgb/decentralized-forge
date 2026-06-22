@@ -160,6 +160,26 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn("rad_node_start", radicle_gate["forbidden_in_first_replay_after_loop_22"])
             self.assertFalse(radicle_gate["replay_executed_after_loop_22"])
 
+        if checklist["loop"] >= 23:
+            radicle_gate = checklist["radicle_local_replay"]
+            self.assertEqual(
+                radicle_gate["status_after_loop_23"],
+                "local_cli_verified_private_no_seed_disposable_replay",
+            )
+            self.assertTrue(radicle_gate["replay_executed_after_loop_23"])
+            self.assertEqual(
+                radicle_gate["evidence_file_after_loop_23"],
+                "evidence/radicle-local-replay-2026-06-22.md",
+            )
+            self.assertRegex(radicle_gate["local_rid_after_loop_23"], r"^rad:z[0-9A-Za-z]+$")
+            self.assertTrue(radicle_gate["local_delegate_did_after_loop_23"].startswith("did:key:"))
+            self.assertEqual(radicle_gate["visibility_after_loop_23"], "private")
+            self.assertFalse(radicle_gate["seed_published_after_loop_23"])
+            self.assertFalse(radicle_gate["node_started_after_loop_23"])
+            self.assertFalse(radicle_gate["sync_or_announce_after_loop_23"])
+            self.assertFalse(radicle_gate["remote_peer_config_after_loop_23"])
+            self.assertFalse(radicle_gate["public_network_replication_verified_after_loop_23"])
+
         required_global_gates = {
             "approved_tooling_path_required",
             "temporary_or_disposable_state_only",
@@ -197,6 +217,22 @@ class RegistryFixtureTests(unittest.TestCase):
         proof_blob = json.dumps(proof).lower()
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, proof_blob)
+
+    def test_loop23_radicle_local_replay_evidence_is_bounded(self):
+        checklist = self.live_replay_checklist
+        if checklist["loop"] < 23:
+            self.skipTest("Loop 23 Radicle replay evidence not recorded yet")
+        radicle_gate = checklist["radicle_local_replay"]
+        evidence_path = ROOT / radicle_gate["evidence_file_after_loop_23"]
+        evidence = evidence_path.read_text(encoding="utf-8")
+        self.assertIn(radicle_gate["local_rid_after_loop_23"], evidence)
+        self.assertIn(radicle_gate["local_delegate_did_after_loop_23"], evidence)
+        self.assertIn("local CLI verification only", evidence)
+        self.assertIn("No `rad node start`", evidence)
+        self.assertIn("No secret values are recorded here", evidence)
+        evidence_blob = evidence.lower()
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, evidence_blob)
 
     def test_required_top_level_fields(self):
         for fixture in self.fixtures:

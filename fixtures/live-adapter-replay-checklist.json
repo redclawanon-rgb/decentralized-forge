@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-adapter-replay-checklist.v1",
-  "loop": 22,
+  "loop": 23,
   "purpose": "Secret-free gates for future Radicle local CLI replay and Nostr disposable relay publish/readback verification.",
   "discovery": {
     "rad_command": "command -v rad",
@@ -24,7 +24,10 @@
     "rad_init_help_checked_after_loop_22": true,
     "rad_inspect_help_checked_after_loop_22": true,
     "rad_status_command_available_after_loop_22": false,
-    "network_protocol_actions_used_after_loop_22": false
+    "network_protocol_actions_used_after_loop_22": false,
+    "loop_23_radicle_replay_recorded": true,
+    "loop_23_radicle_replay_evidence": "evidence/radicle-local-replay-2026-06-22.md",
+    "network_protocol_actions_used_after_loop_23": false
   },
   "global_gates": [
     "approved_tooling_path_required",
@@ -87,7 +90,50 @@
       "production_or_personal_identity_import"
     ],
     "replay_executed_after_loop_22": false,
-    "reason_replay_not_executed_after_loop_22": "Loop 22 was preflight/help discovery only; Loop 23 is the approved stateful temporary-RAD_HOME replay."
+    "reason_replay_not_executed_after_loop_22": "Loop 22 was preflight/help discovery only; Loop 23 is the approved stateful temporary-RAD_HOME replay.",
+    "status_after_loop_23": "local_cli_verified_private_no_seed_disposable_replay",
+    "replay_executed_after_loop_23": true,
+    "evidence_file_after_loop_23": "evidence/radicle-local-replay-2026-06-22.md",
+    "rad_home_scope_after_loop_23": "temporary /tmp directory removed after evidence capture",
+    "disposable_repo_scope_after_loop_23": "temporary /tmp repository removed after evidence capture",
+    "disposable_git_commit_after_loop_23": "c40a3f9bd6d3c39f5fe1f04a10af8bccdd373f2d",
+    "local_rid_after_loop_23": "rad:z33oByNZxkxXAChhD54B4XiSsQkao",
+    "local_delegate_did_after_loop_23": "did:key:z6MkutM4LWh4y9qdeSMTWW88pMDVJBBhnjkoGPgZq1aSYN2n",
+    "visibility_after_loop_23": "private",
+    "seed_published_after_loop_23": false,
+    "node_started_after_loop_23": false,
+    "sync_or_announce_after_loop_23": false,
+    "remote_peer_config_after_loop_23": false,
+    "public_network_replication_verified_after_loop_23": false,
+    "claim_boundary_after_loop_23": "local CLI verification only; no public seed/network replication/durability/censorship-resistance claim",
+    "replay_evidence": "evidence/radicle-local-replay-2026-06-22.md",
+    "rad_auth_required_after_loop_23": true,
+    "rad_auth_scope_after_loop_23": "disposable passphrase via stdin within temporary RAD_HOME; secret value not recorded; temp state removed after evidence capture",
+    "temporary_state_removed_after_loop_23": true,
+    "git_commit_after_loop_23": "dfa5aad01c1bad5d2b1cda9919251b41e14ee643",
+    "local_radicle_rid_after_loop_23": "rad:z33oByNZxkxXAChhD54B4XiSsQkao",
+    "local_radicle_delegate_did_after_loop_23": "did:key:z6MkutM4LWh4y9qdeSMTWW88pMDVJBBhnjkoGPgZq1aSYN2n",
+    "local_radicle_visibility_after_loop_23": "private",
+    "commands_succeeded_after_loop_23": [
+      "git init disposable repo",
+      "git commit disposable fixture",
+      "rad auth --alias decentralized-forge-replay --stdin with disposable passphrase",
+      "rad init --private --no-confirm --no-seed disposable repo",
+      "rad inspect --rid disposable repo",
+      "rad inspect --identity disposable repo",
+      "rad inspect --refs disposable repo",
+      "rad inspect --visibility disposable repo"
+    ],
+    "non_claims_after_loop_23": [
+      "no_radicle_node_start",
+      "no_rad_publish",
+      "no_rad_sync",
+      "no_public_seed_publish",
+      "no_peer_announce_or_remote_peer_configuration",
+      "no_public_network_replication_verified",
+      "no_durability_or_censorship_resistance_claim",
+      "no_production_readiness_claim"
+    ]
   },
   "nostr_disposable_readback": {
     "status_after_loop_20": "planned_not_executed",

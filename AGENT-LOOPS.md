@@ -359,6 +359,10 @@ Completed as read-only CLI help/version preflight. Added `evidence/radicle-local
 
 Abort if the command asks for persistent personal identity, attempts node/seed/network actions, exposes secrets, or makes local-only behavior ambiguous.
 
+**Current result:**
+
+Completed as a bounded local CLI replay. Used temporary `RAD_HOME`, a disposable Git repo, disposable `rad auth --stdin`, `rad init --private --no-confirm --no-seed`, and local `rad inspect` commands. Evidence is `evidence/radicle-local-replay-2026-06-22.md`. Local RID `rad:z2KV6f6WgrTFQFAyyZ8rGfnHNkFpK`, delegate DID `did:key:z6MkqRUou9azzdHZJ6fJJT5KVdUpFPbNr9ZGGCcKouZHrot9`, visibility `private`. No node start, seed publish, sync/announce, remote peer configuration, paid infrastructure, production/private personal key use, direct outreach, public network replication, or live public Radicle verification occurred.
+
 ## Loop 24: Nostr relay selection and event payload review
 
 **Goal:** Choose safe public relay targets and finalize the exact prototype payload before publication.
