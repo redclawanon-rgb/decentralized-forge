@@ -141,6 +141,87 @@ def conformance_report(event: dict[str, Any], *, label: str = "") -> dict[str, A
     }
 
 
+def verification_state(
+    *,
+    scope: str,
+    state: str,
+    evidence: str,
+    synthetic: bool = True,
+    claim_boundary: str | None = None,
+    notes: str = "",
+) -> dict[str, Any]:
+    """Return a registry-compatible verification_states[] row for adapter output.
+
+    These rows mirror the top-level project-registry vocabulary. They describe
+    local fixture evidence imported by this adapter only; they do not assert
+    relay publication, relay readback, signing, durable storage, security
+    review, or production readiness.
+    """
+    return {
+        "scope": scope,
+        "state": state,
+        "evidence": evidence,
+        "live_verified": False,
+        "synthetic": synthetic,
+        "claim_boundary": claim_boundary
+        or "Local dry-run fixture parsed by scripts/nip34_adapter.py only; no relay, signing, key, public status, durability, or production claim.",
+        "last_checked_at": "2026-06-22",
+        "notes": notes,
+    }
+
+
+def build_verification_states(
+    repo_event: dict[str, Any],
+    collaboration_fixture: dict[str, Any],
+    state_status_fixture: dict[str, Any] | None,
+    conformance_reports: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Build adapter-exported verification state rows from local fixtures."""
+    events = collaboration_fixture.get("events", [])
+    event_count = len(events) if isinstance(events, list) else 0
+    states = [
+        verification_state(
+            scope="nip34.adapter.repository_announcement",
+            state="local-fixture",
+            evidence=f"Imported local repository announcement fixture kind {repo_event.get('kind')} with placeholder id {repo_event.get('id', '')}.",
+            notes="Repository tags are mapped to registry project, clone URL, maintainer, and substrate fields.",
+        ),
+        verification_state(
+            scope="nip34.adapter.collaboration_events",
+            state="local-fixture",
+            evidence=f"Imported {event_count} local collaboration fixture event(s) from fixtures/nostr-collaboration-events.json.",
+            notes="Issue and patch records are parser projections of dry-run NIP-34-shaped fixture events.",
+        ),
+        verification_state(
+            scope="nip34.adapter.conformance_reports",
+            state="source-inspected-mapping",
+            evidence=f"Generated {len(conformance_reports)} local NIP-01/NIP-34 shape report(s) without replacing fixture IDs.",
+            notes="Possible event IDs, when present, are local reference hashes only and remain unsigned/unpublished metadata.",
+        ),
+    ]
+    if state_status_fixture is not None:
+        state_event = state_status_fixture.get("repository_state_event", {})
+        status_checks = state_status_fixture.get("status_checks", [])
+        status_count = len(status_checks) if isinstance(status_checks, list) else 0
+        states.extend(
+            [
+                verification_state(
+                    scope="nip34.adapter.repository_state",
+                    state="local-fixture",
+                    evidence=f"Imported local repository state fixture kind {state_event.get('kind')} with recorded source_git_head {state_status_fixture.get('source_git_head', '')}.",
+                    notes="HEAD/ref data is fixture evidence tied to a local Git commit recorded at fixture creation time.",
+                ),
+                verification_state(
+                    scope="nip34.adapter.status_checks",
+                    state="synthetic-fixture",
+                    evidence=f"Projected {status_count} fixture-only status/check row(s) from existing synthetic CI metadata.",
+                    notes="Status/check rows are display projections only and do not create public CI or live NIP status events.",
+                ),
+            ]
+        )
+    return states
+
+
 def load_json(path: str | Path) -> dict[str, Any]:
     """Load a JSON object from *path*."""
     data = json.loads(Path(path).read_text(encoding="utf-8"))
@@ -451,12 +532,32 @@ def export_fixture_pair(
     collaboration = parse_collaboration_fixture(collaboration_fixture)
     state_status = parse_state_status_fixture(state_status_fixture) if state_status_fixture else None
 
+    conformance_reports = [
+        conformance_report(repo_event, label="repository_announcement"),
+        *[
+            conformance_report(event, label=event.get("fixture_name", f"collaboration_event_{index}"))
+            for index, event in enumerate(collaboration_fixture.get("events", []))
+            if isinstance(event, dict)
+        ],
+    ]
+    if state_status:
+        assert state_status_fixture is not None
+        conformance_reports.append(
+            conformance_report(state_status_fixture["repository_state_event"], label="repository_state_event")
+        )
+
     exported = {
         "project": repo["project"],
         "maintainers": repo["maintainers"],
         "clone_urls": repo["clone_urls"],
         "issues": collaboration["issues"],
         "patches": collaboration["patches"],
+        "verification_states": build_verification_states(
+            repo_event,
+            collaboration_fixture,
+            state_status_fixture,
+            conformance_reports,
+        ),
         "substrates": repo["substrates"],
         "dry_run": {
             "repository": repo["dry_run"]["repository"],
@@ -465,26 +566,15 @@ def export_fixture_pair(
             "conformance": {
                 "scope": "local-dry-run-fixtures-only",
                 "source": "NIP-01/NIP-34 source-inspected 2026-06-22; no signing, publishing, or fixture id replacement",
-                "reports": [
-                    conformance_report(repo_event, label="repository_announcement"),
-                    *[
-                        conformance_report(event, label=event.get("fixture_name", f"collaboration_event_{index}"))
-                        for index, event in enumerate(collaboration_fixture.get("events", []))
-                        if isinstance(event, dict)
-                    ],
-                ],
+                "reports": conformance_reports,
             },
         },
     }
     if state_status:
-        assert state_status_fixture is not None
         exported["repository_state"] = state_status["repository_state"]
         exported["status_checks"] = state_status["status_checks"]
         exported["dry_run"]["state_status"] = state_status["dry_run"]["state_status"]
         exported["dry_run"]["repository_state_event"] = state_status["dry_run"]["repository_state_event"]
-        exported["dry_run"]["conformance"]["reports"].append(
-            conformance_report(state_status_fixture["repository_state_event"], label="repository_state_event")
-        )
     return exported
 
 

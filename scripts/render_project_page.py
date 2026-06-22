@@ -279,6 +279,27 @@ def render_nip34_conformance_report(report: dict) -> str:
     )
 
 
+def render_nip34_adapter_verification_states(states: list) -> str:
+    state_dicts = [state for state in states if isinstance(state, dict)]
+    if not state_dicts:
+        return ""
+    live_count = sum(1 for state in state_dicts if state.get("live_verified") is True)
+    synthetic_count = sum(1 for state in state_dicts if state.get("synthetic") is True)
+    state_items = [render_verification_state(state) for state in state_dicts]
+    return (
+        "<h3>Adapter verification states</h3>"
+        '<p class="notice"><strong>Adapter-local verification labels:</strong> these rows use the same '
+        "<code>verification_states[]</code> vocabulary as the registry, but they describe only the optional NIP-34 fixture import below. "
+        "They are separate from the top-level registry verification states and do not make live protocol claims.</p>"
+        + '<dl class="metadata">'
+        + field("Adapter verification row count", len(state_dicts))
+        + field("Adapter live-verified row count", live_count)
+        + field("Adapter synthetic row count", synthetic_count)
+        + "</dl>"
+        + list_items(state_items)
+    )
+
+
 def render_nip34_conformance_summary(conformance: dict) -> str:
     reports = conformance.get("reports", []) if isinstance(conformance, dict) else []
     if not isinstance(reports, list) or not reports:
@@ -324,6 +345,7 @@ def render_nip34_adapter_section(exported: dict | None) -> str:
     state_status_dry_run = dry_run.get("state_status", {}) if isinstance(dry_run, dict) else {}
     repository_state_event = dry_run.get("repository_state_event", {}) if isinstance(dry_run, dict) else {}
     conformance = dry_run.get("conformance", {}) if isinstance(dry_run, dict) else {}
+    adapter_verification_states = exported.get("verification_states", [])
 
     issue_items = [render_nip34_adapter_item("Issue", issue) for issue in issues]
     patch_items = [render_nip34_adapter_item("Patch", patch) for patch in patches]
@@ -349,6 +371,7 @@ def render_nip34_adapter_section(exported: dict | None) -> str:
         + field("Repository dry-run event ID", repository_dry_run.get("id"))
         + field("Repository dry-run signature", repository_dry_run.get("sig"))
         + "</dl>"
+        + render_nip34_adapter_verification_states(adapter_verification_states)
         + render_nip34_conformance_summary(conformance)
         + "<h3>Repository state fixture</h3>"
         + '<dl class="metadata">'

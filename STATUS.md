@@ -372,6 +372,36 @@ Boundaries:
 - Verification-state labels are descriptive local metadata only; no row claims live verification unless backed by future command/network evidence.
 - No relay publishing/readback, relay fetching, key use, event signing, fixture ID replacement, public CI/status event creation, live Radicle/IPFS/Sigstore verification, spending, production/private keys, or unsupported security/durability/censorship-proof claims were performed.
 
+### Loop 17: NIP-34 adapter verification-state vocabulary alignment
+
+Status: **complete as local adapter/renderer vocabulary alignment; no relay publishing, signing, or live protocol verification**.
+
+Outputs:
+
+- `scripts/nip34_adapter.py` now exports adapter-local `verification_states[]` rows using the same vocabulary as the top-level registry fixtures.
+- Adapter rows cover repository announcement import, issue/patch collaboration import, local conformance reports, repository state import, and synthetic fixture-only status/check projections.
+- `scripts/render_project_page.py` now displays those adapter verification states compactly inside the optional NIP-34 fixture adapter section, separate from the registry-level **Verification states** section.
+- `output/demo-project.html` regenerated with all optional local NIP-34 fixtures and the adapter verification-state section.
+- `tests/test_registry_fixture.py` now verifies adapter verification-state scopes, non-live/synthetic/local values, renderer display, and absence of unsupported live/security/durability/censorship-proof claim phrases in adapter rows.
+- README, `.hermes/context.md`, `AGENT-LOOPS.md`, and `docs/nip34-event-shapes.md` updated for Loop 17 behavior and boundaries.
+
+Verified commands:
+
+- `python3 -m json.tool schemas/project-registry.schema.json` — passed.
+- `python3 -m json.tool fixtures/example-project.registry.json` — passed.
+- `python3 -m json.tool fixtures/radicle-backed-project.registry.json` — passed.
+- `python3 -m json.tool fixtures/nostr-repo-announcement.json` — passed.
+- `python3 -m json.tool fixtures/nostr-collaboration-events.json` — passed.
+- `python3 -m json.tool fixtures/nostr-repo-state-status.json` — passed.
+- `python3 scripts/render_project_page.py fixtures/example-project.registry.json output/demo-project.html --nip34-repo-fixture fixtures/nostr-repo-announcement.json --nip34-collaboration-fixture fixtures/nostr-collaboration-events.json --nip34-state-status-fixture fixtures/nostr-repo-state-status.json` — passed.
+- `python3 scripts/nip34_adapter.py fixtures/nostr-repo-announcement.json fixtures/nostr-collaboration-events.json fixtures/nostr-repo-state-status.json` — passed.
+- `python3 -m unittest discover -s tests` — passed, 35 tests.
+
+Boundaries:
+
+- Adapter verification rows are local fixture metadata only and all current rows are non-live/synthetic/local or source-inspected mappings.
+- No relay publishing/readback, relay fetching, key use, event signing, fixture ID replacement, public CI/status event creation, live Radicle/IPFS/Sigstore verification, spending, production/private keys, or unsupported security/durability/censorship-proof claims were performed.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -395,7 +425,7 @@ Boundaries:
 
 - Keep the local registry JSON as the canonical control-plane object and the static renderer as the first user-visible surface.
 - Treat all current Nostr, Radicle, IPFS, ForgeFed, and provenance data as fixtures/mappings unless a future loop records live command/network verification.
-- Use the completed local NIP-34 parser/conformance adapter, repository state/status fixture, local NIP-01 conformance reports, and rendered fixture-adapter/conformance summary section as the seam for future Nostr UI/import work, while keeping relay publishing behind disposable-key and explicit relay gates.
+- Use the completed local NIP-34 parser/conformance adapter, repository state/status fixture, local NIP-01 conformance reports, adapter verification-state exports, and rendered fixture-adapter/conformance/verification sections as the seam for future Nostr UI/import work, while keeping relay publishing behind disposable-key and explicit relay gates.
 - Run a safe Radicle local CLI replay when an approved binary/install path is available; use a temporary `RAD_HOME`, disposable repo, and no public seed publishing by default.
 - Keep ForgeFed as a later object-shape/federation bridge; do not run a public actor until moderation/security gates exist.
 - Keep IPFS/CIDs as artifact metadata until live add/fetch/pin verification is explicitly performed; defer Filecoin/Arweave because they imply spending/wallet decisions.
@@ -403,9 +433,9 @@ Boundaries:
 
 ## Next recommended loop
 
-**Loop 17: consume verification-state labels in adapters/docs or run a safe live-gated replay if approved.**
+**Loop 18: static UX/status filtering or safe live-gated replay if prerequisites appear.**
 
-Loop 16 is complete locally. The next bounded candidate is to make NIP-34/Radicle adapter exports consume or emit the same `verification_states[]` vocabulary, or to attempt a safe Radicle local CLI replay only if an approved `rad` binary/install path is available. Keep all live protocol claims gated by actual command/network verification, and keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, and public protocol gates are explicitly satisfied.
+Loop 17 is complete locally. The next bounded candidate is to improve static UX/status filtering for registry and adapter verification-state rows (for example local/synthetic/live-unverified filters or claim-boundary summaries), or to attempt a safe Radicle local CLI replay only if an approved `rad` binary/install path is available. Keep all live protocol claims gated by actual command/network verification, and keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, and public protocol gates are explicitly satisfied.
 
 ## Gates/blockers
 

@@ -251,6 +251,24 @@ Completed as local schema/fixture/renderer cleanup. `schemas/project-registry.sc
 - Align any remaining docs/status tables on the same state vocabulary.
 - Attempt a Radicle local CLI replay only if an approved `rad` binary/install path is available; use temporary local state and avoid public seed publishing by default.
 
+**Current result:**
+
+Completed as local adapter/renderer vocabulary alignment. `scripts/nip34_adapter.py` now exports adapter-local `verification_states[]` records using the same vocabulary as top-level registry fixtures for repository announcement import, collaboration events, conformance reports, repository state, and synthetic fixture-only status/check projections. `scripts/render_project_page.py` renders those adapter rows inside the optional NIP-34 fixture adapter section, separate from the registry-level verification states. Tests assert non-live/synthetic/local adapter values, renderer display, and absence of unsupported live/security/durability/censorship-proof claim phrases in adapter rows. `output/demo-project.html` was regenerated with all optional NIP-34 fixtures. No relay publishing, signing, fixture ID replacement, live protocol verification, spending, or key use occurred.
+
+**Gate:**
+
+No relay publishing, spending, production/private keys, unsupported live protocol/security/durability/censorship-proof claims, or direct outreach. Any live-verified row must be backed by actual command/network evidence recorded in docs/tests.
+
+## Loop 18: Static UX/status filtering or safe live-gated replay
+
+**Goal:** Make verification-state rows easier to consume in the static UI, or run a live-gated replay only if prerequisites are explicitly satisfied.
+
+**Candidate tasks:**
+
+- Add static renderer grouping/filtering/summaries for registry and adapter verification-state rows.
+- Keep local/synthetic/live-unverified labels visible without implying live protocol support.
+- Attempt a Radicle local CLI replay only if an approved `rad` binary/install path is available; use temporary local state and avoid public seed publishing by default.
+
 **Gate:**
 
 No relay publishing, spending, production/private keys, unsupported live protocol/security/durability/censorship-proof claims, or direct outreach. Any live-verified row must be backed by actual command/network evidence recorded in docs/tests.

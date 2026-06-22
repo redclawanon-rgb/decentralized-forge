@@ -571,6 +571,50 @@ class RegistryFixtureTests(unittest.TestCase):
                 self.assertEqual(report["possible_event_id"], hashlib.sha256(serialized.encode("utf-8")).hexdigest())
                 self.assertNotEqual(report["possible_event_id"], event["id"])
 
+    def test_nip34_adapter_exports_verification_states_vocabulary(self):
+        exported = nip34_adapter.export_fixture_pair(
+            self.nostr_repo_fixture,
+            self.nostr_collab_fixture,
+            self.nostr_state_status_fixture,
+        )
+        states = exported["verification_states"]
+        self.assertEqual(
+            [state["scope"] for state in states],
+            [
+                "nip34.adapter.repository_announcement",
+                "nip34.adapter.collaboration_events",
+                "nip34.adapter.conformance_reports",
+                "nip34.adapter.repository_state",
+                "nip34.adapter.status_checks",
+            ],
+        )
+        allowed_states = {"local-fixture", "source-inspected-mapping", "synthetic-fixture"}
+        forbidden_claims = [
+            "censorship-proof",
+            "production ready",
+            "slsa-compliant",
+            "sigstore-verified",
+            "in-toto-verified",
+            "durably stored",
+            "pinned and available",
+            "relay-accepted",
+            "live-verified",
+        ]
+        for state in states:
+            with self.subTest(scope=state["scope"]):
+                for field in ["scope", "state", "evidence", "live_verified", "synthetic", "claim_boundary"]:
+                    self.assertIn(field, state)
+                self.assertIn(state["state"], allowed_states)
+                self.assertFalse(state["live_verified"])
+                self.assertTrue(state["synthetic"])
+                self.assertIn("nip34_adapter.py", state["claim_boundary"])
+                self.assertIn("2026-06-22", state["last_checked_at"])
+                self.assertTrue(state["evidence"])
+                self.assertTrue(state["notes"])
+                text = json.dumps(state).lower()
+                for claim in forbidden_claims:
+                    self.assertNotIn(claim, text)
+
     def test_nip01_event_shape_rejects_invalid_tag_and_content_shapes(self):
         invalid = json.loads(json.dumps(self.nostr_repo_fixture))
         invalid["tags"] = [["d", "demo-project"], ["bad", 123]]
@@ -781,6 +825,18 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn("No relay publishing, signing, fixture ID replacement, relay fetching, or live verification is performed or claimed", html)
             self.assertIn("possible_event_id values are local reference hashes only", html)
             self.assertIn("Local NIP-34 conformance summary", html)
+            self.assertIn("Adapter verification states", html)
+            self.assertIn("Adapter-local verification labels", html)
+            self.assertIn("Adapter verification row count", html)
+            self.assertIn("<dt>Adapter verification row count</dt><dd><code>5</code></dd>", html)
+            self.assertIn("<dt>Adapter live-verified row count</dt><dd><code>0</code></dd>", html)
+            self.assertIn("<dt>Adapter synthetic row count</dt><dd><code>5</code></dd>", html)
+            self.assertIn("nip34.adapter.repository_announcement", html)
+            self.assertIn("nip34.adapter.collaboration_events", html)
+            self.assertIn("nip34.adapter.conformance_reports", html)
+            self.assertIn("nip34.adapter.repository_state", html)
+            self.assertIn("nip34.adapter.status_checks", html)
+            self.assertIn("They are separate from the top-level registry verification states", html)
             self.assertIn("dry_run.conformance.reports[]", html)
             self.assertIn("Conformance report count", html)
             self.assertIn("<dt>Conformance report count</dt><dd><code>4</code></dd>", html)
