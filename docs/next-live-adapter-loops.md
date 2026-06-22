@@ -20,6 +20,8 @@ This document intentionally separates **loop creation** from **live execution**.
 
 Eric can approve these individually or as a bundle.
 
+**Granted 2026-06-22 via Telegram:** Eric approved Permission A + Permission B + Permission C + public update posting. Execute within the boundaries below; stop and ask again before spending money, using production/private personal keys, contacting specific people, provisioning paid infrastructure, or making unsupported security/durability/censorship-proof/production-readiness claims.
+
 ### Permission A — Radicle local replay
 
 Allow Harry to run a **temporary local Radicle replay** using:

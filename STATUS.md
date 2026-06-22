@@ -568,7 +568,7 @@ The next loop set is defined in `docs/next-live-adapter-loops.md` and `AGENT-LOO
 - Loop 26: Live evidence import into adapter/renderer — can only upgrade claims backed by Loop 23/25 evidence.
 - Loop 27: Public project update draft — posting publicly requires separate public-post approval unless included in the permission bundle.
 
-Needed permission bundles before autonomous execution are recorded in `docs/next-live-adapter-loops.md`: Permission A (Radicle local replay), Permission B (Nostr public relay publish/readback), and Permission C (low-noise durable cron controller).
+Needed permission bundles before autonomous execution are recorded in `docs/next-live-adapter-loops.md`: Permission A (Radicle local replay), Permission B (Nostr public relay publish/readback), and Permission C (low-noise durable cron controller). Eric granted A+B+C plus public update posting on 2026-06-22 via Telegram, while preserving gates against spending, production/private personal keys, paid infrastructure, direct person outreach, and unsupported security/durability/censorship-proof/production-readiness claims.
 
 ## Gates/blockers
 
