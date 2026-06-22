@@ -86,6 +86,9 @@ Notes:
 - Repo initialized locally at `/home/openclaw/projects/decentralized-forge`.
 - First commit existed before this run: `171e578 docs: initialize decentralized forge research workspace`.
 - This run observed no uncommitted user changes before editing.
+- Public GitHub repo created and verified: `https://github.com/redclawanon-rgb/decentralized-forge`.
+- Public settings verified: visibility PUBLIC, default branch `main`, Issues enabled, Discussions enabled, Wiki disabled.
+- Local `HEAD` matched remote `origin/main` at `7941b9ee4558b644a01d63c481b2b09cca91a9e5` after first public push.
 
 ## Current architecture recommendation
 
@@ -105,9 +108,10 @@ Preferred local path: locate or install a free/safe local Nostr relay, publish o
 
 ## Gates/blockers
 
-- Public Nostr/GitHub/X project updates are approved when accurate, non-spammy, and clearly labeled as research/prototype work.
-- Public repo creation/pushes and public project accounts are approved for this project.
-- Public ActivityPub/ForgeFed actor deployment is allowed only if it is free/local/self-hosted and does not require paid infrastructure; otherwise stop.
+- Do not publish Nostr events to public relays without explicit approval.
+- Do not publish/post/push to GitHub/X/Nostr/public remotes or public relays without explicit approval.
+- Do not create public accounts/projects without explicit approval.
+- Do not run a public ActivityPub/ForgeFed actor without explicit approval.
 - Do not spend money or use Filecoin/Arweave wallets without explicit approval.
-- Do not use production/private personal keys for protocol actions; use disposable/project-scoped keys only if needed and document where they are stored without recording secret values.
-- Do not directly contact specific people outside public project channels unless separately approved.
+- Do not use production/private keys; fixtures must use synthetic public identifiers only.
+- Do not contact anyone.
