@@ -305,6 +305,40 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn("rad publish --help", radicle_gate["help_surfaces_inspected_after_loop_30"])
             self.assertIn("rad_clone_or_remote_fetch", radicle_gate["permission_g_forbidden_until_approved"])
 
+        if checklist["loop"] >= 31:
+            discovery = checklist["discovery"]
+            self.assertTrue(discovery["loop_31_storage_preflight_recorded"])
+            self.assertEqual(discovery["loop_31_storage_gate_plan"], "docs/public-storage-evidence-gate-plan.md")
+            self.assertEqual(
+                discovery["loop_31_storage_preflight_evidence"],
+                "evidence/storage-tooling-preflight-2026-06-22.md",
+            )
+            self.assertFalse(discovery["storage_network_actions_used_after_loop_31"])
+            self.assertFalse(discovery["paid_storage_or_wallet_actions_after_loop_31"])
+            storage_gate = checklist["public_storage_preflight"]
+            self.assertEqual(
+                storage_gate["status_after_loop_31"],
+                "preflight_inventory_and_plan_complete_no_live_storage",
+            )
+            self.assertTrue(storage_gate["permission_h_preflight_completed_after_loop_31"])
+            self.assertFalse(storage_gate["installed_ipfs_or_car_tooling_after_loop_31"])
+            self.assertFalse(storage_gate["ipfs_add_or_fetch_after_loop_31"])
+            self.assertFalse(storage_gate["ipfs_daemon_started_after_loop_31"])
+            self.assertFalse(storage_gate["car_file_created_after_loop_31"])
+            self.assertFalse(storage_gate["package_installed_after_loop_31"])
+            self.assertFalse(storage_gate["public_gateway_checked_after_loop_31"])
+            self.assertFalse(storage_gate["paid_pinning_after_loop_31"])
+            self.assertFalse(storage_gate["filecoin_or_arweave_wallet_used_after_loop_31"])
+            self.assertFalse(storage_gate["paid_storage_used_after_loop_31"])
+            self.assertFalse(storage_gate["durability_claim_after_loop_31"])
+            self.assertEqual(
+                storage_gate["local_fixture_cid_v1_raw_base32"],
+                "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua",
+            )
+            package_names = {pkg["package"] for pkg in storage_gate["read_only_package_metadata_checked_after_loop_31"]}
+            self.assertIn("ipfs-car", package_names)
+            self.assertIn("@ipld/car", package_names)
+
         required_global_gates = {
             "approved_tooling_path_required",
             "temporary_or_disposable_state_only",
@@ -375,6 +409,28 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("Permission G is not granted", plan)
         self.assertIn("Do not execute this checklist unless Eric explicitly grants Permission G", plan)
         self.assertIn("Radicle remains **local CLI/private replay verified only**", plan)
+        combined = f"{evidence}\n{plan}".lower()
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, combined)
+
+    def test_loop31_storage_preflight_is_plan_only(self):
+        checklist = self.live_replay_checklist
+        if checklist["loop"] < 31:
+            self.skipTest("Loop 31 storage/IPFS preflight not recorded yet")
+        storage_gate = checklist["public_storage_preflight"]
+        evidence_path = ROOT / storage_gate["storage_preflight_evidence_after_loop_31"]
+        plan_path = ROOT / storage_gate["storage_gate_plan_after_loop_31"]
+        evidence = evidence_path.read_text(encoding="utf-8")
+        plan = plan_path.read_text(encoding="utf-8")
+        self.assertIn("Permission H only", evidence)
+        self.assertIn("`command -v ipfs` | missing", evidence)
+        self.assertIn("`ipfs-car` | `3.1.0`", evidence)
+        self.assertIn("No package install was performed", evidence)
+        self.assertIn("No IPFS add/fetch/pin", evidence)
+        self.assertIn("Loop 33 candidate: local CAR/CID fixture verification", plan)
+        self.assertIn("live_ipfs_verified", plan)
+        self.assertIn("paid pinning", plan.lower())
+        self.assertIn("would not prove paid pinning", plan)
         combined = f"{evidence}\n{plan}".lower()
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, combined)

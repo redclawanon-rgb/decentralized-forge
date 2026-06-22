@@ -487,32 +487,28 @@ Completed as Permission-F help-only preflight. Added `docs/radicle-public-networ
 
 **Goal:** Plan the next artifact-storage verification step without spending money or claiming durability.
 
-**Candidate tasks:**
+**Current result:**
 
-- Inventory installed local IPFS/IPLD/CAR tooling if any.
-- Decide whether local-only CAR/CID verification is enough for next step.
-- Draft a free/local add-fetch plan if tooling is safe or user-local installable.
-- Keep Filecoin/Arweave/pinning as future paid/wallet gates.
+Completed as Permission-H inventory/plan preflight only. Added `evidence/storage-tooling-preflight-2026-06-22.md` and `docs/public-storage-evidence-gate-plan.md`. Inventory found no installed IPFS/Kubo CLI, CAR/IPLD/CID CLI, IPFS cluster tools, `go-ipfs`, or Python multiformats/CAR modules. Local/free runtimes found Node/npm/npx/corepack, Python, and uv; Go/Rust/Cargo were missing. Read-only `npm view` metadata checked `ipfs-car@3.1.0`, `@ipld/car@5.4.6`, `multiformats@14.0.0`, `helia@6.1.4`, and `kubo-rpc-client@7.1.0` without installing or executing packages. No IPFS daemon start, add/fetch/pin, CAR creation/import, public gateway check, paid pinning/storage, Filecoin/Arweave wallet action, spending, production/private key use, direct outreach, durability claim, or production/security/censorship-resistance claim occurred.
+
+**Candidate next step:** Loop 33 local CAR/CID fixture verification. Dependency-backed path needs explicit approval to add project-scoped dev dependencies; no-new-dependency fallback can only strengthen stdlib CID docs/tests.
 
 **Gate:**
 
-Permission H covers preflight only. Separate explicit approval is required for paid pinning, wallet use, Filecoin/Arweave, paid storage, or durability claims.
+Permission H covered preflight only. Separate explicit approval is required for project-scoped dependency installation, paid pinning, wallet use, Filecoin/Arweave, paid storage, gateway availability checks, live IPFS claims, or durability claims.
 
 ## Loop 32: Next controller/report consolidation
 
 **Goal:** Consolidate Loop 26–31 outcomes into project status/context and a concise next-roadblock report.
 
-**Candidate tasks:**
+**Current result:**
 
-- Update `STATUS.md`, `.hermes/context.md`, and `AGENT-LOOPS.md` with results.
-- Run full verification.
-- Commit/push if all checks pass.
-- Report completed loops, evidence paths, remaining gates, and exact next approval request.
+Completed as docs/checklist/test consolidation. Updated `STATUS.md`, `.hermes/context.md`, `AGENT-LOOPS.md`, `docs/next-evidence-and-interoperability-loops.md`, `fixtures/live-adapter-replay-checklist.json`, and tests for Loop 31 completion and remaining gates. Verification, commit, push, and final concise report are handled by the controller run.
 
 **Gate:**
 
-Permission D is required to run this via a new low-noise controller; local/manual docs consolidation is allowed.
+No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone without Permission G. No live storage, package install, paid storage, wallet, or durability claim without a new explicit approval.
 
 ## Next loop-set setup
 
-`docs/next-evidence-and-interoperability-loops.md` defines Loops 26–32 and permission bundles D–H. Recommended low-friction approval bundle: approve D + E + F + H, do not approve G yet. Add G only when Eric wants one disposable public Radicle seed/remote-clone smoke.
+`docs/next-evidence-and-interoperability-loops.md` now records Loops 26–32 as complete. Next useful approval: Permission I for one local CAR/CID fixture verification loop with project-scoped dev dependencies, still no daemon/gateway/pin/wallet/paid-storage/durability claims. Permission G remains blocked unless Eric explicitly wants one disposable public Radicle seed/remote-clone smoke.

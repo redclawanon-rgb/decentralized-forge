@@ -293,71 +293,34 @@ This is selected/limited relay readback evidence only. It is not a durability gu
 
 ## Loop 31 — Public storage/IPFS evidence gate plan
 
-**Goal:** Plan the next artifact-storage verification step without spending money or claiming durability.
+**Status:** Complete 2026-06-22 as Permission-H inventory/plan preflight only; no live storage action.
 
-**Approval needed:** Permission H for public/free preflight; separate explicit approval required for any paid pinning, wallet, Filecoin/Arweave, or durability claim.
+**Result:**
 
-**Tasks under Permission H:**
+1. Added `evidence/storage-tooling-preflight-2026-06-22.md` with installed IPFS/CAR/IPLD tooling inventory, local/free runtime inventory, read-only package metadata checks, and non-actions.
+2. Added `docs/public-storage-evidence-gate-plan.md` with a local CAR/CID fixture verification path, a no-new-dependency fallback, and future live-IPFS/paid-wallet gates.
+3. Updated `fixtures/live-adapter-replay-checklist.json` and tests to record Loop 31 state.
+4. Found no installed IPFS/Kubo/CAR/IPLD/CID CLI or Python multiformats/CAR modules. Read-only `npm view` metadata checked `ipfs-car`, `@ipld/car`, `multiformats`, `helia`, and `kubo-rpc-client` without installing or executing packages.
 
-1. Inventory installed local IPFS/IPLD/CAR tooling if any.
-2. Decide whether local-only CAR/CID verification is enough for next step.
-3. Draft a free/local add-fetch plan if tooling is already safe or user-local installable.
-4. Keep Filecoin/Arweave/pinning as future paid/wallet gates.
+**Boundary preserved:** No package install, IPFS daemon start, IPFS add/fetch/pin, CAR creation/import, public gateway check, paid pinning/storage, Filecoin/Arweave wallet action, spending, production/private key use, direct outreach, durability claim, or production/security/censorship-resistance claim occurred.
 
-**Artifacts:**
-
-- `docs/public-storage-evidence-gate-plan.md`
-- optional `evidence/storage-tooling-preflight-YYYY-MM-DD.md`
-
-**Verification:**
-
-- local command inventory;
-- no paid service use;
-- no public durability claim.
-
-**Stop conditions:**
-
-- Tooling install path is unsafe or requires root/paid account.
-- Any step would imply paid pinning/wallet usage or durability guarantee.
+**Next storage path:** local CAR/CID fixture verification. Dependency-backed path needs a new approval to add project-scoped dev dependencies; no-new-dependency fallback only strengthens stdlib CID documentation/tests.
 
 ## Loop 32 — Next controller/report consolidation
 
-**Goal:** Consolidate loop outcomes into a concise next-roadblock report and either stop or request any remaining approvals.
+**Status:** Complete 2026-06-22 as status/context/loop doc and checklist/test consolidation.
 
-**Approval needed:** Permission D if run by controller; none if done manually as local docs.
+**Result:**
 
-**Tasks:**
+1. Updated `STATUS.md`, `.hermes/context.md`, `AGENT-LOOPS.md`, this file, `fixtures/live-adapter-replay-checklist.json`, and tests with Loop 31 completion and remaining gates.
+2. The controller run performs full verification, commit/push, and the final concise report.
 
-1. Update `STATUS.md`, `.hermes/context.md`, and `AGENT-LOOPS.md` with Loop 26–31 results.
-2. Run full verification.
-3. Commit/push if all checks pass.
-4. Report:
-   - completed loops;
-   - evidence paths;
-   - remaining gates;
-   - exact next approval request if needed.
+**Boundary preserved:** No additional cron jobs, public Radicle action, live storage action, spending, wallet, package install, or unsupported durability/security/production claim.
 
-**Artifacts:**
+## Recommended next approval bundle
 
-- updated project status/context/loop docs
-- final concise Telegram summary
+To run the next lowest-risk storage loop, Eric can say:
 
-**Verification:**
+> Approve Permission I for one local CAR/CID fixture verification loop with project-scoped dev dependencies (`ipfs-car`, `@ipld/car`, and/or `multiformats`), no daemon, no gateway, no pinning, no wallet, no paid storage, and no durability/security/production claims.
 
-- `python3 -m unittest discover -s tests`
-- `python3 scripts/preflight_static_artifact.py`
-- project artifact secret-marker scan
-- `git status --short --branch`
-- remote sync check after push
-
-## Recommended low-friction approval bundle
-
-To remove the most roadblocks while preserving safety, Eric can say:
-
-> Approve D + E + F + H for Loops 26–32. Do not approve G yet.
-
-That lets Harry run evidence import, public update, Nostr follow-up checks, Radicle public-network preflight, and IPFS/storage preflight, while still stopping before the riskier public Radicle seed/publish/remote clone gate.
-
-If Eric wants to remove the next major Radicle roadblock too, he can add:
-
-> Also approve G for one disposable public Radicle seed/remote-clone smoke, no production keys, no paid infra, no durability/censorship/production claims.
+Permission G remains separate and still blocked unless Eric explicitly wants one disposable public Radicle seed/remote-clone smoke.

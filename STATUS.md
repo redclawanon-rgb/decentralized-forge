@@ -750,6 +750,42 @@ Boundaries:
 - No `RAD_HOME` was created, no Radicle identity was created/reused, no node was started, no repository was published/seeded/synced/announced/cloned/fetched/connected/followed/remotely configured, and no public Radicle network action occurred.
 - Permission G remains required before any public Radicle seed/publish/sync/node/remote clone/fetch action.
 
+### Loop 31: Public storage/IPFS evidence gate plan/preflight
+
+Status: **complete as Permission-H inventory/plan preflight only; no live storage action**.
+
+Outputs:
+
+- `evidence/storage-tooling-preflight-2026-06-22.md` records installed-tool inventory, local/free runtime inventory, npm package metadata checks, and non-actions.
+- `docs/public-storage-evidence-gate-plan.md` drafts a later local CAR/CID fixture verification path plus future live-IPFS and paid/wallet gates.
+- `fixtures/live-adapter-replay-checklist.json` and tests now record Loop 31 storage preflight state.
+
+Verified evidence:
+
+- `command -v ipfs`, `kubo`, `ipfs-car`, `car`, `ipld`, `cid`, `ipget`, `ipfs-dag`, `ipfs-cluster-service`, `ipfs-cluster-ctl`, and `go-ipfs` — all missing on this host.
+- Python modules `multiformats`, `ipfshttpclient`, `car`, `dag_cbor`, and `cbor2` — missing.
+- Local/free runtimes present: Node `v22.22.2`, npm/npx `10.9.7`, corepack `0.34.6`, Python `3.13.5`, uv `0.11.16`; Go/Rust/Cargo missing.
+- Read-only `npm view` metadata checked, with no install/execution: `ipfs-car@3.1.0`, `@ipld/car@5.4.6`, `multiformats@14.0.0`, `helia@6.1.4`, and `kubo-rpc-client@7.1.0`, all reporting `Apache-2.0 OR MIT` license in npm metadata.
+
+Boundaries:
+
+- Loop 31 performed preflight/inventory/docs only.
+- No package install, IPFS daemon start, IPFS add/fetch/pin, CAR generation/import, public gateway check, Filecoin/Arweave wallet action, paid pinning/storage, spending, production/private key use, direct outreach, or durability/global-availability/censorship-resistance/security/production-readiness claim occurred.
+- Recommended next storage loop is local CAR/CID fixture verification. Dependency-backed path needs approval to add project-scoped dev dependencies; no-new-dependency fallback can only strengthen stdlib CID documentation/tests.
+
+### Loop 32: Next controller/report consolidation
+
+Status: **complete as docs/checklist/test consolidation for Loops 26–31**.
+
+Outputs:
+
+- `STATUS.md`, `.hermes/context.md`, `AGENT-LOOPS.md`, and `docs/next-evidence-and-interoperability-loops.md` consolidated around Loop 31 completion and remaining gates.
+- Verification and git push are recorded in the final controller report for this run.
+
+Boundaries:
+
+- Loop 32 did not create any new cron jobs, run any public Radicle action, perform live storage action, spend money, use wallets/production keys, or make unsupported durability/security/production claims.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -782,29 +818,31 @@ Boundaries:
 
 ## Next recommended loop
 
-**Loop 31: Public storage/IPFS evidence gate plan/preflight.**
+**Next:** Loop 33 candidate — local CAR/CID fixture verification, preferably with explicit approval to add project-scoped dev dependencies (`ipfs-car`, `@ipld/car`, and/or `multiformats`) if Eric wants dependency-backed CAR evidence. Without dependency approval, the safe fallback is stronger stdlib-only CID documentation/tests, which does not advance beyond local CID-compatible metadata.
 
-The next loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
+The just-completed loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 
 - Loop 26: Live evidence import into adapter/renderer — complete as `fixtures/live-evidence-index.json` plus renderer/preflight/test updates; no new live network action.
 - Loop 27: Public project update draft/post — complete as GitHub Discussion #6: https://github.com/redclawanon-rgb/decentralized-forge/discussions/6.
 - Loop 28: Nostr readback persistence/divergence check — complete as readback-only evidence in `evidence/nostr-loop28-readback-check-2026-06-22.md`/`.json`; selected Loop 25 relays still returned and verified the event; `wss://relay.primal.net` also returned it; `wss://nostr.wine` did not during this check.
 - Loop 29: NIP-34 live-event adapter import — complete as selected-relay readback evidence import without full protocol compatibility claims.
 - Loop 30: Radicle public-network gate plan — complete as Permission-F help-only preflight; Permission G still required before public seed/publish/sync/node/remote clone.
-- Loop 31: Public storage/IPFS evidence gate plan — Permission H for no-spend preflight only; paid pinning/wallet/storage remains blocked.
-- Loop 32: Next controller/report consolidation — Permission D if run by a new low-noise controller.
+- Loop 31: Public storage/IPFS evidence gate plan — complete as Permission-H inventory/plan preflight only; no package install, IPFS add/fetch/pin, gateway check, paid storage, wallet, or durability claim.
+- Loop 32: Next controller/report consolidation — complete as status/context/loop doc and checklist/test consolidation.
 
 ## Next approval bundles to remove roadblocks
 
-- **Permission D:** Renew low-noise controller for Loops 26–32.
-- **Permission E:** Nostr follow-up live evidence using only the disposable project key; covers extra relay readback checks and at most low-volume prototype/research-labeled follow-up events.
-- **Permission F:** Radicle public-network preflight only; inspect/draft commands, no node/seed/publish/sync/remote clone.
 - **Permission G:** Radicle public seed/remote clone smoke; **not granted** as of 2026-06-22 and must remain blocked until Eric explicitly approves it later.
-- **Permission H:** Public immutable storage/IPFS preflight only; no paid pinning, wallets, Filecoin/Arweave spend, paid storage, or durability claims.
+- **Permission I (new):** local CAR/CID fixture verification with project-scoped dev dependencies; allow adding lockfile-backed local JS tooling such as `ipfs-car`, `@ipld/car`, and/or `multiformats`, but still no daemon, gateway, pinning, wallet, paid storage, or durability claim unless separately approved.
+
+Completed approval bundles for the just-finished loop set:
+
+- **Permission D:** Renew low-noise controller for Loops 26–32 — granted 2026-06-22 and completed through Loop 32.
+- **Permission E:** Nostr follow-up live evidence using only the disposable project key — granted 2026-06-22 and used for Loop 28 readback-only checks; no new publish.
+- **Permission F:** Radicle public-network preflight only — granted 2026-06-22 and completed in Loop 30.
+- **Permission H:** Public immutable storage/IPFS preflight only — granted 2026-06-22 and completed in Loop 31; no paid pinning, wallets, Filecoin/Arweave spend, paid storage, or durability claims.
 
 **Granted 2026-06-22 via Telegram voice:** Eric approved **D + E + F + H** and explicitly held off on **G** per Harry's recommendation.
-
-Recommended low-friction approval bundle has therefore been granted except G. The next controller may keep moving through Loops 26–32, but must stop before the riskier public Radicle seed/remote-clone gate.
 
 Needed permission bundles already granted before autonomous execution are recorded in `docs/next-live-adapter-loops.md`: Permission A (Radicle local replay), Permission B (Nostr public relay publish/readback), and Permission C (low-noise durable cron controller). Eric granted A+B+C plus public update posting on 2026-06-22 via Telegram, while preserving gates against spending, production/private personal keys, paid infrastructure, direct person outreach, and unsupported security/durability/censorship-proof/production-readiness claims.
 

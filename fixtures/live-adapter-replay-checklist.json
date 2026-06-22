@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-adapter-replay-checklist.v1",
-  "loop": 30,
+  "loop": 31,
   "purpose": "Secret-free gates for future Radicle local CLI replay and Nostr disposable relay publish/readback verification.",
   "discovery": {
     "rad_command": "command -v rad",
@@ -48,7 +48,12 @@
     "loop_30_radicle_public_network_preflight_recorded": true,
     "loop_30_radicle_public_network_plan": "docs/radicle-public-network-gate-plan.md",
     "loop_30_radicle_public_network_preflight_evidence": "evidence/radicle-public-network-preflight-2026-06-22.md",
-    "network_protocol_actions_used_after_loop_30": false
+    "network_protocol_actions_used_after_loop_30": false,
+    "loop_31_storage_preflight_recorded": true,
+    "loop_31_storage_gate_plan": "docs/public-storage-evidence-gate-plan.md",
+    "loop_31_storage_preflight_evidence": "evidence/storage-tooling-preflight-2026-06-22.md",
+    "storage_network_actions_used_after_loop_31": false,
+    "paid_storage_or_wallet_actions_after_loop_31": false
   },
   "global_gates": [
     "approved_tooling_path_required",
@@ -59,7 +64,8 @@
     "no_relay_publishing_or_signing_until_prerequisites_met",
     "no_public_ci_or_status_events_without_separate_scope",
     "no_direct_outreach",
-    "no_unsupported_security_censorship_durability_or_production_claims"
+    "no_unsupported_security_censorship_durability_or_production_claims",
+    "no_paid_storage_or_wallet_without_approval"
   ],
   "radicle_local_replay": {
     "status_after_loop_20": "blocked_no_approved_rad_binary_found",
@@ -345,5 +351,91 @@
       "personal_credentials",
       "paid_service_tokens"
     ]
+  },
+  "public_storage_preflight": {
+    "status_after_loop_31": "preflight_inventory_and_plan_complete_no_live_storage",
+    "permission_h_preflight_completed_after_loop_31": true,
+    "storage_preflight_evidence_after_loop_31": "evidence/storage-tooling-preflight-2026-06-22.md",
+    "storage_gate_plan_after_loop_31": "docs/public-storage-evidence-gate-plan.md",
+    "installed_ipfs_or_car_tooling_after_loop_31": false,
+    "installed_tool_inventory_after_loop_31": {
+      "ipfs": false,
+      "kubo": false,
+      "ipfs-car": false,
+      "car": false,
+      "ipld": false,
+      "cid": false,
+      "ipget": false,
+      "ipfs-dag": false,
+      "ipfs-cluster-service": false,
+      "ipfs-cluster-ctl": false,
+      "go-ipfs": false,
+      "python_multiformats": false,
+      "python_ipfshttpclient": false,
+      "python_car": false,
+      "python_dag_cbor": false,
+      "python_cbor2": false
+    },
+    "local_free_runtime_available_after_loop_31": {
+      "node": "v22.22.2",
+      "npm": "10.9.7",
+      "npx": "10.9.7",
+      "corepack": "0.34.6",
+      "python3": "Python 3.13.5",
+      "uv": "uv 0.11.16 (x86_64-unknown-linux-gnu)",
+      "go": null,
+      "rustc": null,
+      "cargo": null
+    },
+    "read_only_package_metadata_checked_after_loop_31": [
+      {
+        "package": "ipfs-car",
+        "version": "3.1.0",
+        "license": "Apache-2.0 OR MIT",
+        "installed": false,
+        "executed": false
+      },
+      {
+        "package": "@ipld/car",
+        "version": "5.4.6",
+        "license": "Apache-2.0 OR MIT",
+        "installed": false,
+        "executed": false
+      },
+      {
+        "package": "multiformats",
+        "version": "14.0.0",
+        "license": "Apache-2.0 OR MIT",
+        "installed": false,
+        "executed": false
+      },
+      {
+        "package": "helia",
+        "version": "6.1.4",
+        "license": "Apache-2.0 OR MIT",
+        "installed": false,
+        "executed": false
+      },
+      {
+        "package": "kubo-rpc-client",
+        "version": "7.1.0",
+        "license": "Apache-2.0 OR MIT",
+        "installed": false,
+        "executed": false
+      }
+    ],
+    "local_fixture_sha256": "3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0",
+    "local_fixture_cid_v1_raw_base32": "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua",
+    "ipfs_add_or_fetch_after_loop_31": false,
+    "ipfs_daemon_started_after_loop_31": false,
+    "car_file_created_after_loop_31": false,
+    "package_installed_after_loop_31": false,
+    "public_gateway_checked_after_loop_31": false,
+    "paid_pinning_after_loop_31": false,
+    "filecoin_or_arweave_wallet_used_after_loop_31": false,
+    "paid_storage_used_after_loop_31": false,
+    "durability_claim_after_loop_31": false,
+    "recommended_next_storage_loop": "local_car_cid_fixture_verification_with_project_scoped_dependencies_or_no-new-dependency_stdlib_fallback",
+    "claim_boundary_after_loop_31": "Permission-H preflight only; no live IPFS add/fetch/pin/gateway, no CAR generation, no paid storage or wallet, and no durability/global-availability/censorship-resistance/security/production-readiness claim."
   }
 }
