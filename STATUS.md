@@ -432,6 +432,38 @@ Boundaries:
 - Current fixtures still have zero live-verified rows.
 - No relay publishing/readback, relay fetching, key use, event signing, fixture ID replacement, public CI/status event creation, live Radicle/IPFS/Sigstore verification, spending, production/private keys, or unsupported security/durability/censorship-proof claims were performed.
 
+### Loop 19: Static artifact release/preflight polish
+
+Status: **complete as local static artifact preflight and public usage polish; no hosting, relay publishing, signing, or live protocol verification**.
+
+Outputs:
+
+- `scripts/preflight_static_artifact.py` added as a stdlib-only preflight for `output/demo-project.html`.
+- The preflight checks that the HTML artifact exists, matches a regenerated all-fixture renderer output, contains expected local/synthetic/non-claim and optional NIP-34 fixture sections, and omits selected unsupported live-protocol/security/durability claim phrases.
+- `tests/test_registry_fixture.py` now covers preflight success, stale/overclaim detection, and the documented CLI command.
+- README usage instructions now show how to regenerate, locally open, preflight, and fully verify the static artifact while preserving local/synthetic/live-unverified boundaries.
+- `output/demo-project.html` regenerated with all optional local NIP-34 fixtures.
+- `.hermes/context.md` and `AGENT-LOOPS.md` updated for Loop 19 completion and the next loop recommendation.
+
+Verified commands:
+
+- `python3 -m json.tool schemas/project-registry.schema.json` — passed.
+- `python3 -m json.tool fixtures/example-project.registry.json` — passed.
+- `python3 -m json.tool fixtures/radicle-backed-project.registry.json` — passed.
+- `python3 -m json.tool fixtures/nostr-repo-announcement.json` — passed.
+- `python3 -m json.tool fixtures/nostr-collaboration-events.json` — passed.
+- `python3 -m json.tool fixtures/nostr-repo-state-status.json` — passed.
+- `python3 scripts/render_project_page.py fixtures/example-project.registry.json output/demo-project.html --nip34-repo-fixture fixtures/nostr-repo-announcement.json --nip34-collaboration-fixture fixtures/nostr-collaboration-events.json --nip34-state-status-fixture fixtures/nostr-repo-state-status.json` — passed.
+- `python3 scripts/nip34_adapter.py fixtures/nostr-repo-announcement.json fixtures/nostr-collaboration-events.json fixtures/nostr-repo-state-status.json` — passed.
+- `python3 scripts/preflight_static_artifact.py` — passed.
+- `python3 -m unittest discover -s tests` — passed, 38 tests.
+
+Boundaries:
+
+- Static artifact preflight is local command evidence only.
+- The generated HTML is a local file artifact, not a hosted release page or signed authority.
+- No relay publishing/readback, relay fetching, key use, event signing, fixture ID replacement, public CI/status event creation, live Radicle/IPFS/Sigstore verification, paid screenshot/hosting tooling, spending, production/private keys, direct outreach, or unsupported security/durability/censorship-proof claims were performed.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -463,9 +495,9 @@ Boundaries:
 
 ## Next recommended loop
 
-**Loop 19: release/preflight polish for generated static artifact and public usage instructions, or safe live-gated replay if prerequisites appear.**
+**Loop 20: safe live-gated adapter replay planning, starting with Radicle CLI discovery or Nostr disposable-key relay plan only if prerequisites are explicitly satisfied.**
 
-Loop 18 is complete locally. The next bounded candidate is release/preflight polish around the generated static HTML artifact and public README screenshots/usage instructions, keeping all local/synthetic/live-unverified boundaries visible. A safe Radicle local CLI replay remains an alternative only if an approved `rad` binary/install path is available. Keep all live protocol claims gated by actual command/network verification, and keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, and public protocol gates are explicitly satisfied.
+Loop 19 is complete locally. The next bounded candidate is to prepare a safe live-verification replay plan for one protocol seam without executing public protocol actions by default: discover an approved `rad` binary/install path for a temporary local `RAD_HOME` replay, or draft a disposable/project-scoped Nostr relay publish/readback checklist. Keep all live protocol claims gated by actual command/network verification, and keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, storage location, signing, publish/readback, and public protocol gates are explicitly satisfied.
 
 ## Gates/blockers
 

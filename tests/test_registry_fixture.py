@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import nip34_adapter
+import preflight_static_artifact
 
 SCHEMA_PATH = ROOT / "schemas" / "project-registry.schema.json"
 FIXTURE_PATH = ROOT / "fixtures" / "example-project.registry.json"
@@ -22,6 +23,8 @@ NOSTR_STATE_STATUS_FIXTURE_PATH = ROOT / "fixtures" / "nostr-repo-state-status.j
 LOCAL_RELEASE_ARTIFACT_PATH = ROOT / "fixtures" / "local-release-artifact.txt"
 FIXTURE_PATHS = [FIXTURE_PATH, RADICLE_FIXTURE_PATH]
 RENDERER = ROOT / "scripts" / "render_project_page.py"
+STATIC_PREFLIGHT = ROOT / "scripts" / "preflight_static_artifact.py"
+OUTPUT_DEMO_HTML = ROOT / "output" / "demo-project.html"
 CIDV1_BASE32_RE = re.compile(r"^b[a-z2-7]{20,}$")
 
 
@@ -929,6 +932,42 @@ class RegistryFixtureTests(unittest.TestCase):
             )
             self.assertEqual(result.returncode, 2)
             self.assertIn("must be provided together", result.stderr)
+
+    def test_static_artifact_preflight_accepts_regenerated_all_fixture_output(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output = Path(tmpdir) / "demo-project.html"
+            result = preflight_static_artifact.render_to(output)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            failures = preflight_static_artifact.check_static_artifact(output)
+            self.assertEqual(failures, [])
+
+    def test_static_artifact_preflight_rejects_stale_or_overclaiming_output(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output = Path(tmpdir) / "demo-project.html"
+            result = preflight_static_artifact.render_to(output)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            html = output.read_text(encoding="utf-8")
+            output.write_text(
+                html.replace("Prototype boundary", "Prototype boundary stale")
+                + "\nproduction-ready decentralized forge\n",
+                encoding="utf-8",
+            )
+            failures = preflight_static_artifact.check_static_artifact(output)
+            self.assertTrue(any("unsupported claim phrase" in failure for failure in failures))
+            self.assertTrue(any("generated artifact is stale" in failure for failure in failures))
+
+    def test_static_artifact_preflight_cli_checks_committed_output(self):
+        result = subprocess.run(
+            [sys.executable, str(STATIC_PREFLIGHT)],
+            cwd=ROOT,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Static artifact preflight passed", result.stdout)
+        self.assertTrue(OUTPUT_DEMO_HTML.is_file())
 
     def test_renderer_escapes_fixture_values_in_new_sections(self):
         with tempfile.TemporaryDirectory() as tmpdir:

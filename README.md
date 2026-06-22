@@ -57,19 +57,49 @@ This repository is a **local registry/static renderer prototype** with protocol-
 - `fixtures/radicle-backed-project.registry.json` — synthetic local-only Radicle-backed registry fixture
 - `scripts/nip34_adapter.py` — stdlib parser/export helper that round-trips dry-run NIP-34 repository, issue, patch, repository state, fixture-only status/check data, and local NIP-01 conformance metadata back to registry-shaped concepts without relay publishing
 - `scripts/render_project_page.py` — stdlib renderer for static project pages, including verification-state labels, artifact availability, content-address, CI/provenance, substrate detail sections, and optional local NIP-34 fixture adapter import/display
+- `scripts/preflight_static_artifact.py` — stdlib preflight for generated static artifact freshness, expected local/synthetic boundary sections, optional NIP-34 fixture sections, and selected unsupported claim phrases
 - `output/demo-project.html` — generated demo project page
 - `tests/test_registry_fixture.py` — stdlib verification tests for the registry fixture and renderer
 
-## Local prototype verification
+## Local prototype usage and verification
+
+Regenerate the public demo artifact with every local fixture section enabled:
 
 ```sh
 python3 scripts/render_project_page.py fixtures/example-project.registry.json output/demo-project.html \
   --nip34-repo-fixture fixtures/nostr-repo-announcement.json \
   --nip34-collaboration-fixture fixtures/nostr-collaboration-events.json \
   --nip34-state-status-fixture fixtures/nostr-repo-state-status.json
+```
+
+Open the generated artifact locally in a browser:
+
+```sh
+python3 -m webbrowser output/demo-project.html
+```
+
+Run the static artifact preflight before release-oriented edits, screenshots, pushes, or public updates:
+
+```sh
+python3 scripts/preflight_static_artifact.py
+```
+
+The preflight is stdlib-only. It checks that `output/demo-project.html` exists, is byte-for-byte current with the renderer plus all optional NIP-34 fixtures, includes expected local/synthetic/non-claim sections, includes the optional NIP-34 fixture adapter/state/status/conformance sections, and omits selected unsupported live-protocol/security/durability claim phrases.
+
+Run the full local verification suite:
+
+```sh
+python3 -m json.tool schemas/project-registry.schema.json
+python3 -m json.tool fixtures/example-project.registry.json
+python3 -m json.tool fixtures/radicle-backed-project.registry.json
+python3 -m json.tool fixtures/nostr-repo-announcement.json
+python3 -m json.tool fixtures/nostr-collaboration-events.json
+python3 -m json.tool fixtures/nostr-repo-state-status.json
+python3 scripts/nip34_adapter.py fixtures/nostr-repo-announcement.json fixtures/nostr-collaboration-events.json fixtures/nostr-repo-state-status.json
+python3 scripts/preflight_static_artifact.py
 python3 -m unittest discover -s tests
 ```
 
-The prototype is local-only: it does not publish to relays, run a public federation actor, spend money, or use private/production keys. Top-level `verification_states[]` records now make each scope's evidence and claim boundary explicit; current protocol scopes are local fixtures, source-inspected mappings, synthetic fixtures, or live-unverified, not live-verified. The NIP-34 adapter only parses local dry-run fixtures and preserves placeholder IDs/signatures plus `published: false` non-claim fields; its conformance reports compute possible NIP-01 reference event IDs only as local metadata and do not replace fixture IDs, sign, or publish. Loop 17 also makes the adapter export its own `verification_states[]`-compatible rows for repository announcement, collaboration events, conformance reports, repository state, and synthetic status/check projections; these rows are rendered separately from the registry-level states and all remain non-live local/synthetic evidence. Loop 18 adds static renderer summaries/grouping for both registry-level and adapter-level verification rows: total row counts, live-verified false/true counts, synthetic false/true counts, state chips, grouped rows by state, and claim-boundary summaries. The renderer displays verification labels plus a concise Loop 15 conformance summary (report counts, known NIP-34 kind counts, placeholder flags, signed/published false, and possible-event-ID local references) without dumping full serialized event payloads by default. The renderer can display imported fixture output, including the `kind: 30618` repository state fixture generated from recorded local Git commit `32f88a7a42498328a515e4763e28d84216420a98` at fixture creation time and fixture-only status/check projections. Later commits may make that recorded fixture commit an ancestor of current `HEAD`; tests account for that. The renderer does not sign, connect to relays, fetch relay state, publish events, create public CI/status events, or verify relay read/write compatibility. Release artifact metadata can carry local hashes and CID-compatible identifiers, but Loop 6 did not pin, upload, fetch from IPFS, use wallets, spend on Filecoin/Arweave, or make durability claims. CI/provenance fields and renderer sections remain synthetic/local display data unless separately verified.
+The prototype is local-only: it does not publish to relays, run a public federation actor, spend money, or use private/production keys. Top-level `verification_states[]` records make each scope's evidence and claim boundary explicit; current protocol scopes are local fixtures, source-inspected mappings, synthetic fixtures, or live-unverified, not live-verified. Release artifact metadata can carry local hashes and CID-compatible identifiers, but it is not pinned, uploaded, fetched from IPFS, wallet-backed, paid-storage-backed, or durable-storage verified. CI/provenance fields and renderer sections remain synthetic/local display data unless separately verified. The NIP-34 adapter only parses local dry-run fixtures and preserves placeholder IDs/signatures plus `published: false` non-claim fields; its conformance reports compute possible NIP-01 reference event IDs only as local metadata and do not replace fixture IDs, sign, or publish. Adapter `verification_states[]` rows for repository announcement, collaboration events, conformance reports, repository state, and synthetic status/check projections are rendered separately from the registry-level states and all remain non-live local/synthetic evidence. The renderer summarizes both registry-level and adapter-level verification rows: total row counts, live-verified false/true counts, synthetic false/true counts, state chips, grouped rows by state, and claim-boundary summaries. It also displays a concise conformance summary (report counts, known NIP-34 kind counts, placeholder flags, signed/published false, and possible-event-ID local references) without dumping full serialized event payloads by default. The optional adapter section includes the `kind: 30618` repository state fixture generated from recorded local Git commit `32f88a7a42498328a515e4763e28d84216420a98` at fixture creation time and fixture-only status/check projections. Later commits may make that recorded fixture commit an ancestor of current `HEAD`; tests account for that. The renderer does not sign, connect to relays, fetch relay state, publish events, create public CI/status events, or verify relay read/write behavior.
 
 Loop 4's Radicle artifact is also local-only. It was mapped from the official Radicle source tree available at `/tmp/radicle-heartwood` in this run; no Radicle CLI install, `rad init`, network node, public seed, or publish action was performed.

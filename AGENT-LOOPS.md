@@ -281,13 +281,24 @@ Completed as local static renderer UX/status work. `scripts/render_project_page.
 
 **Goal:** Make the generated static HTML artifact and public usage instructions easier to verify and consume without adding live protocol claims.
 
-**Candidate tasks:**
+**Current result:**
 
-- Polish README usage instructions around regenerating and opening `output/demo-project.html`.
-- Add a lightweight screenshot/HTML artifact checklist if feasible without new hosted services.
-- Confirm generated artifact freshness and public-facing non-claim wording before any push/release-oriented update.
-- Keep safe Radicle local CLI replay as an alternative only if an approved `rad` binary/install path appears.
+Completed as local static artifact release/preflight polish. Added `scripts/preflight_static_artifact.py`, a stdlib-only check that verifies `output/demo-project.html` exists, is byte-for-byte current with a regenerated renderer output using all optional NIP-34 fixtures, includes required local/synthetic/non-claim and adapter/state/status/conformance sections, and omits selected unsupported live-protocol/security/durability claim phrases. README now documents regeneration, local browser opening, preflight, and full local verification commands. Tests cover preflight pass/fail behavior and the CLI command. `output/demo-project.html` was regenerated with all optional NIP-34 fixtures. No hosting, paid screenshot tooling, relay publishing, signing, fixture ID replacement, live protocol verification, spending, or key use occurred.
 
 **Gate:**
 
 No relay publishing, spending, production/private keys, unsupported live protocol/security/durability/censorship-proof claims, or direct outreach. Any live-verified row must be backed by actual command/network evidence recorded in docs/tests.
+
+## Loop 20: Safe live-gated adapter replay planning
+
+**Goal:** Prepare the next live-verification seam without accidentally performing public protocol actions or overclaiming support.
+
+**Candidate tasks:**
+
+- Discover whether an approved `rad` binary/install path is available; if yes, design a temporary `RAD_HOME` local replay with no public seed publish by default.
+- Alternatively, draft a Nostr disposable/project-scoped key and relay publish/readback checklist, including storage location, relay choice, signing steps, readback evidence, and rollback/non-claim wording.
+- Keep implementation changes documentation/test bounded unless prerequisites are satisfied and explicit gates allow a live replay.
+
+**Gate:**
+
+Do not publish to relays, spend money, use production/private keys, contact specific people directly, claim live verification, or create public CI/status events unless the documented prerequisite gates are satisfied and command/network evidence is recorded.
