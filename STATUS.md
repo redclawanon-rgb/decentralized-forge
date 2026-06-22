@@ -93,6 +93,31 @@ Notes:
 - No unsafe installer, paid service, production/private key, public relay, or public post was used.
 - Collaboration events use obvious repeated-hex synthetic pubkeys and non-computed dry-run IDs/signatures only.
 
+### Loop 6: release/artifact metadata and IPFS-CID-compatible local fixture
+
+Status: **complete as local/free artifact metadata fixture; no live IPFS/pinning/durability verification**.
+
+Outputs:
+
+- `schemas/project-registry.schema.json` strengthened with artifact `hashes`, `content_addresses`, and explicit `availability` non-claim flags.
+- `fixtures/local-release-artifact.txt` added as the local artifact bytes.
+- `fixtures/example-project.registry.json` updated with SHA-256 and CIDv1 raw/base32-compatible metadata computed from the local fixture.
+- `fixtures/radicle-backed-project.registry.json` updated with explicit artifact hash/availability flags.
+- `docs/artifact-metadata.md`, `docs/nip34-event-shapes.md`, README, and tests updated with boundaries and validation.
+
+Verified commands:
+
+- `python3 -m json.tool schemas/project-registry.schema.json` — passed.
+- `python3 -m json.tool fixtures/example-project.registry.json` — passed.
+- `python3 -m json.tool fixtures/radicle-backed-project.registry.json` — passed.
+- `python3 -m unittest discover -s tests` — passed, 14 tests.
+
+Notes:
+
+- Local fixture SHA-256: `3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0`.
+- Local CID-compatible value: `bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua`.
+- No IPFS add/fetch/pin, gateway check, paid storage, wallet, Filecoin/Arweave spend, production key, or durability claim occurred.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -124,9 +149,9 @@ Notes:
 
 ## Next recommended loop
 
-**Loop 6: release/artifact metadata and IPFS-CID-compatible fixture.**
+**Loop 7: CI/provenance model docs and local fake attestation fixtures.**
 
-Keep this local/free: add release artifact metadata that can carry content-addressed CIDs and hashes, validate the shape with stdlib tests, and avoid paid pinning/storage, wallets, Filecoin/Arweave spending, or durability claims unless actually verified.
+Keep this local/free: model CI check status and provenance/attestation metadata using synthetic fixtures only. Avoid production CI secrets, paid CI minutes beyond free/local defaults, Sigstore keyless production claims, real signing keys, unsupported SLSA/security claims, or public status publication unless explicitly verified and labeled.
 
 ## Gates/blockers
 

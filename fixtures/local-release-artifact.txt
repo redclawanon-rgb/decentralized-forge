@@ -1,0 +1,3 @@
+decentralized-forge Loop 6 local artifact fixture
+
+This file is a small local-only artifact used to exercise release metadata, SHA-256 hashing, and IPFS CIDv1 raw/base32-compatible shape tests. It is not pinned, uploaded, or durably stored.

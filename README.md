@@ -32,8 +32,10 @@ This repo starts as a research/spec/prototype workspace. The first milestone is 
 - `AGENT-LOOPS.md` — autonomous loop definitions for overnight work
 - `docs/nip34-event-shapes.md` — NIP-34 dry-run event shape notes
 - `docs/radicle-mapping.md` — source-inspected Radicle-to-registry mapping, clearly marked not live-CLI verified
+- `docs/artifact-metadata.md` — Loop 6 release artifact metadata, local CID fixture, and no-pinning/no-durability boundaries
 - `schemas/project-registry.schema.json` — MVP project registry schema
 - `fixtures/example-project.registry.json` — local-only demo project registry fixture
+- `fixtures/local-release-artifact.txt` — local-only release artifact fixture with stdlib-tested SHA-256/CIDv1 metadata
 - `fixtures/radicle-backed-project.registry.json` — synthetic local-only Radicle-backed registry fixture
 - `scripts/render_project_page.py` — stdlib renderer for static project pages
 - `output/demo-project.html` — generated demo project page
@@ -46,6 +48,6 @@ python3 scripts/render_project_page.py fixtures/example-project.registry.json ou
 python3 -m unittest discover -s tests
 ```
 
-The prototype is local-only: it does not publish to relays, run a public federation actor, spend money, or use private/production keys.
+The prototype is local-only: it does not publish to relays, run a public federation actor, spend money, or use private/production keys. Release artifact metadata can carry local hashes and CID-compatible identifiers, but Loop 6 did not pin, upload, fetch from IPFS, use wallets, spend on Filecoin/Arweave, or make durability claims.
 
 Loop 4's Radicle artifact is also local-only. It was mapped from the official Radicle source tree available at `/tmp/radicle-heartwood` in this run; no Radicle CLI install, `rad init`, network node, public seed, or publish action was performed.

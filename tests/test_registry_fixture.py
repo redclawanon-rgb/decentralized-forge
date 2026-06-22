@@ -1,4 +1,7 @@
 import json
+import base64
+import hashlib
+import re
 import subprocess
 import sys
 import tempfile
@@ -10,8 +13,10 @@ SCHEMA_PATH = ROOT / "schemas" / "project-registry.schema.json"
 FIXTURE_PATH = ROOT / "fixtures" / "example-project.registry.json"
 RADICLE_FIXTURE_PATH = ROOT / "fixtures" / "radicle-backed-project.registry.json"
 NOSTR_COLLAB_FIXTURE_PATH = ROOT / "fixtures" / "nostr-collaboration-events.json"
+LOCAL_RELEASE_ARTIFACT_PATH = ROOT / "fixtures" / "local-release-artifact.txt"
 FIXTURE_PATHS = [FIXTURE_PATH, RADICLE_FIXTURE_PATH]
 RENDERER = ROOT / "scripts" / "render_project_page.py"
+CIDV1_BASE32_RE = re.compile(r"^b[a-z2-7]{20,}$")
 
 
 class RegistryFixtureTests(unittest.TestCase):
@@ -21,6 +26,17 @@ class RegistryFixtureTests(unittest.TestCase):
         self.radicle_fixture = json.loads(RADICLE_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.nostr_collab_fixture = json.loads(NOSTR_COLLAB_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.fixtures = [json.loads(path.read_text(encoding="utf-8")) for path in FIXTURE_PATHS]
+
+    def iter_artifacts(self):
+        for fixture in self.fixtures:
+            for release in fixture.get("releases", []):
+                for artifact in release.get("artifacts", []):
+                    yield fixture, release, artifact
+
+    def local_raw_cidv1_for_bytes(self, content):
+        digest = hashlib.sha256(content).digest()
+        cid_bytes = bytes([0x01, 0x55, 0x12, 0x20]) + digest
+        return "b" + base64.b32encode(cid_bytes).decode("ascii").lower().rstrip("=")
 
     def test_schema_and_fixtures_are_valid_json_objects(self):
         self.assertIsInstance(self.schema, dict)
@@ -73,6 +89,52 @@ class RegistryFixtureTests(unittest.TestCase):
                 self.assertGreaterEqual(len(fixture.get("releases", [])), 1)
                 artifact = fixture["releases"][0]["artifacts"][0]
                 self.assertEqual(len(artifact["sha256"]), 64)
+
+    def test_release_artifact_hashes_and_availability_flags_are_explicit(self):
+        hex64 = re.compile(r"^[0-9a-f]{64}$")
+        for fixture, release, artifact in self.iter_artifacts():
+            with self.subTest(project=fixture["project"]["id"], release=release["version"], artifact=artifact["name"]):
+                self.assertRegex(artifact["sha256"], hex64)
+                self.assertEqual(artifact["hashes"]["sha256"], artifact["sha256"])
+
+                availability = artifact["availability"]
+                self.assertFalse(availability["pinned"])
+                self.assertFalse(availability["live_ipfs_verified"])
+                self.assertFalse(availability["paid_storage"])
+                self.assertFalse(availability["durability_claim"])
+
+    def test_local_release_fixture_hash_and_cid_are_computed_but_not_published(self):
+        content = LOCAL_RELEASE_ARTIFACT_PATH.read_bytes()
+        expected_sha256 = hashlib.sha256(content).hexdigest()
+        expected_cid = self.local_raw_cidv1_for_bytes(content)
+
+        artifact = self.fixture["releases"][0]["artifacts"][0]
+        self.assertEqual(artifact["name"], "local-release-artifact.txt")
+        self.assertEqual(artifact["size_bytes"], len(content))
+        self.assertEqual(artifact["sha256"], expected_sha256)
+        self.assertEqual(artifact["hashes"]["sha256"], expected_sha256)
+
+        content_addresses = artifact["content_addresses"]
+        self.assertEqual(len(content_addresses), 1)
+        address = content_addresses[0]
+        self.assertEqual(address["protocol"], "ipfs")
+        self.assertEqual(address["cid"], expected_cid)
+        self.assertEqual(artifact["cid"], expected_cid)
+        self.assertRegex(address["cid"], CIDV1_BASE32_RE)
+        self.assertEqual(address["cid_version"], 1)
+        self.assertEqual(address["multibase"], "base32")
+        self.assertEqual(address["multicodec"], "raw")
+        self.assertEqual(address["multihash"], "sha2-256")
+        self.assertTrue(address["derived_from_local_fixture"])
+        self.assertTrue(address["matches_artifact_hash"])
+        self.assertEqual(address["verification_status"], "local-computed-not-fetched")
+
+        ipfs = self.fixture["substrates"]["ipfs"]
+        self.assertIn(expected_cid, ipfs["artifact_cids"])
+        self.assertEqual(ipfs["pinning_status"], "not-pinned")
+        self.assertFalse(ipfs["live_ipfs_verified"])
+        self.assertFalse(ipfs["paid_storage"])
+        self.assertFalse(ipfs["durability_claim"])
 
     def test_fixture_includes_required_substrate_hints(self):
         substrates = self.fixture["substrates"]
@@ -182,7 +244,7 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn("Maintainers", html)
             self.assertIn("Clone URLs", html)
             self.assertIn("Protocol / substrate hints", html)
-            self.assertIn("demo-project-source.tar.gz", html)
+            self.assertIn("local-release-artifact.txt", html)
 
 
 if __name__ == "__main__":

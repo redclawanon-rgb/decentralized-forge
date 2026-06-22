@@ -95,7 +95,9 @@ Loop 5 adds a synthetic `kind: 1617` patch event in `fixtures/nostr-collaboratio
 
 ## NIP-35 boundary
 
-NIP-35 defines torrent index/comment events (`kind: 2003` and `kind: 2004`), not repository issues or patches. Loop 5 therefore records a `nip35_boundary` object in the collaboration fixture instead of inventing NIP-35 issue/patch semantics. NIP-35 may be revisited for artifact distribution metadata in Loop 6, with no paid pinning/storage and no durability claims unless actually verified.
+NIP-35 defines torrent index/comment events (`kind: 2003` and `kind: 2004`), not repository issues or patches. Loop 5 therefore records a `nip35_boundary` object in the collaboration fixture instead of inventing NIP-35 issue/patch semantics.
+
+Loop 6 keeps artifact distribution metadata in the project registry instead of inventing NIP-35 release semantics. `docs/artifact-metadata.md` documents the local CID-compatible fixture. No paid pinning/storage, wallet, Filecoin/Arweave spend, live IPFS verification, or durability claim was made.
 
 ## Status/check events
 

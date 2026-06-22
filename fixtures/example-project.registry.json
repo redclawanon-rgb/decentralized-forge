@@ -62,12 +62,39 @@
       "tag": "v0.0.1-demo",
       "artifacts": [
         {
-          "name": "demo-project-source.tar.gz",
-          "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-          "uri": "file://output/demo-project-source.tar.gz",
-          "cid": "bafybeigdyrztfixtureplaceholdercidforlocaldemoonly",
+          "name": "local-release-artifact.txt",
+          "media_type": "text/plain",
+          "size_bytes": 241,
+          "sha256": "3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0",
+          "hashes": {
+            "sha256": "3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0"
+          },
+          "uri": "file://fixtures/local-release-artifact.txt",
+          "cid": "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua",
+          "content_addresses": [
+            {
+              "protocol": "ipfs",
+              "cid": "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua",
+              "cid_version": 1,
+              "multibase": "base32",
+              "multicodec": "raw",
+              "multihash": "sha2-256",
+              "derived_from_local_fixture": true,
+              "matches_artifact_hash": true,
+              "verification_status": "local-computed-not-fetched",
+              "notes": "CIDv1 raw/base32 shape computed locally from the fixture bytes; no IPFS add, fetch, pin, gateway, or network availability was verified."
+            }
+          ],
+          "availability": {
+            "local_fixture": true,
+            "pinned": false,
+            "live_ipfs_verified": false,
+            "paid_storage": false,
+            "durability_claim": false,
+            "notes": "Local file fixture only; no paid pinning/storage, wallet, Filecoin/Arweave spend, or durability claim."
+          },
           "signature": "unsigned-fixture",
-          "attestation": "slsa-provenance-placeholder"
+          "attestation": "local-fixture-no-provenance-attestation"
         }
       ]
     }
@@ -88,8 +115,12 @@
       "status": "mapping-only-no-public-actor"
     },
     "ipfs": {
-      "artifact_cids": ["bafybeigdyrztfixtureplaceholdercidforlocaldemoonly"],
-      "pinning_status": "not-pinned"
+      "artifact_cids": ["bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua"],
+      "cid_status": "local-computed-not-fetched",
+      "pinning_status": "not-pinned",
+      "live_ipfs_verified": false,
+      "paid_storage": false,
+      "durability_claim": false
     },
     "sigstore_slsa": {
       "release_signature_status": "placeholder",

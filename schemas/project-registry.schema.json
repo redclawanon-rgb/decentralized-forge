@@ -92,13 +92,56 @@
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["name", "sha256"],
+              "required": ["name", "sha256", "hashes", "availability"],
               "additionalProperties": false,
               "properties": {
                 "name": {"type": "string"},
-                "sha256": {"type": "string"},
+                "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+                "media_type": {"type": "string"},
+                "size_bytes": {"type": "integer", "minimum": 0},
                 "uri": {"type": "string"},
                 "cid": {"type": "string"},
+                "hashes": {
+                  "type": "object",
+                  "required": ["sha256"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+                  }
+                },
+                "content_addresses": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["protocol", "cid", "cid_version", "multibase", "multicodec", "multihash", "verification_status"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "protocol": {"enum": ["ipfs"]},
+                      "cid": {"type": "string"},
+                      "cid_version": {"const": 1},
+                      "multibase": {"const": "base32"},
+                      "multicodec": {"type": "string"},
+                      "multihash": {"type": "string"},
+                      "derived_from_local_fixture": {"type": "boolean"},
+                      "matches_artifact_hash": {"type": "boolean"},
+                      "verification_status": {"enum": ["local-computed-not-fetched", "synthetic-fixture-not-verified", "live-verified"]},
+                      "notes": {"type": "string"}
+                    }
+                  }
+                },
+                "availability": {
+                  "type": "object",
+                  "required": ["local_fixture", "pinned", "live_ipfs_verified", "paid_storage", "durability_claim"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "local_fixture": {"type": "boolean"},
+                    "pinned": {"type": "boolean"},
+                    "live_ipfs_verified": {"type": "boolean"},
+                    "paid_storage": {"type": "boolean"},
+                    "durability_claim": {"type": "boolean"},
+                    "notes": {"type": "string"}
+                  }
+                },
                 "signature": {"type": "string"},
                 "attestation": {"type": "string"}
               }
