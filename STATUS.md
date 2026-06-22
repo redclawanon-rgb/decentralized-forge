@@ -36,12 +36,17 @@ Verified commands:
 
 ### Loop 3: NIP-34 dry-run docs/fixtures
 
-Status: **ready to run after Loop 2 verification**.
+Status: **complete**.
 
-Acceptance outputs:
+Outputs:
 
 - `docs/nip34-event-shapes.md`
 - `fixtures/nostr-repo-announcement.json`
+
+Verified commands:
+
+- `python3 -m json.tool fixtures/nostr-repo-announcement.json` — passed.
+- No public relay publishing performed.
 
 ## Verification requirements
 

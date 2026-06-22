@@ -1,0 +1,24 @@
+{
+  "dry_run_notice": "Synthetic NIP-34 repository announcement fixture only. Not signed. Not published. Do not relay.",
+  "source_registry": "fixtures/example-project.registry.json",
+  "kind": 30617,
+  "pubkey": "0000000000000000000000000000000000000000000000000000000000000000",
+  "created_at": 1782086400,
+  "content": "",
+  "tags": [
+    ["d", "demo-project"],
+    ["name", "Demo Decentralized Forge Project"],
+    ["description", "A local-only fixture showing how a project can be discovered, cloned, discussed, patched, and released without GitHub as the authority."],
+    ["web", "file://output/demo-project.html"],
+    ["clone", "file:///home/openclaw/projects/decentralized-forge"],
+    ["clone", "nostr://npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqfixture/demo-project"],
+    ["clone", "rad:zDemoRegistryFixture111111111111111111111111"],
+    ["relays", "wss://relay.example.invalid"],
+    ["maintainers", "npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqfixture"],
+    ["t", "decentralized-forge"],
+    ["t", "demo"],
+    ["t", "local-only"]
+  ],
+  "id": "dry-run-not-computed",
+  "sig": "dry-run-not-signed"
+}
