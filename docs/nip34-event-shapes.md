@@ -9,6 +9,8 @@ This document maps the local project registry fixture to NIP-34-style event bodi
 - No event is published to public relays.
 - Relay URLs in fixtures are examples/hints only.
 
+Loop 11 adds a stdlib-only local parser/export seam in `scripts/nip34_adapter.py`. The adapter reads the repository announcement and collaboration fixtures and round-trips them back into registry-shaped concepts for tests and future UI integration. It does not compute Nostr event IDs, sign events, verify keys, connect to relays, or publish anything.
+
 Loop 5 local relay/tool check:
 
 - Checked `nak`, `nostril`, `strfry`, and `nostr-rs-relay` with `command -v` in this environment.
@@ -70,6 +72,7 @@ Observed local fixture semantics:
 - The registry issue summary is preserved in Markdown `content`.
 - The local registry status is preserved as a fixture-only `status` tag so parser tests can round-trip it; this is not a claim that every relay/client will interpret that tag.
 - The event has obvious placeholder `id`/`sig` strings and a repeated-hex synthetic pubkey. It is intentionally unusable as a signed public event.
+- `scripts/nip34_adapter.py` maps `kind: 1621` events back to registry-like issue records using the `subject` tag as `title`, the fixture-only `status` tag as `status`, and the first Markdown paragraph in `content` as `summary`, while preserving full `content`, source event kind, repository address, and dry-run placeholders.
 
 ## Patches / PRs
 
@@ -92,6 +95,20 @@ Loop 5 adds a synthetic `kind: 1617` patch event in `fixtures/nostr-collaboratio
 - The registry patch summary appears in a minimal `git format-patch`-shaped content body.
 - The example diff is deliberately tiny and synthetic; it is parser/shape evidence, not a proposed repository change to apply.
 - `id`, `sig`, and `pubkey` remain dry-run placeholders; no signature validity or relay acceptance is claimed.
+- `scripts/nip34_adapter.py` maps `kind: 1617` events back to registry-like patch records using the `subject` tag as `title`, the fixture-only `status` tag as `status`, the first body paragraph after the mail-style patch headers as `summary`, and the full `git format-patch`-shaped body as `content`.
+
+## Local adapter verification
+
+The Loop 11 helper accepts the two dry-run fixture JSON objects (or paths via its CLI) and exports:
+
+- `project.id`, `project.name`, `project.description`, and `project.web_urls` from `kind: 30617` tags.
+- `clone_urls[]` from `clone` tags with local transport inference (`file://` as `git`, `nostr://` as `nostr`, `rad:` as `radicle`).
+- Nostr maintainers from `maintainers` tags.
+- `substrates.nip34` repository kind, repo id tag, relay hints, topics, and the explicit `dry-run-only` publish status.
+- `issues[]` and `patches[]` from `kind: 1621` and `kind: 1617` events.
+- `dry_run` metadata preserving fixture notices, placeholder IDs/signatures, relay-tool fallback state, synthetic key policy, NIP-35 boundary, and `published: false` for each event.
+
+This is conformance/round-trip evidence for local fixtures only. It is not a live Nostr adapter and does not claim relay read/write compatibility.
 
 ## NIP-35 boundary
 

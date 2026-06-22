@@ -63,7 +63,7 @@ Requires Eric approval or a separate explicit target:
 - Claiming production readiness, censorship-proof guarantees, or live protocol verification that has not actually been tested
 ## Current loop state
 
-Loops 1–10 are complete. Loop 4 (Radicle local integration spike) is complete as a **source-inspected local artifact**, not a live Radicle CLI run. Loop 5 is complete as **dry-run Nostr collaboration fixtures**, not a live Nostr relay run. Loop 6 is complete as **local/free artifact metadata with a stdlib-verified CIDv1 raw/base32-compatible fixture**, not live IPFS pinning or durable storage. Loop 7 is complete as **synthetic local CI/provenance fixtures**, not real CI execution, signing, Sigstore/cosign/in-toto verification, Rekor upload, or SLSA compliance. Loop 8 is complete as a **local static renderer/UI improvement**, not public CI/status publication or new infrastructure. Loop 9 is complete as a **public GitHub collaboration surface**, with roadmap/docs and bounded public issues. Loop 10 is complete as **architecture/roadmap/decision matrix cleanup**, not new live protocol verification.
+Loops 1–11 are complete. Loop 4 (Radicle local integration spike) is complete as a **source-inspected local artifact**, not a live Radicle CLI run. Loop 5 is complete as **dry-run Nostr collaboration fixtures**, not a live Nostr relay run. Loop 6 is complete as **local/free artifact metadata with a stdlib-verified CIDv1 raw/base32-compatible fixture**, not live IPFS pinning or durable storage. Loop 7 is complete as **synthetic local CI/provenance fixtures**, not real CI execution, signing, Sigstore/cosign/in-toto verification, Rekor upload, or SLSA compliance. Loop 8 is complete as a **local static renderer/UI improvement**, not public CI/status publication or new infrastructure. Loop 9 is complete as a **public GitHub collaboration surface**, with roadmap/docs and bounded public issues. Loop 10 is complete as **architecture/roadmap/decision matrix cleanup**, not new live protocol verification. Loop 11 is complete as a **local stdlib NIP-34 parser/conformance adapter**, not event signing, event-id computation, relay publishing, or live relay readback.
 
 Public GitHub repo is live at `https://github.com/redclawanon-rgb/decentralized-forge`. Verified public settings: default branch `main`, Issues enabled, Discussions enabled, Wiki disabled. Public building is approved; keep project updates accurate and labeled as research/prototype work.
 
@@ -107,7 +107,7 @@ Loop 7 caveat: CI/provenance data is synthetic and local-only. No hosted CI job,
 
 Loop 8 caveat: renderer improvements are static/local and only display fixture fields. They do not create or publish public CI status, verify live IPFS availability, sign artifacts, verify Sigstore/in-toto statements, upload to Rekor, or establish SLSA compliance.
 
-Nostr caveat: no local relay/client tool (`nak`, `nostril`, `strfry`, or `nostr-rs-relay`) was installed or immediately usable, so Loop 5 used dry-run fixtures only. No public relay post, private key, production key, or unsafe installer was used. The synthetic issue (`kind: 1621`) and patch (`kind: 1617`) events have placeholder IDs/signatures and repeated-hex pubkeys.
+Nostr caveat: no local relay/client tool (`nak`, `nostril`, `strfry`, or `nostr-rs-relay`) was installed or immediately usable, so Loop 5 used dry-run fixtures only. Loop 11 added `scripts/nip34_adapter.py` to parse those fixtures locally and round-trip them to registry-shaped concepts while preserving dry-run notices, placeholder IDs/signatures, relay fallback state, synthetic key policy, NIP-35 boundary, and `published: false`. No public relay post, private key, production key, event signing, event-id computation, live relay readback, or unsafe installer was used. The synthetic issue (`kind: 1621`) and patch (`kind: 1617`) events have placeholder IDs/signatures and repeated-hex pubkeys.
 
 Radicle caveat: `rad` was unavailable in the environment, and the documented `curl https://radicle.dev/install | sh` installer was not used. The mapping was derived from official source/manpage/examples in `/tmp/radicle-heartwood` at commit `90aaec1c9eee77a0beebece48f460c1424c1c8bd`. Do not claim live Radicle verification until an approved binary/install path is available and a temporary local `RAD_HOME` replay has been run.
 
@@ -119,6 +119,12 @@ Loop 9 outputs:
 
 Loop 9 caveat: public GitHub issues are temporary coordination scaffolding while decentralized collaboration remains fixture-backed. No direct contact with specific people, paid services, production/private keys, live protocol verification claims, or unsupported security/SLSA/production/censorship-proof claims were used.
 
+Loop 11 outputs:
+
+- `scripts/nip34_adapter.py`
+- expanded NIP-34 adapter round-trip tests in `tests/test_registry_fixture.py`
+- updated `docs/nip34-event-shapes.md`, README, status, context, and loop notes for local parser behavior and non-claims
+
 ## Current next recommended loop
 
-**Loop 11: NIP-34 parser/conformance adapter and fixture round-trip tests.** Build a local stdlib parser/export seam for the existing NIP-34 repository announcement plus issue/patch fixtures. Keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, storage location, and public protocol gates are explicitly satisfied.
+**Loop 12: Safe Radicle local CLI replay or renderer UX follow-up.** Either run a bounded Radicle CLI replay only if an approved install/binary path is available, or improve the static renderer using the now-available NIP-34 adapter output. Keep all live protocol claims gated by actual local command/network verification and continue avoiding spending, production/private keys, and unsupported security/durability/censorship-proof claims.

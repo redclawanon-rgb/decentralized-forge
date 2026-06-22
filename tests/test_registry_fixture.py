@@ -9,9 +9,14 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+
+import nip34_adapter
+
 SCHEMA_PATH = ROOT / "schemas" / "project-registry.schema.json"
 FIXTURE_PATH = ROOT / "fixtures" / "example-project.registry.json"
 RADICLE_FIXTURE_PATH = ROOT / "fixtures" / "radicle-backed-project.registry.json"
+NOSTR_REPO_FIXTURE_PATH = ROOT / "fixtures" / "nostr-repo-announcement.json"
 NOSTR_COLLAB_FIXTURE_PATH = ROOT / "fixtures" / "nostr-collaboration-events.json"
 LOCAL_RELEASE_ARTIFACT_PATH = ROOT / "fixtures" / "local-release-artifact.txt"
 FIXTURE_PATHS = [FIXTURE_PATH, RADICLE_FIXTURE_PATH]
@@ -24,6 +29,7 @@ class RegistryFixtureTests(unittest.TestCase):
         self.schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
         self.fixture = json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
         self.radicle_fixture = json.loads(RADICLE_FIXTURE_PATH.read_text(encoding="utf-8"))
+        self.nostr_repo_fixture = json.loads(NOSTR_REPO_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.nostr_collab_fixture = json.loads(NOSTR_COLLAB_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.fixtures = [json.loads(path.read_text(encoding="utf-8")) for path in FIXTURE_PATHS]
 
@@ -343,6 +349,82 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertEqual(boundary["status"], "documented-no-collaboration-event")
         self.assertIn("artifact metadata", boundary["reason"])
         self.assertIn("does not define repository issue or patch", boundary["reason"])
+
+    def test_nip34_adapter_round_trips_repo_announcement_to_registry_concepts(self):
+        exported = nip34_adapter.export_fixture_pair(
+            self.nostr_repo_fixture,
+            self.nostr_collab_fixture,
+        )
+
+        self.assertEqual(exported["project"]["id"], self.fixture["project"]["id"])
+        self.assertEqual(exported["project"]["name"], self.fixture["project"]["name"])
+        self.assertEqual(exported["project"]["description"], self.fixture["project"]["description"])
+        self.assertEqual(exported["project"]["web_urls"], self.fixture["project"]["web_urls"])
+        self.assertEqual(
+            [clone["url"] for clone in exported["clone_urls"]],
+            [clone["url"] for clone in self.fixture["clone_urls"]],
+        )
+        self.assertEqual(
+            exported["maintainers"],
+            [
+                {
+                    "id_type": "nostr",
+                    "public_id": self.fixture["maintainers"][0]["public_id"],
+                    "role": "maintainer",
+                }
+            ],
+        )
+        self.assertEqual(exported["substrates"]["nip34"]["repository_kind"], 30617)
+        self.assertEqual(exported["substrates"]["nip34"]["repo_id_tag"], self.fixture["project"]["id"])
+        self.assertEqual(exported["substrates"]["nip34"]["relay_hints"], ["wss://relay.example.invalid"])
+        self.assertEqual(exported["substrates"]["nip34"]["publish_status"], "dry-run-only")
+
+    def test_nip34_adapter_round_trips_issue_and_patch_content_mappings(self):
+        exported = nip34_adapter.export_fixture_pair(
+            self.nostr_repo_fixture,
+            self.nostr_collab_fixture,
+        )
+
+        self.assertEqual(len(exported["issues"]), 1)
+        self.assertEqual(len(exported["patches"]), 1)
+        issue = exported["issues"][0]
+        patch = exported["patches"][0]
+        registry_issue = self.fixture["issues"][0]
+        registry_patch = self.fixture["patches"][0]
+
+        self.assertEqual(issue["id"], "dry-run-issue-event-id-not-computed")
+        self.assertEqual(issue["title"], registry_issue["title"])
+        self.assertEqual(issue["status"], registry_issue["status"])
+        self.assertEqual(issue["summary"], registry_issue["summary"])
+        self.assertEqual(issue["source_event_kind"], 1621)
+        self.assertEqual(issue["repository"], self.nostr_collab_fixture["repo_address"])
+        self.assertIn("Dry-run issue body only", issue["content"])
+
+        self.assertEqual(patch["id"], "dry-run-patch-event-id-not-computed")
+        self.assertEqual(patch["title"], registry_patch["title"])
+        self.assertEqual(patch["status"], registry_patch["status"])
+        self.assertEqual(patch["summary"], registry_patch["summary"])
+        self.assertEqual(patch["source_event_kind"], 1617)
+        self.assertEqual(patch["repository"], self.nostr_collab_fixture["repo_address"])
+        self.assertIn("diff --git", patch["content"])
+
+    def test_nip34_adapter_preserves_dry_run_non_claim_fields(self):
+        exported = nip34_adapter.export_fixture_pair(
+            self.nostr_repo_fixture,
+            self.nostr_collab_fixture,
+        )
+
+        dry_run = exported["dry_run"]
+        self.assertEqual(dry_run["repository"]["id"], "dry-run-not-computed")
+        self.assertEqual(dry_run["repository"]["sig"], "dry-run-not-signed")
+        self.assertIn("Not published", dry_run["repository"]["notice"])
+        self.assertEqual(dry_run["collaboration"]["relay_tool_check"]["fallback"], "dry-run-fixtures")
+        self.assertFalse(dry_run["collaboration"]["relay_tool_check"]["usable_local_relay_found"])
+        self.assertEqual(dry_run["collaboration"]["synthetic_key_policy"]["private_keys"], "none")
+        self.assertEqual(dry_run["collaboration"]["nip35_boundary"]["status"], "documented-no-collaboration-event")
+        self.assertEqual([event["published"] for event in dry_run["events"]], [False, False])
+        self.assertTrue(all(event["id"].startswith("dry-run-") for event in dry_run["events"]))
+        self.assertTrue(all(event["sig"].startswith("dry-run-") for event in dry_run["events"]))
 
     def test_renderer_outputs_expected_html(self):
         with tempfile.TemporaryDirectory() as tmpdir:

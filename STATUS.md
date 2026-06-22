@@ -217,6 +217,28 @@ Boundaries:
 - Loop 10 changed documentation only.
 - No spending, production/private keys, public protocol publishing, live Radicle/Nostr/IPFS/ForgeFed/Sigstore verification, public posts, commits, or pushes were performed.
 
+### Loop 11: NIP-34 parser/conformance adapter and fixture round-trip tests
+
+Status: **complete as local stdlib parser/conformance adapter; no relay publishing, keys, signing, or live relay verification**.
+
+Outputs:
+
+- `scripts/nip34_adapter.py` added as a stdlib-only helper for parsing/exporting `fixtures/nostr-repo-announcement.json` and `fixtures/nostr-collaboration-events.json`.
+- `tests/test_registry_fixture.py` expanded with round-trip tests for repository id/name/description/web URL, clone URLs, Nostr maintainers, NIP-34 substrate fields, issue and patch title/status/summary/content mappings, and preserved dry-run non-claim fields.
+- `docs/nip34-event-shapes.md`, README, `.hermes/context.md`, and `AGENT-LOOPS.md` updated to document adapter behavior and boundaries.
+
+Verified commands:
+
+- `python3 -m unittest discover -s tests` — passed, 22 tests.
+- `python3 -m json.tool fixtures/nostr-repo-announcement.json` — passed.
+- `python3 -m json.tool fixtures/nostr-collaboration-events.json` — passed.
+- `python3 scripts/nip34_adapter.py fixtures/nostr-repo-announcement.json fixtures/nostr-collaboration-events.json` — passed.
+
+Boundaries:
+
+- Adapter is local fixture parsing/export only.
+- No relay publishing/readback, key use, event signing, event ID computation, public protocol verification, spending, production/private keys, unsupported live-protocol/security/durability/SLSA/censorship-proof claims, commits, or pushes were performed.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -240,7 +262,7 @@ Boundaries:
 
 - Keep the local registry JSON as the canonical control-plane object and the static renderer as the first user-visible surface.
 - Treat all current Nostr, Radicle, IPFS, ForgeFed, and provenance data as fixtures/mappings unless a future loop records live command/network verification.
-- Build a Nostr NIP-34 parser/conformance adapter next because it is low-risk and strengthens existing dry-run repository/issue/patch fixtures without requiring public relays.
+- Use the completed local NIP-34 parser/conformance adapter as the seam for future Nostr UI/import work, while keeping relay publishing behind disposable-key and explicit relay gates.
 - Run a safe Radicle local CLI replay when an approved binary/install path is available; use a temporary `RAD_HOME`, disposable repo, and no public seed publishing by default.
 - Keep ForgeFed as a later object-shape/federation bridge; do not run a public actor until moderation/security gates exist.
 - Keep IPFS/CIDs as artifact metadata until live add/fetch/pin verification is explicitly performed; defer Filecoin/Arweave because they imply spending/wallet decisions.
@@ -248,9 +270,9 @@ Boundaries:
 
 ## Next recommended loop
 
-**Loop 11: NIP-34 parser/conformance adapter and fixture round-trip tests.**
+**Loop 12: Safe Radicle local CLI replay or NIP-34 renderer/import follow-up.**
 
-Implement a local stdlib parser/export seam for the existing NIP-34 repository announcement plus issue/patch fixtures. The loop should round-trip fixture fields back to registry concepts and keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, and public protocol gates are explicitly satisfied.
+Either run a bounded Radicle CLI replay only if an approved binary/install path is available, or wire the completed NIP-34 adapter into a local renderer/import surface. Keep all live protocol claims gated by actual command/network verification, and keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, and public protocol gates are explicitly satisfied.
 
 ## Gates/blockers
 

@@ -167,6 +167,10 @@ Completed as documentation consolidation. `README.md`, `ARCHITECTURE.md`, `PROTO
 - Add unit tests proving fixture conformance and preserving dry-run non-claim fields.
 - Update `docs/nip34-event-shapes.md`, `STATUS.md`, and README if behavior or verification states change.
 
+**Current result:**
+
+Completed as a local stdlib parser/conformance adapter. `scripts/nip34_adapter.py` parses the existing NIP-34 repository announcement and issue/patch fixtures back into registry-shaped concepts, including repository id/name/description/web URL, clone URLs, Nostr maintainers, issue/patch title/status/summary/content, NIP-34 substrate fields, and dry-run non-claim metadata. Unit tests round-trip the fixture mappings and assert placeholder IDs/signatures, relay fallback, synthetic key policy, NIP-35 boundary, and `published: false`. No relay publishing, key use, event signing, event-id computation, or live relay verification was performed.
+
 **Gate:**
 
 Keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, storage location, and public protocol gates are explicitly satisfied. No production/private keys, paid services, unsupported live-verification claims, or direct outreach.
