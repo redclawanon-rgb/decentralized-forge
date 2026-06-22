@@ -19,9 +19,9 @@ Outputs:
 
 ### Loop 2: MVP registry object and static repo page prototype
 
-Status: **ready to run / in progress if files are present**.
+Status: **complete**.
 
-Acceptance outputs:
+Outputs:
 
 - `schemas/project-registry.schema.json`
 - `fixtures/example-project.registry.json`
@@ -29,9 +29,14 @@ Acceptance outputs:
 - `output/demo-project.html`
 - `tests/test_registry_fixture.py`
 
+Verified commands:
+
+- `python3 scripts/render_project_page.py fixtures/example-project.registry.json output/demo-project.html` — passed.
+- `python3 -m unittest discover -s tests` — passed, 7 tests.
+
 ### Loop 3: NIP-34 dry-run docs/fixtures
 
-Status: **ready after Loop 2 verification**.
+Status: **ready to run after Loop 2 verification**.
 
 Acceptance outputs:
 

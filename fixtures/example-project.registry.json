@@ -1,0 +1,106 @@
+{
+  "schema_version": "decentralized-forge.project-registry.v1",
+  "project": {
+    "id": "demo-project",
+    "name": "Demo Decentralized Forge Project",
+    "description": "A local-only fixture showing how a project can be discovered, cloned, discussed, patched, and released without GitHub as the authority.",
+    "default_branch": "main",
+    "web_urls": [
+      "file://output/demo-project.html"
+    ]
+  },
+  "maintainers": [
+    {
+      "name": "Synthetic Maintainer",
+      "id_type": "nostr",
+      "public_id": "npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqfixture",
+      "role": "owner"
+    },
+    {
+      "name": "Radicle Placeholder",
+      "id_type": "radicle",
+      "public_id": "rad:zDemoRegistryFixture111111111111111111111111",
+      "role": "mirror-admin"
+    }
+  ],
+  "clone_urls": [
+    {
+      "transport": "git",
+      "url": "file:///home/openclaw/projects/decentralized-forge",
+      "primary": true
+    },
+    {
+      "transport": "nostr",
+      "url": "nostr://npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqfixture/demo-project"
+    },
+    {
+      "transport": "radicle",
+      "url": "rad:zDemoRegistryFixture111111111111111111111111"
+    }
+  ],
+  "issues": [
+    {
+      "id": "ISSUE-1",
+      "title": "Define portable project identity",
+      "status": "open",
+      "author": "npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqfixture",
+      "summary": "Choose how maintainer authority is represented across Nostr, Radicle, DID, and SSH identities."
+    }
+  ],
+  "patches": [
+    {
+      "id": "PATCH-1",
+      "title": "Add static registry renderer",
+      "status": "proposed",
+      "author": "npub1contributorfixture0000000000000000000000000000000000000000",
+      "summary": "Prototype a deterministic stdlib renderer for project registry fixtures."
+    }
+  ],
+  "releases": [
+    {
+      "version": "0.0.1-demo",
+      "tag": "v0.0.1-demo",
+      "artifacts": [
+        {
+          "name": "demo-project-source.tar.gz",
+          "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+          "uri": "file://output/demo-project-source.tar.gz",
+          "cid": "bafybeigdyrztfixtureplaceholdercidforlocaldemoonly",
+          "signature": "unsigned-fixture",
+          "attestation": "slsa-provenance-placeholder"
+        }
+      ]
+    }
+  ],
+  "substrates": {
+    "nip34": {
+      "repository_kind": 30617,
+      "repo_id_tag": "demo-project",
+      "relay_hints": ["wss://relay.example.invalid"],
+      "publish_status": "dry-run-only"
+    },
+    "radicle": {
+      "rid": "rad:zDemoRegistryFixture111111111111111111111111",
+      "status": "placeholder-pending-local-spike"
+    },
+    "forgefed": {
+      "actor": "https://forge.example.invalid/actors/demo-project",
+      "status": "mapping-only-no-public-actor"
+    },
+    "ipfs": {
+      "artifact_cids": ["bafybeigdyrztfixtureplaceholdercidforlocaldemoonly"],
+      "pinning_status": "not-pinned"
+    },
+    "sigstore_slsa": {
+      "release_signature_status": "placeholder",
+      "provenance_status": "placeholder"
+    }
+  },
+  "signature": {
+    "status": "unsigned-fixture",
+    "algorithm": "none",
+    "value": ""
+  },
+  "created_at": "2026-06-22T00:00:00Z",
+  "updated_at": "2026-06-22T00:00:00Z"
+}

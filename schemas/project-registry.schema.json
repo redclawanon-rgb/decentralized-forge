@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/decentralized-forge/project-registry.schema.json",
+  "title": "Decentralized Forge Project Registry",
+  "description": "Minimal project registry object for a local decentralized forge MVP.",
+  "type": "object",
+  "required": ["schema_version", "project", "maintainers", "clone_urls", "created_at", "updated_at", "substrates", "signature"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "decentralized-forge.project-registry.v1"},
+    "project": {
+      "type": "object",
+      "required": ["id", "name", "description", "default_branch"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "name": {"type": "string", "minLength": 1},
+        "description": {"type": "string"},
+        "default_branch": {"type": "string", "minLength": 1},
+        "web_urls": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "maintainers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "id_type", "public_id"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "id_type": {"enum": ["nostr", "radicle", "did", "ssh", "other"]},
+          "public_id": {"type": "string", "minLength": 1},
+          "role": {"type": "string"}
+        }
+      }
+    },
+    "clone_urls": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["transport", "url"],
+        "additionalProperties": false,
+        "properties": {
+          "transport": {"enum": ["git", "https", "ssh", "radicle", "nostr", "other"]},
+          "url": {"type": "string", "minLength": 1},
+          "primary": {"type": "boolean"}
+        }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string"},
+          "title": {"type": "string"},
+          "status": {"enum": ["open", "closed"]},
+          "author": {"type": "string"},
+          "summary": {"type": "string"}
+        }
+      }
+    },
+    "patches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string"},
+          "title": {"type": "string"},
+          "status": {"enum": ["proposed", "review", "accepted", "rejected", "merged"]},
+          "author": {"type": "string"},
+          "summary": {"type": "string"}
+        }
+      }
+    },
+    "releases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["version", "tag", "artifacts"],
+        "additionalProperties": false,
+        "properties": {
+          "version": {"type": "string"},
+          "tag": {"type": "string"},
+          "artifacts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "sha256"],
+              "additionalProperties": false,
+              "properties": {
+                "name": {"type": "string"},
+                "sha256": {"type": "string"},
+                "uri": {"type": "string"},
+                "cid": {"type": "string"},
+                "signature": {"type": "string"},
+                "attestation": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "substrates": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "nip34": {"type": "object"},
+        "radicle": {"type": "object"},
+        "forgefed": {"type": "object"},
+        "ipfs": {"type": "object"},
+        "sigstore_slsa": {"type": "object"}
+      }
+    },
+    "signature": {
+      "type": "object",
+      "required": ["status"],
+      "additionalProperties": false,
+      "properties": {
+        "status": {"enum": ["unsigned-fixture", "signed"]},
+        "algorithm": {"type": "string"},
+        "value": {"type": "string"}
+      }
+    },
+    "created_at": {"type": "string"},
+    "updated_at": {"type": "string"}
+  }
+}

@@ -30,3 +30,17 @@ This repo starts as a research/spec/prototype workspace. The first milestone is 
 - `SPEC-FIRST.md` — MVP product/specification
 - `ARCHITECTURE.md` — proposed architecture
 - `AGENT-LOOPS.md` — autonomous loop definitions for overnight work
+- `schemas/project-registry.schema.json` — MVP project registry schema
+- `fixtures/example-project.registry.json` — local-only demo project registry fixture
+- `scripts/render_project_page.py` — stdlib renderer for static project pages
+- `output/demo-project.html` — generated demo project page
+- `tests/test_registry_fixture.py` — stdlib verification tests for the registry fixture and renderer
+
+## Local prototype verification
+
+```sh
+python3 scripts/render_project_page.py fixtures/example-project.registry.json output/demo-project.html
+python3 -m unittest discover -s tests
+```
+
+The prototype is local-only: it does not publish to relays, run a public federation actor, spend money, or use private/production keys.

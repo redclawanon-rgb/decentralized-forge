@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Demo Decentralized Forge Project</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; line-height: 1.5; padding: 0 1rem; }
+    code { background: #f4f4f4; padding: 0.1rem 0.25rem; }
+    section { border-top: 1px solid #ddd; margin-top: 1.5rem; padding-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Demo Decentralized Forge Project</h1>
+  <p>A local-only fixture showing how a project can be discovered, cloned, discussed, patched, and released without GitHub as the authority.</p>
+  <p><strong>Project ID:</strong> <code>demo-project</code><br>
+     <strong>Default branch:</strong> <code>main</code><br>
+     <strong>Registry updated:</strong> <code>2026-06-22T00:00:00Z</code></p>
+
+  <section><h2>Maintainers</h2><ul>
+  <li><strong>Synthetic Maintainer</strong> — nostr: <code>npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqfixture</code> (owner)</li>
+  <li><strong>Radicle Placeholder</strong> — radicle: <code>rad:zDemoRegistryFixture111111111111111111111111</code> (mirror-admin)</li>
+</ul></section>
+  <section><h2>Clone URLs</h2><ul>
+  <li><strong>git</strong>: <code>file:///home/openclaw/projects/decentralized-forge</code> <em>primary</em></li>
+  <li><strong>nostr</strong>: <code>nostr://npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqfixture/demo-project</code></li>
+  <li><strong>radicle</strong>: <code>rad:zDemoRegistryFixture111111111111111111111111</code></li>
+</ul></section>
+  <section><h2>Issues</h2><ul>
+  <li><strong>ISSUE-1</strong> [open] Define portable project identity<br>Choose how maintainer authority is represented across Nostr, Radicle, DID, and SSH identities.</li>
+</ul></section>
+  <section><h2>Patches / PRs</h2><ul>
+  <li><strong>PATCH-1</strong> [proposed] Add static registry renderer<br>Prototype a deterministic stdlib renderer for project registry fixtures.</li>
+</ul></section>
+  <section><h2>Releases</h2><ul>
+  <li><strong>0.0.1-demo</strong> tag <code>v0.0.1-demo</code><ul>
+  <li>demo-project-source.tar.gz: <code>0000000000000000000000000000000000000000000000000000000000000000</code> CID <code>bafybeigdyrztfixtureplaceholdercidforlocaldemoonly</code> signature <code>unsigned-fixture</code></li>
+</ul></li>
+</ul></section>
+  <section><h2>Protocol / substrate hints</h2><ul>
+  <li><strong>forgefed</strong>: <code>{&quot;actor&quot;: &quot;https://forge.example.invalid/actors/demo-project&quot;, &quot;status&quot;: &quot;mapping-only-no-public-actor&quot;}</code></li>
+  <li><strong>ipfs</strong>: <code>{&quot;artifact_cids&quot;: [&quot;bafybeigdyrztfixtureplaceholdercidforlocaldemoonly&quot;], &quot;pinning_status&quot;: &quot;not-pinned&quot;}</code></li>
+  <li><strong>nip34</strong>: <code>{&quot;publish_status&quot;: &quot;dry-run-only&quot;, &quot;relay_hints&quot;: [&quot;wss://relay.example.invalid&quot;], &quot;repo_id_tag&quot;: &quot;demo-project&quot;, &quot;repository_kind&quot;: 30617}</code></li>
+  <li><strong>radicle</strong>: <code>{&quot;rid&quot;: &quot;rad:zDemoRegistryFixture111111111111111111111111&quot;, &quot;status&quot;: &quot;placeholder-pending-local-spike&quot;}</code></li>
+  <li><strong>sigstore_slsa</strong>: <code>{&quot;provenance_status&quot;: &quot;placeholder&quot;, &quot;release_signature_status&quot;: &quot;placeholder&quot;}</code></li>
+</ul></section>
+  <section><h2>Signature status</h2><p><code>{&quot;algorithm&quot;: &quot;none&quot;, &quot;status&quot;: &quot;unsigned-fixture&quot;, &quot;value&quot;: &quot;&quot;}</code></p></section>
+</body>
+</html>
