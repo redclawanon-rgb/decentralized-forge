@@ -69,6 +69,20 @@ Loop 24 completed Nostr relay selection and local signed payload review without 
 - `nak verify < evidence/nostr-loop24-signed-event-preview-2026-06-22.json` exited 0.
 - Still not executed: relay publication, relay readback, paid infrastructure, production/private personal keys, direct outreach, durability/global-propagation/censorship-resistance/identity-trust/production-readiness/full-compatibility claims.
 
+
+## Loop 25 Nostr publish/readback update
+
+Loop 25 completed public relay publish/readback under Permission B using only the disposable project key.
+
+- Signed event preview: `evidence/nostr-loop24-signed-event-preview-2026-06-22.json`.
+- Publish/readback evidence: `evidence/nostr-loop25-publish-readback-2026-06-22.md` and `evidence/nostr-loop25-publish-readback-2026-06-22.json`.
+- Event kind: `30617`.
+- Event ID: `4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba`.
+- Relays published/read back: `wss://relay.damus.io`, `wss://nos.lol`.
+- Local and readback `nak verify` checks exited 0.
+- No secret key material was recorded in the repo; the secret remains outside the repo at the documented key path.
+- Still not claimed: durable availability, global relay propagation, censorship resistance, identity trust, production readiness, security guarantees, or full NIP-34/forge compatibility.
+
 ## Hard gates for any future replay
 
 A future live replay must stop unless all relevant gates are satisfied and recorded in status docs:

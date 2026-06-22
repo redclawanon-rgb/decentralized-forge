@@ -75,6 +75,8 @@ Loop 22 is complete as **read-only Radicle CLI help/version preflight**. Evidenc
 
 Loop 23 is complete as **local CLI verification of temporary private Radicle repo init/inspect only**. Evidence is `evidence/radicle-local-replay-2026-06-22.md`. Under Permission A, temporary `RAD_HOME` and a disposable Git repo were used; `rad auth --stdin` succeeded with a disposable passphrase that was not logged; `rad init --private --no-confirm --no-seed` created local RID `rad:z33oByNZxkxXAChhD54B4XiSsQkao`; `rad inspect --rid/--identity/--refs/--visibility` succeeded and visibility was `private`; temporary state was removed. No `rad node start`, `rad publish`, sync, announce, public seed publication, peer/remote configuration, public network replication verification, spending, paid infrastructure, production/private personal identity import, durability/censorship-resistance/security/production-readiness claim, or Nostr publication occurred.
 
+Loop 25 is complete as **selected public Nostr relay acceptance/readback for one prototype-labeled disposable-key event**. Evidence is `evidence/nostr-loop25-publish-readback-2026-06-22.md` and `evidence/nostr-loop25-publish-readback-2026-06-22.json`. Event `4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba` (kind `30617`) was published to and read back from `wss://relay.damus.io` and `wss://nos.lol`; local/readback `nak verify` passed. This proves only selected-relay acceptance/readback of the exact prototype event, not durability, global propagation, censorship resistance, identity trust, production readiness, security guarantees, or full NIP-34/forge compatibility.
+
 Loop 4 outputs:
 
 - `docs/radicle-mapping.md`
@@ -194,4 +196,4 @@ Loop 20 outputs:
 
 ## Current next recommended loop
 
-**Next:** Loop 25 is Nostr disposable publish/readback. Loop 24 completed relay selection and local signed payload review: selected `wss://relay.damus.io` and `wss://nos.lol`, signed local kind `30617` preview event `4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba`, and verified it locally with `nak verify`; no relay publication/readback occurred. Under Permission B, Loop 25 may publish/read back the exact signed preview in `evidence/nostr-loop24-signed-event-preview-2026-06-22.json`, record relay responses/readback evidence, and preserve non-claims about durability/global propagation/censorship resistance/identity trust/production readiness/full compatibility.
+**Next:** Loop 26 is live evidence import into adapter/renderer. Loop 25 published and read back the exact prototype/research-labeled kind `30617` event `4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba` from `wss://relay.damus.io` and `wss://nos.lol` using only the disposable project key. Loop 26 may import this evidence narrowly while keeping fixture/local/live states visually and semantically separate and preserving all non-claims.

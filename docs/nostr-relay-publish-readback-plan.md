@@ -88,6 +88,15 @@ Only run these under the already-granted Permission B and still preserve all bou
 
 Loop 25 should capture publish responses and readback JSON in secret-free evidence. It should verify returned event ID, pubkey, kind, tags, content, and signature with `nak verify`.
 
+## Loop 25 outcome
+
+Loop 25 completed on 2026-06-22 under Permission B.
+
+- Published/read back exact event ID: `4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba`.
+- Relays with publish success and verified readback: `wss://relay.damus.io`, `wss://nos.lol`.
+- Evidence: `evidence/nostr-loop25-publish-readback-2026-06-22.md` and `evidence/nostr-loop25-publish-readback-2026-06-22.json`.
+- Local and readback `nak verify` checks exited 0.
+
 ## Non-claims
 
-A successful Loop 25 publish/readback may show only that one or two public relays accepted and returned the exact event. It must not be described as proof of durability, global propagation, censorship resistance, identity trust, security, production readiness, or full NIP-34/forge compatibility.
+Successful Loop 25 publish/readback shows only that the two selected public relays accepted and returned the exact event. It must not be described as proof of durability, global propagation, censorship resistance, identity trust, security, production readiness, or full NIP-34/forge compatibility.

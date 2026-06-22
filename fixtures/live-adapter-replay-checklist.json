@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-adapter-replay-checklist.v1",
-  "loop": 24,
+  "loop": 25,
   "purpose": "Secret-free gates for future Radicle local CLI replay and Nostr disposable relay publish/readback verification.",
   "discovery": {
     "rad_command": "command -v rad",
@@ -31,7 +31,11 @@
     "loop_24_nostr_relay_selection_recorded": true,
     "loop_24_nostr_relay_selection_evidence": "evidence/nostr-relay-selection-2026-06-22.md",
     "loop_24_nostr_publish_plan": "docs/nostr-relay-publish-readback-plan.md",
-    "network_protocol_actions_used_after_loop_24": false
+    "network_protocol_actions_used_after_loop_24": false,
+    "loop_25_nostr_publish_readback_recorded": true,
+    "loop_25_nostr_publish_readback_evidence": "evidence/nostr-loop25-publish-readback-2026-06-22.md",
+    "loop_25_nostr_publish_readback_json": "evidence/nostr-loop25-publish-readback-2026-06-22.json",
+    "network_protocol_actions_used_after_loop_25": true
   },
   "global_gates": [
     "approved_tooling_path_required",
@@ -196,7 +200,37 @@
     "local_signature_verified_after_loop_24": true,
     "relay_published_after_loop_24": false,
     "relay_readback_after_loop_24": false,
-    "claim_boundary_after_loop_24": "local signed preview and relay selection only; no relay publication/readback or durability/global-propagation/censorship-resistance/production-readiness claim"
+    "claim_boundary_after_loop_24": "local signed preview and relay selection only; no relay publication/readback or durability/global-propagation/censorship-resistance/production-readiness claim",
+    "status_after_loop_25": "published_and_read_back_from_selected_relays_with_disposable_project_key",
+    "publish_readback_evidence_after_loop_25": "evidence/nostr-loop25-publish-readback-2026-06-22.md",
+    "publish_readback_json_after_loop_25": "evidence/nostr-loop25-publish-readback-2026-06-22.json",
+    "event_id_after_loop_25": "4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba",
+    "event_kind_after_loop_25": 30617,
+    "published_relays_after_loop_25": [
+      "wss://relay.damus.io",
+      "wss://nos.lol"
+    ],
+    "readback_verified_relays_after_loop_25": [
+      "wss://relay.damus.io",
+      "wss://nos.lol"
+    ],
+    "relay_published_after_loop_25": true,
+    "relay_readback_after_loop_25": true,
+    "readback_field_match_after_loop_25": true,
+    "local_signature_verified_after_loop_25": true,
+    "readback_signature_verified_after_loop_25": true,
+    "production_or_personal_key_used_after_loop_25": false,
+    "paid_infrastructure_used_after_loop_25": false,
+    "direct_outreach_after_loop_25": false,
+    "claim_boundary_after_loop_25": "live relay acceptance/readback verified only for the exact prototype event on selected relays; no durability/global-propagation/censorship-resistance/identity-trust/production-readiness/full-compatibility claim",
+    "non_claims_after_loop_25": [
+      "no_durability_guarantee",
+      "no_global_propagation_claim",
+      "no_censorship_resistance_claim",
+      "no_identity_trust_claim",
+      "no_production_readiness_claim",
+      "no_full_nip34_or_forge_protocol_compatibility_claim"
+    ]
   },
   "secrets_policy": {
     "contains_secret_values": false,

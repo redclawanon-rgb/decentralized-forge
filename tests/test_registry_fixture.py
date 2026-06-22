@@ -202,6 +202,37 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertFalse(nostr_gate["relay_published_after_loop_24"])
             self.assertFalse(nostr_gate["relay_readback_after_loop_24"])
 
+        if checklist["loop"] >= 25:
+            discovery = checklist["discovery"]
+            self.assertTrue(discovery["loop_25_nostr_publish_readback_recorded"])
+            self.assertTrue(discovery["network_protocol_actions_used_after_loop_25"])
+            nostr_gate = checklist["nostr_disposable_readback"]
+            self.assertEqual(
+                nostr_gate["status_after_loop_25"],
+                "published_and_read_back_from_selected_relays_with_disposable_project_key",
+            )
+            self.assertEqual(
+                nostr_gate["event_id_after_loop_25"],
+                nostr_gate["signed_event_id_after_loop_24"],
+            )
+            self.assertEqual(
+                nostr_gate["published_relays_after_loop_25"],
+                ["wss://relay.damus.io", "wss://nos.lol"],
+            )
+            self.assertEqual(
+                nostr_gate["readback_verified_relays_after_loop_25"],
+                ["wss://relay.damus.io", "wss://nos.lol"],
+            )
+            self.assertTrue(nostr_gate["relay_published_after_loop_25"])
+            self.assertTrue(nostr_gate["relay_readback_after_loop_25"])
+            self.assertTrue(nostr_gate["readback_field_match_after_loop_25"])
+            self.assertTrue(nostr_gate["local_signature_verified_after_loop_25"])
+            self.assertTrue(nostr_gate["readback_signature_verified_after_loop_25"])
+            self.assertFalse(nostr_gate["production_or_personal_key_used_after_loop_25"])
+            self.assertFalse(nostr_gate["paid_infrastructure_used_after_loop_25"])
+            self.assertFalse(nostr_gate["direct_outreach_after_loop_25"])
+            self.assertIn("no_durability_guarantee", nostr_gate["non_claims_after_loop_25"])
+
         required_global_gates = {
             "approved_tooling_path_required",
             "temporary_or_disposable_state_only",
@@ -275,6 +306,37 @@ class RegistryFixtureTests(unittest.TestCase):
         event_blob = json.dumps(signed_event).lower()
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, event_blob)
+
+    def test_loop25_nostr_publish_readback_evidence_is_bounded(self):
+        checklist = self.live_replay_checklist
+        if checklist["loop"] < 25:
+            self.skipTest("Loop 25 Nostr publish/readback evidence not recorded yet")
+        nostr_gate = checklist["nostr_disposable_readback"]
+        evidence_path = ROOT / nostr_gate["publish_readback_json_after_loop_25"]
+        evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+        self.assertEqual(evidence["event_id"], nostr_gate["event_id_after_loop_25"])
+        self.assertEqual(evidence["pubkey"], nostr_gate["public_key_hex"])
+        self.assertEqual(evidence["accepted_relays"], nostr_gate["published_relays_after_loop_25"])
+        self.assertEqual(evidence["readback_verified_relays"], nostr_gate["readback_verified_relays_after_loop_25"])
+        self.assertEqual(evidence["kind"], 30617)
+        self.assertEqual(evidence["local_verify"]["returncode"], 0)
+        for publish in evidence["publish"]:
+            self.assertEqual(publish["returncode"], 0)
+            self.assertIn(publish["relay"], nostr_gate["published_relays_after_loop_25"])
+        for readback in evidence["readback"]:
+            self.assertTrue(readback["matched"])
+            self.assertTrue(readback["field_match"])
+            self.assertEqual(readback["verify_readback"]["returncode"], 0)
+            self.assertEqual(readback["events"][0]["id"], nostr_gate["event_id_after_loop_25"])
+        evidence_blob = json.dumps(evidence).lower()
+        for required_non_claim in [
+            "not proof of global propagation",
+            "not proof of censorship resistance",
+            "not production readiness",
+        ]:
+            self.assertIn(required_non_claim, evidence_blob)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, evidence_blob)
 
     def test_required_top_level_fields(self):
         for fixture in self.fixtures:

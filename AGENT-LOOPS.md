@@ -393,6 +393,10 @@ Loop 25 may publish/read back the exact signed event preview under Permission B.
 
 Abort if relay requires payment/production credentials, rejects in a way that needs human choice, payload review finds overclaiming content, or secret-marker scan fails.
 
+**Current result:**
+
+Completed as selected public relay acceptance/readback for one prototype-labeled disposable-key event. Published exact signed preview `4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba` to `wss://relay.damus.io` and `wss://nos.lol`; both publish commands exited 0 and both relays returned the matching event by ID. Local and readback `nak verify` checks exited 0. Evidence: `evidence/nostr-loop25-publish-readback-2026-06-22.md` and `.json`. No spending, paid infrastructure, production/private personal key, direct outreach, durability/global-propagation/censorship-resistance/identity-trust/production-readiness/security/full-compatibility claim, or Radicle public network action occurred.
+
 ## Loop 26: Live evidence import into adapter/renderer
 
 **Goal:** Import narrow live-evidence metadata into fixtures/renderer without replacing fixture-only claims improperly.

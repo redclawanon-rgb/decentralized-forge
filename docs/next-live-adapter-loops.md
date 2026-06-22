@@ -116,7 +116,7 @@ If provider auth/rate limits block a run, the controller should stop with a conc
 
 **Completed 2026-06-22:** Selected `wss://relay.damus.io` and `wss://nos.lol` after NIP-11 checks with `nak relay` showed reachable relay info and no advertised payment/auth/restricted-write requirement. Drafted and locally signed a prototype/research-labeled kind `30617` repository announcement using only the disposable project key. Signed event preview: `evidence/nostr-loop24-signed-event-preview-2026-06-22.json`; event ID: `4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba`; plan/evidence: `docs/nostr-relay-publish-readback-plan.md` and `evidence/nostr-relay-selection-2026-06-22.md`. `nak verify` passed locally. No relay publication/readback occurred.
 
-**Loop 25 publication input:** Publish/read back the exact signed preview event unless the plan is updated and reverified first.
+**Loop 25 result:** Published/read back the exact signed preview event from `wss://relay.damus.io` and `wss://nos.lol`; evidence is `evidence/nostr-loop25-publish-readback-2026-06-22.md` and `.json`.
 
 **Artifacts:**
 
@@ -138,6 +138,8 @@ If provider auth/rate limits block a run, the controller should stop with a conc
 **Goal:** Publish a prototype-labeled event with the disposable project key and read it back by event ID.
 
 **Requires Permission B.**
+
+**Completed 2026-06-22:** Published event `4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba` to `wss://relay.damus.io` and `wss://nos.lol`, read it back from both relays, and verified matching fields/signatures. Evidence: `evidence/nostr-loop25-publish-readback-2026-06-22.md` and `.json`. This is selected-relay acceptance/readback only, not durability/global propagation/censorship resistance/identity trust/production readiness/full compatibility.
 
 **Steps:**
 
