@@ -34,6 +34,8 @@ This repo starts as a research/spec/prototype workspace. The first milestone is 
 - `docs/radicle-mapping.md` — source-inspected Radicle-to-registry mapping, clearly marked not live-CLI verified
 - `docs/artifact-metadata.md` — Loop 6 release artifact metadata, local CID fixture, and no-pinning/no-durability boundaries
 - `docs/ci-provenance-model.md` — Loop 7 synthetic local CI/provenance model and no-Sigstore/no-SLSA-claim boundaries
+- `docs/public-collaboration.md` — Loop 9 public collaboration stance, first issue set, and public update draft
+- `ROADMAP.md` — public prototype roadmap and collaboration tracks
 - `schemas/project-registry.schema.json` — MVP project registry schema
 - `fixtures/example-project.registry.json` — local-only demo project registry fixture
 - `fixtures/local-release-artifact.txt` — local-only release artifact fixture with stdlib-tested SHA-256/CIDv1 metadata

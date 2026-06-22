@@ -63,7 +63,7 @@ Requires Eric approval or a separate explicit target:
 - Claiming production readiness, censorship-proof guarantees, or live protocol verification that has not actually been tested
 ## Current loop state
 
-Loops 1–8 are complete. Loop 4 (Radicle local integration spike) is complete as a **source-inspected local artifact**, not a live Radicle CLI run. Loop 5 is complete as **dry-run Nostr collaboration fixtures**, not a live Nostr relay run. Loop 6 is complete as **local/free artifact metadata with a stdlib-verified CIDv1 raw/base32-compatible fixture**, not live IPFS pinning or durable storage. Loop 7 is complete as **synthetic local CI/provenance fixtures**, not real CI execution, signing, Sigstore/cosign/in-toto verification, Rekor upload, or SLSA compliance. Loop 8 is complete as a **local static renderer/UI improvement**, not public CI/status publication or new infrastructure.
+Loops 1–9 are complete. Loop 4 (Radicle local integration spike) is complete as a **source-inspected local artifact**, not a live Radicle CLI run. Loop 5 is complete as **dry-run Nostr collaboration fixtures**, not a live Nostr relay run. Loop 6 is complete as **local/free artifact metadata with a stdlib-verified CIDv1 raw/base32-compatible fixture**, not live IPFS pinning or durable storage. Loop 7 is complete as **synthetic local CI/provenance fixtures**, not real CI execution, signing, Sigstore/cosign/in-toto verification, Rekor upload, or SLSA compliance. Loop 8 is complete as a **local static renderer/UI improvement**, not public CI/status publication or new infrastructure. Loop 9 is complete as a **public GitHub collaboration surface**, with roadmap/docs and bounded public issues.
 
 Public GitHub repo is live at `https://github.com/redclawanon-rgb/decentralized-forge`. Verified public settings: default branch `main`, Issues enabled, Discussions enabled, Wiki disabled. Public building is approved; keep project updates accurate and labeled as research/prototype work.
 
@@ -111,6 +111,14 @@ Nostr caveat: no local relay/client tool (`nak`, `nostril`, `strfry`, or `nostr-
 
 Radicle caveat: `rad` was unavailable in the environment, and the documented `curl https://radicle.dev/install | sh` installer was not used. The mapping was derived from official source/manpage/examples in `/tmp/radicle-heartwood` at commit `90aaec1c9eee77a0beebece48f460c1424c1c8bd`. Do not claim live Radicle verification until an approved binary/install path is available and a temporary local `RAD_HOME` replay has been run.
 
+Loop 9 outputs:
+
+- `ROADMAP.md`
+- `docs/public-collaboration.md`
+- bounded public GitHub issues for renderer UX, Nostr fixtures, Radicle verification, artifact state model, and provenance evolution
+
+Loop 9 caveat: public GitHub issues are temporary coordination scaffolding while decentralized collaboration remains fixture-backed. No direct contact with specific people, paid services, production/private keys, live protocol verification claims, or unsupported security/SLSA/production/censorship-proof claims were used.
+
 ## Current next recommended loop
 
-**Loop 9: public collaboration surface.** Use the already verified public GitHub repo carefully: tighten GitHub Issues/Discussions/README roadmap as the public collaboration surface and draft/post a concise public update only if accurate, non-spammy, and clearly labeled research/prototype. Do not contact specific people directly or make unsupported security/SLSA/production/censorship-proof/live-verification claims.
+**Loop 10: final architecture/roadmap/decision matrix cleanup.** Consolidate architecture, protocol matrix, roadmap, and status docs after the public collaboration setup; ensure all public-facing docs consistently distinguish local fixtures from live-verified protocol support.

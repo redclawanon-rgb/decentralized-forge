@@ -165,6 +165,22 @@ Notes:
 - New UI labels explicitly show local-only/synthetic status and non-claims: no public CI status, no live IPFS verification, no paid storage, no durability claim, no real Sigstore/in-toto verification, no Rekor upload, no private key use, and no SLSA level claim.
 - No hosted services, paid infrastructure, production/private keys, public posts, or public status publication were used.
 
+### Loop 9: public collaboration surface
+
+Status: **in progress; local roadmap/docs prepared, public issues pending creation/verification**.
+
+Planned outputs:
+
+- `ROADMAP.md` for the public prototype roadmap and collaboration tracks.
+- `docs/public-collaboration.md` for public positioning, first issue set, and a concise public update draft.
+- Public GitHub issues for bounded collaboration tracks once docs are committed/pushed.
+
+Boundaries:
+
+- Use public GitHub issues/discussions only as temporary coordination while decentralized collaboration remains fixture-backed.
+- Do not contact specific people directly.
+- Do not make unsupported security, SLSA, production-readiness, censorship-proof, live IPFS, or live protocol-verification claims.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -196,9 +212,9 @@ Notes:
 
 ## Next recommended loop
 
-**Loop 9: public collaboration surface.**
+**Loop 10: final architecture/roadmap/decision matrix cleanup.**
 
-Use the already verified public GitHub repo carefully: tighten GitHub Issues/Discussions/README roadmap as the public collaboration surface and draft/post a concise public update only if it is accurate, non-spammy, and clearly labeled research/prototype. Do not contact specific people directly. Do not make unsupported security, SLSA, production-readiness, censorship-proof, live IPFS, or live protocol-verification claims.
+Consolidate architecture, protocol matrix, roadmap, and status docs after the public collaboration setup; ensure all public-facing docs consistently distinguish local fixtures from live-verified protocol support. If public issue creation failed or remained partial, finish/verify the Loop 9 issue set before broader cleanup.
 
 ## Gates/blockers
 
