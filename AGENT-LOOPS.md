@@ -99,3 +99,36 @@ Completed as a source-inspected local spike because `rad` was unavailable and th
 **Gate:**
 
 Public relay publishing is allowed only with disposable/project-scoped keys and documented storage; otherwise keep dry-run fixtures and use GitHub issues/discussions as the public collaboration surface first. No production/private keys, unsupported public claims, paid services, or contacting specific people outside public channels.
+
+## Loop 6: release/artifact metadata and local CID-compatible fixture
+
+**Current result:**
+
+Completed as local/free artifact metadata. Outputs include `fixtures/local-release-artifact.txt`, strengthened artifact metadata in the schema/fixtures, `docs/artifact-metadata.md`, and tests for SHA-256/CIDv1-compatible local fixture metadata. No live IPFS add/fetch/pin, paid storage, wallet, Filecoin/Arweave spend, or durability claim was performed.
+
+## Loop 7: CI/provenance model docs and local fake attestation fixtures
+
+**Current result:**
+
+Completed as synthetic local CI/provenance fixtures. Outputs include `docs/ci-provenance-model.md`, optional `ci_checks[]` and artifact `provenance` schema fields, fake local CI records, fake artifact attestation/provenance metadata, and tests for no real signatures/keys/SLSA claims. No hosted CI, public status, signing, Sigstore/cosign/in-toto verification, Rekor upload, or SLSA compliance claim was performed.
+
+## Loop 8: static UI/renderer improvements
+
+**Current result:**
+
+Completed as local static renderer/UI work. `scripts/render_project_page.py` now displays a prototype boundary notice plus clear sections for artifact availability, content addresses, provenance/attestation metadata, CI checks, and protocol substrate details. `output/demo-project.html` was regenerated and renderer tests assert the new non-claim labels. No public status publication, hosted service, paid infrastructure, production key, or unsupported security/SLSA claim was introduced.
+
+## Loop 9: public collaboration surface
+
+**Goal:** Make the already-public GitHub project easier to collaborate on without overstating protocol maturity.
+
+**Tasks:**
+
+- Tighten README roadmap/current status for external readers.
+- Prepare GitHub Issues/Discussions templates or seed issues only if accurate and prototype-labeled.
+- Draft a concise public update/post that clearly states what is local/synthetic versus verified.
+- Run preflight/tests before any public push or post.
+
+**Gate:**
+
+Public collaboration surfaces and updates are approved for this project when accurate, non-spammy, and clearly labeled research/prototype. Do not contact specific people directly. Do not spend money, use production/private keys, or claim production readiness, censorship-proof guarantees, live IPFS availability, real signing/Sigstore/in-toto verification, SLSA compliance, or live protocol verification unless actually verified.

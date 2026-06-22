@@ -4,14 +4,24 @@
   <meta charset="utf-8">
   <title>Demo Decentralized Forge Project</title>
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 2rem auto; line-height: 1.5; padding: 0 1rem; }
+    body { font-family: system-ui, sans-serif; max-width: 1000px; margin: 2rem auto; line-height: 1.5; padding: 0 1rem; }
     code { background: #f4f4f4; padding: 0.1rem 0.25rem; }
     section { border-top: 1px solid #ddd; margin-top: 1.5rem; padding-top: 1rem; }
+    .notice { background: #fff8d6; border: 1px solid #eadb8b; padding: 0.75rem; }
+    .artifact { border: 1px solid #ddd; border-radius: 0.4rem; padding: 1rem; margin: 0.75rem 0; }
+    .metadata { display: grid; grid-template-columns: minmax(10rem, 16rem) 1fr; gap: 0.35rem 0.75rem; }
+    .metadata dt { font-weight: 700; }
+    .metadata dd { margin: 0; overflow-wrap: anywhere; }
+    .flag { border-radius: 999px; padding: 0.05rem 0.5rem; font-weight: 700; }
+    .flag.yes { background: #e4f7e7; color: #126422; }
+    .flag.no { background: #f8e1df; color: #8b1c10; }
+    .flag.unknown { background: #eee; color: #333; }
   </style>
 </head>
 <body>
   <h1>Demo Decentralized Forge Project</h1>
   <p>A local-only fixture showing how a project can be discovered, cloned, discussed, patched, and released without GitHub as the authority.</p>
+  <p class="notice"><strong>Prototype boundary:</strong> this static page renders local registry fixture data. Synthetic CI/provenance, unsigned artifacts, and substrate hints are shown explicitly; the page does not claim production readiness, live pinning, real Sigstore/in-toto verification, Rekor upload, SLSA compliance, or public CI status unless those fields are verified separately.</p>
   <p><strong>Project ID:</strong> <code>demo-project</code><br>
      <strong>Default branch:</strong> <code>main</code><br>
      <strong>Registry updated:</strong> <code>2026-06-22T00:00:00Z</code></p>
@@ -32,16 +42,24 @@
   <li><strong>PATCH-1</strong> [proposed] Add static registry renderer<br>Prototype a deterministic stdlib renderer for project registry fixtures.</li>
 </ul></section>
   <section><h2>Releases</h2><ul>
-  <li><strong>0.0.1-demo</strong> tag <code>v0.0.1-demo</code><ul>
-  <li>local-release-artifact.txt: <code>3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0</code> CID <code>bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua</code> signature <code>unsigned-fixture</code></li>
+  <li><h3>0.0.1-demo</h3><p>tag <code>v0.0.1-demo</code></p><ul>
+  <li><article class="artifact"><h4>local-release-artifact.txt</h4><dl class="metadata"><dt>Media type</dt><dd><code>text/plain</code></dd><dt>Size bytes</dt><dd><code>241</code></dd><dt>URI</dt><dd><code>file://fixtures/local-release-artifact.txt</code></dd><dt>SHA-256</dt><dd><code>3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0</code></dd><dt>CID</dt><dd><code>bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua</code></dd><dt>Signature</dt><dd><code>unsigned-fixture</code></dd></dl><h5>Artifact availability</h5><dl class="metadata"><dt>Local fixture available</dt><dd><span class="flag yes">yes</span></dd><dt>Pinned</dt><dd><span class="flag no">no</span></dd><dt>Live IPFS verified</dt><dd><span class="flag no">no</span></dd><dt>Paid storage</dt><dd><span class="flag no">no</span></dd><dt>Durability claim</dt><dd><span class="flag no">no</span></dd><dt>Availability notes</dt><dd>Local file fixture only; no paid pinning/storage, wallet, Filecoin/Arweave spend, or durability claim.</dd></dl><h5>Content addresses</h5><ul>
+  <li><dl class="metadata"><dt>Protocol</dt><dd><code>ipfs</code></dd><dt>CID</dt><dd><code>bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua</code></dd><dt>CID version</dt><dd><code>1</code></dd><dt>Multibase</dt><dd><code>base32</code></dd><dt>Multicodec</dt><dd><code>raw</code></dd><dt>Multihash</dt><dd><code>sha2-256</code></dd><dt>Derived from local fixture</dt><dd><span class="flag yes">yes</span></dd><dt>Matches artifact hash</dt><dd><span class="flag yes">yes</span></dd><dt>Verification status</dt><dd><code>local-computed-not-fetched</code></dd><dt>Notes</dt><dd>CIDv1 raw/base32 shape computed locally from the fixture bytes; no IPFS add, fetch, pin, gateway, or network availability was verified.</dd></dl></li>
+</ul><h5>Provenance / attestation</h5><dl class="metadata"><dt>Attestation fixture</dt><dd><code>fake-local-attestation:artifact_sha256=3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0;commit=1111111111111111111111111111111111111111;repo=decentralized-forge;synthetic=true;no-slsa-claim=true</code></dd></dl><ul>
+  <li><dl class="metadata"><dt>Status</dt><dd><code>synthetic-local-only</code></dd><dt>Builder</dt><dd><code>local-fake-ci/loop-7</code></dd><dt>Repository</dt><dd><code>file:///home/openclaw/projects/decentralized-forge</code></dd><dt>Commit</dt><dd><code>1111111111111111111111111111111111111111</code></dd><dt>Tag</dt><dd><code>v0.0.1-demo</code></dd><dt>Predicate type</dt><dd><code>https://example.invalid/decentralized-forge/fake-slsa-provenance/v0</code></dd><dt>Synthetic fixture</dt><dd><span class="flag yes">yes</span></dd><dt>Local schema only</dt><dd><span class="flag yes">yes</span></dd><dt>Real Sigstore verified</dt><dd><span class="flag no">no</span></dd><dt>Real in-toto verified</dt><dd><span class="flag no">no</span></dd><dt>No SLSA level claimed</dt><dd><span class="flag yes">yes</span></dd><dt>Uses private key</dt><dd><span class="flag no">no</span></dd><dt>CI check IDs</dt><dd><code>local-fake-ci-001, local-fake-ci-002</code></dd><dt>Boundaries</dt><dd>no-real-signature, no-private-key, no-cosign, no-rekor, no-in-toto-verification, no-slsa-level-claim, no-public-ci-status</dd><dt>Verification notes</dt><dd>Fake local attestation fixture for data modeling only; not a DSSE envelope, not signed, not uploaded to Rekor, not a SLSA compliance claim.</dd></dl></li>
+</ul></article></li>
 </ul></li>
 </ul></section>
-  <section><h2>Protocol / substrate hints</h2><ul>
-  <li><strong>forgefed</strong>: <code>{&quot;actor&quot;: &quot;https://forge.example.invalid/actors/demo-project&quot;, &quot;status&quot;: &quot;mapping-only-no-public-actor&quot;}</code></li>
-  <li><strong>ipfs</strong>: <code>{&quot;artifact_cids&quot;: [&quot;bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua&quot;], &quot;cid_status&quot;: &quot;local-computed-not-fetched&quot;, &quot;durability_claim&quot;: false, &quot;live_ipfs_verified&quot;: false, &quot;paid_storage&quot;: false, &quot;pinning_status&quot;: &quot;not-pinned&quot;}</code></li>
-  <li><strong>nip34</strong>: <code>{&quot;publish_status&quot;: &quot;dry-run-only&quot;, &quot;relay_hints&quot;: [&quot;wss://relay.example.invalid&quot;], &quot;repo_id_tag&quot;: &quot;demo-project&quot;, &quot;repository_kind&quot;: 30617}</code></li>
-  <li><strong>radicle</strong>: <code>{&quot;rid&quot;: &quot;rad:zDemoRegistryFixture111111111111111111111111&quot;, &quot;status&quot;: &quot;placeholder-pending-local-spike&quot;}</code></li>
-  <li><strong>sigstore_slsa</strong>: <code>{&quot;provenance_status&quot;: &quot;placeholder&quot;, &quot;release_signature_status&quot;: &quot;placeholder&quot;}</code></li>
+  <section><h2>CI / provenance checks</h2><ul>
+  <li><dl class="metadata"><dt>ID</dt><dd><code>local-fake-ci-001</code></dd><dt>Name</dt><dd>stdlib fixture validation</dd><dt>Provider</dt><dd><code>local-fake</code></dd><dt>Workflow</dt><dd><code>loop-7-synthetic-ci-model</code></dd><dt>Status</dt><dd><code>completed</code></dd><dt>Conclusion</dt><dd><code>success</code></dd><dt>Synthetic</dt><dd><span class="flag yes">yes</span></dd><dt>Published publicly</dt><dd><span class="flag no">no</span></dd><dt>Repository</dt><dd><code>file:///home/openclaw/projects/decentralized-forge</code></dd><dt>Commit</dt><dd><code>1111111111111111111111111111111111111111</code></dd><dt>URL</dt><dd><code>file://fixtures/example-project.registry.json#ci_checks/local-fake-ci-001</code></dd><dt>Notes</dt><dd>Synthetic local-only status for renderer/protocol mapping; no hosted CI job, secret, token, or public status was created.</dd></dl></li>
+  <li><dl class="metadata"><dt>ID</dt><dd><code>local-fake-ci-002</code></dd><dt>Name</dt><dd>artifact hash provenance dry run</dd><dt>Provider</dt><dd><code>local-fake</code></dd><dt>Workflow</dt><dd><code>loop-7-synthetic-ci-model</code></dd><dt>Status</dt><dd><code>completed</code></dd><dt>Conclusion</dt><dd><code>success</code></dd><dt>Synthetic</dt><dd><span class="flag yes">yes</span></dd><dt>Published publicly</dt><dd><span class="flag no">no</span></dd><dt>Repository</dt><dd><code>file:///home/openclaw/projects/decentralized-forge</code></dd><dt>Commit</dt><dd><code>1111111111111111111111111111111111111111</code></dd><dt>URL</dt><dd><code>file://fixtures/example-project.registry.json#ci_checks/local-fake-ci-002</code></dd><dt>Notes</dt><dd>Synthetic local-only passing artifact provenance check over fixture metadata; no Sigstore/cosign/in-toto/SLSA verification occurred.</dd></dl></li>
+</ul></section>
+  <section><h2>Protocol substrate details</h2><ul>
+  <li><strong>forgefed</strong><dl class="metadata"><dt>actor</dt><dd><code>https://forge.example.invalid/actors/demo-project</code></dd><dt>status</dt><dd><code>mapping-only-no-public-actor</code></dd></dl></li>
+  <li><strong>ipfs</strong><dl class="metadata"><dt>artifact_cids</dt><dd><code>[&quot;bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua&quot;]</code></dd><dt>cid_status</dt><dd><code>local-computed-not-fetched</code></dd><dt>durability_claim</dt><dd><span class="flag no">no</span></dd><dt>live_ipfs_verified</dt><dd><span class="flag no">no</span></dd><dt>paid_storage</dt><dd><span class="flag no">no</span></dd><dt>pinning_status</dt><dd><code>not-pinned</code></dd></dl></li>
+  <li><strong>nip34</strong><dl class="metadata"><dt>publish_status</dt><dd><code>dry-run-only</code></dd><dt>relay_hints</dt><dd><code>[&quot;wss://relay.example.invalid&quot;]</code></dd><dt>repo_id_tag</dt><dd><code>demo-project</code></dd><dt>repository_kind</dt><dd><code>30617</code></dd></dl></li>
+  <li><strong>radicle</strong><dl class="metadata"><dt>rid</dt><dd><code>rad:zDemoRegistryFixture111111111111111111111111</code></dd><dt>status</dt><dd><code>placeholder-pending-local-spike</code></dd></dl></li>
+  <li><strong>sigstore_slsa</strong><dl class="metadata"><dt>attestation_fixture</dt><dd><code>artifact.provenance plus artifact.attestation string</code></dd><dt>private_keys_used</dt><dd><span class="flag no">no</span></dd><dt>production_claim</dt><dd><code>none</code></dd><dt>provenance_status</dt><dd><code>synthetic-local-only</code></dd><dt>real_cosign_verified</dt><dd><span class="flag no">no</span></dd><dt>real_in_toto_verified</dt><dd><span class="flag no">no</span></dd><dt>real_sigstore_verified</dt><dd><span class="flag no">no</span></dd><dt>rekor_uploaded</dt><dd><span class="flag no">no</span></dd><dt>release_signature_status</dt><dd><code>fake-local-unsigned-fixture</code></dd><dt>slsa_level_claimed</dt><dd><span class="flag no">no</span></dd></dl></li>
 </ul></section>
   <section><h2>Signature status</h2><p><code>{&quot;algorithm&quot;: &quot;none&quot;, &quot;status&quot;: &quot;unsigned-fixture&quot;, &quot;value&quot;: &quot;&quot;}</code></p></section>
 </body>

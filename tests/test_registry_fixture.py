@@ -360,8 +360,52 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn("Demo Decentralized Forge Project", html)
             self.assertIn("Maintainers", html)
             self.assertIn("Clone URLs", html)
-            self.assertIn("Protocol / substrate hints", html)
+            self.assertIn("Protocol substrate details", html)
+            self.assertIn("CI / provenance checks", html)
+            self.assertIn("Artifact availability", html)
+            self.assertIn("Content addresses", html)
+            self.assertIn("Provenance / attestation", html)
+            self.assertIn("Prototype boundary", html)
+            self.assertIn("does not claim production readiness", html)
+            self.assertIn("No SLSA level claimed", html)
+            self.assertIn("Published publicly", html)
+            self.assertIn("Live IPFS verified", html)
+            self.assertIn("Durability claim", html)
+            self.assertIn("local-fake-ci-001", html)
+            self.assertIn("synthetic-local-only", html)
+            self.assertIn("bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua", html)
+            self.assertIn("sigstore_slsa", html)
             self.assertIn("local-release-artifact.txt", html)
+
+    def test_renderer_escapes_fixture_values_in_new_sections(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = Path(tmpdir)
+            registry = json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
+            registry["project"]["description"] = "<script>alert('project')</script>"
+            registry["releases"][0]["artifacts"][0]["name"] = "artifact <unsafe> & demo"
+            registry["ci_checks"][0]["notes"] = "CI note <b>not html</b>"
+            registry["substrates"]["ipfs"]["cid_status"] = "<not-fetched>"
+
+            input_path = tmp / "registry.json"
+            output = tmp / "demo.html"
+            input_path.write_text(json.dumps(registry), encoding="utf-8")
+
+            result = subprocess.run(
+                [sys.executable, str(RENDERER), str(input_path), str(output)],
+                cwd=ROOT,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            html = output.read_text(encoding="utf-8")
+            self.assertIn("&lt;script&gt;alert(&#x27;project&#x27;)&lt;/script&gt;", html)
+            self.assertIn("artifact &lt;unsafe&gt; &amp; demo", html)
+            self.assertIn("CI note &lt;b&gt;not html&lt;/b&gt;", html)
+            self.assertIn("&lt;not-fetched&gt;", html)
+            self.assertNotIn("<script>alert('project')</script>", html)
+            self.assertNotIn("CI note <b>not html</b>", html)
 
 
 if __name__ == "__main__":

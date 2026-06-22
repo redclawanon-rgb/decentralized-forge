@@ -143,6 +143,28 @@ Notes:
 - Fake provenance references local artifact SHA-256 `3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0` and synthetic commit `1111111111111111111111111111111111111111`.
 - No hosted CI job, public commit status, CI secret/token, real signing key, cosign/Sigstore verification, Rekor upload, in-toto statement verification, SLSA level/compliance claim, paid CI, or public infrastructure was used.
 
+### Loop 8: static UI/renderer improvements
+
+Status: **complete as local static renderer/UI improvement; no public status publication or new infrastructure**.
+
+Outputs:
+
+- `scripts/render_project_page.py` now renders a clearer static page with explicit prototype boundary notice, artifact availability flags, content-address details, provenance/attestation metadata, CI check records, and expanded protocol substrate details.
+- `output/demo-project.html` regenerated from `fixtures/example-project.registry.json`.
+- `tests/test_registry_fixture.py` updated to assert the new rendered sections/non-claim flags while preserving existing basics.
+- README/context updated to describe the renderer output and synthetic CI/provenance caveats.
+
+Verified commands:
+
+- `python3 scripts/render_project_page.py fixtures/example-project.registry.json output/demo-project.html` — passed.
+- `python3 -m unittest discover -s tests` — passed, 19 tests.
+
+Notes:
+
+- The renderer remains stdlib-only, static HTML/CSS only, with existing `html.escape`-based escaping paths for fixture-derived values.
+- New UI labels explicitly show local-only/synthetic status and non-claims: no public CI status, no live IPFS verification, no paid storage, no durability claim, no real Sigstore/in-toto verification, no Rekor upload, no private key use, and no SLSA level claim.
+- No hosted services, paid infrastructure, production/private keys, public posts, or public status publication were used.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -174,9 +196,9 @@ Notes:
 
 ## Next recommended loop
 
-**Loop 8: static UI/renderer improvements.**
+**Loop 9: public collaboration surface.**
 
-Keep this local/free: improve the static renderer so it displays CI/provenance, artifact availability, and protocol substrate details clearly. Avoid hosted services, paid infrastructure, production secrets, unsupported security/SLSA claims, or public status publication unless explicitly verified and labeled.
+Use the already verified public GitHub repo carefully: tighten GitHub Issues/Discussions/README roadmap as the public collaboration surface and draft/post a concise public update only if it is accurate, non-spammy, and clearly labeled research/prototype. Do not contact specific people directly. Do not make unsupported security, SLSA, production-readiness, censorship-proof, live IPFS, or live protocol-verification claims.
 
 ## Gates/blockers
 

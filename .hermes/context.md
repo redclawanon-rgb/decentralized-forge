@@ -63,7 +63,7 @@ Requires Eric approval or a separate explicit target:
 - Claiming production readiness, censorship-proof guarantees, or live protocol verification that has not actually been tested
 ## Current loop state
 
-Loops 1–7 are complete. Loop 4 (Radicle local integration spike) is complete as a **source-inspected local artifact**, not a live Radicle CLI run. Loop 5 is complete as **dry-run Nostr collaboration fixtures**, not a live Nostr relay run. Loop 6 is complete as **local/free artifact metadata with a stdlib-verified CIDv1 raw/base32-compatible fixture**, not live IPFS pinning or durable storage. Loop 7 is complete as **synthetic local CI/provenance fixtures**, not real CI execution, signing, Sigstore/cosign/in-toto verification, Rekor upload, or SLSA compliance.
+Loops 1–8 are complete. Loop 4 (Radicle local integration spike) is complete as a **source-inspected local artifact**, not a live Radicle CLI run. Loop 5 is complete as **dry-run Nostr collaboration fixtures**, not a live Nostr relay run. Loop 6 is complete as **local/free artifact metadata with a stdlib-verified CIDv1 raw/base32-compatible fixture**, not live IPFS pinning or durable storage. Loop 7 is complete as **synthetic local CI/provenance fixtures**, not real CI execution, signing, Sigstore/cosign/in-toto verification, Rekor upload, or SLSA compliance. Loop 8 is complete as a **local static renderer/UI improvement**, not public CI/status publication or new infrastructure.
 
 Public GitHub repo is live at `https://github.com/redclawanon-rgb/decentralized-forge`. Verified public settings: default branch `main`, Issues enabled, Discussions enabled, Wiki disabled. Public building is approved; keep project updates accurate and labeled as research/prototype work.
 
@@ -96,7 +96,16 @@ Loop 7 outputs:
 - explicit Sigstore/SLSA non-claim flags in registry fixtures
 - stdlib tests for synthetic-only CI states, coherent artifact hash/commit/repo references, and no real signatures/keys/SLSA claims
 
+Loop 8 outputs:
+
+- improved `scripts/render_project_page.py` static UI with a prototype boundary notice
+- clearer rendered sections for release artifact availability, content addresses, provenance/attestation metadata, CI checks, and protocol substrate details
+- regenerated `output/demo-project.html`
+- renderer tests that assert new non-claim labels and preserve existing basics
+
 Loop 7 caveat: CI/provenance data is synthetic and local-only. No hosted CI job, public commit status, CI secret/token, real signing key, Sigstore/cosign/in-toto verification, Rekor upload, SLSA level/compliance claim, paid CI, or public infrastructure was used. Do not claim signed artifacts, real provenance verification, or production supply-chain trust.
+
+Loop 8 caveat: renderer improvements are static/local and only display fixture fields. They do not create or publish public CI status, verify live IPFS availability, sign artifacts, verify Sigstore/in-toto statements, upload to Rekor, or establish SLSA compliance.
 
 Nostr caveat: no local relay/client tool (`nak`, `nostril`, `strfry`, or `nostr-rs-relay`) was installed or immediately usable, so Loop 5 used dry-run fixtures only. No public relay post, private key, production key, or unsafe installer was used. The synthetic issue (`kind: 1621`) and patch (`kind: 1617`) events have placeholder IDs/signatures and repeated-hex pubkeys.
 
@@ -104,4 +113,4 @@ Radicle caveat: `rad` was unavailable in the environment, and the documented `cu
 
 ## Current next recommended loop
 
-**Loop 8: static UI/renderer improvements.** Keep it local/free: improve rendering for CI/provenance, artifact availability, and protocol substrate details; avoid hosted services, paid infrastructure, production secrets, unsupported security/SLSA claims, or public status publication unless explicitly verified.
+**Loop 9: public collaboration surface.** Use the already verified public GitHub repo carefully: tighten GitHub Issues/Discussions/README roadmap as the public collaboration surface and draft/post a concise public update only if accurate, non-spammy, and clearly labeled research/prototype. Do not contact specific people directly or make unsupported security/SLSA/production/censorship-proof/live-verification claims.
