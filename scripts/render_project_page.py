@@ -242,6 +242,48 @@ def render_nip34_status_check(check: dict) -> str:
     )
 
 
+def render_nip34_conformance_report(report: dict) -> str:
+    shape = report.get("shape", {}) if isinstance(report.get("shape", {}), dict) else {}
+    return (
+        '<article class="adapter-item conformance-report">'
+        f"<h4>Conformance: {esc(report.get('label', 'fixture event'))}</h4>"
+        + '<dl class="metadata">'
+        + field("Label", report.get("label"), code=False)
+        + field("Kind", report.get("kind"))
+        + f"<dt>Known NIP-34 kind</dt><dd>{yes_no(report.get('nip34_kind_known'))}</dd>"
+        + f"<dt>Valid for local fixture</dt><dd>{yes_no(shape.get('valid_for_local_fixture'))}</dd>"
+        + f"<dt>ID is placeholder</dt><dd>{yes_no(report.get('id_is_placeholder'))}</dd>"
+        + f"<dt>Signature is placeholder</dt><dd>{yes_no(report.get('sig_is_placeholder'))}</dd>"
+        + f"<dt>Signed</dt><dd>{yes_no(report.get('signed'))}</dd>"
+        + f"<dt>Published</dt><dd>{yes_no(report.get('published'))}</dd>"
+        + field("Possible event ID (local reference only)", report.get("possible_event_id"))
+        + "</dl>"
+        + "</article>"
+    )
+
+
+def render_nip34_conformance_summary(conformance: dict) -> str:
+    reports = conformance.get("reports", []) if isinstance(conformance, dict) else []
+    if not isinstance(reports, list) or not reports:
+        return ""
+    report_dicts = [report for report in reports if isinstance(report, dict)]
+    known_count = sum(1 for report in report_dicts if report.get("nip34_kind_known") is True)
+    report_items = [render_nip34_conformance_report(report) for report in report_dicts]
+    return (
+        "<h3>Local NIP-34 conformance summary</h3>"
+        '<p class="notice"><strong>Local reference only:</strong> these rows summarize dry-run fixture shape metadata exported by '
+        "<code>dry_run.conformance.reports[]</code>. Possible event IDs are local NIP-01 reference hashes only; "
+        "they do not replace fixture IDs and are not signed or relay-accepted event ID claims.</p>"
+        + '<dl class="metadata">'
+        + field("Conformance report count", len(report_dicts))
+        + field("Known NIP-34 kind count", known_count)
+        + field("Conformance scope", conformance.get("scope"), code=False)
+        + field("Conformance source", conformance.get("source"), code=False)
+        + "</dl>"
+        + list_items(report_items)
+    )
+
+
 def render_json_block(value: object) -> str:
     return f"<pre><code>{esc(json.dumps(value, indent=2, sort_keys=True))}</code></pre>"
 
@@ -264,6 +306,7 @@ def render_nip34_adapter_section(exported: dict | None) -> str:
     repository_dry_run = dry_run.get("repository", {}) if isinstance(dry_run, dict) else {}
     state_status_dry_run = dry_run.get("state_status", {}) if isinstance(dry_run, dict) else {}
     repository_state_event = dry_run.get("repository_state_event", {}) if isinstance(dry_run, dict) else {}
+    conformance = dry_run.get("conformance", {}) if isinstance(dry_run, dict) else {}
 
     issue_items = [render_nip34_adapter_item("Issue", issue) for issue in issues]
     patch_items = [render_nip34_adapter_item("Patch", patch) for patch in patches]
@@ -289,6 +332,7 @@ def render_nip34_adapter_section(exported: dict | None) -> str:
         + field("Repository dry-run event ID", repository_dry_run.get("id"))
         + field("Repository dry-run signature", repository_dry_run.get("sig"))
         + "</dl>"
+        + render_nip34_conformance_summary(conformance)
         + "<h3>Repository state fixture</h3>"
         + '<dl class="metadata">'
         + field("State kind", repository_state.get("kind"))

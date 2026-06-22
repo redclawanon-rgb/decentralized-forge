@@ -319,6 +319,33 @@ Boundaries:
 - NIP-01 possible event IDs are computed references only, not fixture IDs and not proof of signing or relay acceptance.
 - No relay publishing/readback, relay fetching, key use, event signing, fixture ID replacement, public CI/status event creation, public protocol verification, spending, production/private keys, or unsupported live-protocol/security/durability/SLSA/censorship-proof claims were performed.
 
+### Loop 15: Render NIP-34 conformance metadata in static HTML
+
+Status: **complete as local renderer metadata display; no signing, relay publishing, fixture ID replacement, or live protocol verification**.
+
+Outputs:
+
+- `scripts/render_project_page.py` now renders `dry_run.conformance.reports[]` from the local NIP-34 adapter as a concise **Local NIP-34 conformance summary**.
+- The summary displays report count, known NIP-34 kind count, conformance scope/source, and per-event label, kind, local fixture validity, placeholder id/signature flags, signed/published false fields, and `possible_event_id` labeled as local reference only.
+- Full serialized event payloads are not dumped by default in the static HTML.
+- `output/demo-project.html` regenerated with all optional NIP-34 fixtures.
+- `tests/test_registry_fixture.py` expanded with renderer assertions for conformance summary text, possible-event-ID labels/values, placeholder metadata, local-only boundary wording, and low-noise payload omission.
+- README, `.hermes/context.md`, `AGENT-LOOPS.md`, and `docs/nip34-event-shapes.md` updated for Loop 15 behavior and boundaries.
+
+Verified commands:
+
+- `python3 scripts/render_project_page.py fixtures/example-project.registry.json output/demo-project.html --nip34-repo-fixture fixtures/nostr-repo-announcement.json --nip34-collaboration-fixture fixtures/nostr-collaboration-events.json --nip34-state-status-fixture fixtures/nostr-repo-state-status.json` — passed.
+- `python3 -m unittest discover -s tests` — passed, 31 tests.
+- `python3 -m json.tool fixtures/nostr-repo-announcement.json` — passed.
+- `python3 -m json.tool fixtures/nostr-collaboration-events.json` — passed.
+- `python3 -m json.tool fixtures/nostr-repo-state-status.json` — passed.
+
+Boundaries:
+
+- Renderer output is local dry-run fixture metadata only.
+- NIP-01 possible event IDs are displayed as local references only, not fixture IDs and not proof of signing or relay acceptance.
+- No relay publishing/readback, relay fetching, key use, event signing, fixture ID replacement, public CI/status event creation, public protocol verification, spending, production/private keys, or unsupported live-protocol/security/durability/SLSA/censorship-proof claims were performed.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -342,7 +369,7 @@ Boundaries:
 
 - Keep the local registry JSON as the canonical control-plane object and the static renderer as the first user-visible surface.
 - Treat all current Nostr, Radicle, IPFS, ForgeFed, and provenance data as fixtures/mappings unless a future loop records live command/network verification.
-- Use the completed local NIP-34 parser/conformance adapter, repository state/status fixture, local NIP-01 conformance reports, and renderer fixture-adapter section as the seam for future Nostr UI/import work, while keeping relay publishing behind disposable-key and explicit relay gates.
+- Use the completed local NIP-34 parser/conformance adapter, repository state/status fixture, local NIP-01 conformance reports, and rendered fixture-adapter/conformance summary section as the seam for future Nostr UI/import work, while keeping relay publishing behind disposable-key and explicit relay gates.
 - Run a safe Radicle local CLI replay when an approved binary/install path is available; use a temporary `RAD_HOME`, disposable repo, and no public seed publishing by default.
 - Keep ForgeFed as a later object-shape/federation bridge; do not run a public actor until moderation/security gates exist.
 - Keep IPFS/CIDs as artifact metadata until live add/fetch/pin verification is explicitly performed; defer Filecoin/Arweave because they imply spending/wallet decisions.
@@ -350,9 +377,9 @@ Boundaries:
 
 ## Next recommended loop
 
-**Loop 15: Parent-selected bounded follow-up after Loop 14 review.**
+**Loop 16: Parent-selected bounded follow-up after Loop 15 review.**
 
-Good candidates are a safe Radicle local CLI replay if an approved `rad` binary/install path is available, renderer display of local conformance metadata, or further fixture/schema cleanup. Keep all live protocol claims gated by actual command/network verification, and keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, and public protocol gates are explicitly satisfied.
+Good candidates are further schema/fixture cleanup, public push/review if Loop 15 has not yet been pushed by the parent, or a safe Radicle local CLI replay if an approved `rad` binary/install path is available. Keep all live protocol claims gated by actual command/network verification, and keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, and public protocol gates are explicitly satisfied.
 
 ## Gates/blockers
 

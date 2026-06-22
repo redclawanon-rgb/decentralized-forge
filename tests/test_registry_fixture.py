@@ -721,6 +721,32 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn("local parser/conformance output", html)
             self.assertIn("No relay publishing, signing, fixture ID replacement, relay fetching, or live verification is performed or claimed", html)
             self.assertIn("possible_event_id values are local reference hashes only", html)
+            self.assertIn("Local NIP-34 conformance summary", html)
+            self.assertIn("dry_run.conformance.reports[]", html)
+            self.assertIn("Conformance report count", html)
+            self.assertIn("<dt>Conformance report count</dt><dd><code>4</code></dd>", html)
+            self.assertIn("Known NIP-34 kind count", html)
+            self.assertIn("<dt>Known NIP-34 kind count</dt><dd><code>4</code></dd>", html)
+            self.assertIn("Conformance: repository_announcement", html)
+            self.assertIn("Conformance: demo-project-issue-1", html)
+            self.assertIn("Conformance: demo-project-patch-1", html)
+            self.assertIn("Conformance: repository_state_event", html)
+            self.assertIn("Valid for local fixture", html)
+            self.assertIn("ID is placeholder", html)
+            self.assertIn("Signature is placeholder", html)
+            self.assertIn("Signed", html)
+            self.assertIn("Published", html)
+            self.assertIn("Possible event ID (local reference only)", html)
+            self.assertIn("they do not replace fixture IDs and are not signed or relay-accepted event ID claims", html)
+            exported = nip34_adapter.export_fixture_pair(
+                self.nostr_repo_fixture,
+                self.nostr_collab_fixture,
+                self.nostr_state_status_fixture,
+            )
+            for report in exported["dry_run"]["conformance"]["reports"]:
+                self.assertIn(report["possible_event_id"], html)
+            self.assertNotIn("serialized_event_payload", html)
+            self.assertNotIn("diff --git a/README.md", html)
             self.assertIn("Repo ID", html)
             self.assertIn("demo-project", html)
             self.assertIn("wss://relay.example.invalid", html)

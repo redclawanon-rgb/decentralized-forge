@@ -210,3 +210,29 @@ Completed as local-only conformance reporting. `scripts/nip34_adapter.py` now va
 **Gate:**
 
 Keep these reports as local metadata only. Do not replace dry-run fixture IDs/signatures or claim live Nostr compatibility until disposable/project-scoped keys, relay selection, signing, publish/readback, and verification are explicitly approved and completed.
+
+## Loop 15: Render local NIP-34 conformance metadata in static HTML
+
+**Goal:** Display the Loop 14 local conformance reports in the static renderer without increasing protocol claims.
+
+**Current result:**
+
+Completed as a local renderer follow-up. `scripts/render_project_page.py` now displays `dry_run.conformance.reports[]` as a concise **Local NIP-34 conformance summary** with report count, known NIP-34 kind count, scope/source, per-event label/kind/local-validity, placeholder id/signature flags, signed/published false fields, and `possible_event_id` labeled as local reference only. Full serialized payloads are intentionally omitted by default. `output/demo-project.html` was regenerated with all optional NIP-34 fixtures, and tests assert the rendered summary, possible-event-ID labels/values, placeholder metadata, boundary wording, and low-noise payload omission.
+
+**Gate:**
+
+Keep the summary as local fixture metadata only. Do not replace dry-run fixture IDs/signatures or claim live Nostr compatibility until disposable/project-scoped keys, relay selection, signing, publish/readback, and verification are explicitly approved and completed.
+
+## Loop 16: Parent-selected bounded follow-up
+
+**Goal:** Choose the next bounded improvement after reviewing Loop 15.
+
+**Candidate tasks:**
+
+- Further schema/fixture cleanup around fixture-vs-live verification labels.
+- Parent push/review if Loop 15 has not yet been pushed.
+- Safe Radicle local CLI replay only if an approved `rad` binary/install path appears.
+
+**Gate:**
+
+Keep all live protocol claims gated by actual command/network verification. No relay publishing, spending, production/private keys, unsupported security/durability/censorship-proof claims, or direct outreach without the existing project gates being satisfied.
