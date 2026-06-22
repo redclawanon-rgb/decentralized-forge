@@ -462,6 +462,80 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertTrue(all(event["id"].startswith("dry-run-") for event in dry_run["events"]))
         self.assertTrue(all(event["sig"].startswith("dry-run-") for event in dry_run["events"]))
 
+    def test_nip34_conformance_reports_cover_dry_run_event_shapes(self):
+        exported = nip34_adapter.export_fixture_pair(
+            self.nostr_repo_fixture,
+            self.nostr_collab_fixture,
+            self.nostr_state_status_fixture,
+        )
+
+        conformance = exported["dry_run"]["conformance"]
+        self.assertEqual(conformance["scope"], "local-dry-run-fixtures-only")
+        reports = conformance["reports"]
+        self.assertEqual(
+            [report["label"] for report in reports],
+            [
+                "repository_announcement",
+                "demo-project-issue-1",
+                "demo-project-patch-1",
+                "repository_state_event",
+            ],
+        )
+        self.assertEqual([report["kind"] for report in reports], [30617, 1621, 1617, 30618])
+
+        source_events = [
+            self.nostr_repo_fixture,
+            *self.nostr_collab_fixture["events"],
+            self.nostr_state_status_fixture["repository_state_event"],
+        ]
+        for report, event in zip(reports, source_events):
+            with self.subTest(label=report["label"]):
+                shape = report["shape"]
+                self.assertTrue(report["nip34_kind_known"])
+                self.assertTrue(shape["required_fields_present"])
+                self.assertTrue(shape["valid_for_local_fixture"])
+                self.assertTrue(shape["pubkey_is_lower_hex_64"])
+                self.assertTrue(shape["pubkey_is_fixture_synthetic"])
+                self.assertTrue(shape["created_at_is_int"])
+                self.assertTrue(shape["kind_is_int"])
+                self.assertTrue(shape["tags_are_arrays_of_strings"])
+                self.assertTrue(shape["content_is_string"])
+                self.assertEqual(shape["errors"], [])
+                self.assertTrue(report["id_is_placeholder"])
+                self.assertTrue(report["sig_is_placeholder"])
+                self.assertFalse(report["event_id_computed"])
+                self.assertFalse(report["signed"])
+                self.assertFalse(report["published"])
+                self.assertRegex(report["possible_event_id"], r"^[0-9a-f]{64}$")
+                serialized = json.dumps(
+                    [0, event["pubkey"], event["created_at"], event["kind"], event["tags"], event["content"]],
+                    ensure_ascii=False,
+                    separators=(",", ":"),
+                )
+                self.assertEqual(report["serialized_event_payload"], serialized)
+                self.assertEqual(report["possible_event_id"], hashlib.sha256(serialized.encode("utf-8")).hexdigest())
+                self.assertNotEqual(report["possible_event_id"], event["id"])
+
+    def test_nip01_event_shape_rejects_invalid_tag_and_content_shapes(self):
+        invalid = json.loads(json.dumps(self.nostr_repo_fixture))
+        invalid["tags"] = [["d", "demo-project"], ["bad", 123]]
+        invalid["content"] = {"not": "a string"}
+
+        shape = nip34_adapter.validate_nip01_event_shape(invalid)
+        report = nip34_adapter.conformance_report(invalid, label="invalid")
+
+        self.assertFalse(shape["valid_for_local_fixture"])
+        self.assertFalse(shape["tags_are_arrays_of_strings"])
+        self.assertFalse(shape["content_is_string"])
+        self.assertIn("tags[1] values must be strings", shape["errors"])
+        self.assertIn("content must be a string", shape["errors"])
+        self.assertIsNone(nip34_adapter.possible_event_id(invalid))
+        self.assertIsNone(report["possible_event_id"])
+        self.assertIsNone(report["serialized_event_payload"])
+        self.assertFalse(report["event_id_computed"])
+        with self.assertRaisesRegex(ValueError, "not eligible"):
+            nip34_adapter.nip01_serialized_event_payload(invalid)
+
     def test_renderer_outputs_expected_html(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             output = Path(tmpdir) / "demo.html"

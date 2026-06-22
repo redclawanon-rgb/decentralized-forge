@@ -1,6 +1,6 @@
 # NIP-34 Event Shapes Dry Run
 
-Retrieval/source basis: Nostr NIP-34, https://github.com/nostr-protocol/nips/blob/master/34.md, retrieved 2026-06-22.
+Retrieval/source basis: Nostr NIP-01 and NIP-34, https://github.com/nostr-protocol/nips/blob/master/01.md and https://github.com/nostr-protocol/nips/blob/master/34.md, source-inspected 2026-06-22.
 
 This document maps the local project registry fixture to NIP-34-style event bodies. It is a **dry run only**:
 
@@ -9,7 +9,7 @@ This document maps the local project registry fixture to NIP-34-style event bodi
 - No event is published to public relays.
 - Relay URLs in fixtures are examples/hints only.
 
-Loop 11 adds a stdlib-only local parser/export seam in `scripts/nip34_adapter.py`. The adapter reads the repository announcement and collaboration fixtures and round-trips them back into registry-shaped concepts for tests and future UI integration. Loop 12 wires that adapter into the static renderer through paired optional fixture arguments. Loop 13 adds a local repository state/status fixture generated from the recorded local Git HEAD at fixture creation time; later commits may make that recorded SHA an ancestor rather than current `HEAD`. None of these paths compute Nostr event IDs, sign events, verify keys, connect to relays, fetch relay state, or publish anything.
+Loop 11 adds a stdlib-only local parser/export seam in `scripts/nip34_adapter.py`. The adapter reads the repository announcement and collaboration fixtures and round-trips them back into registry-shaped concepts for tests and future UI integration. Loop 12 wires that adapter into the static renderer through paired optional fixture arguments. Loop 13 adds a local repository state/status fixture generated from the recorded local Git HEAD at fixture creation time; later commits may make that recorded SHA an ancestor rather than current `HEAD`. Loop 14 adds local NIP-01 event-shape/conformance metadata reports for those dry-run events, including compact serialized payloads and possible reference event IDs when the fixture shape permits them. None of these paths replace fixture IDs, sign events, verify keys, connect to relays, fetch relay state, or publish anything.
 
 Loop 5 local relay/tool check:
 
@@ -116,8 +116,22 @@ The Loop 11 helper accepts the two dry-run fixture JSON objects (or paths via it
 - `substrates.nip34` repository kind, repo id tag, relay hints, topics, and the explicit `dry-run-only` publish status.
 - `issues[]` and `patches[]` from `kind: 1621` and `kind: 1617` events.
 - `dry_run` metadata preserving fixture notices, placeholder IDs/signatures, relay-tool fallback state, synthetic key policy, NIP-35 boundary, and `published: false` for each event.
+- `dry_run.conformance.reports[]` for the repository announcement, issue, patch, and repository state fixtures.
 
 This is conformance/round-trip evidence for local fixtures only. It is not a live Nostr adapter and does not claim relay read/write compatibility.
+
+## Loop 14 local NIP-01 conformance metadata
+
+NIP-01 defines the event fields `id`, `pubkey`, `created_at`, `kind`, `tags`, `content`, and `sig`; it defines event IDs as the SHA-256 hash of the UTF-8 JSON serialization of `[0,pubkey,created_at,kind,tags,content]` with no whitespace. NIP-34 uses `kind: 30617` for repository announcements, `kind: 30618` for repository state, `kind: 1621` for issues, and `kind: 1617` for patches.
+
+Loop 14 implements only local metadata checks:
+
+- Required event fields checked: `pubkey`, `created_at`, `kind`, `tags`, and `content`.
+- Shape checks: `kind` and `created_at` are integers, `content` is a string, and every tag is an array of strings.
+- Fixture pubkeys must be 64 lowercase hex or this project's obvious repeated-digit synthetic fixture values.
+- Placeholder `id` and `sig` strings are accepted and reported as placeholders because the fixtures are dry-run only.
+- `event_id_computed: false`, `signed: false`, and `published: false` remain explicit even when a `possible_event_id` reference hash is included.
+- `serialized_event_payload` and `possible_event_id` are local references only; they do not replace fixture `id` values and are not proof of signing or relay acceptance.
 
 ## Local renderer/import surface
 

@@ -198,3 +198,15 @@ Completed as a local fixture follow-up because `rad` was unavailable for a safe 
 **Gate:**
 
 Keep repository state/status evidence local until a future loop explicitly approves disposable/project-scoped keys, relay selection, signing, publish/readback verification, and public status semantics. No production/private keys, paid services, unsupported live-verification claims, or direct outreach.
+
+## Loop 14: Local NIP-01/NIP-34 conformance metadata for dry-run fixtures
+
+**Goal:** Strengthen the local NIP-34 adapter with NIP-01 event-shape metadata without signing or publishing.
+
+**Current result:**
+
+Completed as local-only conformance reporting. `scripts/nip34_adapter.py` now validates required NIP-01 event fields, tag/content shapes, integer `kind`/`created_at`, and fixture pubkey shape for repository announcement (`30617`), issue (`1621`), patch (`1617`), and repository state (`30618`) fixtures. The adapter exports `dry_run.conformance.reports[]` with placeholder id/signature flags, `event_id_computed: false`, `signed: false`, `published: false`, and local-only `serialized_event_payload`/`possible_event_id` references where shape permits. Tests cover valid reports and invalid tag/content rejection.
+
+**Gate:**
+
+Keep these reports as local metadata only. Do not replace dry-run fixture IDs/signatures or claim live Nostr compatibility until disposable/project-scoped keys, relay selection, signing, publish/readback, and verification are explicitly approved and completed.

@@ -293,6 +293,32 @@ Boundaries:
 - No Radicle CLI was installed or run, because `rad` was unavailable in the parent check.
 - No relay publishing/readback, relay fetching, key use, event signing, event ID computation, public CI/status event creation, public protocol verification, spending, production/private keys, or unsupported live-protocol/security/durability/SLSA/censorship-proof claims were performed. Local commits/pushes were performed only after parent verification and preflight.
 
+### Loop 14: NIP-01/NIP-34 conformance metadata for dry-run fixtures
+
+Status: **complete as local conformance metadata; no signing, relay publishing, fixture ID replacement, or live protocol verification**.
+
+Outputs:
+
+- `scripts/nip34_adapter.py` now validates local NIP-01 event shape for dry-run fixtures: required fields, integer `kind`/`created_at`, string `content`, array-of-string `tags`, and fixture pubkey shape.
+- The adapter exports `dry_run.conformance.reports[]` for repository announcement (`30617`), issue (`1621`), patch (`1617`), and repository state (`30618`) fixtures.
+- Reports preserve placeholder id/signature detection and explicit `event_id_computed: false`, `signed: false`, and `published: false` fields.
+- Reports include local-only `serialized_event_payload` and `possible_event_id` references when NIP-01 shape permits; fixture `id`/`sig` values are not replaced.
+- `tests/test_registry_fixture.py` covers valid reports, placeholder id/signature metadata, local possible event IDs, and invalid tag/content rejection.
+- README, `.hermes/context.md`, `AGENT-LOOPS.md`, and `docs/nip34-event-shapes.md` updated for Loop 14 behavior and boundaries.
+
+Verified commands:
+
+- `python3 -m unittest discover -s tests` — passed, 29 tests.
+- `python3 -m json.tool fixtures/nostr-repo-announcement.json` — passed.
+- `python3 -m json.tool fixtures/nostr-collaboration-events.json` — passed.
+- `python3 -m json.tool fixtures/nostr-repo-state-status.json` — passed.
+
+Boundaries:
+
+- Conformance reports are local dry-run metadata only.
+- NIP-01 possible event IDs are computed references only, not fixture IDs and not proof of signing or relay acceptance.
+- No relay publishing/readback, relay fetching, key use, event signing, fixture ID replacement, public CI/status event creation, public protocol verification, spending, production/private keys, or unsupported live-protocol/security/durability/SLSA/censorship-proof claims were performed.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -316,7 +342,7 @@ Boundaries:
 
 - Keep the local registry JSON as the canonical control-plane object and the static renderer as the first user-visible surface.
 - Treat all current Nostr, Radicle, IPFS, ForgeFed, and provenance data as fixtures/mappings unless a future loop records live command/network verification.
-- Use the completed local NIP-34 parser/conformance adapter, repository state/status fixture, and renderer fixture-adapter section as the seam for future Nostr UI/import work, while keeping relay publishing behind disposable-key and explicit relay gates.
+- Use the completed local NIP-34 parser/conformance adapter, repository state/status fixture, local NIP-01 conformance reports, and renderer fixture-adapter section as the seam for future Nostr UI/import work, while keeping relay publishing behind disposable-key and explicit relay gates.
 - Run a safe Radicle local CLI replay when an approved binary/install path is available; use a temporary `RAD_HOME`, disposable repo, and no public seed publishing by default.
 - Keep ForgeFed as a later object-shape/federation bridge; do not run a public actor until moderation/security gates exist.
 - Keep IPFS/CIDs as artifact metadata until live add/fetch/pin verification is explicitly performed; defer Filecoin/Arweave because they imply spending/wallet decisions.
@@ -324,9 +350,9 @@ Boundaries:
 
 ## Next recommended loop
 
-**Loop 14: Parent-selected bounded follow-up after Loop 13 review.**
+**Loop 15: Parent-selected bounded follow-up after Loop 14 review.**
 
-Good candidates are a safe Radicle local CLI replay if an approved `rad` binary/install path is available, or further local NIP-34 conformance/fixture cleanup. Keep all live protocol claims gated by actual command/network verification, and keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, and public protocol gates are explicitly satisfied.
+Good candidates are a safe Radicle local CLI replay if an approved `rad` binary/install path is available, renderer display of local conformance metadata, or further fixture/schema cleanup. Keep all live protocol claims gated by actual command/network verification, and keep relay publishing out of scope unless disposable/project-scoped keys, relay selection, and public protocol gates are explicitly satisfied.
 
 ## Gates/blockers
 

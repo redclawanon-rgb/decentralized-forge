@@ -2,12 +2,16 @@
 """Stdlib-only helpers for local NIP-34 fixture parsing.
 
 This module intentionally parses existing dry-run fixtures only. It does not
-sign events, compute Nostr event ids, publish to relays, or verify relay state.
+sign events, replace fixture event ids, publish to relays, or verify relay state.
+Loop 14 can compute local possible event-id references for conformance metadata
+only; fixture ids/signatures remain dry-run placeholders.
 """
 
 from __future__ import annotations
 
+import hashlib
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -16,6 +20,122 @@ REPOSITORY_KIND = 30617
 REPOSITORY_STATE_KIND = 30618
 ISSUE_KIND = 1621
 PATCH_KIND = 1617
+
+LOWER_HEX_64_RE = re.compile(r"^[0-9a-f]{64}$")
+SYNTHETIC_REPEATED_DIGIT_KEY_RE = re.compile(r"^([0-9])\1{63}$")
+
+
+def is_lower_hex_pubkey(value: Any) -> bool:
+    """Return whether *value* is a NIP-01-shaped 64-char lowercase hex pubkey."""
+    return isinstance(value, str) and bool(LOWER_HEX_64_RE.fullmatch(value))
+
+
+def is_fixture_synthetic_pubkey(value: Any) -> bool:
+    """Return whether *value* is one of this project's obvious fixture keys."""
+    return isinstance(value, str) and bool(SYNTHETIC_REPEATED_DIGIT_KEY_RE.fullmatch(value))
+
+
+def validate_nip01_event_shape(event: dict[str, Any]) -> dict[str, Any]:
+    """Validate local NIP-01 event shape without requiring real id/sig.
+
+    Dry-run fixtures intentionally keep placeholder ids and signatures. This
+    helper checks the fields needed to describe NIP-01/NIP-34 fixture shape and
+    reports validation errors instead of signing, publishing, or mutating input.
+    """
+    errors: list[str] = []
+    for field in ["pubkey", "created_at", "kind", "tags", "content"]:
+        if field not in event:
+            errors.append(f"missing required field: {field}")
+
+    pubkey = event.get("pubkey")
+    pubkey_is_lower_hex = is_lower_hex_pubkey(pubkey)
+    pubkey_is_fixture_synthetic = is_fixture_synthetic_pubkey(pubkey)
+    if "pubkey" in event and not (pubkey_is_lower_hex or pubkey_is_fixture_synthetic):
+        errors.append("pubkey must be 64 lowercase hex or an obvious repeated-digit fixture key")
+
+    if "created_at" in event and not isinstance(event.get("created_at"), int):
+        errors.append("created_at must be an int")
+    if "kind" in event and not isinstance(event.get("kind"), int):
+        errors.append("kind must be an int")
+    if "content" in event and not isinstance(event.get("content"), str):
+        errors.append("content must be a string")
+
+    tags = event.get("tags")
+    tags_valid = isinstance(tags, list)
+    if "tags" in event and not tags_valid:
+        errors.append("tags must be a list")
+    if isinstance(tags, list):
+        for index, tag in enumerate(tags):
+            if not isinstance(tag, list):
+                errors.append(f"tags[{index}] must be a list")
+                tags_valid = False
+                continue
+            if not all(isinstance(item, str) for item in tag):
+                errors.append(f"tags[{index}] values must be strings")
+                tags_valid = False
+
+    required_shape_valid = not errors
+    return {
+        "required_fields_present": all(field in event for field in ["pubkey", "created_at", "kind", "tags", "content"]),
+        "pubkey_is_lower_hex_64": pubkey_is_lower_hex,
+        "pubkey_is_fixture_synthetic": pubkey_is_fixture_synthetic,
+        "created_at_is_int": isinstance(event.get("created_at"), int),
+        "kind_is_int": isinstance(event.get("kind"), int),
+        "tags_are_arrays_of_strings": tags_valid,
+        "content_is_string": isinstance(event.get("content"), str),
+        "valid_for_local_fixture": required_shape_valid,
+        "errors": errors,
+    }
+
+
+def nip01_serialized_event_payload(event: dict[str, Any]) -> str:
+    """Return compact UTF-8 JSON serialization for NIP-01 event id input."""
+    shape = validate_nip01_event_shape(event)
+    if not shape["valid_for_local_fixture"] or not shape["pubkey_is_lower_hex_64"]:
+        raise ValueError("event is not eligible for NIP-01 serialized id payload")
+    payload = [
+        0,
+        event["pubkey"],
+        event["created_at"],
+        event["kind"],
+        event["tags"],
+        event["content"],
+    ]
+    return json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+
+
+def possible_event_id(event: dict[str, Any]) -> str | None:
+    """Return local reference sha256 event id when fixture shape permits it."""
+    try:
+        serialized = nip01_serialized_event_payload(event)
+    except ValueError:
+        return None
+    return hashlib.sha256(serialized.encode("utf-8")).hexdigest()
+
+
+def conformance_report(event: dict[str, Any], *, label: str = "") -> dict[str, Any]:
+    """Describe dry-run NIP-01/NIP-34 conformance metadata for one fixture event."""
+    shape = validate_nip01_event_shape(event)
+    serialized_payload = None
+    computed_reference = None
+    if shape["valid_for_local_fixture"] and shape["pubkey_is_lower_hex_64"]:
+        serialized_payload = nip01_serialized_event_payload(event)
+        computed_reference = hashlib.sha256(serialized_payload.encode("utf-8")).hexdigest()
+    event_id = event.get("id", "")
+    sig = event.get("sig", "")
+    return {
+        "label": label or event.get("fixture_name", ""),
+        "kind": event.get("kind"),
+        "nip34_kind_known": event.get("kind") in {REPOSITORY_KIND, REPOSITORY_STATE_KIND, ISSUE_KIND, PATCH_KIND},
+        "shape": shape,
+        "id_is_placeholder": isinstance(event_id, str) and event_id.startswith("dry-run-"),
+        "sig_is_placeholder": isinstance(sig, str) and sig.startswith("dry-run-"),
+        "event_id_computed": False,
+        "signed": False,
+        "published": False,
+        "serialized_event_payload": serialized_payload,
+        "possible_event_id": computed_reference,
+    }
 
 
 def load_json(path: str | Path) -> dict[str, Any]:
@@ -339,13 +459,29 @@ def export_fixture_pair(
             "repository": repo["dry_run"]["repository"],
             "collaboration": collaboration["dry_run"]["collaboration"],
             "events": collaboration["dry_run"]["events"],
+            "conformance": {
+                "scope": "local-dry-run-fixtures-only",
+                "source": "NIP-01/NIP-34 source-inspected 2026-06-22; no signing, publishing, or fixture id replacement",
+                "reports": [
+                    conformance_report(repo_event, label="repository_announcement"),
+                    *[
+                        conformance_report(event, label=event.get("fixture_name", f"collaboration_event_{index}"))
+                        for index, event in enumerate(collaboration_fixture.get("events", []))
+                        if isinstance(event, dict)
+                    ],
+                ],
+            },
         },
     }
     if state_status:
+        assert state_status_fixture is not None
         exported["repository_state"] = state_status["repository_state"]
         exported["status_checks"] = state_status["status_checks"]
         exported["dry_run"]["state_status"] = state_status["dry_run"]["state_status"]
         exported["dry_run"]["repository_state_event"] = state_status["dry_run"]["repository_state_event"]
+        exported["dry_run"]["conformance"]["reports"].append(
+            conformance_report(state_status_fixture["repository_state_event"], label="repository_state_event")
+        )
     return exported
 
 
