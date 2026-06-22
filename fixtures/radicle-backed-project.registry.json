@@ -145,6 +145,18 @@
           "merge_command_shape": "git merge patch/<patch-id> && git push rad"
         }
       ]
+    },
+    "sigstore_slsa": {
+      "release_signature_status": "unsigned-fixture",
+      "provenance_status": "absent-synthetic-placeholder",
+      "real_sigstore_verified": false,
+      "real_cosign_verified": false,
+      "real_in_toto_verified": false,
+      "slsa_level_claimed": false,
+      "rekor_uploaded": false,
+      "private_keys_used": false,
+      "production_claim": "none",
+      "notes": "Loop 4 fixture remains source-inspection-only and does not carry artifact-byte provenance."
     }
   },
   "signature": {

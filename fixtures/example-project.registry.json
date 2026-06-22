@@ -94,7 +94,48 @@
             "notes": "Local file fixture only; no paid pinning/storage, wallet, Filecoin/Arweave spend, or durability claim."
           },
           "signature": "unsigned-fixture",
-          "attestation": "local-fixture-no-provenance-attestation"
+          "attestation": "fake-local-attestation:artifact_sha256=3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0;commit=1111111111111111111111111111111111111111;repo=decentralized-forge;synthetic=true;no-slsa-claim=true",
+          "provenance": {
+            "status": "synthetic-local-only",
+            "predicate_type": "https://example.invalid/decentralized-forge/fake-slsa-provenance/v0",
+            "builder": "local-fake-ci/loop-7",
+            "repository": "file:///home/openclaw/projects/decentralized-forge",
+            "commit": "1111111111111111111111111111111111111111",
+            "tag": "v0.0.1-demo",
+            "artifact_name": "local-release-artifact.txt",
+            "artifact_sha256": "3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0",
+            "materials": [
+              {
+                "uri": "file:///home/openclaw/projects/decentralized-forge@1111111111111111111111111111111111111111",
+                "digest": {
+                  "gitCommit": "1111111111111111111111111111111111111111"
+                }
+              }
+            ],
+            "ci_check_ids": [
+              "local-fake-ci-001",
+              "local-fake-ci-002"
+            ],
+            "synthetic": true,
+            "verification": {
+              "local_schema_only": true,
+              "real_sigstore_verified": false,
+              "real_in_toto_verified": false,
+              "slsa_level_claimed": false,
+              "uses_real_signature": false,
+              "uses_private_key": false,
+              "notes": "Fake local attestation fixture for data modeling only; not a DSSE envelope, not signed, not uploaded to Rekor, not a SLSA compliance claim."
+            },
+            "boundaries": [
+              "no-real-signature",
+              "no-private-key",
+              "no-cosign",
+              "no-rekor",
+              "no-in-toto-verification",
+              "no-slsa-level-claim",
+              "no-public-ci-status"
+            ]
+          }
         }
       ]
     }
@@ -103,7 +144,9 @@
     "nip34": {
       "repository_kind": 30617,
       "repo_id_tag": "demo-project",
-      "relay_hints": ["wss://relay.example.invalid"],
+      "relay_hints": [
+        "wss://relay.example.invalid"
+      ],
       "publish_status": "dry-run-only"
     },
     "radicle": {
@@ -115,7 +158,9 @@
       "status": "mapping-only-no-public-actor"
     },
     "ipfs": {
-      "artifact_cids": ["bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua"],
+      "artifact_cids": [
+        "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua"
+      ],
       "cid_status": "local-computed-not-fetched",
       "pinning_status": "not-pinned",
       "live_ipfs_verified": false,
@@ -123,8 +168,16 @@
       "durability_claim": false
     },
     "sigstore_slsa": {
-      "release_signature_status": "placeholder",
-      "provenance_status": "placeholder"
+      "release_signature_status": "fake-local-unsigned-fixture",
+      "provenance_status": "synthetic-local-only",
+      "attestation_fixture": "artifact.provenance plus artifact.attestation string",
+      "real_sigstore_verified": false,
+      "real_cosign_verified": false,
+      "real_in_toto_verified": false,
+      "slsa_level_claimed": false,
+      "rekor_uploaded": false,
+      "private_keys_used": false,
+      "production_claim": "none"
     }
   },
   "signature": {
@@ -133,5 +186,39 @@
     "value": ""
   },
   "created_at": "2026-06-22T00:00:00Z",
-  "updated_at": "2026-06-22T00:00:00Z"
+  "updated_at": "2026-06-22T00:00:00Z",
+  "ci_checks": [
+    {
+      "id": "local-fake-ci-001",
+      "name": "stdlib fixture validation",
+      "provider": "local-fake",
+      "workflow": "loop-7-synthetic-ci-model",
+      "repository": "file:///home/openclaw/projects/decentralized-forge",
+      "commit": "1111111111111111111111111111111111111111",
+      "status": "completed",
+      "conclusion": "success",
+      "synthetic": true,
+      "published": false,
+      "started_at": "2026-06-22T00:00:00Z",
+      "completed_at": "2026-06-22T00:01:00Z",
+      "url": "file://fixtures/example-project.registry.json#ci_checks/local-fake-ci-001",
+      "notes": "Synthetic local-only status for renderer/protocol mapping; no hosted CI job, secret, token, or public status was created."
+    },
+    {
+      "id": "local-fake-ci-002",
+      "name": "artifact hash provenance dry run",
+      "provider": "local-fake",
+      "workflow": "loop-7-synthetic-ci-model",
+      "repository": "file:///home/openclaw/projects/decentralized-forge",
+      "commit": "1111111111111111111111111111111111111111",
+      "status": "completed",
+      "conclusion": "success",
+      "synthetic": true,
+      "published": false,
+      "started_at": "2026-06-22T00:01:00Z",
+      "completed_at": "2026-06-22T00:02:00Z",
+      "url": "file://fixtures/example-project.registry.json#ci_checks/local-fake-ci-002",
+      "notes": "Synthetic local-only passing artifact provenance check over fixture metadata; no Sigstore/cosign/in-toto/SLSA verification occurred."
+    }
+  ]
 }

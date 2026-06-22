@@ -63,7 +63,7 @@ Requires Eric approval or a separate explicit target:
 - Claiming production readiness, censorship-proof guarantees, or live protocol verification that has not actually been tested
 ## Current loop state
 
-Loops 1–6 are complete. Loop 4 (Radicle local integration spike) is complete as a **source-inspected local artifact**, not a live Radicle CLI run. Loop 5 is complete as **dry-run Nostr collaboration fixtures**, not a live Nostr relay run. Loop 6 is complete as **local/free artifact metadata with a stdlib-verified CIDv1 raw/base32-compatible fixture**, not live IPFS pinning or durable storage.
+Loops 1–7 are complete. Loop 4 (Radicle local integration spike) is complete as a **source-inspected local artifact**, not a live Radicle CLI run. Loop 5 is complete as **dry-run Nostr collaboration fixtures**, not a live Nostr relay run. Loop 6 is complete as **local/free artifact metadata with a stdlib-verified CIDv1 raw/base32-compatible fixture**, not live IPFS pinning or durable storage. Loop 7 is complete as **synthetic local CI/provenance fixtures**, not real CI execution, signing, Sigstore/cosign/in-toto verification, Rekor upload, or SLSA compliance.
 
 Public GitHub repo is live at `https://github.com/redclawanon-rgb/decentralized-forge`. Verified public settings: default branch `main`, Issues enabled, Discussions enabled, Wiki disabled. Public building is approved; keep project updates accurate and labeled as research/prototype work.
 
@@ -88,10 +88,20 @@ Loop 6 outputs:
 
 Loop 6 caveat: the CID-compatible value is computed locally from fixture bytes and validated by tests, but no IPFS add/fetch/pin, gateway verification, paid storage, wallet, Filecoin/Arweave spend, or durability verification occurred. Do not claim pinned, durable, censorship-proof, replicated, gateway-reachable, or production-ready artifact storage.
 
+Loop 7 outputs:
+
+- `docs/ci-provenance-model.md`
+- optional `ci_checks[]` and artifact `provenance` schema fields
+- fake local CI check records and fake artifact attestation/provenance metadata in `fixtures/example-project.registry.json`
+- explicit Sigstore/SLSA non-claim flags in registry fixtures
+- stdlib tests for synthetic-only CI states, coherent artifact hash/commit/repo references, and no real signatures/keys/SLSA claims
+
+Loop 7 caveat: CI/provenance data is synthetic and local-only. No hosted CI job, public commit status, CI secret/token, real signing key, Sigstore/cosign/in-toto verification, Rekor upload, SLSA level/compliance claim, paid CI, or public infrastructure was used. Do not claim signed artifacts, real provenance verification, or production supply-chain trust.
+
 Nostr caveat: no local relay/client tool (`nak`, `nostril`, `strfry`, or `nostr-rs-relay`) was installed or immediately usable, so Loop 5 used dry-run fixtures only. No public relay post, private key, production key, or unsafe installer was used. The synthetic issue (`kind: 1621`) and patch (`kind: 1617`) events have placeholder IDs/signatures and repeated-hex pubkeys.
 
 Radicle caveat: `rad` was unavailable in the environment, and the documented `curl https://radicle.dev/install | sh` installer was not used. The mapping was derived from official source/manpage/examples in `/tmp/radicle-heartwood` at commit `90aaec1c9eee77a0beebece48f460c1424c1c8bd`. Do not claim live Radicle verification until an approved binary/install path is available and a temporary local `RAD_HOME` replay has been run.
 
 ## Current next recommended loop
 
-**Loop 7: CI/provenance model docs and local fake attestation fixtures.** Keep it free/local: model CI checks and release provenance/attestations with synthetic data only; avoid production secrets/signing keys, paid CI/storage, unsupported SLSA/security claims, or public status publication unless explicitly verified.
+**Loop 8: static UI/renderer improvements.** Keep it local/free: improve rendering for CI/provenance, artifact availability, and protocol substrate details; avoid hosted services, paid infrastructure, production secrets, unsupported security/SLSA claims, or public status publication unless explicitly verified.

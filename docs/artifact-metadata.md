@@ -29,12 +29,23 @@ Current local fixture values:
 - SHA-256: `3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0`
 - CID-compatible value: `bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua`
 
+## Loop 7 provenance attachment
+
+Loop 7 attaches a fake local CI/provenance model to the same local artifact. See `docs/ci-provenance-model.md` for details.
+
+The artifact now carries:
+
+- `attestation` — a plain string fake attestation summary that repeats the artifact SHA-256, synthetic commit, repository hint, and `no-slsa-claim=true`.
+- `provenance` — structured synthetic metadata linking the artifact hash to local fake CI check IDs, a synthetic commit, and explicit non-verification flags.
+
 ## Boundaries
 
 Loop 6 does **not** claim that the artifact is pinned, retrievable from IPFS, durably stored, production ready, or available from any gateway.
 
-No live IPFS add/fetch/pin was performed. No paid storage, wallet, Filecoin spend, Arweave spend, production/private key, or public infrastructure was used.
+Loop 7 does **not** claim the artifact is signed, produced by real hosted CI, Sigstore/cosign/in-toto verified, uploaded to Rekor, SLSA-compliant, or suitable for production supply-chain trust.
 
-Allowed claim: the fixture carries a CIDv1/base32-compatible content address computed from local bytes and verified by local stdlib tests.
+No live IPFS add/fetch/pin was performed. No paid storage, wallet, Filecoin spend, Arweave spend, CI secret, production/private key, real signing key, public CI status publication, or public infrastructure was used.
 
-Not allowed claim: the artifact is pinned, durable, censorship-proof, replicated, gateway-reachable, Filecoin-backed, Arweave-backed, or production-secure.
+Allowed claim: the fixture carries a CIDv1/base32-compatible content address computed from local bytes plus synthetic CI/provenance metadata verified for internal consistency by local stdlib tests.
+
+Not allowed claim: the artifact is pinned, durable, censorship-proof, replicated, gateway-reachable, Filecoin-backed, Arweave-backed, production-secure, signed, SLSA-compliant, Sigstore-verified, or in-toto-verified.

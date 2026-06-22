@@ -170,6 +170,94 @@ class RegistryFixtureTests(unittest.TestCase):
         for key in ["nip34", "radicle", "forgefed", "ipfs", "sigstore_slsa"]:
             self.assertIn(key, substrates)
 
+    def test_loop7_ci_checks_are_synthetic_local_and_sensible(self):
+        checks = self.fixture["ci_checks"]
+        self.assertGreaterEqual(len(checks), 1)
+        allowed_status = {"queued", "in_progress", "completed", "cancelled", "skipped"}
+        terminal_status = {"completed", "cancelled", "skipped"}
+        allowed_conclusion = {"success", "failure", "neutral", "cancelled", "skipped", "timed_out", "action_required"}
+        ids = set()
+
+        for check in checks:
+            with self.subTest(check=check["id"]):
+                self.assertNotIn(check["id"], ids)
+                ids.add(check["id"])
+                self.assertEqual(check["provider"], "local-fake")
+                self.assertIn(check["status"], allowed_status)
+                self.assertIn(check["conclusion"], allowed_conclusion)
+                self.assertTrue(check["synthetic"])
+                self.assertFalse(check["published"])
+                self.assertRegex(check["commit"], r"^[0-9a-f]{40}$")
+                self.assertTrue(check["repository"].startswith("file://"))
+                self.assertLessEqual(check["started_at"], check["completed_at"])
+                if check["conclusion"] == "success":
+                    self.assertIn(check["status"], terminal_status)
+                self.assertIn("Synthetic", check["notes"])
+                self.assertNotIn("github.com/", check.get("url", ""))
+
+    def test_loop7_fake_attestation_links_artifact_commit_repo_and_ci_checks(self):
+        artifact = self.fixture["releases"][0]["artifacts"][0]
+        provenance = artifact["provenance"]
+        ci_checks = {check["id"]: check for check in self.fixture["ci_checks"]}
+
+        self.assertEqual(provenance["status"], "synthetic-local-only")
+        self.assertTrue(provenance["synthetic"])
+        self.assertEqual(provenance["artifact_name"], artifact["name"])
+        self.assertEqual(provenance["artifact_sha256"], artifact["sha256"])
+        self.assertEqual(provenance["tag"], self.fixture["releases"][0]["tag"])
+        self.assertTrue(provenance["repository"].startswith("file://"))
+        self.assertRegex(provenance["commit"], r"^[0-9a-f]{40}$")
+        self.assertIn(provenance["artifact_sha256"], artifact["attestation"])
+        self.assertIn(provenance["commit"], artifact["attestation"])
+        self.assertIn("synthetic=true", artifact["attestation"])
+        self.assertIn("no-slsa-claim=true", artifact["attestation"])
+
+        for material in provenance["materials"]:
+            self.assertIn(provenance["commit"], material["uri"])
+            self.assertEqual(material["digest"].get("gitCommit"), provenance["commit"])
+
+        self.assertGreaterEqual(len(provenance["ci_check_ids"]), 1)
+        for check_id in provenance["ci_check_ids"]:
+            self.assertIn(check_id, ci_checks)
+            check = ci_checks[check_id]
+            self.assertEqual(check["commit"], provenance["commit"])
+            self.assertEqual(check["repository"], provenance["repository"])
+            self.assertEqual(check["status"], "completed")
+            self.assertEqual(check["conclusion"], "success")
+
+    def test_loop7_no_real_signatures_keys_or_slsa_claims(self):
+        artifact = self.fixture["releases"][0]["artifacts"][0]
+        provenance = artifact["provenance"]
+        verification = provenance["verification"]
+        sigstore = self.fixture["substrates"]["sigstore_slsa"]
+
+        self.assertEqual(self.fixture["signature"]["status"], "unsigned-fixture")
+        self.assertEqual(self.fixture["signature"]["algorithm"], "none")
+        self.assertEqual(self.fixture["signature"]["value"], "")
+        self.assertEqual(artifact["signature"], "unsigned-fixture")
+        self.assertTrue(verification["local_schema_only"])
+        for field in [
+            "real_sigstore_verified",
+            "real_in_toto_verified",
+            "slsa_level_claimed",
+            "uses_real_signature",
+            "uses_private_key",
+        ]:
+            self.assertFalse(verification[field])
+        for field in [
+            "real_sigstore_verified",
+            "real_cosign_verified",
+            "real_in_toto_verified",
+            "slsa_level_claimed",
+            "rekor_uploaded",
+            "private_keys_used",
+        ]:
+            self.assertFalse(sigstore[field])
+        self.assertEqual(sigstore["production_claim"], "none")
+        self.assertIn("no-real-signature", provenance["boundaries"])
+        self.assertIn("no-private-key", provenance["boundaries"])
+        self.assertIn("no-slsa-level-claim", provenance["boundaries"])
+
     def test_radicle_fixture_models_source_inspected_local_spike(self):
         fixture = self.radicle_fixture
         radicle = fixture["substrates"]["radicle"]

@@ -118,6 +118,31 @@ Notes:
 - Local CID-compatible value: `bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua`.
 - No IPFS add/fetch/pin, gateway check, paid storage, wallet, Filecoin/Arweave spend, production key, or durability claim occurred.
 
+### Loop 7: CI/provenance model docs and local fake attestation fixtures
+
+Status: **complete as synthetic local CI/provenance fixtures; no real CI, signing, Sigstore, in-toto, Rekor, or SLSA verification**.
+
+Outputs:
+
+- `schemas/project-registry.schema.json` strengthened with optional `ci_checks[]` and artifact `provenance` metadata.
+- `fixtures/example-project.registry.json` updated with two `local-fake` CI check records, a fake attestation string, structured artifact provenance, and explicit Sigstore/SLSA non-claim flags.
+- `fixtures/radicle-backed-project.registry.json` updated with explicit absent/synthetic Sigstore/SLSA non-claim flags.
+- `docs/ci-provenance-model.md` added to document fields and hard boundaries.
+- `docs/artifact-metadata.md` updated to point to the provenance attachment and supply-chain trust boundaries.
+- `tests/test_registry_fixture.py` updated to validate synthetic-only CI states, coherent artifact hash/commit/repo references, and absence of real signatures/keys/SLSA claims.
+
+Verified commands:
+
+- `python3 -m json.tool schemas/project-registry.schema.json` — passed.
+- `python3 -m json.tool fixtures/example-project.registry.json` — passed.
+- `python3 -m json.tool fixtures/radicle-backed-project.registry.json` — passed.
+- `python3 -m unittest discover -s tests` — passed, 18 tests.
+
+Notes:
+
+- Fake provenance references local artifact SHA-256 `3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0` and synthetic commit `1111111111111111111111111111111111111111`.
+- No hosted CI job, public commit status, CI secret/token, real signing key, cosign/Sigstore verification, Rekor upload, in-toto statement verification, SLSA level/compliance claim, paid CI, or public infrastructure was used.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -149,9 +174,9 @@ Notes:
 
 ## Next recommended loop
 
-**Loop 7: CI/provenance model docs and local fake attestation fixtures.**
+**Loop 8: static UI/renderer improvements.**
 
-Keep this local/free: model CI check status and provenance/attestation metadata using synthetic fixtures only. Avoid production CI secrets, paid CI minutes beyond free/local defaults, Sigstore keyless production claims, real signing keys, unsupported SLSA/security claims, or public status publication unless explicitly verified and labeled.
+Keep this local/free: improve the static renderer so it displays CI/provenance, artifact availability, and protocol substrate details clearly. Avoid hosted services, paid infrastructure, production secrets, unsupported security/SLSA claims, or public status publication unless explicitly verified and labeled.
 
 ## Gates/blockers
 
