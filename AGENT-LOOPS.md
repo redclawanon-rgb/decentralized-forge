@@ -511,4 +511,9 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 
 ## Next loop-set setup
 
-`docs/next-evidence-and-interoperability-loops.md` now records Loops 26–32 as complete. Next useful approval: Permission I for one local CAR/CID fixture verification loop with project-scoped dev dependencies, still no daemon/gateway/pin/wallet/paid-storage/durability claims. Permission G remains blocked unless Eric explicitly wants one disposable public Radicle seed/remote-clone smoke.
+`docs/next-evidence-and-interoperability-loops.md` now records Loops 26–32 as complete. Eric approved Permission G and Permission I on 2026-06-22 via Telegram message: “G & I are approved to keep things moving along.”
+
+Next useful loops:
+
+- Loop 33: local CAR/CID fixture verification with project-scoped dev dependencies (`ipfs-car`, `@ipld/car`, and/or `multiformats`) under Permission I. No daemon/gateway/pin/wallet/paid-storage/durability claims.
+- Loop 34: disposable public Radicle seed/remote-clone smoke under Permission G. Use only disposable/project-scoped state, no production/private personal keys, no paid infra, no unsupported durability/censorship/security/production claims.

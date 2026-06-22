@@ -315,12 +315,16 @@ This is selected/limited relay readback evidence only. It is not a durability gu
 1. Updated `STATUS.md`, `.hermes/context.md`, `AGENT-LOOPS.md`, this file, `fixtures/live-adapter-replay-checklist.json`, and tests with Loop 31 completion and remaining gates.
 2. The controller run performs full verification, commit/push, and the final concise report.
 
-**Boundary preserved:** No additional cron jobs, public Radicle action, live storage action, spending, wallet, package install, or unsupported durability/security/production claim.
+Permission G and Permission I were approved by Eric on 2026-06-22 via Telegram message: “G & I are approved to keep things moving along.”
 
-## Recommended next approval bundle
+Permission G now allows one disposable public Radicle seed/remote-clone smoke, still bounded by: only disposable/project-scoped state, no production/private personal keys, no paid infrastructure, no spending, no direct outreach, no unsupported durability/censorship-resistance/security/production-readiness claims, and no broad replication claim beyond what is actually verified.
 
-To run the next lowest-risk storage loop, Eric can say:
+Permission I now allows one local CAR/CID fixture verification loop with project-scoped dev dependencies (`ipfs-car`, `@ipld/car`, and/or `multiformats`) and lockfile-backed tooling. It still forbids daemon/gateway/pin/wallet/paid-storage/public-storage action and durability/security/production claims.
 
-> Approve Permission I for one local CAR/CID fixture verification loop with project-scoped dev dependencies (`ipfs-car`, `@ipld/car`, and/or `multiformats`), no daemon, no gateway, no pinning, no wallet, no paid storage, and no durability/security/production claims.
+## Next execution path
 
-Permission G remains separate and still blocked unless Eric explicitly wants one disposable public Radicle seed/remote-clone smoke.
+Permission I and Permission G are now approved. The next bounded controller should run:
+
+1. **Loop 33:** local CAR/CID fixture verification with project-scoped dev dependencies; no daemon, gateway, pinning, wallet, paid storage, public storage, or durability/security/production claims.
+2. **Loop 34:** one disposable public Radicle seed/remote-clone smoke; no production/private personal keys, paid infrastructure, spending, direct outreach, or unsupported durability/censorship-resistance/security/production-readiness claims.
+3. **Loop 35:** consolidation/report with exact evidence paths, verified scope, remaining non-claims, tests, and next gates.

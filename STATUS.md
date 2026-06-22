@@ -832,8 +832,8 @@ The just-completed loop set is defined in `docs/next-evidence-and-interoperabili
 
 ## Next approval bundles to remove roadblocks
 
-- **Permission G:** Radicle public seed/remote clone smoke; **not granted** as of 2026-06-22 and must remain blocked until Eric explicitly approves it later.
-- **Permission I (new):** local CAR/CID fixture verification with project-scoped dev dependencies; allow adding lockfile-backed local JS tooling such as `ipfs-car`, `@ipld/car`, and/or `multiformats`, but still no daemon, gateway, pinning, wallet, paid storage, or durability claim unless separately approved.
+- **Permission G:** Radicle public seed/remote clone smoke with only disposable/project-scoped state; approved 2026-06-22 via Telegram message “G & I are approved to keep things moving along.” Still no production/private personal keys, paid infrastructure, spending, direct outreach, durability/censorship-resistance/production-readiness/security claims, or unsupported replication claims.
+- **Permission I:** local CAR/CID fixture verification with project-scoped dev dependencies; approved 2026-06-22 via Telegram message “G & I are approved to keep things moving along.” Allows adding lockfile-backed local JS tooling such as `ipfs-car`, `@ipld/car`, and/or `multiformats`, but still no daemon, gateway, pinning, wallet, paid storage, public storage action, or durability claim unless separately approved.
 
 Completed approval bundles for the just-finished loop set:
 
