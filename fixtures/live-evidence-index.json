@@ -1,0 +1,86 @@
+{
+  "schema_version": "decentralized-forge.live-evidence-index.v1",
+  "loop": 26,
+  "created_at": "2026-06-22",
+  "purpose": "Secret-free index of narrow live/local evidence that can be rendered without upgrading unverified protocol claims.",
+  "claim_policy": {
+    "contains_secret_values": false,
+    "allowed_claims": [
+      "Radicle local CLI verified for one disposable private temporary-RAD_HOME init/inspect replay",
+      "Nostr selected-relay acceptance/readback verified for one exact prototype event on two relays"
+    ],
+    "forbidden_claims": [
+      "Radicle public seed/network replication verified",
+      "Nostr durability or global propagation verified",
+      "censorship resistance verified",
+      "identity trust verified",
+      "production readiness verified",
+      "full NIP-34 or forge compatibility verified",
+      "security guarantees verified"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "loop23-radicle-local-cli-replay",
+      "protocol": "radicle",
+      "scope": "radicle.local_cli_private_replay",
+      "state": "local-cli-verified",
+      "verified_at": "2026-06-22",
+      "evidence_file": "evidence/radicle-local-replay-2026-06-22.md",
+      "verification_summary": "Temporary RAD_HOME plus disposable Git repository completed rad auth, private no-seed rad init, and local rad inspect commands.",
+      "live_network_action": false,
+      "local_cli_verified": true,
+      "selected_relay_readback_verified": false,
+      "synthetic": false,
+      "public_identifiers": {
+        "rid": "rad:z33oByNZxkxXAChhD54B4XiSsQkao",
+        "delegate_did": "did:key:z6MkutM4LWh4y9qdeSMTWW88pMDVJBBhnjkoGPgZq1aSYN2n",
+        "visibility": "private",
+        "disposable_git_commit": "dfa5aad01c1bad5d2b1cda9919251b41e14ee643"
+      },
+      "non_claims": [
+        "no Radicle node start",
+        "no rad publish",
+        "no public seed publication",
+        "no sync or announce",
+        "no remote peer configuration",
+        "no public network replication verification",
+        "no durability or censorship-resistance claim",
+        "no production-readiness claim"
+      ],
+      "notes": "Promotes only the disposable private local replay path; Permission G remains required before public Radicle seed/publish/sync/node/remote clone."
+    },
+    {
+      "id": "loop25-nostr-selected-relay-readback",
+      "protocol": "nostr",
+      "scope": "nostr.selected_relay_publish_readback",
+      "state": "selected-relay-readback-verified",
+      "verified_at": "2026-06-22",
+      "evidence_file": "evidence/nostr-loop25-publish-readback-2026-06-22.json",
+      "verification_summary": "Exact prototype/research kind 30617 event was published to and read back from selected relays; local and readback nak verify returned exit code 0.",
+      "live_network_action": true,
+      "local_cli_verified": true,
+      "selected_relay_readback_verified": true,
+      "synthetic": false,
+      "public_identifiers": {
+        "event_id": "4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba",
+        "pubkey": "6669423ee76d9d5adc8e81df79286c2569edbe5ab84f3e35043db71a54eff5c8",
+        "kind": 30617,
+        "relays": [
+          "wss://relay.damus.io",
+          "wss://nos.lol"
+        ]
+      },
+      "non_claims": [
+        "not a durability guarantee",
+        "not proof of global propagation",
+        "not proof of censorship resistance",
+        "not proof of identity trust",
+        "not production readiness",
+        "not full NIP-34 or forge protocol compatibility",
+        "not a security guarantee"
+      ],
+      "notes": "Uses only the disposable project key; secret key material remains outside the repo and is not recorded here."
+    }
+  ]
+}

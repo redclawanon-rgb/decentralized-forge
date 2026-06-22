@@ -401,16 +401,13 @@ Completed as selected public relay acceptance/readback for one prototype-labeled
 
 **Goal:** Import narrow live-evidence metadata into fixtures/renderer without replacing fixture-only claims improperly.
 
-**Candidate tasks:**
+**Current result:**
 
-- Add or update `fixtures/live-evidence-index.json` if useful.
-- Update `fixtures/live-adapter-replay-checklist.json` with verified evidence only.
-- Update renderer/tests only if a live/local/fixture distinction needs to be displayed.
-- Run tests, static preflight, and secret-marker scan.
+Completed as a bounded evidence import. Added `fixtures/live-evidence-index.json` for Loop 23 Radicle local CLI/private replay evidence and Loop 25 Nostr selected-relay publish/readback evidence. `scripts/render_project_page.py` now accepts `--live-evidence-index` and renders a **Live evidence index** section that distinguishes `local-cli-verified` from `selected-relay-readback-verified` while preserving non-claims. `scripts/preflight_static_artifact.py`, `tests/test_registry_fixture.py`, `fixtures/live-adapter-replay-checklist.json`, and `output/demo-project.html` were updated accordingly. No new live network action, Nostr publish, Radicle node/seed/sync/publish/remote clone, spending, production/private personal key use, direct outreach, or unsupported durability/global-propagation/censorship-resistance/security/production-readiness/full-compatibility claim occurred.
 
 **Gate:**
 
-No claim may be upgraded to live-verified without command/network evidence from Loop 23 and/or Loop 25.
+No claim may be upgraded to live-verified without command/network evidence from Loop 23 and/or Loop 25. Loop 27 is the next approved public update draft/post path if accurate, non-spammy, and prototype/research-labeled.
 
 ## Loop 27: Public project update draft
 

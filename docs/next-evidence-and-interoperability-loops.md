@@ -90,40 +90,33 @@ Allow free/read-only preflight for IPFS/IPLD storage options:
 
 ## Loop 26 — Live evidence import into adapter/renderer
 
-**Goal:** Import Loop 23/25 evidence into fixtures and renderer while preserving fixture/local/live distinctions.
+**Status:** Complete 2026-06-22 as bounded live/local evidence import; no new live network action.
 
-**Approval needed:** none beyond existing local/code/public-GitHub push approval. No new live network action.
+**Result:**
 
-**Tasks:**
-
-1. Add or update `fixtures/live-evidence-index.json` with:
-   - Radicle local CLI replay evidence;
-   - Nostr selected-relay publish/readback evidence;
+1. Added `fixtures/live-evidence-index.json` with:
+   - Radicle local CLI replay evidence from Loop 23;
+   - Nostr selected-relay publish/readback evidence from Loop 25;
    - claim boundaries and non-claims.
-2. Update `fixtures/live-adapter-replay-checklist.json` only with verified facts.
-3. Update renderer/tests if useful so UI distinguishes:
+2. Updated `fixtures/live-adapter-replay-checklist.json` with Loop 26 import state.
+3. Updated `scripts/render_project_page.py`, `scripts/preflight_static_artifact.py`, tests, and `output/demo-project.html` so the UI distinguishes:
    - fixture-only;
    - local CLI verified;
    - selected-relay readback verified;
    - still-unverified protocol claims.
-4. Run verification.
+4. Verification is recorded in `STATUS.md` for Loop 26.
 
 **Artifacts:**
 
 - `fixtures/live-evidence-index.json`
-- optional renderer changes in `scripts/render_project_page.py`
-- updated tests and `output/demo-project.html` if renderer changes
+- `scripts/render_project_page.py`
+- `scripts/preflight_static_artifact.py`
+- `tests/test_registry_fixture.py`
+- `output/demo-project.html`
 
-**Verification:**
+**Boundary preserved:**
 
-- `python3 -m unittest discover -s tests`
-- `python3 scripts/preflight_static_artifact.py`
-- project artifact secret-marker scan
-
-**Stop conditions:**
-
-- Any evidence would require upgrading a claim beyond what Loop 23/25 actually proved.
-- Any secret marker appears in artifacts.
+No claim was upgraded beyond Loop 23/25 evidence. No new Nostr publish/readback, Radicle node/seed/publish/sync/remote clone, spending, paid infrastructure, production/private personal key use, direct outreach, or unsupported durability/global-propagation/censorship-resistance/security/production-readiness/full-compatibility claim occurred.
 
 ## Loop 27 — Public project update draft/post
 

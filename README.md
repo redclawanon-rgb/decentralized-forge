@@ -55,12 +55,13 @@ This repository is a **local registry/static renderer prototype** with protocol-
 - `schemas/project-registry.schema.json` — MVP project registry schema
 - `fixtures/example-project.registry.json` — local-only demo project registry fixture
 - `fixtures/live-adapter-replay-checklist.json` — secret-free Loop 20 machine-readable gates for future live adapter replay
+- `fixtures/live-evidence-index.json` — secret-free Loop 26 index of Radicle local CLI replay evidence and Nostr selected-relay readback evidence with explicit non-claims
 - `fixtures/local-release-artifact.txt` — local-only release artifact fixture with stdlib-tested SHA-256/CIDv1 metadata
 - `fixtures/nostr-repo-state-status.json` — local-only `kind: 30618` repository state fixture generated from the recorded local Git HEAD at fixture creation time plus fixture-only synthetic status/check projections
 - `fixtures/radicle-backed-project.registry.json` — synthetic local-only Radicle-backed registry fixture
 - `scripts/nip34_adapter.py` — stdlib parser/export helper that round-trips dry-run NIP-34 repository, issue, patch, repository state, fixture-only status/check data, and local NIP-01 conformance metadata back to registry-shaped concepts without relay publishing
-- `scripts/render_project_page.py` — stdlib renderer for static project pages, including verification-state labels, artifact availability, content-address, CI/provenance, substrate detail sections, and optional local NIP-34 fixture adapter import/display
-- `scripts/preflight_static_artifact.py` — stdlib preflight for generated static artifact freshness, expected local/synthetic boundary sections, optional NIP-34 fixture sections, and selected unsupported claim phrases
+- `scripts/render_project_page.py` — stdlib renderer for static project pages, including verification-state labels, artifact availability, content-address, CI/provenance, substrate detail sections, optional local NIP-34 fixture adapter import/display, and optional live-evidence index display
+- `scripts/preflight_static_artifact.py` — stdlib preflight for generated static artifact freshness, expected local/synthetic boundary sections, optional NIP-34 fixture sections, optional live evidence index, and selected unsupported claim phrases
 - `output/demo-project.html` — generated demo project page
 - `tests/test_registry_fixture.py` — stdlib verification tests for the registry fixture and renderer
 
@@ -72,7 +73,8 @@ Regenerate the public demo artifact with every local fixture section enabled:
 python3 scripts/render_project_page.py fixtures/example-project.registry.json output/demo-project.html \
   --nip34-repo-fixture fixtures/nostr-repo-announcement.json \
   --nip34-collaboration-fixture fixtures/nostr-collaboration-events.json \
-  --nip34-state-status-fixture fixtures/nostr-repo-state-status.json
+  --nip34-state-status-fixture fixtures/nostr-repo-state-status.json \
+  --live-evidence-index fixtures/live-evidence-index.json
 ```
 
 Open the generated artifact locally in a browser:
@@ -87,7 +89,7 @@ Run the static artifact preflight before release-oriented edits, screenshots, pu
 python3 scripts/preflight_static_artifact.py
 ```
 
-The preflight is stdlib-only. It checks that `output/demo-project.html` exists, is byte-for-byte current with the renderer plus all optional NIP-34 fixtures, includes expected local/synthetic/non-claim sections, includes the optional NIP-34 fixture adapter/state/status/conformance sections, and omits selected unsupported live-protocol/security/durability claim phrases.
+The preflight is stdlib-only. It checks that `output/demo-project.html` exists, is byte-for-byte current with the renderer plus all optional NIP-34 fixtures and the Loop 26 live evidence index, includes expected local/synthetic/non-claim sections, includes the optional NIP-34 fixture adapter/state/status/conformance sections, includes the live evidence index section, and omits selected unsupported live-protocol/security/durability claim phrases.
 
 Run the full local verification suite:
 
@@ -99,6 +101,7 @@ python3 -m json.tool fixtures/nostr-repo-announcement.json
 python3 -m json.tool fixtures/nostr-collaboration-events.json
 python3 -m json.tool fixtures/nostr-repo-state-status.json
 python3 -m json.tool fixtures/live-adapter-replay-checklist.json
+python3 -m json.tool fixtures/live-evidence-index.json
 python3 scripts/nip34_adapter.py fixtures/nostr-repo-announcement.json fixtures/nostr-collaboration-events.json fixtures/nostr-repo-state-status.json
 python3 scripts/preflight_static_artifact.py
 python3 -m unittest discover -s tests

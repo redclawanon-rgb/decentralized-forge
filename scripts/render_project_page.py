@@ -424,6 +424,77 @@ def render_json_block(value: object) -> str:
     return f"<pre><code>{esc(json.dumps(value, indent=2, sort_keys=True))}</code></pre>"
 
 
+def load_live_evidence_index(path: Path) -> dict:
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise RegistryError(f"invalid JSON in {path}: {exc}") from exc
+    if not isinstance(data, dict):
+        raise RegistryError("live evidence index root must be an object")
+    if data.get("schema_version") != "decentralized-forge.live-evidence-index.v1":
+        raise RegistryError("unsupported live evidence index schema_version")
+    evidence = data.get("evidence")
+    if not isinstance(evidence, list):
+        raise RegistryError("live evidence index evidence must be an array")
+    for item in evidence:
+        if not isinstance(item, dict):
+            raise RegistryError("live evidence entries must be objects")
+        for key in ["id", "protocol", "scope", "state", "evidence_file", "verification_summary", "non_claims"]:
+            if not item.get(key):
+                raise RegistryError(f"live evidence entry missing required field: {key}")
+        if item.get("selected_relay_readback_verified") and item.get("protocol") != "nostr":
+            raise RegistryError("selected relay readback evidence must be Nostr-scoped")
+    return data
+
+
+def render_live_evidence_item(item: dict) -> str:
+    identifiers = item.get("public_identifiers", {}) if isinstance(item.get("public_identifiers"), dict) else {}
+    return (
+        f'<article class="live-evidence live-evidence-{esc(css_token(item.get("state", "unknown")))}">'
+        f"<h3>{esc(item.get('id'))}</h3>"
+        + '<dl class="metadata">'
+        + field("Protocol", item.get("protocol"))
+        + field("Scope", item.get("scope"))
+        + field("Evidence state", item.get("state"))
+        + field("Verified at", item.get("verified_at"))
+        + field("Evidence file", item.get("evidence_file"), code=False)
+        + field("Summary", item.get("verification_summary"), code=False)
+        + f"<dt>Live network action</dt><dd>{yes_no(item.get('live_network_action'))}</dd>"
+        + f"<dt>Local CLI verified</dt><dd>{yes_no(item.get('local_cli_verified'))}</dd>"
+        + f"<dt>Selected-relay readback verified</dt><dd>{yes_no(item.get('selected_relay_readback_verified'))}</dd>"
+        + f"<dt>Synthetic</dt><dd>{yes_no(item.get('synthetic'))}</dd>"
+        + field("Public identifiers", json.dumps(identifiers, sort_keys=True))
+        + field("Notes", item.get("notes"), code=False)
+        + "</dl>"
+        + "<h4>Non-claims preserved</h4>"
+        + list_items([esc(non_claim) for non_claim in item.get("non_claims", [])])
+        + "</article>"
+    )
+
+
+def render_live_evidence_section(index: dict | None) -> str:
+    if not index:
+        return ""
+    evidence = [item for item in index.get("evidence", []) if isinstance(item, dict)]
+    policy = index.get("claim_policy", {}) if isinstance(index.get("claim_policy", {}), dict) else {}
+    return (
+        "<section>"
+        "<h2>Live evidence index</h2>"
+        '<p class="notice"><strong>Narrow evidence only:</strong> these rows import Loop 23/25 evidence into the renderer. '
+        "They distinguish local CLI verification and selected-relay readback from unverified durability, global propagation, censorship resistance, identity trust, production readiness, security guarantees, and full protocol compatibility.</p>"
+        + '<dl class="metadata">'
+        + field("Index schema", index.get("schema_version"))
+        + field("Loop", index.get("loop"))
+        + field("Created", index.get("created_at"))
+        + f"<dt>Contains secret values</dt><dd>{yes_no(policy.get('contains_secret_values'))}</dd>"
+        + field("Allowed claims", "; ".join(policy.get("allowed_claims", [])), code=False)
+        + field("Forbidden claims", "; ".join(policy.get("forbidden_claims", [])), code=False)
+        + "</dl>"
+        + list_items([render_live_evidence_item(item) for item in evidence])
+        + "</section>"
+    )
+
+
 def render_nip34_adapter_section(exported: dict | None) -> str:
     if not exported:
         return ""
@@ -502,7 +573,7 @@ def render_nip34_adapter_section(exported: dict | None) -> str:
     )
 
 
-def render_registry(data: dict, nip34_adapter_export: dict | None = None) -> str:
+def render_registry(data: dict, nip34_adapter_export: dict | None = None, live_evidence_index: dict | None = None) -> str:
     project = data["project"]
     maintainer_items = [
         f"<strong>{esc(m['name'])}</strong> — {esc(m['id_type'])}: <code>{esc(m['public_id'])}</code> ({esc(m.get('role', 'maintainer'))})"
@@ -583,6 +654,7 @@ def render_registry(data: dict, nip34_adapter_export: dict | None = None) -> str
   <section><h2>Releases</h2>{list_items(release_items)}</section>
   <section><h2>CI / provenance checks</h2>{list_items(ci_items)}</section>
   <section><h2>Verification states</h2><p class="notice"><strong>Verification labels:</strong> these records separate local fixtures, source-inspected mappings, synthetic fixtures, live-unverified scopes, and live-verified evidence. A scope is not live-verified unless its row says so explicitly.</p>{verification_state_summary}<h3>Registry verification rows grouped by state</h3>{verification_state_groups}</section>
+  {render_live_evidence_section(live_evidence_index)}
   <section><h2>Protocol substrate details</h2>{list_items(substrate_items)}</section>
   {render_nip34_adapter_section(nip34_adapter_export)}
   <section><h2>Signature status</h2><p><code>{esc(json.dumps(data.get('signature', {}), sort_keys=True))}</code></p></section>
@@ -598,6 +670,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--nip34-repo-fixture", type=Path, help="Optional local NIP-34 repository announcement fixture JSON")
     parser.add_argument("--nip34-collaboration-fixture", type=Path, help="Optional local NIP-34 collaboration events fixture JSON")
     parser.add_argument("--nip34-state-status-fixture", type=Path, help="Optional local NIP-34 repository state/status fixture JSON")
+    parser.add_argument("--live-evidence-index", type=Path, help="Optional live/local evidence index JSON")
     args = parser.parse_args(argv)
     if bool(args.nip34_repo_fixture) != bool(args.nip34_collaboration_fixture):
         parser.error("--nip34-repo-fixture and --nip34-collaboration-fixture must be provided together")
@@ -613,7 +686,8 @@ def main(argv: list[str] | None = None) -> int:
                 nip34_adapter.load_json(args.nip34_collaboration_fixture),
                 state_status_fixture,
             )
-        rendered = render_registry(data, nip34_export)
+        live_evidence_index = load_live_evidence_index(args.live_evidence_index) if args.live_evidence_index else None
+        rendered = render_registry(data, nip34_export, live_evidence_index)
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(rendered, encoding="utf-8")
     except (RegistryError, ValueError, OSError, json.JSONDecodeError) as exc:

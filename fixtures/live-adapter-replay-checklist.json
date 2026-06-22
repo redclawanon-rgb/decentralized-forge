@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-adapter-replay-checklist.v1",
-  "loop": 25,
+  "loop": 26,
   "purpose": "Secret-free gates for future Radicle local CLI replay and Nostr disposable relay publish/readback verification.",
   "discovery": {
     "rad_command": "command -v rad",
@@ -35,7 +35,9 @@
     "loop_25_nostr_publish_readback_recorded": true,
     "loop_25_nostr_publish_readback_evidence": "evidence/nostr-loop25-publish-readback-2026-06-22.md",
     "loop_25_nostr_publish_readback_json": "evidence/nostr-loop25-publish-readback-2026-06-22.json",
-    "network_protocol_actions_used_after_loop_25": true
+    "network_protocol_actions_used_after_loop_25": true,
+    "loop_26_live_evidence_import_recorded": true,
+    "loop_26_live_evidence_index": "fixtures/live-evidence-index.json"
   },
   "global_gates": [
     "approved_tooling_path_required",
@@ -141,7 +143,9 @@
       "no_public_network_replication_verified",
       "no_durability_or_censorship_resistance_claim",
       "no_production_readiness_claim"
-    ]
+    ],
+    "imported_into_live_evidence_index_after_loop_26": true,
+    "live_evidence_index_state_after_loop_26": "local-cli-verified"
   },
   "nostr_disposable_readback": {
     "status_after_loop_20": "planned_not_executed",
@@ -230,7 +234,9 @@
       "no_identity_trust_claim",
       "no_production_readiness_claim",
       "no_full_nip34_or_forge_protocol_compatibility_claim"
-    ]
+    ],
+    "imported_into_live_evidence_index_after_loop_26": true,
+    "live_evidence_index_state_after_loop_26": "selected-relay-readback-verified"
   },
   "secrets_policy": {
     "contains_secret_values": false,

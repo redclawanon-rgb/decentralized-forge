@@ -22,6 +22,7 @@ REGISTRY_FIXTURE = ROOT / "fixtures" / "example-project.registry.json"
 NIP34_REPO_FIXTURE = ROOT / "fixtures" / "nostr-repo-announcement.json"
 NIP34_COLLAB_FIXTURE = ROOT / "fixtures" / "nostr-collaboration-events.json"
 NIP34_STATE_STATUS_FIXTURE = ROOT / "fixtures" / "nostr-repo-state-status.json"
+LIVE_EVIDENCE_INDEX = ROOT / "fixtures" / "live-evidence-index.json"
 
 RENDER_COMMAND = [
     sys.executable,
@@ -34,6 +35,8 @@ RENDER_COMMAND = [
     str(NIP34_COLLAB_FIXTURE),
     "--nip34-state-status-fixture",
     str(NIP34_STATE_STATUS_FIXTURE),
+    "--live-evidence-index",
+    str(LIVE_EVIDENCE_INDEX),
 ]
 
 REQUIRED_PHRASES = [
@@ -49,6 +52,11 @@ REQUIRED_PHRASES = [
     "Possible event ID (local reference only)",
     "Repository state fixture",
     "Fixture-only status/check projections",
+    "Live evidence index",
+    "Narrow evidence only",
+    "loop23-radicle-local-cli-replay",
+    "loop25-nostr-selected-relay-readback",
+    "Selected-relay readback verified",
 ]
 
 # Phrases below would be over-claims if they appeared in the generated artifact.

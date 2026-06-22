@@ -642,6 +642,29 @@ Boundaries:
 - It does not prove durability, global propagation, censorship resistance, identity trust, production readiness, security guarantees, or full NIP-34/forge protocol compatibility.
 - No spending, paid infrastructure, production/private personal key, direct outreach, Radicle node/seed action, wallet, or public status/CI event was used.
 
+### Loop 26: Live evidence import into adapter/renderer
+
+Status: **complete as bounded live/local evidence import; no new live network action**.
+
+Outputs:
+
+- `fixtures/live-evidence-index.json` indexes Loop 23 Radicle local CLI/private replay evidence and Loop 25 Nostr selected-relay readback evidence with explicit non-claims.
+- `scripts/render_project_page.py` accepts `--live-evidence-index` and renders a **Live evidence index** section.
+- `scripts/preflight_static_artifact.py` now regenerates/checks `output/demo-project.html` with the live evidence index.
+- `fixtures/live-adapter-replay-checklist.json` records Loop 26 import state.
+- `tests/test_registry_fixture.py` validates the index, renderer output, bounded states, and secret-free/non-overclaiming evidence import.
+- `output/demo-project.html` was regenerated with all optional NIP-34 fixtures plus the live evidence index.
+
+Verified commands/evidence:
+
+- `python3 scripts/render_project_page.py fixtures/example-project.registry.json output/demo-project.html --nip34-repo-fixture fixtures/nostr-repo-announcement.json --nip34-collaboration-fixture fixtures/nostr-collaboration-events.json --nip34-state-status-fixture fixtures/nostr-repo-state-status.json --live-evidence-index fixtures/live-evidence-index.json` — exited 0.
+
+Boundaries:
+
+- Radicle is still only local CLI verified for one disposable private temporary-`RAD_HOME` init/inspect replay.
+- Nostr is only selected-relay acceptance/readback verified for one exact prototype event on `wss://relay.damus.io` and `wss://nos.lol`.
+- No new Nostr publish/readback, Radicle node start, Radicle seed/publish/sync/remote clone, public Radicle network replication, spending, paid infrastructure, production/private personal key use, direct outreach, wallet/pinning/storage action, or unsupported durability/global-propagation/censorship-resistance/security/production-readiness/full-compatibility claim occurred.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -674,12 +697,12 @@ Boundaries:
 
 ## Next recommended loop
 
-**Loop 26: Live evidence import into adapter/renderer.**
+**Loop 27: Public project update draft/post.**
 
 The next loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 
-- Loop 26: Live evidence import into adapter/renderer — next; can only upgrade claims backed by Loop 23/25 evidence.
-- Loop 27: Public project update draft/post — approved if accurate, non-spammy, and prototype/research-labeled.
+- Loop 26: Live evidence import into adapter/renderer — complete as `fixtures/live-evidence-index.json` plus renderer/preflight/test updates; no new live network action.
+- Loop 27: Public project update draft/post — next; approved if accurate, non-spammy, and prototype/research-labeled.
 - Loop 28: Nostr readback persistence/divergence check — re-read Loop 25 event from selected relays; extra relays or additional publish need Permission E.
 - Loop 29: NIP-34 live-event adapter import — import selected-relay readback evidence without claiming full protocol compatibility.
 - Loop 30: Radicle public-network gate plan — Permission F for preflight only; Permission G required before public seed/publish/sync/node/remote clone.

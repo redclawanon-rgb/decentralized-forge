@@ -21,6 +21,7 @@ NOSTR_REPO_FIXTURE_PATH = ROOT / "fixtures" / "nostr-repo-announcement.json"
 NOSTR_COLLAB_FIXTURE_PATH = ROOT / "fixtures" / "nostr-collaboration-events.json"
 NOSTR_STATE_STATUS_FIXTURE_PATH = ROOT / "fixtures" / "nostr-repo-state-status.json"
 LIVE_REPLAY_CHECKLIST_PATH = ROOT / "fixtures" / "live-adapter-replay-checklist.json"
+LIVE_EVIDENCE_INDEX_PATH = ROOT / "fixtures" / "live-evidence-index.json"
 LOCAL_RELEASE_ARTIFACT_PATH = ROOT / "fixtures" / "local-release-artifact.txt"
 FIXTURE_PATHS = [FIXTURE_PATH, RADICLE_FIXTURE_PATH]
 RENDERER = ROOT / "scripts" / "render_project_page.py"
@@ -38,6 +39,7 @@ class RegistryFixtureTests(unittest.TestCase):
         self.nostr_collab_fixture = json.loads(NOSTR_COLLAB_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.nostr_state_status_fixture = json.loads(NOSTR_STATE_STATUS_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.live_replay_checklist = json.loads(LIVE_REPLAY_CHECKLIST_PATH.read_text(encoding="utf-8"))
+        self.live_evidence_index = json.loads(LIVE_EVIDENCE_INDEX_PATH.read_text(encoding="utf-8"))
         self.fixtures = [json.loads(path.read_text(encoding="utf-8")) for path in FIXTURE_PATHS]
 
     def iter_artifacts(self):
@@ -337,6 +339,50 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn(required_non_claim, evidence_blob)
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, evidence_blob)
+
+    def test_loop26_live_evidence_index_imports_only_bounded_evidence(self):
+        index = self.live_evidence_index
+        self.assertEqual(index["schema_version"], "decentralized-forge.live-evidence-index.v1")
+        self.assertEqual(index["loop"], 26)
+        self.assertFalse(index["claim_policy"]["contains_secret_values"])
+        by_id = {item["id"]: item for item in index["evidence"]}
+        self.assertEqual(
+            set(by_id),
+            {"loop23-radicle-local-cli-replay", "loop25-nostr-selected-relay-readback"},
+        )
+
+        radicle = by_id["loop23-radicle-local-cli-replay"]
+        self.assertEqual(radicle["protocol"], "radicle")
+        self.assertEqual(radicle["state"], "local-cli-verified")
+        self.assertTrue(radicle["local_cli_verified"])
+        self.assertFalse(radicle["live_network_action"])
+        self.assertFalse(radicle["selected_relay_readback_verified"])
+        self.assertEqual(radicle["evidence_file"], "evidence/radicle-local-replay-2026-06-22.md")
+        self.assertEqual(radicle["public_identifiers"]["visibility"], "private")
+        self.assertIn("no public seed publication", radicle["non_claims"])
+        self.assertIn("Permission G remains required", radicle["notes"])
+
+        nostr = by_id["loop25-nostr-selected-relay-readback"]
+        self.assertEqual(nostr["protocol"], "nostr")
+        self.assertEqual(nostr["state"], "selected-relay-readback-verified")
+        self.assertTrue(nostr["live_network_action"])
+        self.assertTrue(nostr["local_cli_verified"])
+        self.assertTrue(nostr["selected_relay_readback_verified"])
+        self.assertEqual(nostr["evidence_file"], "evidence/nostr-loop25-publish-readback-2026-06-22.json")
+        self.assertEqual(nostr["public_identifiers"]["event_id"], self.live_replay_checklist["nostr_disposable_readback"]["event_id_after_loop_25"])
+        self.assertEqual(nostr["public_identifiers"]["relays"], ["wss://relay.damus.io", "wss://nos.lol"])
+        self.assertIn("not proof of global propagation", nostr["non_claims"])
+
+        blob = json.dumps(index).lower()
+        for forbidden_overclaim in [
+            "radicle public seed/network replication verified",
+            "nostr durability or global propagation verified",
+            "production readiness verified",
+            "full nip-34 or forge compatibility verified",
+        ]:
+            self.assertIn(forbidden_overclaim, blob)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, blob)
 
     def test_required_top_level_fields(self):
         for fixture in self.fixtures:
@@ -1073,6 +1119,8 @@ class RegistryFixtureTests(unittest.TestCase):
                     str(NOSTR_COLLAB_FIXTURE_PATH),
                     "--nip34-state-status-fixture",
                     str(NOSTR_STATE_STATUS_FIXTURE_PATH),
+                    "--live-evidence-index",
+                    str(LIVE_EVIDENCE_INDEX_PATH),
                 ],
                 cwd=ROOT,
                 text=True,
@@ -1154,6 +1202,18 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn("local-fixture-projection", html)
             self.assertIn("public_ci_status_created", html)
             self.assertIn("live_nip_status_semantics_claimed", html)
+            self.assertIn("Live evidence index", html)
+            self.assertIn("Narrow evidence only", html)
+            self.assertIn("loop23-radicle-local-cli-replay", html)
+            self.assertIn("loop25-nostr-selected-relay-readback", html)
+            self.assertIn("Selected-relay readback verified", html)
+            self.assertIn("local-cli-verified", html)
+            self.assertIn("selected-relay-readback-verified", html)
+            self.assertIn("rad:z33oByNZxkxXAChhD54B4XiSsQkao", html)
+            self.assertIn("4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba", html)
+            self.assertIn("not proof of global propagation", html)
+            self.assertIn("Permission G remains required", html)
+            self.assertIn("Contains secret values", html)
 
     def test_renderer_requires_nip34_fixture_args_as_a_pair(self):
         with tempfile.TemporaryDirectory() as tmpdir:
