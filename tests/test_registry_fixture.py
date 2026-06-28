@@ -910,7 +910,7 @@ class RegistryFixtureTests(unittest.TestCase):
     def test_loop26_live_evidence_index_imports_only_bounded_evidence(self):
         index = self.live_evidence_index
         self.assertEqual(index["schema_version"], "decentralized-forge.live-evidence-index.v1")
-        self.assertEqual(index["loop"], 35)
+        self.assertEqual(index["loop"], 40)
         self.assertFalse(index["claim_policy"]["contains_secret_values"])
         by_id = {item["id"]: item for item in index["evidence"]}
         self.assertEqual(
@@ -919,6 +919,7 @@ class RegistryFixtureTests(unittest.TestCase):
                 "loop23-radicle-local-cli-replay",
                 "loop25-nostr-selected-relay-readback",
                 "loop34-radicle-disposable-public-smoke",
+                "loop40-github-keyless-artifact-attestation",
             },
         )
 
@@ -956,6 +957,44 @@ class RegistryFixtureTests(unittest.TestCase):
             self.live_replay_checklist["radicle_local_replay"]["public_smoke_rid_after_loop_34"],
         )
         self.assertIn("not proof of broad Radicle network availability", radicle_public["non_claims"])
+
+        attestation = by_id["loop40-github-keyless-artifact-attestation"]
+        self.assertEqual(attestation["protocol"], "github-actions")
+        self.assertEqual(attestation["state"], "hosted-keyless-attestation-generated")
+        self.assertTrue(attestation["live_network_action"])
+        self.assertFalse(attestation["synthetic"])
+        self.assertEqual(attestation["public_identifiers"]["subject_count"], 6)
+        self.assertIn("not a SLSA compliance claim", attestation["non_claims"])
+        self.assertIn("not a registry fixture provenance import", attestation["non_claims"])
+
+    def test_loop40_github_keyless_attestation_evidence_is_bounded(self):
+        index = self.live_evidence_index
+        by_id = {item["id"]: item for item in index["evidence"]}
+        evidence_path = ROOT / by_id["loop40-github-keyless-artifact-attestation"]["evidence_file"]
+        evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+
+        self.assertEqual(evidence["schema_version"], "decentralized-forge.github-keyless-attestation.v1")
+        self.assertEqual(evidence["loop"], 40)
+        self.assertEqual(evidence["workflow_run"]["conclusion"], "success")
+        self.assertEqual(evidence["workflow_run"]["commit"], "1b6e6c84036c52f6dee0bbbee49fdc5e29787dc7")
+        self.assertEqual(evidence["attestation"]["action"], "actions/attest@v4")
+        self.assertEqual(evidence["attestation"]["predicate_type"], "https://slsa.dev/provenance/v1")
+        self.assertEqual(evidence["attestation"]["transparency_log_entries"], 1)
+        self.assertEqual(len(evidence["attestation"]["subjects"]), 6)
+        self.assertFalse(evidence["contains_secret_values"])
+        self.assertFalse(evidence["private_keys_used"])
+        self.assertFalse(evidence["paid_infrastructure_used"])
+        self.assertFalse(evidence["production_readiness_claim"])
+        self.assertFalse(evidence["registry_fixture_provenance_imported"])
+        for required_non_claim in [
+            "does not use production/private personal signing keys",
+            "does not make the registry fixture provenance object verified",
+            "does not claim SLSA compliance",
+        ]:
+            self.assertIn(required_non_claim, evidence["non_claims"])
+        blob = json.dumps(evidence).lower()
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, blob)
 
         blob = json.dumps(index).lower()
         for forbidden_overclaim in [
@@ -1795,6 +1834,8 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn("loop23-radicle-local-cli-replay", html)
             self.assertIn("loop25-nostr-selected-relay-readback", html)
             self.assertIn("loop34-radicle-disposable-public-smoke", html)
+            self.assertIn("loop40-github-keyless-artifact-attestation", html)
+            self.assertIn("hosted-keyless-attestation-generated", html)
             self.assertIn("Selected-relay readback verified", html)
             self.assertIn("local-cli-verified", html)
             self.assertIn("selected-relay-readback-verified", html)

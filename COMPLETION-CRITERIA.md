@@ -81,7 +81,7 @@ Approved as of 2026-06-28 when free/disposable/project-scoped, low-volume, secre
 
 Still forbidden without separate explicit approval: spending money, paid pinning/storage, wallets, production/private personal keys, direct person outreach, persistent public seed operation, or stronger durability/censorship/security/production claims.
 
-Loop 40 adds GitHub Actions keyless artifact attestation generation for committed/generated prototype artifacts. This is hosted provenance evidence; it does not by itself upgrade local registry fixture provenance fields to SLSA compliance or production supply-chain trust.
+Loop 40 added GitHub Actions keyless artifact attestation generation for committed/generated prototype artifacts and recorded the passed run in `evidence/github-keyless-attestation-2026-06-28.json`. This is hosted provenance evidence; it does not by itself upgrade local registry fixture provenance fields to SLSA compliance or production supply-chain trust.
 
 ## Release Rule
 

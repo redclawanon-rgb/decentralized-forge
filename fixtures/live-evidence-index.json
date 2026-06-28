@@ -1,14 +1,15 @@
 {
   "schema_version": "decentralized-forge.live-evidence-index.v1",
-  "loop": 35,
-  "created_at": "2026-06-22",
+  "loop": 40,
+  "created_at": "2026-06-28",
   "purpose": "Secret-free index of narrow live/local evidence that can be rendered without upgrading unverified protocol claims.",
   "claim_policy": {
     "contains_secret_values": false,
     "allowed_claims": [
       "Radicle local CLI verified for one disposable private temporary-RAD_HOME init/inspect replay",
       "Nostr selected-relay acceptance/readback verified for one exact prototype event on two relays",
-      "Radicle disposable public seed/remote-clone smoke verified for exact RID rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa"
+      "Radicle disposable public seed/remote-clone smoke verified for exact RID rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa",
+      "GitHub Actions generated keyless hosted artifact attestations for six prototype artifacts on main"
     ],
     "forbidden_claims": [
       "Radicle durable public seed/network availability verified",
@@ -112,6 +113,34 @@
         "not proof of broad Radicle network availability"
       ],
       "notes": "Uses only disposable temporary state recorded in Loop 34 evidence. No production/private personal keys, paid infrastructure, direct outreach, persistent seed operation, or broad network availability claim."
+    },
+    {
+      "id": "loop40-github-keyless-artifact-attestation",
+      "protocol": "github-actions",
+      "scope": "ci.keyless_artifact_attestation",
+      "state": "hosted-keyless-attestation-generated",
+      "verified_at": "2026-06-28",
+      "evidence_file": "evidence/github-keyless-attestation-2026-06-28.json",
+      "verification_summary": "GitHub Actions run 28339280081 generated a keyless hosted attestation with SLSA provenance predicate for six prototype artifacts after CI passed on main.",
+      "live_network_action": true,
+      "local_cli_verified": false,
+      "selected_relay_readback_verified": false,
+      "synthetic": false,
+      "public_identifiers": {
+        "workflow_run": "https://github.com/redclawanon-rgb/decentralized-forge/actions/runs/28339280081",
+        "commit": "1b6e6c84036c52f6dee0bbbee49fdc5e29787dc7",
+        "predicate_type": "https://slsa.dev/provenance/v1",
+        "subject_count": 6
+      },
+      "non_claims": [
+        "not proof of production supply-chain security",
+        "not a registry fixture provenance import",
+        "not a SLSA compliance claim",
+        "not proof of consumer policy verification",
+        "not a durability guarantee",
+        "not production readiness"
+      ],
+      "notes": "Uses GitHub OIDC/keyless attestation; no production/private personal signing key is recorded or used."
     }
   ]
 }

@@ -54,6 +54,8 @@ Loop 7 and the local registry fixture do **not** perform or claim any of the fol
 
 Loop 40 allowed claim after the updated CI workflow passes on `main`: GitHub Actions generated keyless artifact attestations for the named subject files using GitHub OIDC and GitHub's artifact attestation service. This is hosted workflow evidence, not yet imported into the local registry provenance fixture as a replacement for the synthetic fields.
 
+Concrete Loop 40 evidence is recorded in `evidence/github-keyless-attestation-2026-06-28.json` from GitHub Actions run https://github.com/redclawanon-rgb/decentralized-forge/actions/runs/28339280081.
+
 Still not allowed claim: the registry fixture itself is signed, the project is production supply-chain secure, consumers have verified the attestations, a custom in-toto policy was enforced, paid/private infrastructure was used, or a production readiness guarantee exists.
 
 Loop 16 allowed claim: `verification_states[]` consistently labels CI/provenance scopes as synthetic or live-unverified until real hosted CI/signing/verifier evidence exists.

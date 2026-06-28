@@ -565,6 +565,6 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 
 **Goal:** Add real hosted keyless provenance generation for reproducible prototype artifacts without private signing keys.
 
-**Current result:** Configured in `.github/workflows/ci.yml`. The `ci` workflow grants GitHub OIDC/attestation permissions and runs `actions/attest@v4` on `main` pushes for generated HTML, summary JSON, the local CAR fixture, and the local release artifact fixture.
+**Current result:** Complete as hosted keyless attestation evidence. The `ci` workflow grants GitHub OIDC/attestation permissions and runs `actions/attest@v4` on `main` pushes for generated HTML, summary JSON, the local CAR fixture, and the local release artifact fixture. GitHub Actions run https://github.com/redclawanon-rgb/decentralized-forge/actions/runs/28339280081 passed, the attestation step completed successfully, and `evidence/github-keyless-attestation-2026-06-28.json` records subject digests plus the SLSA provenance predicate, builder identity, invocation URL, resolved commit, and transparency-log entry count.
 
 **Gate preserved:** This is GitHub-hosted keyless attestation generation only. It does not use production/private personal keys, paid infrastructure, wallets, direct outreach, persistent background services, or stronger durability/censorship/security/SLSA/production-readiness claims. Local registry fixture provenance fields remain synthetic until a later import loop records a concrete workflow run and verification evidence.
