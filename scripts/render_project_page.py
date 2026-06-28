@@ -529,8 +529,8 @@ def render_live_evidence_section(index: dict | None) -> str:
     return (
         "<section>"
         "<h2>Live evidence index</h2>"
-        '<p class="notice"><strong>Narrow evidence only:</strong> these rows import Loop 23/25 evidence into the renderer. '
-        "They distinguish local CLI verification and selected-relay readback from unverified durability, global propagation, censorship resistance, identity trust, production readiness, security guarantees, and full protocol compatibility.</p>"
+        '<p class="notice"><strong>Narrow evidence only:</strong> these rows import Loop 23/25/34 evidence into the renderer. '
+        "They distinguish local CLI verification, selected-relay readback, and one disposable public Radicle smoke from unverified durability, global propagation, censorship resistance, identity trust, production readiness, security guarantees, and full protocol compatibility.</p>"
         + '<dl class="metadata">'
         + field("Index schema", index.get("schema_version"))
         + field("Loop", index.get("loop"))

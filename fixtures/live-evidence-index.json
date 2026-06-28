@@ -1,16 +1,17 @@
 {
   "schema_version": "decentralized-forge.live-evidence-index.v1",
-  "loop": 26,
+  "loop": 35,
   "created_at": "2026-06-22",
   "purpose": "Secret-free index of narrow live/local evidence that can be rendered without upgrading unverified protocol claims.",
   "claim_policy": {
     "contains_secret_values": false,
     "allowed_claims": [
       "Radicle local CLI verified for one disposable private temporary-RAD_HOME init/inspect replay",
-      "Nostr selected-relay acceptance/readback verified for one exact prototype event on two relays"
+      "Nostr selected-relay acceptance/readback verified for one exact prototype event on two relays",
+      "Radicle disposable public seed/remote-clone smoke verified for exact RID rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa"
     ],
     "forbidden_claims": [
-      "Radicle public seed/network replication verified",
+      "Radicle durable public seed/network availability verified",
       "Nostr durability or global propagation verified",
       "censorship resistance verified",
       "identity trust verified",
@@ -48,7 +49,7 @@
         "no durability or censorship-resistance claim",
         "no production-readiness claim"
       ],
-      "notes": "Promotes only the disposable private local replay path; Permission G remains required before public Radicle seed/publish/sync/node/remote clone."
+      "notes": "Promotes only the disposable private local replay path. Later Loop 34 evidence separately records one bounded disposable public seed/clone smoke; this row does not imply public-network availability."
     },
     {
       "id": "loop25-nostr-selected-relay-readback",
@@ -81,6 +82,36 @@
         "not a security guarantee"
       ],
       "notes": "Uses only the disposable project key; secret key material remains outside the repo and is not recorded here."
+    },
+    {
+      "id": "loop34-radicle-disposable-public-smoke",
+      "protocol": "radicle",
+      "scope": "radicle.disposable_public_seed_clone_smoke",
+      "state": "disposable-public-smoke-verified",
+      "verified_at": "2026-06-22",
+      "evidence_file": "evidence/radicle-public-network-smoke-2026-06-22.json",
+      "verification_summary": "One disposable public Radicle repository was initialized, seeded from a temporary localhost node, synced/announced, cloned through a separate temporary node, and read back successfully.",
+      "live_network_action": true,
+      "local_cli_verified": true,
+      "selected_relay_readback_verified": false,
+      "synthetic": false,
+      "public_identifiers": {
+        "rid": "rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa",
+        "visibility": "public",
+        "seed_scope": "temporary localhost seed node",
+        "clone_scope": "separate temporary Radicle profile/node"
+      },
+      "non_claims": [
+        "not proof of durability",
+        "not proof of censorship resistance",
+        "not a security guarantee",
+        "not proof of global replication",
+        "not proof of identity trust",
+        "not production readiness",
+        "not full Radicle compatibility",
+        "not proof of broad Radicle network availability"
+      ],
+      "notes": "Uses only disposable temporary state recorded in Loop 34 evidence. No production/private personal keys, paid infrastructure, direct outreach, persistent seed operation, or broad network availability claim."
     }
   ]
 }

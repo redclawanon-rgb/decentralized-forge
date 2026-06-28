@@ -771,12 +771,16 @@ class RegistryFixtureTests(unittest.TestCase):
     def test_loop26_live_evidence_index_imports_only_bounded_evidence(self):
         index = self.live_evidence_index
         self.assertEqual(index["schema_version"], "decentralized-forge.live-evidence-index.v1")
-        self.assertEqual(index["loop"], 26)
+        self.assertEqual(index["loop"], 35)
         self.assertFalse(index["claim_policy"]["contains_secret_values"])
         by_id = {item["id"]: item for item in index["evidence"]}
         self.assertEqual(
             set(by_id),
-            {"loop23-radicle-local-cli-replay", "loop25-nostr-selected-relay-readback"},
+            {
+                "loop23-radicle-local-cli-replay",
+                "loop25-nostr-selected-relay-readback",
+                "loop34-radicle-disposable-public-smoke",
+            },
         )
 
         radicle = by_id["loop23-radicle-local-cli-replay"]
@@ -788,7 +792,7 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertEqual(radicle["evidence_file"], "evidence/radicle-local-replay-2026-06-22.md")
         self.assertEqual(radicle["public_identifiers"]["visibility"], "private")
         self.assertIn("no public seed publication", radicle["non_claims"])
-        self.assertIn("Permission G remains required", radicle["notes"])
+        self.assertIn("Later Loop 34 evidence", radicle["notes"])
 
         nostr = by_id["loop25-nostr-selected-relay-readback"]
         self.assertEqual(nostr["protocol"], "nostr")
@@ -801,9 +805,22 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertEqual(nostr["public_identifiers"]["relays"], ["wss://relay.damus.io", "wss://nos.lol"])
         self.assertIn("not proof of global propagation", nostr["non_claims"])
 
+        radicle_public = by_id["loop34-radicle-disposable-public-smoke"]
+        self.assertEqual(radicle_public["protocol"], "radicle")
+        self.assertEqual(radicle_public["state"], "disposable-public-smoke-verified")
+        self.assertTrue(radicle_public["live_network_action"])
+        self.assertTrue(radicle_public["local_cli_verified"])
+        self.assertFalse(radicle_public["selected_relay_readback_verified"])
+        self.assertEqual(radicle_public["evidence_file"], "evidence/radicle-public-network-smoke-2026-06-22.json")
+        self.assertEqual(
+            radicle_public["public_identifiers"]["rid"],
+            self.live_replay_checklist["radicle_local_replay"]["public_smoke_rid_after_loop_34"],
+        )
+        self.assertIn("not proof of broad Radicle network availability", radicle_public["non_claims"])
+
         blob = json.dumps(index).lower()
         for forbidden_overclaim in [
-            "radicle public seed/network replication verified",
+            "radicle durable public seed/network availability verified",
             "nostr durability or global propagation verified",
             "production readiness verified",
             "full nip-34 or forge compatibility verified",
@@ -1638,13 +1655,15 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn("Narrow evidence only", html)
             self.assertIn("loop23-radicle-local-cli-replay", html)
             self.assertIn("loop25-nostr-selected-relay-readback", html)
+            self.assertIn("loop34-radicle-disposable-public-smoke", html)
             self.assertIn("Selected-relay readback verified", html)
             self.assertIn("local-cli-verified", html)
             self.assertIn("selected-relay-readback-verified", html)
             self.assertIn("rad:z33oByNZxkxXAChhD54B4XiSsQkao", html)
+            self.assertIn("rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa", html)
             self.assertIn("4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba", html)
             self.assertIn("not proof of global propagation", html)
-            self.assertIn("Permission G remains required", html)
+            self.assertIn("not proof of broad Radicle network availability", html)
             self.assertIn("Contains secret values", html)
             self.assertIn("NIP-34 live readback import", html)
             self.assertIn("Selected-relay readback only", html)

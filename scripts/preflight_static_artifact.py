@@ -62,6 +62,7 @@ REQUIRED_PHRASES = [
     "Narrow evidence only",
     "loop23-radicle-local-cli-replay",
     "loop25-nostr-selected-relay-readback",
+    "loop34-radicle-disposable-public-smoke",
     "Selected-relay readback verified",
 ]
 
