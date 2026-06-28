@@ -875,6 +875,24 @@ Boundaries:
 
 - Hosted CI is local verification only. It does not sign artifacts, upload to Rekor, verify Sigstore/cosign/in-toto, claim SLSA compliance, publish protocol events, start IPFS/Radicle/Nostr live actions, use production/private keys, spend money, or prove durability/censorship resistance/security/production readiness.
 
+### Loop 37: Public Milestone 1 update
+
+Status: **complete as a prototype-labeled public project-channel update; no new live protocol/storage action**.
+
+Outputs:
+
+- `docs/public-update-drafts/2026-06-28-milestone-1-complete.md` records the exact public update body and posting result.
+- GitHub Discussion #7 was created in the project Announcements channel: https://github.com/redclawanon-rgb/decentralized-forge/discussions/7
+
+Verified evidence:
+
+- GitHub GraphQL `createDiscussion` returned Discussion #7 with the expected title and URL.
+
+Boundaries:
+
+- The update preserves narrow claims: Milestone 1 is complete only as a reproducible, evidence-scoped static prototype with hosted local-verification CI.
+- No live IPFS/storage action, new Nostr publish/readback, new Radicle public-network action, signing/provenance action, spending, paid infrastructure, production/private personal key use, direct outreach, or unsupported durability/censorship-resistance/security/SLSA/production-readiness claim occurred.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -915,6 +933,7 @@ Recent completed loops:
 - Loop 34: disposable public Radicle seed/remote-clone smoke — complete as exact bounded evidence in `evidence/radicle-public-network-smoke-2026-06-22.json`; RID `rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa`; no broad durability/censorship/security/production/network-availability claim.
 - Loop 35: consolidation/report — complete as `evidence/loop35-consolidation-2026-06-22.md` plus checklist/test/context/status updates; no new live protocol/storage action, public update, or cron job.
 - Loop 36: hosted local-verification CI and Milestone 1 completion state — complete as `.github/workflows/ci.yml` plus `COMPLETION-CRITERIA.md` updates; CI passed on `main`; no signing/SLSA/live protocol/storage claim.
+- Loop 37: public Milestone 1 update — complete as GitHub Discussion #7: https://github.com/redclawanon-rgb/decentralized-forge/discussions/7; no new live protocol/storage/signing action.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

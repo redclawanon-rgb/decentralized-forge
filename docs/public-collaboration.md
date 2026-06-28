@@ -44,6 +44,11 @@ These issues are temporary GitHub coordination scaffolding. They are not evidenc
 
 > Opened a public research/prototype repo for a decentralized GitHub-class forge: local project registry schema, static renderer, Nostr/Radicle mapping fixtures, local CID-compatible artifact metadata, and synthetic CI/provenance displays. This is not production-ready or live protocol verified yet; the goal is to make the seams explicit and invite focused protocol/UX collaboration. https://github.com/redclawanon-rgb/decentralized-forge
 
+## Posted public updates
+
+- Live adapter evidence update, 2026-06-22: <https://github.com/redclawanon-rgb/decentralized-forge/discussions/6>
+- Milestone 1 reproducible static prototype complete, 2026-06-28: <https://github.com/redclawanon-rgb/decentralized-forge/discussions/7>
+
 ## Boundaries
 
 - Public repo/issues/discussions are allowed for this project.
