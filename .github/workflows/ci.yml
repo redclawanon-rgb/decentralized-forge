@@ -8,6 +8,9 @@ on:
 
 permissions:
   contents: read
+  id-token: write
+  attestations: write
+  artifact-metadata: write
 
 jobs:
   verify:
@@ -69,3 +72,15 @@ jobs:
 
       - name: Verify worktree stays clean
         run: git diff --exit-code
+
+      - name: Generate keyless artifact provenance attestation
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/attest@v4
+        with:
+          subject-path: |
+            output/demo-project.html
+            output/portable-lab.html
+            output/demo-project.summary.json
+            output/portable-lab.summary.json
+            evidence/local-release-artifact-2026-06-22.car
+            fixtures/local-release-artifact.txt

@@ -560,3 +560,11 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as `fixtures/next-loop-controller.json`, controller report wording, autonomy docs, status docs, and tests. Live IPFS, Radicle, Nostr, and signing/provenance actions are now approved when free, disposable or project-scoped, low-volume, secret-free, and evidence-labeled.
 
 **Gate preserved:** No live protocol/storage/signing action was executed in Loop 39. Spending, wallets, paid infrastructure, production/private personal keys, direct outreach, persistent public seed/background services, and stronger durability/censorship/security/SLSA/production-readiness claims remain separately gated.
+
+## Loop 40: GitHub keyless artifact attestation workflow
+
+**Goal:** Add real hosted keyless provenance generation for reproducible prototype artifacts without private signing keys.
+
+**Current result:** Configured in `.github/workflows/ci.yml`. The `ci` workflow grants GitHub OIDC/attestation permissions and runs `actions/attest@v4` on `main` pushes for generated HTML, summary JSON, the local CAR fixture, and the local release artifact fixture.
+
+**Gate preserved:** This is GitHub-hosted keyless attestation generation only. It does not use production/private personal keys, paid infrastructure, wallets, direct outreach, persistent background services, or stronger durability/censorship/security/SLSA/production-readiness claims. Local registry fixture provenance fields remain synthetic until a later import loop records a concrete workflow run and verification evidence.

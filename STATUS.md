@@ -914,6 +914,18 @@ Eric stated on 2026-06-28: "For what its worth I am totally ok with live IPFS/Ra
 
 Gate preserved: Spending, wallets, paid infrastructure, production/private personal keys, direct outreach, persistent public seed/background services, and stronger durability/censorship/security/SLSA/broad-availability/production-readiness claims still require separate approval.
 
+### Loop 40: GitHub keyless artifact attestation workflow
+
+Status: **configured; completion requires the updated `ci` workflow to pass on `main` and generate hosted attestations**.
+
+Outputs:
+
+- `.github/workflows/ci.yml` now grants `id-token: write`, `attestations: write`, and `artifact-metadata: write`.
+- The `ci` workflow runs `actions/attest@v4` on `main` push after the local verification suite and worktree-clean check.
+- Attestation subjects are `output/demo-project.html`, `output/portable-lab.html`, `output/demo-project.summary.json`, `output/portable-lab.summary.json`, `evidence/local-release-artifact-2026-06-22.car`, and `fixtures/local-release-artifact.txt`.
+
+Gate preserved: This uses GitHub OIDC/keyless hosted attestations and no production/private personal signing key. It does not claim local registry provenance fields are imported, SLSA-compliant, production-ready, or consumer-verified.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -946,7 +958,7 @@ Gate preserved: Spending, wallets, paid infrastructure, production/private perso
 
 ## Next recommended loop
 
-**Next:** Use `npm run next:loop` locally or the manual `next-loop-controller` GitHub Actions workflow for recurring verification/reporting. The controller may proceed with free/disposable/project-scoped live IPFS, Radicle, Nostr, and signing/provenance actions, while still stopping before spending, wallets, paid infrastructure, production/private personal keys, direct outreach, persistent background services, or stronger durability/censorship/security/production claims.
+**Next:** Push Loop 40, verify the GitHub `ci` run generated keyless artifact attestations, then import the run URL/evidence into project docs without upgrading synthetic registry provenance fields beyond the evidence.
 
 Recent completed loops:
 
@@ -958,6 +970,7 @@ Recent completed loops:
 
 - Loop 38: approval-bounded next-loop controller - complete as config, script, docs, tests, npm scripts, and manual GitHub Actions workflow; no background daemon or live action.
 - Loop 39: standing live-action approval recorded - complete as controller/status/test updates; no live protocol/storage/signing action executed in this loop.
+- Loop 40: GitHub keyless artifact attestation workflow - configured; waiting for updated `ci` run on `main` to generate hosted attestations.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

@@ -70,9 +70,9 @@ Status: complete.
 
 ### Lane D: Optional Live Evidence
 
-Status: gated.
+Status: active under standing approval.
 
-Allowed only with explicit target and only in free/disposable modes:
+Approved as of 2026-06-28 when free/disposable/project-scoped, low-volume, secret-free, and evidence-labeled:
 
 - live IPFS add/fetch/gateway checks for the local CAR/CID fixture;
 - Nostr issue/patch readback using disposable project-scoped keys;
@@ -80,6 +80,8 @@ Allowed only with explicit target and only in free/disposable modes:
 - optional signing/provenance verification with disposable or keyless test material.
 
 Still forbidden without separate explicit approval: spending money, paid pinning/storage, wallets, production/private personal keys, direct person outreach, persistent public seed operation, or stronger durability/censorship/security/production claims.
+
+Loop 40 adds GitHub Actions keyless artifact attestation generation for committed/generated prototype artifacts. This is hosted provenance evidence; it does not by itself upgrade local registry fixture provenance fields to SLSA compliance or production supply-chain trust.
 
 ## Release Rule
 

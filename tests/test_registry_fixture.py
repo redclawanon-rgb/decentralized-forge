@@ -29,6 +29,7 @@ LIVE_REPLAY_CHECKLIST_PATH = ROOT / "fixtures" / "live-adapter-replay-checklist.
 LIVE_EVIDENCE_INDEX_PATH = ROOT / "fixtures" / "live-evidence-index.json"
 NEXT_LOOP_CONTROLLER_PATH = ROOT / "fixtures" / "next-loop-controller.json"
 NEXT_LOOP_WORKFLOW_PATH = ROOT / ".github" / "workflows" / "next-loop.yml"
+CI_WORKFLOW_PATH = ROOT / ".github" / "workflows" / "ci.yml"
 LOCAL_RELEASE_ARTIFACT_PATH = ROOT / "fixtures" / "local-release-artifact.txt"
 FIXTURE_PATHS = [FIXTURE_PATH, PORTABLE_FIXTURE_PATH, RADICLE_FIXTURE_PATH]
 RENDERER = ROOT / "scripts" / "render_project_page.py"
@@ -221,6 +222,23 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("python scripts/next_loop_controller.py --check --skip-npm-ci", workflow)
         self.assertNotIn("git push", workflow)
         self.assertNotIn("gh discussion", workflow)
+
+    def test_ci_workflow_generates_keyless_attestations_for_release_artifacts(self):
+        workflow = CI_WORKFLOW_PATH.read_text(encoding="utf-8")
+        self.assertIn("id-token: write", workflow)
+        self.assertIn("attestations: write", workflow)
+        self.assertIn("artifact-metadata: write", workflow)
+        self.assertIn("uses: actions/attest@v4", workflow)
+        self.assertIn("if: github.event_name == 'push' && github.ref == 'refs/heads/main'", workflow)
+        for subject in [
+            "output/demo-project.html",
+            "output/portable-lab.html",
+            "output/demo-project.summary.json",
+            "output/portable-lab.summary.json",
+            "evidence/local-release-artifact-2026-06-22.car",
+            "fixtures/local-release-artifact.txt",
+        ]:
+            self.assertIn(subject, workflow)
 
     def test_live_replay_checklist_is_secret_free_and_gated(self):
         checklist = self.live_replay_checklist

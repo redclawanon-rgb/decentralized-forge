@@ -33,7 +33,7 @@ As of Loop 35, the project has local CAR/CID fixture verification, one selected-
 | Nostr NIP-34 | Dry-run repository/issue/patch/state fixtures, local stdlib parser/conformance checks, and one imported Loop 25 selected-relay repository-announcement readback event using a disposable project key | Durability, global propagation, identity trust, issue/patch readback, full NIP-34/forge compatibility |
 | Radicle | Source-inspected mapping, disposable local/private CLI replay evidence, and one disposable public seed/remote-clone smoke for exact RID `rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa` | Persistent seed operation, broad Radicle network availability, durability, identity trust, production readiness |
 | Artifacts | Local SHA-256, CIDv1 raw/base32-compatible metadata, and lockfile-backed local CAR/CID readback evidence | IPFS daemon add/fetch, public gateway availability, pinning, Filecoin/Arweave durability |
-| CI/provenance | GitHub Actions runs the local verification suite; registry provenance fields remain synthetic local fixtures | Real signing, Sigstore/in-toto verification, Rekor upload, SLSA compliance, supply-chain security guarantee |
+| CI/provenance | GitHub Actions runs the local verification suite and is configured to generate keyless artifact attestations on `main` pushes; registry provenance fields remain synthetic local fixtures until imported | Registry-level Sigstore/in-toto verification, SLSA compliance, supply-chain security guarantee |
 | Verification labels | Top-level and NIP-34 adapter `verification_states[]` records identify local fixtures, source-inspected mappings, synthetic fixtures, live-unverified scopes, and narrow live-verified evidence, with rendered counts and claim-boundary summaries | Implicit trust, unsupported scope expansion, censorship-proof/durability/security guarantees |
 | Live replay gates | Safe replay checklist advanced through Loop 35; further live storage, broader Radicle checks, public updates, or stronger claims require a new explicit target/approval | Unbounded live testing, paid services, production/private personal keys |
 | Public collaboration | GitHub issues/discussions for temporary coordination | Decentralized issue/patch federation running in production |
@@ -51,7 +51,7 @@ As of Loop 35, the project has local CAR/CID fixture verification, one selected-
 - `docs/nip34-event-shapes.md` — NIP-34 dry-run event shape notes
 - `docs/radicle-mapping.md` — source-inspected Radicle-to-registry mapping, clearly marked not live-CLI verified
 - `docs/artifact-metadata.md` — Loop 6 release artifact metadata, local CID fixture, and no-pinning/no-durability boundaries
-- `docs/ci-provenance-model.md` — Loop 7 synthetic local CI/provenance model and no-Sigstore/no-SLSA-claim boundaries
+- `docs/ci-provenance-model.md` — synthetic local CI/provenance model plus hosted keyless attestation boundary
 - `docs/public-collaboration.md` — Loop 9 public collaboration stance, first issue set, and public update draft
 - `docs/live-adapter-replay-plan.md` — Loop 20 safe live-gated Radicle/Nostr replay prerequisites, evidence checklist, rollback, and non-claim gates
 - `docs/live-completion-gates.md` — optional post-Milestone-1 live IPFS, Nostr, Radicle, and signing gates

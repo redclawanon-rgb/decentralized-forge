@@ -2,7 +2,9 @@
 
 Loop 7 adds a local-only model for CI check status and release provenance so future renderers/protocol adapters can display build trust metadata without depending on paid CI, production secrets, real Sigstore, cosign, in-toto, or SLSA infrastructure.
 
-After Milestone 1 completion, the repository also has GitHub Actions CI at `.github/workflows/ci.yml`. That workflow runs the local verification suite and checks that generated artifacts stay current. It is useful hosted validation, but it does not convert the synthetic registry `ci_checks[]`, fake attestation, or provenance fields into real signing, Sigstore, in-toto, Rekor, SLSA, or supply-chain trust evidence.
+After Milestone 1 completion, the repository also has GitHub Actions CI at `.github/workflows/ci.yml`. That workflow runs the local verification suite, checks that generated artifacts stay current, and on `main` push uses GitHub OIDC with `actions/attest@v4` to generate keyless provenance attestations for the generated HTML/summary artifacts plus the local CAR/CID fixture artifacts.
+
+The workflow-level attestation is real hosted keyless provenance evidence for the named subject files in GitHub Actions. The registry fixture `ci_checks[]`, fake attestation string, and structured `provenance` object remain synthetic local fixture data until a later loop imports the hosted attestation result back into registry fields with a concrete run URL and verification evidence.
 
 ## Registry fields
 
@@ -42,20 +44,21 @@ The predicate URI is intentionally under `example.invalid` and describes a fake 
 
 ## Boundaries
 
-Loop 7 and the Milestone 1 hosted CI workflow do **not** perform or claim any of the following:
+Loop 7 and the local registry fixture do **not** perform or claim any of the following:
 
 - CI secrets, CI tokens, deployment keys, or production/private signing keys
-- Sigstore keyless signing, cosign signing/verification, Rekor upload, certificate issuance, or transparency-log inclusion
 - DSSE envelope generation or verification
 - in-toto statement generation or verification
 - SLSA level, SLSA compliance, supply-chain security guarantee, or production readiness
 - paid CI minutes, paid storage, wallets, or public infrastructure provisioning
 
-Allowed claim: the project has hosted CI for local validation plus a local synthetic schema/fixture for CI status and artifact provenance, and tests validate internal consistency and non-claim flags.
+Loop 40 allowed claim after the updated CI workflow passes on `main`: GitHub Actions generated keyless artifact attestations for the named subject files using GitHub OIDC and GitHub's artifact attestation service. This is hosted workflow evidence, not yet imported into the local registry provenance fixture as a replacement for the synthetic fields.
+
+Still not allowed claim: the registry fixture itself is signed, the project is production supply-chain secure, consumers have verified the attestations, a custom in-toto policy was enforced, paid/private infrastructure was used, or a production readiness guarantee exists.
 
 Loop 16 allowed claim: `verification_states[]` consistently labels CI/provenance scopes as synthetic or live-unverified until real hosted CI/signing/verifier evidence exists.
 
-Not allowed claim: the artifact is signed, SLSA-compliant, Sigstore-verified, in-toto-verified, backed by a real provenance attestation, secured by production keys, or suitable for production supply-chain trust.
+Not allowed claim for local registry fields until a later import loop: the artifact's registry provenance object is SLSA-compliant, Sigstore-verified, in-toto-verified, backed by an imported verified provenance attestation, secured by production keys, or suitable for production supply-chain trust.
 
 ## Validation
 
