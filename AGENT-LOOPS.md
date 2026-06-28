@@ -542,7 +542,8 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 - Milestone 1 is complete as a reproducible, evidence-scoped static prototype with hosted local-verification CI passing on `main`.
 - A prototype-labeled public Milestone 1 update was posted to GitHub Discussion #7.
 - Use the approval-bounded next-loop controller for recurring safe verification/reporting: `npm run next:loop` locally or the manual `next-loop-controller` GitHub Actions workflow.
-- Stop at the explicit-target boundary before live IPFS daemon/add/fetch/gateway checks, paid/wallet storage lanes, repeated/broader Radicle public-network checks, new Nostr publish/readback, optional disposable/keyless signing evidence, direct outreach, or stronger claims.
+- Live IPFS, Radicle, Nostr, and signing/provenance actions are approved as of 2026-06-28 when they stay free, disposable or project-scoped, low-volume, secret-free, and evidence-labeled.
+- Stop before spending, wallets, paid infrastructure, production/private personal keys, direct outreach, persistent public seed/background services, or stronger durability/censorship/security/SLSA/production-readiness claims unless separately approved.
 
 ## Loop 38: Approval-bounded next-loop controller
 
@@ -551,3 +552,11 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as a repo-contained controller. Added `fixtures/next-loop-controller.json`, `scripts/next_loop_controller.py`, `docs/autonomy/README.md`, npm scripts `next:loop`/`next:check`, tests, and manual GitHub Actions workflow `.github/workflows/next-loop.yml`.
 
 **Gate preserved:** The controller runs one iteration per invocation. It may check worktree state, run local verification, inventory live-gate tooling without live actions, and draft `docs/autonomy/next-loop-report.md`. It does not auto-commit, push, publish, sign, spend, contact people, use wallets or production/private personal keys, or run live IPFS/Nostr/Radicle actions without a separate explicit target.
+
+## Loop 39: Standing live-action approval recorded
+
+**Goal:** Convert Eric's broad live-action approval into precise controller rules without removing cost, key, outreach, persistence, or claim-scope safety boundaries.
+
+**Current result:** Complete as `fixtures/next-loop-controller.json`, controller report wording, autonomy docs, status docs, and tests. Live IPFS, Radicle, Nostr, and signing/provenance actions are now approved when free, disposable or project-scoped, low-volume, secret-free, and evidence-labeled.
+
+**Gate preserved:** No live protocol/storage/signing action was executed in Loop 39. Spending, wallets, paid infrastructure, production/private personal keys, direct outreach, persistent public seed/background services, and stronger durability/censorship/security/SLSA/production-readiness claims remain separately gated.

@@ -81,8 +81,14 @@ def summarize_gates(inventory: dict, config: dict) -> list[str]:
         lines.append(f"- `{group_name}`: available tools: {available_text}; gate: {group.get('next_gate')}")
 
     lines.append("")
-    lines.append("Blocked without explicit target:")
-    for gate in config["blocked_without_explicit_target"]:
+    lines.append("Approved live action scope:")
+    standing_approval = config.get("standing_live_approval", {})
+    for action in standing_approval.get("approved_live_action_scope", []):
+        lines.append(f"- `{action['id']}`: {action['scope']}")
+
+    lines.append("")
+    lines.append("Still blocked without separate approval:")
+    for gate in config["blocked_without_separate_approval"]:
         lines.append(f"- `{gate['id']}`: {gate['requires']}")
     return lines
 
@@ -146,9 +152,9 @@ def build_report(config: dict, verification: dict | None, plan_only: bool, dirty
             "",
             "## Next Logical Step",
             "",
-            "Keep looping through safe verification/reporting with this controller. Choose one explicit target before moving into live IPFS/storage, broader Radicle public-network checks, new Nostr publish/readback, signing/provenance, spending, direct outreach, or stronger claims.",
+            "Keep looping through safe verification/reporting with this controller. Live IPFS, Radicle, Nostr, and signing actions are approved when they stay free, disposable or project-scoped, low-volume, secret-free, and evidence-labeled.",
             "",
-            "No live IPFS daemon/add/fetch/gateway/pinning, Nostr publish/readback, Radicle public-network action, signing action, wallet, paid infrastructure, production/private personal key use, direct outreach, or stronger durability/censorship/security/SLSA/production-readiness claim was performed by this controller.",
+            "Still stop before spending, wallets, paid infrastructure, production/private personal key use, direct outreach, persistent background services, or stronger durability/censorship/security/SLSA/production-readiness claims unless separate approval is recorded.",
         ]
     )
     return "\n".join(lines) + "\n"

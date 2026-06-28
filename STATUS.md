@@ -906,13 +906,21 @@ Outputs:
 
 Gate preserved: Loop 38 does not auto-commit, push, publish, sign, spend, contact people, use wallets or production/private personal keys, or run live IPFS/Nostr/Radicle actions. It stops before stronger durability, censorship-resistance, security, SLSA, broad-availability, or production-readiness claims unless a future explicit target is recorded.
 
+### Loop 39: Standing live-action approval recorded
+
+Status: **complete as controller permission update; no live protocol/storage/signing action executed in this loop**.
+
+Eric stated on 2026-06-28: "For what its worth I am totally ok with live IPFS/Radicle/Nostr/signing actions." The controller now records that standing approval for free, disposable or project-scoped, low-volume, secret-free, evidence-labeled live IPFS, Radicle, Nostr, and signing/provenance actions.
+
+Gate preserved: Spending, wallets, paid infrastructure, production/private personal keys, direct outreach, persistent public seed/background services, and stronger durability/censorship/security/SLSA/broad-availability/production-readiness claims still require separate approval.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
 - Research must separate observed facts from recommendations.
 - Public building is approved for this project in the current all-night controller run: GitHub publishing/pushes, public project updates, and public collaboration surfaces are allowed when accurate, non-spammy, and labeled as research/prototype work.
-- No spending.
-- No production/private keys for protocol actions.
+- No spending unless separately approved.
+- No production/private keys for protocol actions unless separately approved.
 - No unsupported production/security/censorship-proof claims.
 - Local commits and public GitHub pushes are allowed after tests/preflight pass.
 
@@ -928,7 +936,7 @@ Gate preserved: Loop 38 does not auto-commit, push, publish, sign, spend, contac
 ## Current architecture recommendation
 
 - Keep the local registry JSON as the canonical control-plane object and the static renderer as the first user-visible surface.
-- Treat all current Nostr, Radicle, IPFS, ForgeFed, and provenance data as fixtures/mappings unless a future loop records live command/network verification.
+- Treat current Nostr, Radicle, IPFS, ForgeFed, and provenance data as fixtures/mappings unless a loop records live command/network verification. As of Loop 39, free/disposable/project-scoped live IPFS, Radicle, Nostr, and signing/provenance actions are approved.
 - Use the completed local NIP-34 parser/conformance adapter, repository state/status fixture, local NIP-01 conformance reports, adapter verification-state exports, and rendered fixture-adapter/conformance/verification sections as the seam for future Nostr UI/import work, while keeping relay publishing behind disposable-key and explicit relay gates.
 - Use the completed safe live-gated replay plan/checklist as the prerequisite gate for Radicle/Nostr live verification. As of Loop 35, `rad` and `nak` are installed user-locally, a disposable project Nostr key exists outside the repo, a Radicle temporary-`RAD_HOME` disposable private replay succeeded locally, Nostr selected-relay publish/readback has been executed for one prototype event, and one disposable public Radicle seed/clone/readback smoke succeeded for exact RID `rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa`.
 - Treat Radicle as verified only for (a) the narrow disposable private local replay path and (b) the exact Loop 34 disposable public seed/clone/readback smoke; do not claim durable availability, censorship resistance, security, global replication, identity trust, production readiness, full Radicle compatibility, or broad Radicle network availability.
@@ -938,7 +946,7 @@ Gate preserved: Loop 38 does not auto-commit, push, publish, sign, spend, contac
 
 ## Next recommended loop
 
-**Next:** Use `npm run next:loop` locally or the manual `next-loop-controller` GitHub Actions workflow for recurring safe verification/reporting. The controller stops at the same explicit-target boundary before further live storage (IPFS daemon/add/fetch/gateway/pinning/wallet), repeated or broader Radicle public-network testing, new Nostr publish/readback, signing/provenance action, spending, direct outreach, or stronger durability/censorship/security/production claims.
+**Next:** Use `npm run next:loop` locally or the manual `next-loop-controller` GitHub Actions workflow for recurring verification/reporting. The controller may proceed with free/disposable/project-scoped live IPFS, Radicle, Nostr, and signing/provenance actions, while still stopping before spending, wallets, paid infrastructure, production/private personal keys, direct outreach, persistent background services, or stronger durability/censorship/security/production claims.
 
 Recent completed loops:
 
@@ -949,6 +957,7 @@ Recent completed loops:
 - Loop 37: public Milestone 1 update — complete as GitHub Discussion #7: https://github.com/redclawanon-rgb/decentralized-forge/discussions/7; no new live protocol/storage/signing action.
 
 - Loop 38: approval-bounded next-loop controller - complete as config, script, docs, tests, npm scripts, and manual GitHub Actions workflow; no background daemon or live action.
+- Loop 39: standing live-action approval recorded - complete as controller/status/test updates; no live protocol/storage/signing action executed in this loop.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

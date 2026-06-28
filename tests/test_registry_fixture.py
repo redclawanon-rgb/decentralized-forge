@@ -161,16 +161,26 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertEqual(controller["mode"], "approval-bounded")
         self.assertEqual(controller["max_iterations_per_run"], 1)
         self.assertIn("run_local_verification_suite", controller["approved_safe_actions"])
+        self.assertEqual(controller["standing_live_approval"]["approved_by"], "user_chat_2026-06-28")
 
-        blocked = {gate["id"]: gate["requires"] for gate in controller["blocked_without_explicit_target"]}
+        approved_live = {
+            action["id"]: action["scope"]
+            for action in controller["standing_live_approval"]["approved_live_action_scope"]
+        }
+        for approved_gate in [
+            "live_ipfs_storage_free_project_scoped",
+            "radicle_disposable_public_network_checks",
+            "nostr_disposable_publish_readback",
+            "signing_provenance_disposable_or_keyless_test",
+        ]:
+            self.assertIn(approved_gate, approved_live)
+
+        blocked = {gate["id"]: gate["requires"] for gate in controller["blocked_without_separate_approval"]}
         for required_gate in [
-            "live_ipfs_storage",
-            "broader_radicle_public_network",
-            "nostr_publish_or_extra_readback",
-            "signing_provenance",
             "spending_or_paid_infrastructure",
             "production_private_keys",
             "direct_outreach",
+            "persistent_public_seed_or_background_service",
             "stronger_claims",
         ]:
             self.assertIn(required_gate, blocked)
@@ -196,8 +206,10 @@ class RegistryFixtureTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("Next Loop Controller Report", result.stdout)
-        self.assertIn("Blocked without explicit target", result.stdout)
-        self.assertIn("No live IPFS daemon", result.stdout)
+        self.assertIn("Approved live action scope", result.stdout)
+        self.assertIn("Still blocked without separate approval", result.stdout)
+        self.assertIn("Live IPFS, Radicle, Nostr, and signing actions are approved", result.stdout)
+        self.assertIn("Still stop before spending", result.stdout)
         combined = result.stdout.lower()
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, combined)

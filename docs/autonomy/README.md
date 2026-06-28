@@ -9,7 +9,9 @@ It may:
 - inventory live-gate tooling without live actions;
 - draft a next-loop report.
 
-It must not perform live IPFS daemon/add/fetch/gateway/pinning work, new Nostr publish/readback work, broader Radicle public-network checks, signing/provenance actions, spending, wallet use, paid infrastructure, production/private personal key use, direct outreach, or stronger durability/censorship/security/SLSA/production-readiness claims without a separate explicit target.
+As of the 2026-06-28 user chat approval recorded in `fixtures/next-loop-controller.json`, live IPFS, Radicle, Nostr, and signing/provenance actions are approved when they stay free, disposable or project-scoped, low-volume, secret-free, and evidence-labeled.
+
+It must not perform spending, wallet use, paid infrastructure, production/private personal key use, direct outreach, persistent public seed/background service operation, or stronger durability/censorship/security/SLSA/production-readiness claims without separate approval.
 
 Run locally:
 
