@@ -1,0 +1,46 @@
+{
+  "artifact_cids": [],
+  "artifact_names": [
+    "portable-lab-placeholder.txt"
+  ],
+  "clone_transports": [
+    "git",
+    "other"
+  ],
+  "counts": {
+    "artifacts": 1,
+    "ci_checks": 0,
+    "clone_urls": 2,
+    "issues": 1,
+    "maintainers": 1,
+    "patches": 1,
+    "releases": 1,
+    "verification_states": 4
+  },
+  "non_claims": {
+    "censorship_resistance_verified": false,
+    "durable_storage_verified": false,
+    "production_ready": false,
+    "security_guarantee": false
+  },
+  "project": {
+    "default_branch": "main",
+    "id": "portable-lab",
+    "name": "Portable Lab Registry Fixture"
+  },
+  "release_versions": [
+    "0.0.1-portable"
+  ],
+  "schema_version": "decentralized-forge.registry-summary.v1",
+  "source": "fixtures/portable-lab.registry.json",
+  "verification": {
+    "by_state": {
+      "live-unverified": 2,
+      "local-fixture": 1,
+      "synthetic-fixture": 1
+    },
+    "live_verified": 0,
+    "synthetic": 1,
+    "total": 4
+  }
+}

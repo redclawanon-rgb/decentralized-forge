@@ -5,6 +5,7 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "verify:local": "python scripts/forge_registry.py verify-local",
     "verify:car-cid": "node scripts/verify_car_cid_fixture.mjs"
   },
   "repository": {

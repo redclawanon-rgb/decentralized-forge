@@ -1,0 +1,69 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: local verification suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Validate JSON fixtures
+        run: |
+          python -m json.tool schemas/project-registry.schema.json
+          python -m json.tool fixtures/example-project.registry.json
+          python -m json.tool fixtures/portable-lab.registry.json
+          python -m json.tool fixtures/radicle-backed-project.registry.json
+          python -m json.tool fixtures/nostr-repo-announcement.json
+          python -m json.tool fixtures/nostr-collaboration-events.json
+          python -m json.tool fixtures/nostr-repo-state-status.json
+          python -m json.tool fixtures/live-adapter-replay-checklist.json
+          python -m json.tool fixtures/live-evidence-index.json
+
+      - name: Validate NIP-34 adapter export
+        run: python scripts/nip34_adapter.py fixtures/nostr-repo-announcement.json fixtures/nostr-collaboration-events.json fixtures/nostr-repo-state-status.json
+
+      - name: Verify static artifact freshness
+        run: python scripts/preflight_static_artifact.py
+
+      - name: Verify reusable registry CLI
+        run: |
+          python scripts/forge_registry.py validate fixtures/example-project.registry.json fixtures/portable-lab.registry.json
+          python scripts/forge_registry.py render fixtures/portable-lab.registry.json output/portable-lab.html
+          python scripts/forge_registry.py export-summary fixtures/example-project.registry.json output/demo-project.summary.json
+          python scripts/forge_registry.py export-summary fixtures/portable-lab.registry.json output/portable-lab.summary.json
+
+      - name: Inventory live gates without live actions
+        run: python scripts/live_gate_inventory.py
+
+      - name: Run unit tests
+        run: python -m unittest discover -s tests
+
+      - name: Verify local CAR/CID fixture
+        run: npm run verify:car-cid
+
+      - name: Verify worktree stays clean
+        run: git diff --exit-code

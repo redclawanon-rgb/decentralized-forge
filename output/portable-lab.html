@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Portable Lab Registry Fixture</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 1000px; margin: 2rem auto; line-height: 1.5; padding: 0 1rem; }
+    code { background: #f4f4f4; padding: 0.1rem 0.25rem; }
+    section { border-top: 1px solid #ddd; margin-top: 1.5rem; padding-top: 1rem; }
+    .notice { background: #fff8d6; border: 1px solid #eadb8b; padding: 0.75rem; }
+    .artifact { border: 1px solid #ddd; border-radius: 0.4rem; padding: 1rem; margin: 0.75rem 0; }
+    .metadata { display: grid; grid-template-columns: minmax(10rem, 16rem) 1fr; gap: 0.35rem 0.75rem; }
+    .metadata dt { font-weight: 700; }
+    .metadata dd { margin: 0; overflow-wrap: anywhere; }
+    .flag { border-radius: 999px; padding: 0.05rem 0.5rem; font-weight: 700; }
+    .flag.yes { background: #e4f7e7; color: #126422; }
+    .flag.no { background: #f8e1df; color: #8b1c10; }
+    .flag.unknown { background: #eee; color: #333; }
+    .verification-summary { border: 1px solid #d7e0ef; border-radius: 0.4rem; padding: 0.75rem; margin: 0.75rem 0; background: #f8fbff; }
+    .summary-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0; margin: 0.4rem 0 0.8rem; list-style: none; }
+    .summary-chip { border: 1px solid #ddd; border-radius: 999px; padding: 0.15rem 0.6rem; background: #fff; }
+    .summary-chip.state-local-fixture, .verification-state-local-fixture { border-color: #9cc3ff; }
+    .summary-chip.state-source-inspected-mapping, .verification-state-source-inspected-mapping { border-color: #b49cff; }
+    .summary-chip.state-synthetic-fixture, .verification-state-synthetic-fixture { border-color: #f0bd65; }
+    .summary-chip.state-live-unverified, .verification-state-live-unverified { border-color: #d98b7f; }
+    .summary-chip.state-live-verified, .verification-state-live-verified { border-color: #73bf7b; }
+    .verification-state { border-left: 0.25rem solid #ddd; padding-left: 0.75rem; }
+  </style>
+</head>
+<body>
+  <h1>Portable Lab Registry Fixture</h1>
+  <p>A second local-only fixture used to prove registry tooling can validate and export another project without demo-specific code.</p>
+  <p class="notice"><strong>Prototype boundary:</strong> this static page renders local registry fixture data. Synthetic CI/provenance, unsigned artifacts, and substrate hints are shown explicitly; the page does not claim production readiness, live pinning, real Sigstore/in-toto verification, Rekor upload, SLSA compliance, or public CI status unless those fields are verified separately.</p>
+  <p><strong>Project ID:</strong> <code>portable-lab</code><br>
+     <strong>Default branch:</strong> <code>main</code><br>
+     <strong>Registry updated:</strong> <code>2026-06-28T00:00:00Z</code></p>
+
+  <section><h2>Maintainers</h2><ul>
+  <li><strong>Portable Fixture Maintainer</strong> — did: <code>did:example:portable-lab-fixture</code> (owner)</li>
+</ul></section>
+  <section><h2>Clone URLs</h2><ul>
+  <li><strong>git</strong>: <code>file://fixtures/portable-lab.registry.json</code> <em>primary</em></li>
+  <li><strong>other</strong>: <code>urn:decentralized-forge:portable-lab</code></li>
+</ul></section>
+  <section><h2>Issues</h2><ul>
+  <li><strong>PL-1</strong> [open] Confirm non-demo registry export<br>Keep a second fixture in the repository so CLI validation and exports are not tied to the demo project.</li>
+</ul></section>
+  <section><h2>Patches / PRs</h2><ul>
+  <li><strong>PL-PATCH-1</strong> [proposed] Add portable export summary<br>Synthetic patch record for second-fixture collaboration coverage; no live patch federation is claimed.</li>
+</ul></section>
+  <section><h2>Releases</h2><ul>
+  <li><h3>0.0.1-portable</h3><p>tag <code>v0.0.1-portable</code></p><ul>
+  <li><article class="artifact"><h4>portable-lab-placeholder.txt</h4><dl class="metadata"><dt>Media type</dt><dd><code>text/plain</code></dd><dt>Size bytes</dt><dd><code>0</code></dd><dt>URI</dt><dd><code>file://output/portable-lab-placeholder.txt</code></dd><dt>SHA-256</dt><dd><code>2222222222222222222222222222222222222222222222222222222222222222</code></dd><dt>CID</dt><dd><em>not listed</em></dd><dt>Signature</dt><dd><code>unsigned-fixture</code></dd></dl><h5>Artifact availability</h5><dl class="metadata"><dt>Local fixture available</dt><dd><span class="flag no">no</span></dd><dt>Pinned</dt><dd><span class="flag no">no</span></dd><dt>Live IPFS verified</dt><dd><span class="flag no">no</span></dd><dt>Paid storage</dt><dd><span class="flag no">no</span></dd><dt>Durability claim</dt><dd><span class="flag no">no</span></dd><dt>Availability notes</dt><dd>Synthetic non-byte-backed placeholder for second-fixture parser coverage only; no artifact file, CID, pin, paid storage, wallet, or durability claim exists.</dd></dl><h5>Content addresses</h5><p><em>None listed.</em></p><h5>Provenance / attestation</h5><dl class="metadata"><dt>Attestation fixture</dt><dd><code>absent</code></dd></dl><p><em>None listed.</em></p></article></li>
+</ul></li>
+</ul></section>
+  <section><h2>CI / provenance checks</h2><p><em>None listed.</em></p></section>
+  <section><h2>Verification states</h2><p class="notice"><strong>Verification labels:</strong> these records separate local fixtures, source-inspected mappings, synthetic fixtures, live-unverified scopes, and live-verified evidence. A scope is not live-verified unless its row says so explicitly.</p><div class="verification-summary registry-verification-summary"><h3>Registry verification states summary</h3><dl class="metadata"><dt>Verification row count</dt><dd><code>4</code></dd><dt>Live-verified row count</dt><dd><code>0</code></dd><dt>Live-unverified or local row count</dt><dd><code>4</code></dd><dt>Synthetic row count</dt><dd><code>1</code></dd><dt>Non-synthetic row count</dt><dd><code>3</code></dd></dl><h4>Counts by state</h4><ul class="summary-chips">
+  <li class="summary-chip state-local-fixture"><span class="chip-label">local-fixture</span>: <strong>1</strong></li>
+  <li class="summary-chip state-synthetic-fixture"><span class="chip-label">synthetic-fixture</span>: <strong>1</strong></li>
+  <li class="summary-chip state-live-unverified"><span class="chip-label">live-unverified</span>: <strong>2</strong></li>
+</ul><h4>Counts by live verification flag</h4><ul class="summary-chips">
+  <li class="summary-chip live-live-verified-false"><span class="chip-label">live_verified=false</span>: <strong>4</strong></li>
+</ul><h4>Counts by synthetic flag</h4><ul class="summary-chips">
+  <li class="summary-chip synthetic-synthetic-true"><span class="chip-label">synthetic=true</span>: <strong>1</strong></li>
+  <li class="summary-chip synthetic-synthetic-false"><span class="chip-label">synthetic=false</span>: <strong>3</strong></li>
+</ul><h4>Claim-boundary summary</h4><ul class="summary-chips">
+  <li class="summary-chip boundary-no-radicle-live-mapping--seed--clone--or-network-availability-claim-for-this-fixture"><span class="chip-label">No Radicle live mapping, seed, clone, or network availability claim for this fixture.</span>: <strong>1</strong></li>
+  <li class="summary-chip boundary-no-hosted-ci--signing--sigstore--in-toto--rekor--slsa--or-public-status-claim"><span class="chip-label">No hosted CI, signing, Sigstore, in-toto, Rekor, SLSA, or public status claim.</span>: <strong>1</strong></li>
+  <li class="summary-chip boundary-parser-coverage-only--no-local-artifact-bytes--cid--ipfs-add-fetch--pin--paid-storage--or-durability-claim"><span class="chip-label">Parser coverage only; no local artifact bytes, CID, IPFS add/fetch, pin, paid storage, or durability claim.</span>: <strong>1</strong></li>
+  <li class="summary-chip boundary-second-local-registry-fixture-only--no-live-protocol--durable-storage--signing--or-production-claim"><span class="chip-label">Second local registry fixture only; no live protocol, durable storage, signing, or production claim.</span>: <strong>1</strong></li>
+</ul></div><h3>Registry verification rows grouped by state</h3><div class="verification-state-group verification-state-group-local-fixture"><h4>local-fixture (1)</h4><ul>
+  <li><article class="verification-state verification-state-local-fixture"><dl class="metadata"><dt>Scope</dt><dd><code>registry.renderer</code></dd><dt>State</dt><dd><code>local-fixture</code></dd><dt>Live verified</dt><dd><span class="flag no">no</span></dd><dt>Synthetic</dt><dd><span class="flag no">no</span></dd><dt>Evidence</dt><dd>fixtures/portable-lab.registry.json rendered by scripts/forge_registry.py and covered by tests</dd><dt>Claim boundary</dt><dd>Second local registry fixture only; no live protocol, durable storage, signing, or production claim.</dd><dt>Last checked</dt><dd><code>2026-06-28T00:00:00Z</code></dd><dt>Notes</dt><dd>Exists to prove reusable tooling over a non-demo registry object.</dd></dl></article></li>
+</ul></div><div class="verification-state-group verification-state-group-synthetic-fixture"><h4>synthetic-fixture (1)</h4><ul>
+  <li><article class="verification-state verification-state-synthetic-fixture"><dl class="metadata"><dt>Scope</dt><dd><code>artifact-metadata.ipfs</code></dd><dt>State</dt><dd><code>synthetic-fixture</code></dd><dt>Live verified</dt><dd><span class="flag no">no</span></dd><dt>Synthetic</dt><dd><span class="flag yes">yes</span></dd><dt>Evidence</dt><dd>Synthetic placeholder artifact metadata in fixtures/portable-lab.registry.json.</dd><dt>Claim boundary</dt><dd>Parser coverage only; no local artifact bytes, CID, IPFS add/fetch, pin, paid storage, or durability claim.</dd><dt>Last checked</dt><dd><code>2026-06-28T00:00:00Z</code></dd><dt>Notes</dt><dd>Real artifact metadata remains covered by fixtures/example-project.registry.json.</dd></dl></article></li>
+</ul></div><div class="verification-state-group verification-state-group-live-unverified"><h4>live-unverified (2)</h4><ul>
+  <li><article class="verification-state verification-state-live-unverified"><dl class="metadata"><dt>Scope</dt><dd><code>radicle.mapping</code></dd><dt>State</dt><dd><code>live-unverified</code></dd><dt>Live verified</dt><dd><span class="flag no">no</span></dd><dt>Synthetic</dt><dd><span class="flag no">no</span></dd><dt>Evidence</dt><dd>No Radicle identity or RID is attached to the portable-lab fixture.</dd><dt>Claim boundary</dt><dd>No Radicle live mapping, seed, clone, or network availability claim for this fixture.</dd><dt>Last checked</dt><dd><code>2026-06-28T00:00:00Z</code></dd><dt>Notes</dt><dd>The fixture intentionally exercises non-Radicle registry portability.</dd></dl></article></li>
+  <li><article class="verification-state verification-state-live-unverified"><dl class="metadata"><dt>Scope</dt><dd><code>ci.provenance</code></dd><dt>State</dt><dd><code>live-unverified</code></dd><dt>Live verified</dt><dd><span class="flag no">no</span></dd><dt>Synthetic</dt><dd><span class="flag no">no</span></dd><dt>Evidence</dt><dd>No CI/provenance rows are attached to the portable-lab fixture.</dd><dt>Claim boundary</dt><dd>No hosted CI, signing, Sigstore, in-toto, Rekor, SLSA, or public status claim.</dd><dt>Last checked</dt><dd><code>2026-06-28T00:00:00Z</code></dd><dt>Notes</dt><dd>Synthetic provenance remains isolated to the demo fixture.</dd></dl></article></li>
+</ul></div></section>
+  
+  <section><h2>Protocol substrate details</h2><ul>
+  <li><strong>forgefed</strong><dl class="metadata"><dt>actor</dt><dd><code>https://forge.example.invalid/actors/portable-lab</code></dd><dt>status</dt><dd><code>mapping-only-no-public-actor</code></dd></dl></li>
+  <li><strong>ipfs</strong><dl class="metadata"><dt>artifact_cids</dt><dd><code>[]</code></dd><dt>cid_status</dt><dd><code>no-artifact-cid</code></dd><dt>durability_claim</dt><dd><span class="flag no">no</span></dd><dt>live_ipfs_verified</dt><dd><span class="flag no">no</span></dd><dt>paid_storage</dt><dd><span class="flag no">no</span></dd><dt>pinning_status</dt><dd><code>not-pinned</code></dd></dl></li>
+  <li><strong>sigstore_slsa</strong><dl class="metadata"><dt>private_keys_used</dt><dd><span class="flag no">no</span></dd><dt>production_claim</dt><dd><code>none</code></dd><dt>provenance_status</dt><dd><code>absent</code></dd><dt>real_cosign_verified</dt><dd><span class="flag no">no</span></dd><dt>real_in_toto_verified</dt><dd><span class="flag no">no</span></dd><dt>real_sigstore_verified</dt><dd><span class="flag no">no</span></dd><dt>rekor_uploaded</dt><dd><span class="flag no">no</span></dd><dt>release_signature_status</dt><dd><code>absent</code></dd><dt>slsa_level_claimed</dt><dd><span class="flag no">no</span></dd></dl></li>
+</ul></section>
+  
+  <section><h2>Signature status</h2><p><code>{&quot;algorithm&quot;: &quot;none&quot;, &quot;status&quot;: &quot;unsigned-fixture&quot;, &quot;value&quot;: &quot;&quot;}</code></p></section>
+</body>
+</html>

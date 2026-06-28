@@ -12,10 +12,13 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import nip34_adapter
+import forge_registry
+import live_gate_inventory
 import preflight_static_artifact
 
 SCHEMA_PATH = ROOT / "schemas" / "project-registry.schema.json"
 FIXTURE_PATH = ROOT / "fixtures" / "example-project.registry.json"
+PORTABLE_FIXTURE_PATH = ROOT / "fixtures" / "portable-lab.registry.json"
 RADICLE_FIXTURE_PATH = ROOT / "fixtures" / "radicle-backed-project.registry.json"
 NOSTR_REPO_FIXTURE_PATH = ROOT / "fixtures" / "nostr-repo-announcement.json"
 NOSTR_COLLAB_FIXTURE_PATH = ROOT / "fixtures" / "nostr-collaboration-events.json"
@@ -24,10 +27,13 @@ NOSTR_LIVE_READBACK_FIXTURE_PATH = ROOT / "fixtures" / "nostr-live-readback-even
 LIVE_REPLAY_CHECKLIST_PATH = ROOT / "fixtures" / "live-adapter-replay-checklist.json"
 LIVE_EVIDENCE_INDEX_PATH = ROOT / "fixtures" / "live-evidence-index.json"
 LOCAL_RELEASE_ARTIFACT_PATH = ROOT / "fixtures" / "local-release-artifact.txt"
-FIXTURE_PATHS = [FIXTURE_PATH, RADICLE_FIXTURE_PATH]
+FIXTURE_PATHS = [FIXTURE_PATH, PORTABLE_FIXTURE_PATH, RADICLE_FIXTURE_PATH]
 RENDERER = ROOT / "scripts" / "render_project_page.py"
 STATIC_PREFLIGHT = ROOT / "scripts" / "preflight_static_artifact.py"
 OUTPUT_DEMO_HTML = ROOT / "output" / "demo-project.html"
+OUTPUT_PORTABLE_HTML = ROOT / "output" / "portable-lab.html"
+OUTPUT_DEMO_SUMMARY = ROOT / "output" / "demo-project.summary.json"
+OUTPUT_PORTABLE_SUMMARY = ROOT / "output" / "portable-lab.summary.json"
 CIDV1_BASE32_RE = re.compile(r"^b[a-z2-7]{20,}$")
 
 
@@ -35,6 +41,7 @@ class RegistryFixtureTests(unittest.TestCase):
     def setUp(self):
         self.schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
         self.fixture = json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
+        self.portable_fixture = json.loads(PORTABLE_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.radicle_fixture = json.loads(RADICLE_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.nostr_repo_fixture = json.loads(NOSTR_REPO_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.nostr_collab_fixture = json.loads(NOSTR_COLLAB_FIXTURE_PATH.read_text(encoding="utf-8"))
@@ -100,6 +107,46 @@ class RegistryFixtureTests(unittest.TestCase):
         for fixture in self.fixtures:
             self.assertIsInstance(fixture, dict)
             self.assertEqual(fixture["schema_version"], "decentralized-forge.project-registry.v1")
+
+    def test_forge_registry_cli_exports_deterministic_summaries(self):
+        demo_summary = forge_registry.registry_summary(self.fixture, FIXTURE_PATH)
+        portable_summary = forge_registry.registry_summary(self.portable_fixture, PORTABLE_FIXTURE_PATH)
+        self.assertEqual(demo_summary, json.loads(OUTPUT_DEMO_SUMMARY.read_text(encoding="utf-8")))
+        self.assertEqual(portable_summary, json.loads(OUTPUT_PORTABLE_SUMMARY.read_text(encoding="utf-8")))
+        self.assertEqual(portable_summary["project"]["id"], "portable-lab")
+        self.assertEqual(portable_summary["counts"]["issues"], 1)
+        self.assertEqual(portable_summary["counts"]["patches"], 1)
+        self.assertEqual(portable_summary["counts"]["artifacts"], 1)
+        self.assertEqual(portable_summary["counts"]["verification_states"], 4)
+        self.assertFalse(portable_summary["non_claims"]["production_ready"])
+
+    def test_forge_registry_cli_renders_second_fixture_without_demo_adapters(self):
+        html = OUTPUT_PORTABLE_HTML.read_text(encoding="utf-8")
+        self.assertIn("Portable Lab Registry Fixture", html)
+        self.assertIn("portable-lab", html)
+        self.assertIn("Prototype boundary", html)
+        self.assertIn("Second local registry fixture only", html)
+        self.assertNotIn("NIP-34 fixture adapter", html)
+        self.assertNotIn("Live evidence index", html)
+
+    def test_live_gate_inventory_is_read_only_and_secret_free(self):
+        payload = live_gate_inventory.inventory()
+        self.assertEqual(payload["schema_version"], "decentralized-forge.live-gate-inventory.v1")
+        self.assertEqual(payload["scope"], "local tool inventory only")
+        self.assertEqual(
+            set(payload["groups"]),
+            {"ipfs_storage", "nostr", "radicle", "signing_provenance"},
+        )
+        combined = json.dumps(payload).lower()
+        for required_non_action in [
+            "no ipfs daemon was started",
+            "no nostr event was signed",
+            "no radicle node",
+            "no signing key",
+        ]:
+            self.assertIn(required_non_action, combined)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, combined)
 
     def test_live_replay_checklist_is_secret_free_and_gated(self):
         checklist = self.live_replay_checklist

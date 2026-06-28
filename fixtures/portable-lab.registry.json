@@ -1,0 +1,151 @@
+{
+  "schema_version": "decentralized-forge.project-registry.v1",
+  "project": {
+    "id": "portable-lab",
+    "name": "Portable Lab Registry Fixture",
+    "description": "A second local-only fixture used to prove registry tooling can validate and export another project without demo-specific code.",
+    "default_branch": "main",
+    "web_urls": [
+      "file://output/portable-lab.html"
+    ]
+  },
+  "maintainers": [
+    {
+      "name": "Portable Fixture Maintainer",
+      "id_type": "did",
+      "public_id": "did:example:portable-lab-fixture",
+      "role": "owner"
+    }
+  ],
+  "clone_urls": [
+    {
+      "transport": "git",
+      "url": "file://fixtures/portable-lab.registry.json",
+      "primary": true
+    },
+    {
+      "transport": "other",
+      "url": "urn:decentralized-forge:portable-lab"
+    }
+  ],
+  "issues": [
+    {
+      "id": "PL-1",
+      "title": "Confirm non-demo registry export",
+      "status": "open",
+      "author": "did:example:portable-lab-fixture",
+      "summary": "Keep a second fixture in the repository so CLI validation and exports are not tied to the demo project."
+    }
+  ],
+  "patches": [
+    {
+      "id": "PL-PATCH-1",
+      "title": "Add portable export summary",
+      "status": "proposed",
+      "author": "did:example:portable-lab-fixture",
+      "summary": "Synthetic patch record for second-fixture collaboration coverage; no live patch federation is claimed."
+    }
+  ],
+  "releases": [
+    {
+      "version": "0.0.1-portable",
+      "tag": "v0.0.1-portable",
+      "artifacts": [
+        {
+          "name": "portable-lab-placeholder.txt",
+          "media_type": "text/plain",
+          "size_bytes": 0,
+          "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+          "hashes": {
+            "sha256": "2222222222222222222222222222222222222222222222222222222222222222"
+          },
+          "uri": "file://output/portable-lab-placeholder.txt",
+          "availability": {
+            "local_fixture": false,
+            "pinned": false,
+            "live_ipfs_verified": false,
+            "paid_storage": false,
+            "durability_claim": false,
+            "notes": "Synthetic non-byte-backed placeholder for second-fixture parser coverage only; no artifact file, CID, pin, paid storage, wallet, or durability claim exists."
+          },
+          "signature": "unsigned-fixture",
+          "attestation": "absent"
+        }
+      ]
+    }
+  ],
+  "substrates": {
+    "forgefed": {
+      "actor": "https://forge.example.invalid/actors/portable-lab",
+      "status": "mapping-only-no-public-actor"
+    },
+    "ipfs": {
+      "artifact_cids": [],
+      "cid_status": "no-artifact-cid",
+      "pinning_status": "not-pinned",
+      "live_ipfs_verified": false,
+      "paid_storage": false,
+      "durability_claim": false
+    },
+    "sigstore_slsa": {
+      "release_signature_status": "absent",
+      "provenance_status": "absent",
+      "real_sigstore_verified": false,
+      "real_cosign_verified": false,
+      "real_in_toto_verified": false,
+      "slsa_level_claimed": false,
+      "rekor_uploaded": false,
+      "private_keys_used": false,
+      "production_claim": "none"
+    }
+  },
+  "verification_states": [
+    {
+      "scope": "registry.renderer",
+      "state": "local-fixture",
+      "evidence": "fixtures/portable-lab.registry.json rendered by scripts/forge_registry.py and covered by tests",
+      "live_verified": false,
+      "synthetic": false,
+      "claim_boundary": "Second local registry fixture only; no live protocol, durable storage, signing, or production claim.",
+      "last_checked_at": "2026-06-28T00:00:00Z",
+      "notes": "Exists to prove reusable tooling over a non-demo registry object."
+    },
+    {
+      "scope": "radicle.mapping",
+      "state": "live-unverified",
+      "evidence": "No Radicle identity or RID is attached to the portable-lab fixture.",
+      "live_verified": false,
+      "synthetic": false,
+      "claim_boundary": "No Radicle live mapping, seed, clone, or network availability claim for this fixture.",
+      "last_checked_at": "2026-06-28T00:00:00Z",
+      "notes": "The fixture intentionally exercises non-Radicle registry portability."
+    },
+    {
+      "scope": "artifact-metadata.ipfs",
+      "state": "synthetic-fixture",
+      "evidence": "Synthetic placeholder artifact metadata in fixtures/portable-lab.registry.json.",
+      "live_verified": false,
+      "synthetic": true,
+      "claim_boundary": "Parser coverage only; no local artifact bytes, CID, IPFS add/fetch, pin, paid storage, or durability claim.",
+      "last_checked_at": "2026-06-28T00:00:00Z",
+      "notes": "Real artifact metadata remains covered by fixtures/example-project.registry.json."
+    },
+    {
+      "scope": "ci.provenance",
+      "state": "live-unverified",
+      "evidence": "No CI/provenance rows are attached to the portable-lab fixture.",
+      "live_verified": false,
+      "synthetic": false,
+      "claim_boundary": "No hosted CI, signing, Sigstore, in-toto, Rekor, SLSA, or public status claim.",
+      "last_checked_at": "2026-06-28T00:00:00Z",
+      "notes": "Synthetic provenance remains isolated to the demo fixture."
+    }
+  ],
+  "signature": {
+    "status": "unsigned-fixture",
+    "algorithm": "none",
+    "value": ""
+  },
+  "created_at": "2026-06-28T00:00:00Z",
+  "updated_at": "2026-06-28T00:00:00Z"
+}

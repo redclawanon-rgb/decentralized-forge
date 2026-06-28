@@ -42,6 +42,7 @@ As of Loop 35, the project has local CAR/CID fixture verification, one selected-
 
 - `.hermes/context.md` — durable project brain for agents
 - `STATUS.md` — current loop, gates, and next actions
+- `COMPLETION-CRITERIA.md` — Milestone 1 definition of done, verification commands, and gated completion lanes
 - `RESEARCH.md` — source-grounded protocol research
 - `PROTOCOL-MATRIX.md` — protocol fit/maturity comparison plus next-step decision matrix
 - `SPEC-FIRST.md` — MVP product/specification
@@ -53,9 +54,11 @@ As of Loop 35, the project has local CAR/CID fixture verification, one selected-
 - `docs/ci-provenance-model.md` — Loop 7 synthetic local CI/provenance model and no-Sigstore/no-SLSA-claim boundaries
 - `docs/public-collaboration.md` — Loop 9 public collaboration stance, first issue set, and public update draft
 - `docs/live-adapter-replay-plan.md` — Loop 20 safe live-gated Radicle/Nostr replay prerequisites, evidence checklist, rollback, and non-claim gates
+- `docs/live-completion-gates.md` — optional post-Milestone-1 live IPFS, Nostr, Radicle, and signing gates
 - `ROADMAP.md` — public prototype roadmap, verification-state labels, and collaboration tracks
 - `schemas/project-registry.schema.json` — MVP project registry schema
 - `fixtures/example-project.registry.json` — local-only demo project registry fixture
+- `fixtures/portable-lab.registry.json` — second local-only registry fixture for non-demo CLI/export coverage
 - `fixtures/live-adapter-replay-checklist.json` — secret-free replay gate/checklist state advanced through Loop 35
 - `fixtures/live-evidence-index.json` — secret-free index of Radicle local CLI replay evidence, Nostr selected-relay readback evidence, and explicit non-claims
 - `fixtures/local-release-artifact.txt` — local-only release artifact fixture with stdlib-tested SHA-256/CIDv1 metadata
@@ -65,6 +68,8 @@ As of Loop 35, the project has local CAR/CID fixture verification, one selected-
 - `scripts/render_project_page.py` — stdlib renderer for static project pages, including verification-state labels, artifact availability, content-address, CI/provenance, substrate detail sections, optional local NIP-34 fixture adapter import/display, and optional live-evidence index display
 - `scripts/preflight_static_artifact.py` — stdlib preflight for generated static artifact freshness, expected local/synthetic boundary sections, optional NIP-34 fixture sections, optional live evidence index, and selected unsupported claim phrases
 - `output/demo-project.html` — generated demo project page
+- `output/portable-lab.html` — generated second-fixture project page
+- `output/*.summary.json` — deterministic machine-readable registry summaries
 - `tests/test_registry_fixture.py` — stdlib verification tests for the registry fixture and renderer
 
 ## Local prototype usage and verification
@@ -98,6 +103,7 @@ Run the full local verification suite:
 ```sh
 python3 -m json.tool schemas/project-registry.schema.json
 python3 -m json.tool fixtures/example-project.registry.json
+python3 -m json.tool fixtures/portable-lab.registry.json
 python3 -m json.tool fixtures/radicle-backed-project.registry.json
 python3 -m json.tool fixtures/nostr-repo-announcement.json
 python3 -m json.tool fixtures/nostr-collaboration-events.json
@@ -106,6 +112,11 @@ python3 -m json.tool fixtures/live-adapter-replay-checklist.json
 python3 -m json.tool fixtures/live-evidence-index.json
 python3 scripts/nip34_adapter.py fixtures/nostr-repo-announcement.json fixtures/nostr-collaboration-events.json fixtures/nostr-repo-state-status.json
 python3 scripts/preflight_static_artifact.py
+python3 scripts/forge_registry.py validate fixtures/example-project.registry.json fixtures/portable-lab.registry.json
+python3 scripts/forge_registry.py render fixtures/portable-lab.registry.json output/portable-lab.html
+python3 scripts/forge_registry.py export-summary fixtures/example-project.registry.json output/demo-project.summary.json
+python3 scripts/forge_registry.py export-summary fixtures/portable-lab.registry.json output/portable-lab.summary.json
+python3 scripts/live_gate_inventory.py
 python3 -m unittest discover -s tests
 npm run verify:car-cid
 ```

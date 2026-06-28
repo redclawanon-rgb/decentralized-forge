@@ -1,9 +1,13 @@
 * text=auto
 
+.gitattributes text eol=lf
 *.md text eol=lf
 *.py text eol=lf
 *.mjs text eol=lf
 *.js text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
 *.txt text eol=lf
 
 # Hash-sensitive fixtures and evidence must keep stable bytes across platforms.
