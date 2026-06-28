@@ -1,6 +1,8 @@
-# CI/provenance model and fake local attestation fixture
+# CI/provenance model, hosted local checks, and fake local attestation fixture
 
 Loop 7 adds a local-only model for CI check status and release provenance so future renderers/protocol adapters can display build trust metadata without depending on paid CI, production secrets, real Sigstore, cosign, in-toto, or SLSA infrastructure.
+
+After Milestone 1 completion, the repository also has GitHub Actions CI at `.github/workflows/ci.yml`. That workflow runs the local verification suite and checks that generated artifacts stay current. It is useful hosted validation, but it does not convert the synthetic registry `ci_checks[]`, fake attestation, or provenance fields into real signing, Sigstore, in-toto, Rekor, SLSA, or supply-chain trust evidence.
 
 ## Registry fields
 
@@ -40,9 +42,8 @@ The predicate URI is intentionally under `example.invalid` and describes a fake 
 
 ## Boundaries
 
-Loop 7 does **not** perform or claim any of the following:
+Loop 7 and the Milestone 1 hosted CI workflow do **not** perform or claim any of the following:
 
-- real hosted CI execution or public commit status publication
 - CI secrets, CI tokens, deployment keys, or production/private signing keys
 - Sigstore keyless signing, cosign signing/verification, Rekor upload, certificate issuance, or transparency-log inclusion
 - DSSE envelope generation or verification
@@ -50,11 +51,11 @@ Loop 7 does **not** perform or claim any of the following:
 - SLSA level, SLSA compliance, supply-chain security guarantee, or production readiness
 - paid CI minutes, paid storage, wallets, or public infrastructure provisioning
 
-Allowed claim: the project has a local synthetic schema/fixture for CI status and artifact provenance, and stdlib tests validate internal consistency and non-claim flags.
+Allowed claim: the project has hosted CI for local validation plus a local synthetic schema/fixture for CI status and artifact provenance, and tests validate internal consistency and non-claim flags.
 
 Loop 16 allowed claim: `verification_states[]` consistently labels CI/provenance scopes as synthetic or live-unverified until real hosted CI/signing/verifier evidence exists.
 
-Not allowed claim: the artifact is signed, SLSA-compliant, Sigstore-verified, in-toto-verified, produced by real CI, secured by production keys, or suitable for production supply-chain trust.
+Not allowed claim: the artifact is signed, SLSA-compliant, Sigstore-verified, in-toto-verified, backed by a real provenance attestation, secured by production keys, or suitable for production supply-chain trust.
 
 ## Validation
 

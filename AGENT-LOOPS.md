@@ -539,4 +539,5 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 
 ## Next useful loop
 
-- Stop here until Eric supplies the next explicit approval/target. Candidate future lanes are live IPFS daemon/add/fetch/gateway checks, paid/wallet storage lanes, repeated/broader Radicle public-network checks, or a prototype-labeled public update about the exact Loop 33/34 evidence.
+- Milestone 1 is complete as a reproducible, evidence-scoped static prototype with hosted local-verification CI passing on `main`.
+- Stop here until Eric supplies the next explicit approval/target. Candidate future lanes are live IPFS daemon/add/fetch/gateway checks, paid/wallet storage lanes, repeated/broader Radicle public-network checks, optional disposable/keyless signing evidence, or a prototype-labeled public update about the exact Milestone 1 evidence.

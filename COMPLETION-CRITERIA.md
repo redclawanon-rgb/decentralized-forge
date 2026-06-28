@@ -46,27 +46,27 @@ npm run verify:car-cid
 
 ### Lane A: Reproducible Prototype
 
-Status: in progress.
+Status: complete.
 
-- Add CI for the required verification commands.
-- Keep fixture bytes stable across platforms through `.gitattributes`.
-- Keep generated HTML current with preflight.
+- CI for the required verification commands exists at `.github/workflows/ci.yml` and passed on `main` for commit `e69fd5b22e8ec27f52a11e582b705e212690a865`.
+- Fixture bytes are kept stable across platforms through `.gitattributes`.
+- Generated HTML is checked by `scripts/preflight_static_artifact.py` and the CI worktree-clean check.
 
 ### Lane B: Reusable Local Tooling
 
-Status: planned.
+Status: complete.
 
-- Add `scripts/forge_registry.py` with `validate`, `render`, `export-summary`, and `verify-local` commands.
-- Use the same validation paths as the renderer and tests.
-- Emit deterministic JSON exports for clients and downstream prototypes.
+- `scripts/forge_registry.py` provides `validate`, `render`, `export-summary`, and `verify-local` commands.
+- The CLI uses the same validation paths as the renderer and tests.
+- Deterministic JSON summaries are generated under `output/*.summary.json`.
 
 ### Lane C: Multi-Project Fixture Coverage
 
-Status: planned.
+Status: complete.
 
-- Add a second realistic registry fixture.
-- Render or export it without code changes.
-- Keep all evidence and non-claim language project-scoped.
+- `fixtures/portable-lab.registry.json` is the second registry fixture.
+- It renders to `output/portable-lab.html` and exports to `output/portable-lab.summary.json` without code changes.
+- Its evidence and non-claim language remain project-scoped.
 
 ### Lane D: Optional Live Evidence
 
@@ -83,4 +83,4 @@ Still forbidden without separate explicit approval: spending money, paid pinning
 
 ## Release Rule
 
-Milestone 1 can be marked complete only after CI passes on `main`, the README points to this file, and `STATUS.md` names the current completion state without contradicting the evidence index.
+Milestone 1 is complete as an evidence-scoped static prototype after CI passed on `main` for commit `e69fd5b22e8ec27f52a11e582b705e212690a865`, the README points to this file, and `STATUS.md` names the current completion state without contradicting the evidence index.

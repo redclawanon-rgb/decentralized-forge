@@ -2,6 +2,8 @@
 
 ## Current milestone
 
+Current completion state: **Milestone 1 complete as an evidence-scoped static prototype with hosted local-verification CI passing on `main`**. This does not claim production readiness, durable storage, censorship resistance, broad protocol availability, security guarantees, real signing, Sigstore/in-toto verification, Rekor upload, or SLSA compliance.
+
 Milestone 1 — Local registry/static forge prototype and protocol mapping.
 
 ## Current loop state
@@ -853,6 +855,26 @@ Boundaries:
 - Loop 35 performed consolidation only. No new public protocol action, IPFS/storage action, gateway check, pinning, wallet, spending, paid infrastructure, production/private personal key use, direct outreach, public update, or new cron job occurred.
 - Further live storage, repeated/broader Radicle public-network testing, public updates about Loops 33–34, or stronger durability/censorship/security/production claims require a new explicit approval/target.
 
+### Loop 36: Milestone 1 CI and completion state
+
+Status: **complete as hosted local-verification CI and Milestone 1 closure; no new live protocol/storage action**.
+
+Outputs:
+
+- `.github/workflows/ci.yml` runs the local verification suite on pushes to `main` and pull requests.
+- `scripts/forge_registry.py` provides reusable `validate`, `render`, `export-summary`, and `verify-local` commands.
+- `fixtures/portable-lab.registry.json`, `output/portable-lab.html`, and `output/*.summary.json` provide second-fixture and machine-readable export coverage.
+- `COMPLETION-CRITERIA.md` records the Milestone 1 definition of done and marks the reproducible prototype, reusable local tooling, and multi-project fixture lanes complete.
+
+Verified evidence:
+
+- Local `npm run verify:local` passed on Windows in this checkout.
+- GitHub Actions `ci` run #2 passed on `main` for commit `e69fd5b22e8ec27f52a11e582b705e212690a865`: https://github.com/redclawanon-rgb/decentralized-forge/actions/runs/28335479676
+
+Boundaries:
+
+- Hosted CI is local verification only. It does not sign artifacts, upload to Rekor, verify Sigstore/cosign/in-toto, claim SLSA compliance, publish protocol events, start IPFS/Radicle/Nostr live actions, use production/private keys, spend money, or prove durability/censorship resistance/security/production readiness.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -885,13 +907,14 @@ Boundaries:
 
 ## Next recommended loop
 
-**Next:** Loops 33–35 are complete. The next step is an explicit Eric approval/target before any further live storage (IPFS daemon/add/fetch/gateway/pinning/wallet), repeated or broader Radicle public-network testing, public update posting about these new results, or stronger durability/censorship/security/production claims.
+**Next:** Milestone 1 is complete as a reproducible, evidence-scoped static prototype. The next step is an explicit Eric approval/target before any further live storage (IPFS daemon/add/fetch/gateway/pinning/wallet), repeated or broader Radicle public-network testing, public update posting about these results, or stronger durability/censorship/security/production claims.
 
 Recent completed loops:
 
 - Loop 33: local CAR/CID fixture verification — complete as project-scoped `@ipld/car`/`multiformats` evidence in `evidence/local-car-cid-fixture-2026-06-22.json`; no live storage action.
 - Loop 34: disposable public Radicle seed/remote-clone smoke — complete as exact bounded evidence in `evidence/radicle-public-network-smoke-2026-06-22.json`; RID `rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa`; no broad durability/censorship/security/production/network-availability claim.
 - Loop 35: consolidation/report — complete as `evidence/loop35-consolidation-2026-06-22.md` plus checklist/test/context/status updates; no new live protocol/storage action, public update, or cron job.
+- Loop 36: hosted local-verification CI and Milestone 1 completion state — complete as `.github/workflows/ci.yml` plus `COMPLETION-CRITERIA.md` updates; CI passed on `main`; no signing/SLSA/live protocol/storage claim.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 
