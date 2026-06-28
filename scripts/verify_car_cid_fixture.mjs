@@ -42,6 +42,22 @@ async function readAllBlocks(carReader) {
   return blocks;
 }
 
+async function existingCreatedUtc() {
+  try {
+    const existing = JSON.parse(await readFile(evidenceUrl, 'utf8'));
+    if (
+      existing.schema_version === 'decentralized-forge.local-car-cid-fixture.v1' &&
+      existing.loop === 33 &&
+      typeof existing.created_utc === 'string'
+    ) {
+      return existing.created_utc;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
 const artifactBytes = await readFile(artifactUrl);
 const digest = await sha256.digest(artifactBytes);
 const cid = CID.create(1, raw.code, digest);
@@ -66,7 +82,7 @@ await writeFile(carUrl, carBytes);
 const evidence = {
   schema_version: 'decentralized-forge.local-car-cid-fixture.v1',
   loop: 33,
-  created_utc: new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'),
+  created_utc: (await existingCreatedUtc()) ?? new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'),
   scope: 'local CAR/CID fixture verification only',
   permission: 'Permission I approved 2026-06-22 for one local CAR/CID fixture verification loop with project-scoped lockfile-backed dev dependencies.',
   input_artifact: 'fixtures/local-release-artifact.txt',

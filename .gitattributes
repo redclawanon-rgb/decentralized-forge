@@ -1,0 +1,17 @@
+* text=auto
+
+*.md text eol=lf
+*.py text eol=lf
+*.mjs text eol=lf
+*.js text eol=lf
+*.txt text eol=lf
+
+# Hash-sensitive fixtures and evidence must keep stable bytes across platforms.
+fixtures/local-release-artifact.txt text eol=lf
+fixtures/*.json text eol=lf
+schemas/*.json text eol=lf
+evidence/*.json text eol=lf
+evidence/*.md text eol=lf
+
+# CAR fixtures are binary evidence.
+evidence/*.car binary
