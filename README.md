@@ -55,6 +55,7 @@ As of Loop 35, the project has local CAR/CID fixture verification, one selected-
 - `docs/public-collaboration.md` — Loop 9 public collaboration stance, first issue set, and public update draft
 - `docs/live-adapter-replay-plan.md` — Loop 20 safe live-gated Radicle/Nostr replay prerequisites, evidence checklist, rollback, and non-claim gates
 - `docs/live-completion-gates.md` — optional post-Milestone-1 live IPFS, Nostr, Radicle, and signing gates
+- `docs/autonomy/README.md` — approval-bounded next-loop controller usage and automation limits
 - `ROADMAP.md` — public prototype roadmap, verification-state labels, and collaboration tracks
 - `schemas/project-registry.schema.json` — MVP project registry schema
 - `fixtures/example-project.registry.json` — local-only demo project registry fixture
@@ -120,6 +121,14 @@ python3 scripts/live_gate_inventory.py
 python3 -m unittest discover -s tests
 npm run verify:car-cid
 ```
+
+To continue safe housekeeping without re-deciding the same next step each time:
+
+```sh
+npm run next:loop
+```
+
+This writes `docs/autonomy/next-loop-report.md` after running the safe verifier. The matching manual GitHub Actions workflow is `next-loop-controller`; it runs the same controller in check mode and does not commit, push, publish, sign, spend, or perform live protocol actions.
 
 The prototype is evidence-scoped: it does not run a public federation actor, spend money, use production/private personal keys, or claim production readiness. Top-level `verification_states[]` records make each scope's evidence and claim boundary explicit. CI/provenance fields and renderer sections remain synthetic/local display data unless separately verified. The NIP-34 adapter parses local dry-run fixtures and separately imports the already-recorded selected-relay readback event; it does not publish new relay events during rendering or tests. Release artifact metadata includes local hashes, CID-compatible identifiers, and a local CAR/CID readback fixture, but it is not pinned, uploaded, fetched from IPFS, wallet-backed, paid-storage-backed, or durable-storage verified.
 

@@ -6,7 +6,9 @@
   "private": true,
   "scripts": {
     "verify:local": "python scripts/forge_registry.py verify-local",
-    "verify:car-cid": "node scripts/verify_car_cid_fixture.mjs"
+    "verify:car-cid": "node scripts/verify_car_cid_fixture.mjs",
+    "next:loop": "python scripts/next_loop_controller.py --write-report",
+    "next:check": "python scripts/next_loop_controller.py --check"
   },
   "repository": {
     "type": "git",

@@ -893,6 +893,19 @@ Boundaries:
 - The update preserves narrow claims: Milestone 1 is complete only as a reproducible, evidence-scoped static prototype with hosted local-verification CI.
 - No live IPFS/storage action, new Nostr publish/readback, new Radicle public-network action, signing/provenance action, spending, paid infrastructure, production/private personal key use, direct outreach, or unsupported durability/censorship-resistance/security/SLSA/production-readiness claim occurred.
 
+### Loop 38: Approval-bounded next-loop controller
+
+Status: **complete as repo-contained safe automation; no live protocol/storage/signing action**.
+
+Outputs:
+
+- `fixtures/next-loop-controller.json` records approved safe actions and blocked live-action gates.
+- `scripts/next_loop_controller.py` runs one approval-bounded verification/reporting pass.
+- `docs/autonomy/README.md` documents local and CI usage.
+- `.github/workflows/next-loop.yml` exposes a manual GitHub Actions workflow for the same controller.
+
+Gate preserved: Loop 38 does not auto-commit, push, publish, sign, spend, contact people, use wallets or production/private personal keys, or run live IPFS/Nostr/Radicle actions. It stops before stronger durability, censorship-resistance, security, SLSA, broad-availability, or production-readiness claims unless a future explicit target is recorded.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -925,7 +938,7 @@ Boundaries:
 
 ## Next recommended loop
 
-**Next:** Milestone 1 is complete as a reproducible, evidence-scoped static prototype. The next step is an explicit Eric approval/target before any further live storage (IPFS daemon/add/fetch/gateway/pinning/wallet), repeated or broader Radicle public-network testing, public update posting about these results, or stronger durability/censorship/security/production claims.
+**Next:** Use `npm run next:loop` locally or the manual `next-loop-controller` GitHub Actions workflow for recurring safe verification/reporting. The controller stops at the same explicit-target boundary before further live storage (IPFS daemon/add/fetch/gateway/pinning/wallet), repeated or broader Radicle public-network testing, new Nostr publish/readback, signing/provenance action, spending, direct outreach, or stronger durability/censorship/security/production claims.
 
 Recent completed loops:
 
@@ -934,6 +947,8 @@ Recent completed loops:
 - Loop 35: consolidation/report — complete as `evidence/loop35-consolidation-2026-06-22.md` plus checklist/test/context/status updates; no new live protocol/storage action, public update, or cron job.
 - Loop 36: hosted local-verification CI and Milestone 1 completion state — complete as `.github/workflows/ci.yml` plus `COMPLETION-CRITERIA.md` updates; CI passed on `main`; no signing/SLSA/live protocol/storage claim.
 - Loop 37: public Milestone 1 update — complete as GitHub Discussion #7: https://github.com/redclawanon-rgb/decentralized-forge/discussions/7; no new live protocol/storage/signing action.
+
+- Loop 38: approval-bounded next-loop controller - complete as config, script, docs, tests, npm scripts, and manual GitHub Actions workflow; no background daemon or live action.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

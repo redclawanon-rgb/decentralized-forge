@@ -1,0 +1,48 @@
+{
+  "schema_version": "decentralized-forge.next-loop-controller.v1",
+  "mode": "approval-bounded",
+  "max_iterations_per_run": 1,
+  "safe_automation_enabled": true,
+  "approved_safe_actions": [
+    "check_worktree_state",
+    "run_local_verification_suite",
+    "summarize_status",
+    "inventory_live_gates_without_live_actions",
+    "draft_next_loop_report"
+  ],
+  "blocked_without_explicit_target": [
+    {
+      "id": "live_ipfs_storage",
+      "requires": "Explicit live-storage target before daemon start, add, fetch, gateway checks, pinning, wallet use, paid storage, or durability claims."
+    },
+    {
+      "id": "broader_radicle_public_network",
+      "requires": "Explicit target before repeated or broader public-network checks, persistent seed operation, external peer targeting, or stronger availability claims."
+    },
+    {
+      "id": "nostr_publish_or_extra_readback",
+      "requires": "Disposable project-scoped key target before any new publish; explicit target before extra readback probes."
+    },
+    {
+      "id": "signing_provenance",
+      "requires": "Disposable or keyless test-signing target before replacing synthetic provenance with verified signing evidence."
+    },
+    {
+      "id": "spending_or_paid_infrastructure",
+      "requires": "Separate explicit approval before paid storage, wallets, paid services, or spending."
+    },
+    {
+      "id": "production_private_keys",
+      "requires": "Separate explicit approval before production/private personal keys are used for any protocol action."
+    },
+    {
+      "id": "direct_outreach",
+      "requires": "Separate explicit approval before contacting specific people outside public project channels."
+    },
+    {
+      "id": "stronger_claims",
+      "requires": "Evidence-specific approval and proof before durability, censorship-resistance, security, SLSA, broad availability, or production-readiness claims."
+    }
+  ],
+  "report_path": "docs/autonomy/next-loop-report.md"
+}

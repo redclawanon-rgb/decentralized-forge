@@ -14,6 +14,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import nip34_adapter
 import forge_registry
 import live_gate_inventory
+import next_loop_controller
 import preflight_static_artifact
 
 SCHEMA_PATH = ROOT / "schemas" / "project-registry.schema.json"
@@ -26,6 +27,8 @@ NOSTR_STATE_STATUS_FIXTURE_PATH = ROOT / "fixtures" / "nostr-repo-state-status.j
 NOSTR_LIVE_READBACK_FIXTURE_PATH = ROOT / "fixtures" / "nostr-live-readback-events.json"
 LIVE_REPLAY_CHECKLIST_PATH = ROOT / "fixtures" / "live-adapter-replay-checklist.json"
 LIVE_EVIDENCE_INDEX_PATH = ROOT / "fixtures" / "live-evidence-index.json"
+NEXT_LOOP_CONTROLLER_PATH = ROOT / "fixtures" / "next-loop-controller.json"
+NEXT_LOOP_WORKFLOW_PATH = ROOT / ".github" / "workflows" / "next-loop.yml"
 LOCAL_RELEASE_ARTIFACT_PATH = ROOT / "fixtures" / "local-release-artifact.txt"
 FIXTURE_PATHS = [FIXTURE_PATH, PORTABLE_FIXTURE_PATH, RADICLE_FIXTURE_PATH]
 RENDERER = ROOT / "scripts" / "render_project_page.py"
@@ -49,6 +52,7 @@ class RegistryFixtureTests(unittest.TestCase):
         self.nostr_live_readback_fixture = json.loads(NOSTR_LIVE_READBACK_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.live_replay_checklist = json.loads(LIVE_REPLAY_CHECKLIST_PATH.read_text(encoding="utf-8"))
         self.live_evidence_index = json.loads(LIVE_EVIDENCE_INDEX_PATH.read_text(encoding="utf-8"))
+        self.next_loop_controller = json.loads(NEXT_LOOP_CONTROLLER_PATH.read_text(encoding="utf-8"))
         self.fixtures = [json.loads(path.read_text(encoding="utf-8")) for path in FIXTURE_PATHS]
 
     def iter_artifacts(self):
@@ -147,6 +151,64 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn(required_non_action, combined)
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, combined)
+
+    def test_next_loop_controller_is_approval_bounded(self):
+        controller = self.next_loop_controller
+        self.assertEqual(
+            controller["schema_version"],
+            "decentralized-forge.next-loop-controller.v1",
+        )
+        self.assertEqual(controller["mode"], "approval-bounded")
+        self.assertEqual(controller["max_iterations_per_run"], 1)
+        self.assertIn("run_local_verification_suite", controller["approved_safe_actions"])
+
+        blocked = {gate["id"]: gate["requires"] for gate in controller["blocked_without_explicit_target"]}
+        for required_gate in [
+            "live_ipfs_storage",
+            "broader_radicle_public_network",
+            "nostr_publish_or_extra_readback",
+            "signing_provenance",
+            "spending_or_paid_infrastructure",
+            "production_private_keys",
+            "direct_outreach",
+            "stronger_claims",
+        ]:
+            self.assertIn(required_gate, blocked)
+        combined = json.dumps(controller).lower()
+        for forbidden_default in ["auto-push", "auto-publish", "auto-commit"]:
+            self.assertNotIn(forbidden_default, combined)
+        self.assertIn("wallet", combined)
+        self.assertIn("production/private personal keys", combined)
+
+    def test_next_loop_controller_plan_is_secret_free_and_non_live(self):
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(ROOT / "scripts" / "next_loop_controller.py"),
+                "--plan-only",
+                "--allow-dirty",
+            ],
+            cwd=ROOT,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("Next Loop Controller Report", result.stdout)
+        self.assertIn("Blocked without explicit target", result.stdout)
+        self.assertIn("No live IPFS daemon", result.stdout)
+        combined = result.stdout.lower()
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, combined)
+
+    def test_next_loop_controller_workflow_is_manual_only(self):
+        workflow = NEXT_LOOP_WORKFLOW_PATH.read_text(encoding="utf-8")
+        self.assertIn("workflow_dispatch", workflow)
+        self.assertNotIn("schedule:", workflow)
+        self.assertIn("python scripts/next_loop_controller.py --check --skip-npm-ci", workflow)
+        self.assertNotIn("git push", workflow)
+        self.assertNotIn("gh discussion", workflow)
 
     def test_live_replay_checklist_is_secret_free_and_gated(self):
         checklist = self.live_replay_checklist

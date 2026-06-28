@@ -541,4 +541,13 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 
 - Milestone 1 is complete as a reproducible, evidence-scoped static prototype with hosted local-verification CI passing on `main`.
 - A prototype-labeled public Milestone 1 update was posted to GitHub Discussion #7.
-- Stop here until Eric supplies the next explicit approval/target. Candidate future lanes are live IPFS daemon/add/fetch/gateway checks, paid/wallet storage lanes, repeated/broader Radicle public-network checks, optional disposable/keyless signing evidence, or follow-up issue triage around Milestone 1 feedback.
+- Use the approval-bounded next-loop controller for recurring safe verification/reporting: `npm run next:loop` locally or the manual `next-loop-controller` GitHub Actions workflow.
+- Stop at the explicit-target boundary before live IPFS daemon/add/fetch/gateway checks, paid/wallet storage lanes, repeated/broader Radicle public-network checks, new Nostr publish/readback, optional disposable/keyless signing evidence, direct outreach, or stronger claims.
+
+## Loop 38: Approval-bounded next-loop controller
+
+**Goal:** Let safe housekeeping continue without Eric repeatedly prompting for the same next step, while preserving the live-action approval gates.
+
+**Current result:** Complete as a repo-contained controller. Added `fixtures/next-loop-controller.json`, `scripts/next_loop_controller.py`, `docs/autonomy/README.md`, npm scripts `next:loop`/`next:check`, tests, and manual GitHub Actions workflow `.github/workflows/next-loop.yml`.
+
+**Gate preserved:** The controller runs one iteration per invocation. It may check worktree state, run local verification, inventory live-gate tooling without live actions, and draft `docs/autonomy/next-loop-report.md`. It does not auto-commit, push, publish, sign, spend, contact people, use wallets or production/private personal keys, or run live IPFS/Nostr/Radicle actions without a separate explicit target.
