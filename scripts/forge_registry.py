@@ -651,6 +651,7 @@ def collect_verification_bundle_paths() -> list[Path]:
         "scripts/preflight_static_artifact.py",
         "scripts/run_radicle_fresh_readback_check.py",
         "scripts/run_radicle_project_repo_smoke.py",
+        "scripts/run_radicle_update_continuity_check.py",
         "scripts/verify_car_cid_fixture.mjs",
         "scripts/verify_helia_fixture.mjs",
         "output/forge-app.html",
@@ -1641,6 +1642,7 @@ def command_verify_local(args: argparse.Namespace) -> int:
         [sys.executable, "-m", "json.tool", "fixtures/keyless-attestation.registry-verification.json"],
         [sys.executable, "-m", "py_compile", "scripts/run_radicle_fresh_readback_check.py"],
         [sys.executable, "-m", "py_compile", "scripts/run_radicle_project_repo_smoke.py"],
+        [sys.executable, "-m", "py_compile", "scripts/run_radicle_update_continuity_check.py"],
         [
             sys.executable,
             "scripts/nip34_adapter.py",

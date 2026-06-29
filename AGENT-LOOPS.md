@@ -728,3 +728,11 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as `scripts/run_radicle_fresh_readback_check.py` plus `evidence/radicle-fresh-readback-check-2026-06-29.json` and `.md`. The script ran in a Linux Docker container with Radicle 1.9.1, created a brand-new temporary `RAD_HOME`, started a fresh node, cloned `rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr` through Radicle's normal network path without `rad node connect` or `--seed`, and verified the cloned commit matched the Loop 59 expected commit `fd3f1898d81a4b00be9095c62e3c07fc1a792a95`. The live evidence index is now loop 60 and imports the new evidence row.
 
 **Gate preserved:** This is one exact fresh-state readback observation. It does not keep a persistent seed, use production/private personal keys, spend money, use paid infrastructure, contact specific people, or claim permanent durability, censorship resistance, global replication, identity trust, security, SLSA compliance, full Radicle compatibility, or production readiness.
+
+## Loop 61: Radicle update continuity check
+
+**Goal:** Determine whether the first project RID can move forward to the current Git commit without the original disposable Loop 59 delegate state.
+
+**Current result:** Complete as `scripts/run_radicle_update_continuity_check.py` plus `evidence/radicle-update-continuity-check-2026-06-29.json` and `.md`. A fresh non-original Radicle identity cloned `rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr`, imported current source commit `00404656bcb17ad1aab241fb0ab0dd60487d9699`, pushed `main` to `rad://zWGy1Ssjb7tBbwDbdGLqeHCsUqwr/<fresh-peer-id>`, and synced with public seeds. A separate fresh readback clone still checked out the original delegate branch at `fd3f1898d81a4b00be9095c62e3c07fc1a792a95`, so canonical/default update continuity was not observed.
+
+**Gate preserved:** This is one exact update-continuity observation. It does not reuse the original delegate key, keep persistent seed state, use production/private personal keys, spend money, contact specific people, or claim canonical continuity, permanent durability, censorship resistance, global replication, identity trust, security, SLSA compliance, full Radicle compatibility, or production readiness.

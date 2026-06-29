@@ -1247,9 +1247,27 @@ Verified evidence:
 
 Gate preserved: Loop 60 is one exact fresh-state readback observation through Radicle's normal network path. It does not keep a persistent seed, use production/private personal keys, spend money, use paid infrastructure, contact specific people, or introduce permanent-durability, censorship-resistance, global-replication, security, SLSA, identity-trust, full-compatibility, or production-readiness claims.
 
+### Loop 61: Radicle update continuity check
+
+Status: **complete as fresh-peer same-RID publication observed; canonical/default update continuity not yet observed**.
+
+Outputs:
+
+- `scripts/run_radicle_update_continuity_check.py` runs a Docker/Linux-oriented same-RID update-continuity check using fresh non-original Radicle identities.
+- `evidence/radicle-update-continuity-check-2026-06-29.json` and `.md` record a successful push of current commit `00404656bcb17ad1aab241fb0ab0dd60487d9699` to `rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr` under a fresh peer namespace.
+- A separate fresh readback clone still checked out the original delegate main at `fd3f1898d81a4b00be9095c62e3c07fc1a792a95`.
+- `fixtures/live-evidence-index.json` now imports the Loop 61 evidence row and bumps the live evidence index to loop 61.
+
+Verified evidence:
+
+- Direct evidence tests assert prior/current commit ancestry, fresh-peer push success, same-RID peer namespace publication, default readback remaining on the original delegate commit, and no secret-marker leakage.
+- Evidence-index tests assert the Loop 61 row, canonical evidence hash/size metadata, fresh-peer/default-readback boundary, and bounded non-claims.
+
+Gate preserved: Loop 61 does not reuse the original Loop 59 delegate key, keep persistent seed state, use production/private personal keys, spend money, contact specific people, or introduce canonical-continuity, permanent-durability, censorship-resistance, global-replication, security, SLSA, identity-trust, full-compatibility, or production-readiness claims.
+
 ## Next recommended loop
 
-**Next:** Move from readback of the initial Radicle RID to update continuity: publish the current post-Loop-60 Git commit to the Radicle repo or create a documented update path that preserves the same RID where possible. The caveat remains that permanent durability still requires persistent seeding or independent mirrors.
+**Next:** Establish a real maintainer/delegate continuity lane: create or document a retained project-scoped Radicle delegate identity, initialize a new project RID or migrate authority deliberately, publish the current commit, and verify that a default fresh clone reads back the current commit. The caveat remains that permanent durability still requires persistent seeding or independent mirrors.
 
 Recent completed loops:
 
@@ -1282,6 +1300,7 @@ Recent completed loops:
 - Loop 58: workbench project set handoff - complete as a static Project set screen with embedded output/registry paths and a copyable recreate command.
 - Loop 59: project-scoped Radicle repository smoke - complete as RID `rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr` for commit `fd3f1898d81a4b00be9095c62e3c07fc1a792a95`, seeded/synced/cloned/read back from separate temporary Radicle state with bounded non-claims.
 - Loop 60: fresh-state Radicle RID readback - complete as brand-new temporary profile clone/readback of `rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr` at commit `fd3f1898d81a4b00be9095c62e3c07fc1a792a95`, without reusing the original Loop 59 seed profile or explicit original-seed connection.
+- Loop 61: Radicle update continuity check - complete as fresh-peer publication of current commit `00404656bcb17ad1aab241fb0ab0dd60487d9699` to the same RID, while default readback remained on the original delegate commit.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

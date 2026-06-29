@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-evidence-index.v1",
-  "loop": 60,
+  "loop": 61,
   "created_at": "2026-06-29",
   "purpose": "Secret-free index of narrow live/local evidence that can be rendered without upgrading unverified protocol claims.",
   "claim_policy": {
@@ -16,7 +16,8 @@
       "Radicle broader check recorded current-host rad CLI absence plus read-only public route probes",
       "Registry-shaped keyless attestation import recorded outside project-registry fixtures",
       "Current decentralized-forge commit initialized as a public Radicle repo and cloned/read back from a separate temporary profile",
-      "Recorded Radicle RID cloned/read back from a fresh temporary Radicle profile without reusing the original Loop 59 seed profile"
+      "Recorded Radicle RID cloned/read back from a fresh temporary Radicle profile without reusing the original Loop 59 seed profile",
+      "Current project commit published to the recorded Radicle RID under a fresh peer namespace, while default readback remained on the original delegate commit"
     ],
     "forbidden_claims": [
       "Radicle durable public seed/network availability verified",
@@ -384,6 +385,40 @@
         "not full Radicle compatibility"
       ],
       "notes": "Fresh-state readback was observed once through Radicle's normal network path. This strengthens the project-repo evidence beyond localhost-only smoke but is still not a long-term availability guarantee."
+    },
+    {
+      "id": "loop61-radicle-update-continuity-check",
+      "protocol": "radicle",
+      "scope": "radicle.project_repo_update_continuity_check",
+      "state": "fresh-peer-update-default-readback-original-delegate",
+      "verified_at": "2026-06-29",
+      "evidence_file": "evidence/radicle-update-continuity-check-2026-06-29.json",
+      "evidence_sha256": "5ce0bf39365ee4d314260c1751ebc4f5bf94261a9dca794a106f80c87cf6cffe",
+      "evidence_size_bytes": 29390,
+      "verification_summary": "A fresh non-original Radicle identity pushed the current project commit to the same RID under its own peer namespace, but a default fresh clone still checked out the original delegate main at the prior commit.",
+      "live_network_action": true,
+      "local_cli_verified": true,
+      "selected_relay_readback_verified": false,
+      "synthetic": false,
+      "public_identifiers": {
+        "rid": "rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr",
+        "prior_recorded_commit": "fd3f1898d81a4b00be9095c62e3c07fc1a792a95",
+        "current_source_commit": "00404656bcb17ad1aab241fb0ab0dd60487d9699",
+        "fresh_peer_push_observed": true,
+        "default_readback_commit": "fd3f1898d81a4b00be9095c62e3c07fc1a792a95",
+        "same_rid_current_commit_default_readback_observed": false
+      },
+      "non_claims": [
+        "not proof of canonical default-branch update continuity",
+        "not proof of permanent durability",
+        "not proof of censorship resistance",
+        "not a security guarantee",
+        "not proof of global replication",
+        "not proof of identity trust",
+        "not production readiness",
+        "not full Radicle compatibility"
+      ],
+      "notes": "The useful finding is architectural: same-RID non-original peer publication works, but default clone/readback follows the original delegate branch. A real usable decentralized repo needs retained maintainer delegate state or a deliberate multi-peer/ref policy."
     }
   ]
 }
