@@ -65,3 +65,9 @@ The current bundle workflow is local and fixture-backed. Local onboarding record
 The committed onboarding sample at `fixtures/onboarding-sample.registry.json` and `output/onboarding-sample.registry.html` shows the full local path without requiring a separate project.
 To inspect it inside the static workbench, render `output/forge-app-with-onboarding-sample.html` with `render-app --registry fixtures/example-project.registry.json --registry fixtures/portable-lab.registry.json --registry fixtures/onboarding-sample.registry.json`.
 The workbench Project set screen lists the embedded registry inputs and shows the matching recreate command for the current project set.
+
+## First Radicle Repo Smoke
+
+Loop 59 records the first project-scoped Radicle repository smoke for this repo in `evidence/radicle-project-repo-smoke-2026-06-29.json`. The recorded RID is `rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr`, tied to source commit `fd3f1898d81a4b00be9095c62e3c07fc1a792a95`, with a separate temporary Radicle profile clone/readback of that same commit.
+
+Treat that as exact run evidence only. It does not prove durable availability, broad network replication, identity trust, security, or production readiness.

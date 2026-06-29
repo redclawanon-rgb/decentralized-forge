@@ -1210,9 +1210,28 @@ Verified evidence:
 
 Gate preserved: Loop 58 only renders committed local registry/evidence data into static HTML. It does not publish protocol events, sign events, fetch from relays or gateways, add/fetch/pin IPFS content, start daemons, spend money, use wallets, import private keys, replace registry provenance, or introduce durability, censorship-resistance, broad-availability, security, SLSA, or production-readiness claims.
 
+### Loop 59: Project-scoped Radicle repository smoke
+
+Status: **complete as first project-scoped Radicle repo evidence; no durability/broad-availability/security/production claim**.
+
+Outputs:
+
+- `scripts/run_radicle_project_repo_smoke.py` runs a Docker/Linux-oriented Radicle smoke using temporary seed and clone `RAD_HOME` directories.
+- `evidence/radicle-project-repo-smoke-2026-06-29.json` and `.md` record the current `decentralized-forge` checkout at commit `fd3f1898d81a4b00be9095c62e3c07fc1a792a95` initialized as public Radicle RID `rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr`.
+- The smoke started a temporary seed node, ran publish/seed/sync, connected a separate temporary Radicle profile, cloned the RID, and verified the cloned Git commit matched the source commit.
+- `fixtures/live-evidence-index.json` now imports the Loop 59 evidence row and bumps the live evidence index to loop 59.
+- `output/forge-app.html`, `output/forge-app-with-onboarding-sample.html`, and the portable verification bundle now include the Loop 59 evidence row.
+
+Verified evidence:
+
+- Direct evidence tests assert RID shape, public visibility, source/clone commit equality, seed/sync/clone success, separate-profile readback, and no secret-marker leakage.
+- Evidence-index tests assert canonical evidence hash/size metadata and bounded non-claims.
+
+Gate preserved: Loop 59 uses temporary project-scoped Radicle state in a Linux container. It does not keep a persistent seed, use production/private personal keys, spend money, use paid infrastructure, contact specific people, or introduce durability, censorship-resistance, broad-network-availability, security, SLSA, identity-trust, or production-readiness claims.
+
 ## Next recommended loop
 
-**Next:** Add a static bundle handoff screen or section that summarizes the committed verification bundle/report commands from inside the workbench, so a reviewer can move from project inspection to bundle verification without leaving the app. The still-blocked parallel lane is locating an approved `rad` CLI on this Windows host for broader disposable Radicle clone/sync checks.
+**Next:** Decide whether to run a second Radicle follow-up that proves the Loop 59 RID can be fetched from a fresh container without the original temporary seed profile, or pause live Radicle work and add a static workbench summary for the new project-scoped RID. The important caveat is that durable availability is still not proven.
 
 Recent completed loops:
 
@@ -1243,6 +1262,7 @@ Recent completed loops:
 - Loop 56: committed onboarding sample - complete as `fixtures/onboarding-sample.registry.json`, generated sample summary/page/report, tests, CI wiring, and bundle refresh.
 - Loop 57: optional workbench import for onboarding sample - complete as `output/forge-app-with-onboarding-sample.html`; proves `render-app --registry` imports onboarded registries without changing the default workbench.
 - Loop 58: workbench project set handoff - complete as a static Project set screen with embedded output/registry paths and a copyable recreate command.
+- Loop 59: project-scoped Radicle repository smoke - complete as RID `rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr` for commit `fd3f1898d81a4b00be9095c62e3c07fc1a792a95`, seeded/synced/cloned/read back from separate temporary Radicle state with bounded non-claims.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

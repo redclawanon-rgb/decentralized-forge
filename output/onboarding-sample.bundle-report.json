@@ -1,15 +1,15 @@
 {
   "bundle": {
-    "file_count": 62,
+    "file_count": 65,
     "name": "decentralized-forge portable verification bundle",
     "role_counts": {
       "documentation": 7,
       "fixture": 14,
       "generated-output": 8,
       "schema": 2,
-      "source-evidence": 22,
+      "source-evidence": 24,
       "supporting-file": 2,
-      "verifier-tooling": 7
+      "verifier-tooling": 8
     },
     "schema_version": "decentralized-forge.verification-bundle.v1",
     "scope": "portable local verification package; no live protocol actions, signing, spending, or publishing",
@@ -121,16 +121,27 @@
         "state": "registry-shaped-import-recorded",
         "synthetic": false,
         "verification_summary": "Hosted GitHub keyless attestation evidence was imported into a registry-shaped verification row outside the project-registry fixtures."
+      },
+      {
+        "evidence_file": "evidence/radicle-project-repo-smoke-2026-06-29.json",
+        "id": "loop59-radicle-project-repo-smoke",
+        "live_network_action": true,
+        "protocol": "radicle",
+        "scope": "radicle.project_repo_public_seed_clone_smoke",
+        "selected_relay_readback_verified": false,
+        "state": "project-repo-radicle-readback-verified",
+        "synthetic": false,
+        "verification_summary": "The current decentralized-forge commit was initialized as a public Radicle repository, seeded from disposable temporary state, cloned by a separate temporary Radicle profile, and read back at the exact source commit."
       }
     ],
-    "entry_count": 9,
+    "entry_count": 10,
     "index_path": "fixtures/live-evidence-index.json",
-    "live_network_action_count": 6,
+    "live_network_action_count": 7,
     "protocol_counts": {
       "github-actions": 2,
       "ipfs": 2,
       "nostr": 2,
-      "radicle": 3
+      "radicle": 4
     },
     "selected_relay_readback_count": 2,
     "state_counts": {
@@ -139,6 +150,7 @@
       "hosted-keyless-attestation-generated": 1,
       "local-cli-verified": 1,
       "local-helia-add-get-verified": 1,
+      "project-repo-radicle-readback-verified": 1,
       "public-gateway-no-readback-observed": 1,
       "registry-shaped-import-recorded": 1,
       "selected-relay-issue-patch-readback-verified": 1,

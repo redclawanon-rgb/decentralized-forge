@@ -1,7 +1,7 @@
 {
   "schema_version": "decentralized-forge.live-evidence-index.v1",
-  "loop": 45,
-  "created_at": "2026-06-28",
+  "loop": 59,
+  "created_at": "2026-06-29",
   "purpose": "Secret-free index of narrow live/local evidence that can be rendered without upgrading unverified protocol claims.",
   "claim_policy": {
     "contains_secret_values": false,
@@ -14,7 +14,8 @@
       "Public gateway preflight queried three gateways and observed no successful readback for the unpinned fixture CID",
       "Nostr selected-relay issue/patch acceptance/readback verified for two disposable prototype events",
       "Radicle broader check recorded current-host rad CLI absence plus read-only public route probes",
-      "Registry-shaped keyless attestation import recorded outside project-registry fixtures"
+      "Registry-shaped keyless attestation import recorded outside project-registry fixtures",
+      "Current decentralized-forge commit initialized as a public Radicle repo and cloned/read back from a separate temporary profile"
     ],
     "forbidden_claims": [
       "Radicle durable public seed/network availability verified",
@@ -316,6 +317,40 @@
         "not production readiness"
       ],
       "notes": "The imported row is registry-shaped evidence only; the existing registry fixture provenance row remains synthetic."
+    },
+    {
+      "id": "loop59-radicle-project-repo-smoke",
+      "protocol": "radicle",
+      "scope": "radicle.project_repo_public_seed_clone_smoke",
+      "state": "project-repo-radicle-readback-verified",
+      "verified_at": "2026-06-29",
+      "evidence_file": "evidence/radicle-project-repo-smoke-2026-06-29.json",
+      "evidence_sha256": "e49b6729041f0c8e04b0f4753b0325fe865d1208f84367dae005ca58e7402d4d",
+      "evidence_size_bytes": 20737,
+      "verification_summary": "The current decentralized-forge commit was initialized as a public Radicle repository, seeded from disposable temporary state, cloned by a separate temporary Radicle profile, and read back at the exact source commit.",
+      "live_network_action": true,
+      "local_cli_verified": true,
+      "selected_relay_readback_verified": false,
+      "synthetic": false,
+      "public_identifiers": {
+        "rid": "rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr",
+        "visibility": "public",
+        "source_commit": "fd3f1898d81a4b00be9095c62e3c07fc1a792a95",
+        "clone_commit": "fd3f1898d81a4b00be9095c62e3c07fc1a792a95",
+        "seed_scope": "temporary Radicle home and localhost seed node",
+        "clone_scope": "separate temporary Radicle home and clone node"
+      },
+      "non_claims": [
+        "not proof of durability",
+        "not proof of censorship resistance",
+        "not a security guarantee",
+        "not proof of global replication",
+        "not proof of identity trust",
+        "not production readiness",
+        "not full Radicle compatibility",
+        "not proof of broad Radicle network availability"
+      ],
+      "notes": "Uses only temporary project-scoped Radicle state in a Linux container. Private key material and passphrase were not recorded, and temporary seed/clone state was removed after evidence capture."
     }
   ]
 }

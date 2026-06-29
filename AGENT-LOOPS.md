@@ -712,3 +712,11 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as a Project set screen in `output/forge-app.html` and `output/forge-app-with-onboarding-sample.html`. The app data now embeds `generated_from.output` alongside the registry source paths, and the screen lists those inputs plus a copyable `python scripts/forge_registry.py render-app ... --registry ...` command. Tests compare regenerated workbench outputs, assert the embedded output/registry source paths for the default and onboarding workbenches, and preserve the no-fetch/no-sign/no-publish runtime checks.
 
 **Gate preserved:** This is static local HTML generation from committed fixture/evidence data only. It does not publish protocol events, sign events, fetch from relays or gateways, add/fetch/pin IPFS content, start daemons, spend money, use wallets, import private keys, replace registry provenance, or claim durability, censorship resistance, broad availability, security, SLSA compliance, or production readiness.
+
+## Loop 59: Project-scoped Radicle repository smoke
+
+**Goal:** Move from local prototype polish to the first evidence that this project can exist as a live Radicle repository.
+
+**Current result:** Complete as `scripts/run_radicle_project_repo_smoke.py` plus `evidence/radicle-project-repo-smoke-2026-06-29.json` and `.md`. The script ran in a Linux Docker container with Radicle 1.9.1 installed into a repo-local temp prefix, cloned the current checkout into temporary state, initialized it as public RID `rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr`, seeded/synced it from a temporary Radicle profile, cloned it from a separate temporary profile, and verified the cloned commit matched source commit `fd3f1898d81a4b00be9095c62e3c07fc1a792a95`. The live evidence index is now loop 59 and imports the new evidence row.
+
+**Gate preserved:** This is bounded project-scoped Radicle evidence only. It does not keep a persistent seed, use production/private personal keys, spend money, use paid infrastructure, contact specific people, or claim durability, censorship resistance, broad availability, identity trust, security, SLSA compliance, full Radicle compatibility, or production readiness.
