@@ -264,29 +264,33 @@ def live_evidence_entry(entry_id: str, index_path: Path = DEFAULT_LIVE_EVIDENCE_
 
 
 def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_INDEX) -> dict:
-    entry = live_evidence_entry("loop63-radicle-retained-update-check", index_path)
+    try:
+        entry = live_evidence_entry("loop65-radicle-independent-availability-check", index_path)
+    except ValueError:
+        entry = live_evidence_entry("loop63-radicle-retained-update-check", index_path)
     public = entry.get("public_identifiers")
     if not isinstance(public, dict):
-        raise ValueError("loop63 retained Radicle evidence missing public_identifiers")
+        raise ValueError(f"{entry.get('id', 'retained Radicle evidence')} missing public_identifiers")
 
-    required = [
-        "rid",
-        "current_source_commit",
-        "direct_seed_readback_commit",
-        "direct_seed_readback_matches_source",
-        "default_readback_matches_source",
-        "retained_state_committed",
-        "secret_values_recorded",
-    ]
+    is_independent_availability = entry.get("id") == "loop65-radicle-independent-availability-check"
+    required = ["rid", "current_source_commit", "retained_state_committed", "secret_values_recorded"]
+    if is_independent_availability:
+        required.extend(["reader_b_readback_commit", "reader_b_readback_matches_source", "follower_seed_succeeded"])
+    else:
+        required.extend(["direct_seed_readback_commit", "direct_seed_readback_matches_source", "default_readback_matches_source"])
     missing = [key for key in required if key not in public]
     if missing:
-        raise ValueError(f"loop63 retained Radicle evidence missing fields: {', '.join(missing)}")
-    if public["direct_seed_readback_commit"] != public["current_source_commit"]:
-        raise ValueError("loop63 direct-seed readback commit does not match current source commit")
-    if public["direct_seed_readback_matches_source"] is not True:
-        raise ValueError("loop63 direct-seed readback did not match source")
+        raise ValueError(f"{entry['id']} retained Radicle evidence missing fields: {', '.join(missing)}")
+    readback_key = "reader_b_readback_commit" if is_independent_availability else "direct_seed_readback_commit"
+    matches_key = "reader_b_readback_matches_source" if is_independent_availability else "direct_seed_readback_matches_source"
+    if public[readback_key] != public["current_source_commit"]:
+        raise ValueError(f"{entry['id']} readback commit does not match current source commit")
+    if public[matches_key] is not True:
+        raise ValueError(f"{entry['id']} readback did not match source")
+    if is_independent_availability and public["follower_seed_succeeded"] is not True:
+        raise ValueError("loop65 follower seed did not succeed")
     if public["retained_state_committed"] is not False or public["secret_values_recorded"] is not False:
-        raise ValueError("loop63 retained Radicle evidence is not secret-free")
+        raise ValueError(f"{entry['id']} retained Radicle evidence is not secret-free")
 
     return {
         "schema_version": "decentralized-forge.radicle-retained-quickstart.v1",
@@ -294,22 +298,24 @@ def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_I
         "source_evidence_file": entry["evidence_file"],
         "rid": public["rid"],
         "expected_commit": public["current_source_commit"],
-        "direct_seed_readback_commit": public["direct_seed_readback_commit"],
-        "default_public_routing_observed": public["default_readback_matches_source"],
+        "readback_commit": public[readback_key],
+        "availability_mode": "independent follower-seed readback" if is_independent_availability else "maintainer direct-seed readback",
+        "follower_seed_succeeded": bool(public.get("follower_seed_succeeded", False)),
+        "default_public_routing_observed": bool(public.get("default_readback_matches_source", False)),
         "retained_state_committed": public["retained_state_committed"],
         "secret_values_recorded": public["secret_values_recorded"],
-        "seed_peer_hint": "<maintainer-peer-id>@<reachable-host>:<port>",
+        "seed_peer_hint": "<seed-peer-id>@<reachable-host>:<port>",
         "commands": [
             "rad auth --alias decentralized-forge-reader --stdin",
             "rad node start",
-            "rad node connect <maintainer-peer-id>@<reachable-host>:<port> --timeout 30s",
-            f"rad clone --timeout 120s --seed <maintainer-peer-id> {public['rid']} decentralized-forge",
+            "rad node connect <seed-peer-id>@<reachable-host>:<port> --timeout 30s",
+            f"rad clone --timeout 120s --seed <seed-peer-id> {public['rid']} decentralized-forge",
             "cd decentralized-forge",
             "git rev-parse HEAD",
         ],
         "expected_verification": [
             f"git rev-parse HEAD prints {public['current_source_commit']}",
-            "A mismatch means the clone did not reproduce the Loop 63 direct-seed readback claim.",
+            f"A mismatch means the clone did not reproduce the {entry['id']} readback claim.",
         ],
         "non_claims": [
             "not a default public-routing claim",
@@ -332,10 +338,12 @@ def format_retained_radicle_quickstart(model: dict) -> str:
         f"- source evidence: `{model['source_evidence_file']}`",
         f"- RID: `{model['rid']}`",
         f"- expected commit: `{model['expected_commit']}`",
+        f"- availability mode: `{model['availability_mode']}`",
+        f"- follower seed succeeded in evidence: `{str(model['follower_seed_succeeded']).lower()}`",
         f"- default public routing observed: `{str(model['default_public_routing_observed']).lower()}`",
         f"- seed address needed: `{model['seed_peer_hint']}`",
         "",
-        "This is a maintainer-assisted direct-seed path. The maintainer must run a reachable Radicle node for this RID and share the peer address for the current session.",
+        "This is a direct-seed path. A maintainer or follower seed operator must run a reachable Radicle node for this RID and share the peer address for the current session.",
         "",
         "Reader commands:",
         "",
@@ -739,6 +747,7 @@ def collect_verification_bundle_paths() -> list[Path]:
         "AGENT-LOOPS.md",
         "docs/threat-model.md",
         "docs/community-quickstart.md",
+        "docs/radicle-persistent-seed-plan.md",
         "docs/radicle-retained-rid-quickstart.md",
         relative(DEFAULT_BUNDLE_REVIEW_CHECKLIST),
         "package.json",
@@ -749,6 +758,7 @@ def collect_verification_bundle_paths() -> list[Path]:
         "scripts/nip34_adapter.py",
         "scripts/preflight_static_artifact.py",
         "scripts/run_radicle_fresh_readback_check.py",
+        "scripts/run_radicle_independent_availability_check.py",
         "scripts/run_radicle_project_repo_smoke.py",
         "scripts/run_radicle_retained_delegate_check.py",
         "scripts/run_radicle_retained_update_check.py",
@@ -1755,6 +1765,7 @@ def command_verify_local(args: argparse.Namespace) -> int:
         [sys.executable, "-m", "json.tool", "fixtures/live-evidence-index.json"],
         [sys.executable, "-m", "json.tool", "fixtures/keyless-attestation.registry-verification.json"],
         [sys.executable, "-m", "py_compile", "scripts/run_radicle_fresh_readback_check.py"],
+        [sys.executable, "-m", "py_compile", "scripts/run_radicle_independent_availability_check.py"],
         [sys.executable, "-m", "py_compile", "scripts/run_radicle_project_repo_smoke.py"],
         [sys.executable, "-m", "py_compile", "scripts/run_radicle_retained_delegate_check.py"],
         [sys.executable, "-m", "py_compile", "scripts/run_radicle_retained_update_check.py"],

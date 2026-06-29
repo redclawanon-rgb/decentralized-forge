@@ -1315,9 +1315,28 @@ Outputs:
 
 Gate preserved: Loop 64 is documentation and read-only local CLI output only. It does not start Radicle nodes, connect to peers, clone, publish, sign, use private keys, expose retained secret state, run a persistent seed, or introduce permanent-durability, default-routing-availability, broad-network-availability, censorship-resistance, security, identity-trust, full-compatibility, or production-readiness claims.
 
+## Loop 65: Retained RID independent follower-seed readback
+
+Outputs:
+
+- `scripts/run_radicle_independent_availability_check.py` advances the retained RID to the current checkout and tests an independent follower-seed handoff.
+- `evidence/radicle-independent-availability-check-2026-06-29.json` and `.md` record retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` advancing to commit `7262f69b82e442263d6261414f6b771be04c6b6f`.
+- Reader A used a fresh temporary Radicle profile to clone from the retained maintainer seed.
+- Reader A then seeded the RID from its temporary profile.
+- Reader B used another fresh temporary Radicle profile to clone from reader A and read back the same commit.
+- `fixtures/live-evidence-index.json` now imports the Loop 65 evidence row and bumps the live evidence index to loop 65.
+- `docs/radicle-persistent-seed-plan.md` records the minimum plan for a future reachable/persistent seed service without turning one on in this loop.
+
+Verified evidence:
+
+- Direct evidence tests assert same retained RID, current source commit, reader A readback, follower seed success, reader B readback, temporary reader-state removal, secret-free committed evidence, and non-claim boundaries.
+- The retained quickstart helper now prefers the Loop 65 row when present and prints commit `7262f69b82e442263d6261414f6b771be04c6b6f`.
+
+Gate preserved: Loop 65 does not commit or bundle retained Radicle secret state, keep a persistent public seed service running, use production/private personal keys, spend money, contact specific people, or introduce permanent-durability, future-default-routing-availability, censorship-resistance, global-replication, security, SLSA, identity-trust, full-compatibility, or production-readiness claims.
+
 ## Next recommended loop
 
-**Next:** Move from maintainer-assisted direct-seed usability to independent availability: either run a second independent retained/follower seed readback for RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy`, or document the minimum persistent-seed service plan without turning it on. The caveat remains that permanent durability still requires persistent seeding or independent mirrors.
+**Next:** Move from temporary follower-seed evidence to a reachable seed pilot: choose a free host/network target, run a bounded persistent-seed dry run or service rehearsal, and verify clone/readback from a separate network context before publishing any stable seed address. The caveat remains that permanent durability still requires persistent seeding or independent mirrors.
 
 Recent completed loops:
 
@@ -1354,6 +1373,7 @@ Recent completed loops:
 - Loop 62: retained Radicle maintainer lane - complete as retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` with fresh default and direct-seed readback of commit `dfc10b8f029c5eb886db2025dcc06c6490e28504`.
 - Loop 63: retained Radicle same-RID update - complete as the same RID advanced to commit `f800bae387f33452fdeb79ecf5c795d25f7246ac`, with fresh direct-seed readback matching the updated commit and default public-routing readback not observed.
 - Loop 64: retained RID community direct-seed quickstart - complete as `docs/radicle-retained-rid-quickstart.md` plus `radicle-retained-quickstart`, a read-only evidence-derived recipe for maintainer-assisted direct-seed clones.
+- Loop 65: retained RID independent follower-seed readback - complete as the same RID advanced to commit `7262f69b82e442263d6261414f6b771be04c6b6f`; reader A cloned from retained maintainer seed and reader B cloned from reader A acting as a follower seed.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

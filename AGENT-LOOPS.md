@@ -757,6 +757,14 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 
 **Goal:** Turn the retained RID update lane into a concrete reader handoff without overstating default routing or durability.
 
-**Current result:** Complete as `docs/radicle-retained-rid-quickstart.md` plus `python scripts/forge_registry.py radicle-retained-quickstart`. The helper reads the committed live evidence index, validates the Loop 63 retained RID fields, and prints a maintainer-assisted direct-seed clone recipe for RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` at expected commit `f800bae387f33452fdeb79ecf5c795d25f7246ac`. `docs/community-quickstart.md`, `docs/portable-bundle-review-checklist.md`, README, tests, and the verification bundle manifest now include the handoff path.
+**Current result:** Complete as `docs/radicle-retained-rid-quickstart.md` plus `python scripts/forge_registry.py radicle-retained-quickstart`. The helper reads the committed live evidence index, validates the strongest retained RID readback row available, and prints a direct-seed clone recipe for RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy`. `docs/community-quickstart.md`, `docs/portable-bundle-review-checklist.md`, README, tests, and the verification bundle manifest now include the handoff path.
 
 **Gate preserved:** This is read-only documentation and local CLI output. It does not start Radicle nodes, connect to peers, clone, publish, sign, use private keys, expose retained secret state, run a persistent seed, or claim permanent durability, future default public-routing availability, censorship resistance, global replication, identity trust, security, SLSA compliance, full Radicle compatibility, or production readiness.
+
+## Loop 65: Retained RID independent follower-seed readback
+
+**Goal:** Move closer to a usable product by proving the retained RID can be served by an independent follower seed, not only the retained maintainer seed.
+
+**Current result:** Complete as `scripts/run_radicle_independent_availability_check.py` plus `evidence/radicle-independent-availability-check-2026-06-29.json` and `.md`. The check ran in Ubuntu WSL using WSL-local retained maintainer state and temporary `/tmp` reader states. The same retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` advanced from prior verified commit `f800bae387f33452fdeb79ecf5c795d25f7246ac` to current commit `7262f69b82e442263d6261414f6b771be04c6b6f`; reader A cloned from the retained maintainer seed, reader A seeded the RID from its own temporary profile, and reader B cloned/read back the same commit from reader A. `docs/radicle-persistent-seed-plan.md` records the minimum service plan for a future persistent seed.
+
+**Gate preserved:** This is one retained-RID independent follower-seed readback observation. It does not commit or bundle secret state, keep a persistent public seed service running, use production/private personal keys, spend money, contact specific people, or claim permanent durability, future default public-routing availability, censorship resistance, global replication, identity trust, security, SLSA compliance, full Radicle compatibility, or production readiness.
