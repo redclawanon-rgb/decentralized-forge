@@ -824,3 +824,11 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as `evidence/radicle-public-seed-update-ef16e2a-2026-06-29.json` and `.md`. The retained RID advanced from `64efbada294d4a57c014a27398b92e344c6d68aa` to `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`; `openclaw` synced through a temporary maintainer bridge; the bridge and maintainer seed were stopped; and a fresh reader on `ubuntu-work` cloned the updated commit from the public VPS seed.
 
 **Gate preserved:** This proves one manual update propagation to the hardening commit. It does not prove automatic future propagation, permanent durability, security, identity trust, global replication, default public routing, or production readiness.
+
+## Loop 73: Second follower seed staging
+
+**Goal:** Add a second always-on follower seed process/state store without copying retained maintainer key material.
+
+**Current result:** Complete as `scripts/bootstrap_radicle_follower_seed.py`, `evidence/radicle-ubuntu-work-follower-bootstrap-2026-06-29.json`, and `evidence/radicle-second-seed-tailnet-health-2026-06-29.json`. `ubuntu-work` bootstrapped a separate follower identity `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A`, installed it as an enabled user-level `systemd` service on `100.83.206.66:8877`, and `openclaw` cloned/read back the retained RID over Tailnet at commit `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`.
+
+**Gate preserved:** This proves a second persistent follower seed with separate state reachable over Tailnet. It does not prove a second public internet seed, durability, security, identity trust, default public routing, or production readiness. Opening an `openclaw` public relay on port `8877` requires explicit approval because it changes the VPS public network surface.

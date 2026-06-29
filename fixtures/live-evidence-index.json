@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-evidence-index.v1",
-  "loop": 72,
+  "loop": 73,
   "created_at": "2026-06-29",
   "purpose": "Secret-free index of narrow live/local evidence that can be rendered without upgrading unverified protocol claims.",
   "claim_policy": {
@@ -27,7 +27,8 @@
       "A repeatable public Radicle seed health-check script cloned the retained RID from the explicit openclaw seed and verified the expected commit",
       "The retained RID advanced to commit 64efbada294d4a57c014a27398b92e344c6d68aa and the public openclaw follower seed served that updated commit to a fresh reader",
       "An external ubuntu-work user systemd timer ran the public Radicle seed health check and wrote a passing latest.json for the openclaw seed",
-      "The retained RID advanced to commit ef16e2ad39d3e13bdcc9d454443c5bbb17733c68 and the public openclaw follower seed served that updated commit to a fresh reader"
+      "The retained RID advanced to commit ef16e2ad39d3e13bdcc9d454443c5bbb17733c68 and the public openclaw follower seed served that updated commit to a fresh reader",
+      "A second persistent follower seed on ubuntu-work served the retained RID to a fresh reader on openclaw over Tailnet, with readback matching commit ef16e2ad39d3e13bdcc9d454443c5bbb17733c68"
     ],
     "forbidden_claims": [
       "Radicle durable public seed/network availability verified",
@@ -893,6 +894,60 @@
         "not maintainer key material on the VPS"
       ],
       "notes": "This updates the public direct-seed milestone to include the prior hardening commit and records that external health monitoring is now installed."
+    },
+    {
+      "id": "loop73-radicle-second-follower-tailnet-readback",
+      "protocol": "radicle",
+      "scope": "radicle.second_follower_seed_tailnet_readback",
+      "state": "second-follower-tailnet-readback-verified",
+      "verified_at": "2026-06-29",
+      "evidence_file": "evidence/radicle-second-seed-tailnet-health-2026-06-29.json",
+      "evidence_sha256": "817025b5be6bcf68b4cef416dfb0816138a7c7fb7e9ae4faaef0b144de337acb",
+      "evidence_size_bytes": 6850,
+      "verification_summary": "ubuntu-work runs a second persistent follower seed with separate Radicle state and node identity; a fresh reader on openclaw connected over Tailnet to z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@100.83.206.66:8877, cloned the retained RID, and verified commit ef16e2ad39d3e13bdcc9d454443c5bbb17733c68.",
+      "live_network_action": true,
+      "local_cli_verified": true,
+      "selected_relay_readback_verified": false,
+      "synthetic": false,
+      "public_identifiers": {
+        "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+        "current_source_commit": "ef16e2ad39d3e13bdcc9d454443c5bbb17733c68",
+        "primary_public_seed_address": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776",
+        "second_seed_node_id": "z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A",
+        "second_seed_tailnet_address": "z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@100.83.206.66:8877",
+        "second_seed_host": "ubuntu-work",
+        "second_seed_state_host_separate_from_public_seed": true,
+        "second_seed_systemd_user_service_enabled": true,
+        "second_seed_service_active": true,
+        "second_seed_public_internet_relay_enabled": false,
+        "second_seed_public_internet_address_approved": false,
+        "second_seed_bootstrap_evidence_file": "evidence/radicle-ubuntu-work-follower-bootstrap-2026-06-29.json",
+        "health_check_script": "scripts/check_public_radicle_seed.py",
+        "bootstrap_script": "scripts/bootstrap_radicle_follower_seed.py",
+        "fresh_reader_host": "openclaw",
+        "fresh_reader_connected_to_second_seed": true,
+        "fresh_reader_clone_succeeded": true,
+        "fresh_reader_readback_commit": "ef16e2ad39d3e13bdcc9d454443c5bbb17733c68",
+        "fresh_reader_readback_matches_expected": true,
+        "fresh_reader_temp_state_removed": true,
+        "retained_state_committed": false,
+        "secret_values_recorded": false,
+        "retained_maintainer_key_material_copied_to_second_seed": false
+      },
+      "non_claims": [
+        "not a second public internet seed yet",
+        "not proof of permanent durability",
+        "not proof of future default public-routing availability",
+        "not proof of censorship resistance",
+        "not a security guarantee",
+        "not proof of global replication",
+        "not proof of identity trust",
+        "not production readiness",
+        "not full Radicle compatibility",
+        "not a committed secret or key backup",
+        "not maintainer key material on ubuntu-work"
+      ],
+      "notes": "The openclaw-to-ubuntu-work Tailnet readback proves a second persistent follower seed and separate state store. Opening openclaw public port 8877 as an internet relay remains blocked until explicit approval because it changes the VPS public network surface."
     }
   ]
 }

@@ -88,6 +88,7 @@ As of Loop 67, the project has local CAR/CID fixture verification, local Helia U
 - `evidence/radicle-public-seed-update-propagation-2026-06-29.json` and `.md` — Loop 70 retained RID update propagation through the public `openclaw` follower seed to commit `64efbada294d4a57c014a27398b92e344c6d68aa`
 - `evidence/radicle-external-health-timer-2026-06-29.json` and `.md` — Loop 71 external `ubuntu-work` user-level `systemd` health timer for the public Radicle seed
 - `evidence/radicle-public-seed-update-ef16e2a-2026-06-29.json` and `.md` — Loop 72 retained RID update propagation through the public `openclaw` follower seed to commit `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`
+- `evidence/radicle-ubuntu-work-follower-bootstrap-2026-06-29.json` and `evidence/radicle-second-seed-tailnet-health-2026-06-29.json` — Loop 73 second persistent `ubuntu-work` follower seed bootstrap plus `openclaw` fresh-reader Tailnet readback for the same retained RID and commit; not a second public internet seed yet
 - `docs/first-decentralized-repo-milestone.md` — first usable public Radicle direct-seed clone milestone and non-claims
 - `fixtures/keyless-attestation.registry-verification.json` — Loop 45 registry-shaped keyless-attestation import kept outside project-registry fixtures
 - `fixtures/local-release-artifact.txt` — local-only release artifact fixture with stdlib-tested SHA-256/CIDv1 metadata
@@ -106,7 +107,9 @@ As of Loop 67, the project has local CAR/CID fixture verification, local Helia U
 - `scripts/run_radicle_seed_restart_check.py` — host/WSL-oriented retained seed restart/readback rehearsal
 - `scripts/install_radicle_user_seed_service.py` — Linux host helper for installing a user-level `systemd` Radicle follower seed service without printing secrets
 - `scripts/check_public_radicle_seed.py` — fresh-profile public Radicle seed clone/readback health check
+- `scripts/bootstrap_radicle_follower_seed.py` — Linux host helper for bootstrapping a follower seed from an explicit source seed without maintainer key material
 - `scripts/install_radicle_health_timer.py` — Linux host helper for installing a user-level `systemd` timer that runs the public seed health check
+- `scripts/install_tcp_relay_user_service.py` — Linux host helper for installing a user-level `systemd` TCP relay with `socat`; public relay use requires explicit approval because it opens a VPS network port
 - `scripts/radicle_seed_host_control.py` — Linux host helper for starting/stopping a Radicle seed profile from a local passphrase file without printing secrets
 - `scripts/run_radicle_update_continuity_check.py` — Docker/Linux-oriented same-RID update-continuity check for fresh-peer publication versus default delegate readback
 - `output/demo-project.html` — generated demo project page

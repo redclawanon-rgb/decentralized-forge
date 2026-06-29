@@ -1,6 +1,6 @@
 # First Decentralized Repo Milestone
 
-As of Loop 72, this project has a usable public Radicle direct-seed path for the
+As of Loop 73, this project has a usable public Radicle direct-seed path for the
 retained project RID.
 
 ## What Works
@@ -13,6 +13,10 @@ retained project RID.
 - Service mode: enabled user-level `systemd` service with restart policy
 - Health check: `scripts/check_public_radicle_seed.py`
 - External monitor: `decentralized-forge-radicle-healthcheck.timer` on `ubuntu-work`
+- Second follower seed: `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@100.83.206.66:8877`
+- Second seed host: `ubuntu-work`
+- Second seed mode: enabled user-level `systemd` follower seed with separate Radicle state
+- Second seed reachability: verified from `openclaw` over Tailnet; not public internet-facing yet
 
 ## Clone
 
@@ -50,11 +54,16 @@ python scripts/check_public_radicle_seed.py \
 - `evidence/radicle-external-health-timer-2026-06-29.json`
 - `evidence/radicle-public-seed-update-ef16e2a-2026-06-29.json`
 - `evidence/radicle-public-seed-update-health-check-ef16e2a-2026-06-29.json`
+- `evidence/radicle-ubuntu-work-follower-bootstrap-2026-06-29.json`
+- `evidence/radicle-second-seed-tailnet-health-2026-06-29.json`
 
 ## Non-Claims
 
 This milestone does not prove permanent durability, automatic future update
 propagation, default public routing, global replication, censorship resistance,
 security, identity trust, full Radicle compatibility, SLSA compliance, or
-production readiness. It proves a usable direct-seed path for the verified
+production readiness. Loop 73 adds a second persistent follower seed with
+separate state and Tailnet readback, but it does not prove a second public
+internet seed until public relay port `8877` is explicitly approved and verified.
+The current public claim remains one usable direct-seed path for the verified
 milestone commit.

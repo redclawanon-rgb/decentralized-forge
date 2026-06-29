@@ -1418,6 +1418,7 @@ Recent completed loops:
 - Loop 70: public seed update propagation - complete as the same retained RID advanced to commit `64efbada294d4a57c014a27398b92e344c6d68aa`, the `openclaw` follower synced it through a temporary bridge, the bridge and maintainer seed were stopped, and a fresh reader cloned the updated commit from the public VPS seed.
 - Loop 71: external public seed health timer - complete as an enabled user-level `systemd` timer on `ubuntu-work` that runs `scripts/check_public_radicle_seed.py` against the public `openclaw` seed and wrote a passing latest JSON for commit `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`.
 - Loop 72: public seed update to hardening commit - complete as the retained RID advanced to commit `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`, the `openclaw` follower synced it, temporary bridge and maintainer seed were stopped, and a fresh reader cloned the updated commit from the public VPS seed.
+- Loop 73: second follower seed staging - complete as `ubuntu-work` now runs a separate persistent Radicle follower seed at `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@100.83.206.66:8877`, and a fresh `openclaw` reader cloned the retained RID over Tailnet with HEAD `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`. This is not yet a second public internet seed; opening public relay port `8877` on the VPS remains gated on explicit approval.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

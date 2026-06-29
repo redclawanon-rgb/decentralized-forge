@@ -1,15 +1,15 @@
 {
   "bundle": {
-    "file_count": 105,
+    "file_count": 109,
     "name": "decentralized-forge portable verification bundle",
     "role_counts": {
       "documentation": 10,
       "fixture": 14,
       "generated-output": 8,
       "schema": 2,
-      "source-evidence": 51,
+      "source-evidence": 53,
       "supporting-file": 2,
-      "verifier-tooling": 18
+      "verifier-tooling": 20
     },
     "schema_version": "decentralized-forge.verification-bundle.v1",
     "scope": "portable local verification package; no live protocol actions, signing, spending, or publishing",
@@ -265,16 +265,27 @@
         "state": "public-vps-follower-update-readback-verified",
         "synthetic": false,
         "verification_summary": "The retained RID advanced from 64efbada294d4a57c014a27398b92e344c6d68aa to ef16e2ad39d3e13bdcc9d454443c5bbb17733c68; the openclaw follower synced it through a temporary maintainer bridge, then served the updated commit to a fresh ubuntu-work reader after the bridge and maintainer seed were stopped."
+      },
+      {
+        "evidence_file": "evidence/radicle-second-seed-tailnet-health-2026-06-29.json",
+        "id": "loop73-radicle-second-follower-tailnet-readback",
+        "live_network_action": true,
+        "protocol": "radicle",
+        "scope": "radicle.second_follower_seed_tailnet_readback",
+        "selected_relay_readback_verified": false,
+        "state": "second-follower-tailnet-readback-verified",
+        "synthetic": false,
+        "verification_summary": "ubuntu-work runs a second persistent follower seed with separate Radicle state and node identity; a fresh reader on openclaw connected over Tailnet to z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@100.83.206.66:8877, cloned the retained RID, and verified commit ef16e2ad39d3e13bdcc9d454443c5bbb17733c68."
       }
     ],
-    "entry_count": 22,
+    "entry_count": 23,
     "index_path": "fixtures/live-evidence-index.json",
-    "live_network_action_count": 19,
+    "live_network_action_count": 20,
     "protocol_counts": {
       "github-actions": 2,
       "ipfs": 2,
       "nostr": 2,
-      "radicle": 16
+      "radicle": 17
     },
     "selected_relay_readback_count": 2,
     "state_counts": {
@@ -297,6 +308,7 @@
       "retained-rid-direct-seed-update-readback-verified": 1,
       "retained-rid-follower-seed-readback-verified": 1,
       "retained-rid-seed-restart-readback-verified": 1,
+      "second-follower-tailnet-readback-verified": 1,
       "selected-relay-issue-patch-readback-verified": 1,
       "selected-relay-readback-verified": 1
     },

@@ -16,6 +16,8 @@ ef16e2ad39d3e13bdcc9d454443c5bbb17733c68
 
 The strongest matching evidence is `evidence/radicle-public-seed-update-ef16e2a-2026-06-29.json`: the retained RID advanced to the updated commit, the `openclaw` VPS follower seed synced it, the temporary maintainer bridge was stopped, and a fresh reader on `ubuntu-work` cloned the updated commit from the public seed.
 
+Loop 73 added a second persistent follower seed on `ubuntu-work` with its own Radicle state and node ID `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A`. A fresh reader on `openclaw` cloned the same retained RID and commit from `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@100.83.206.66:8877` over Tailnet. This is not a second public internet seed yet; public relay port `8877` on the VPS still requires explicit approval and a separate public readback check.
+
 ## Generate The Current Recipe
 
 Run this read-only command from a checkout of the repository:

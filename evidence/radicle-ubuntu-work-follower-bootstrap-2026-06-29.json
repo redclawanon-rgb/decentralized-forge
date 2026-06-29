@@ -1,0 +1,164 @@
+{
+  "commands": [
+    {
+      "cmd": [
+        "rad",
+        "--version"
+      ],
+      "cwd": null,
+      "duration_seconds": 0.004,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "rad 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)\n"
+    },
+    {
+      "cmd": [
+        "radicle-node",
+        "--version"
+      ],
+      "cwd": null,
+      "duration_seconds": 0.001,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "radicle-node 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)\n"
+    },
+    {
+      "cmd": [
+        "rad",
+        "auth",
+        "--alias",
+        "df-ubuntu-work-follower-seed",
+        "--stdin"
+      ],
+      "cwd": null,
+      "duration_seconds": 0.247,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "\nInitializing your Radicle \ud83d\udc7e identity\n\n\u2713 Creating your Ed25519 keypair...\n\u2713 Your Radicle DID is did:key:z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A. This identifies your device. Run `rad self` to show it at all times.\n\u2713 You're all set.\n\n\u2717 Hint: install ssh-agent to have it fill in your passphrase for you when signing.\n\nTo create a Radicle repository, run `rad init` from a Git repository with at least one commit.\nTo clone a repository, run `rad clone <rid>`. For example, `rad clone rad:z3gqcJUoA1n9HaHKufZs5FCSGazv5` clones the Radicle 'heartwood' repository.\nTo get a list of all commands, run `rad`.\n"
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "stop"
+      ],
+      "cwd": null,
+      "duration_seconds": 0.127,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "\u2717 Stopping node... error: node is not running\n"
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "start",
+        "--",
+        "--listen",
+        "127.0.0.1:8877"
+      ],
+      "cwd": null,
+      "duration_seconds": 0.488,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "\u2713 Node started (1971614)\nTo stay in sync with the network, leave the node running in the background.\nTo learn more, run `rad node --help`.\n"
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "status"
+      ],
+      "cwd": null,
+      "duration_seconds": 9.877,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "\u2713 Node is running with Node ID z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A and listening for inbound connections on 127.0.0.1:8877.\n\n\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 Node ID                                            Address                     ?   \u292d   Since            \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 z6MkhnTnqSsfpKNJst7zJYbizApwG1U2AWTyuni21TY4iqJP   babis.yorgos.net.gr:58007   !   \u2197                    \u2502\n\u2502 z6MkfugLbqzUWvL6H1f5rG7j4YJEh25rUCZJtNVJQ18Rkbvx   seed.faukah.com:3867        !   \u2197                    \u2502\n\u2502 z6MkwfrBy9mKTfcVELcV4wc6zfN379FPMnAqsxnwt4j2TdQ2   radicle.jarg.io:8776        !   \u2197                    \u2502\n\u2502 z6Mkmqogy2qEM2ummccUthFEaaHvyYmYBYh3dbe9W4ebScxo   rosa.radicle.network:8776   \u2713   \u2197   15.760 second(s) \u2502\n\u2502 z6MkuRM41FyaPcbosztmj2YNUeLrcp41EKcjoWH1dJapH6ff   100.100.0.32:8810           !   \u2197                    \u2502\n\u2502 z6MkrLMMsiPWUcNPHcRajuMi9mDfYckSoJyPwwnknocNYPm7   iris.radicle.network:8776   \u2713   \u2197   7.760 second(s)  \u2502\n\u2502 z6Mknt3TPebLzohYiH8iX3rVF7zhGdGdYPrx5JUXKXgcwZYu   44.33.3.132:8776            !   \u2197                    \u2502\n\u2502 z6MkpBpSGPRth537T7iEE41emnCsUTdckdueXxfYEudMuLLN   repoducible.org:8776        !   \u2197                    \u2502\n\u2502 z6MkvxKMoRXN7QmPFiVh7tWQ8ti14a7YgvuRD5c8jBgVAYDK   100.100.0.32:8811           !   \u2197                    \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\n\u2717 Hint: \n   ? \u2026 Status:\n       \u2713 \u2026 connected    \u2717 \u2026 disconnected\n       ! \u2026 attempted    \u2022 \u2026 initial\n   \u292d \u2026 Link Direction:\n       \u2198 \u2026 inbound      \u2197 \u2026 outbound\n\n2026-06-29T19:12:53.168-04:00 INFO  service  Received command ListenAddrs\n2026-06-29T19:12:53.267-04:00 INFO  service  Connected to z6MkrLMMsiPWUcNPHcRajuMi9mDfYckSoJyPwwnknocNYPm7 (iris.radicle.network:8776) (Outbound)\n2026-06-29T19:12:58.707-04:00 WARN  wire     Failed to establish connection to romuloch.local:8776: failed to lookup address information: Try again\n2026-06-29T19:12:58.707-04:00 INFO  service  Disconnected from z6MkwTdDRvCnCDnpuY3PtVMAczF4R7WrkvJ5F1jpYyBW5sYT (failed to lookup address information: Try again)\n2026-06-29T19:12:58.788-04:00 WARN  wire     Failed to establish connection to [200:9095:c019:2576:cd21:f947:134c:c8d1]:8777: Network unreachable (os error 101)\n2026-06-29T19:12:58.788-04:00 INFO  service  Disconnected from z6MksDkhJ6y84mrZp7uC7FSfksg5zbm9CrDQHKFRCYENSt5t (Network unreachable (os error 101))\n2026-06-29T19:12:59.367-04:00 INFO  service  Received command QueryState(..)\n2026-06-29T19:13:00.760-04:00 INFO  service  Received command QueryState(..)\n2026-06-29T19:13:00.761-04:00 INFO  service  Connected to z6MkhnTnqSsfpKNJst7zJYbizApwG1U2AWTyuni21TY4iqJP (babis.yorgos.net.gr:58007) (Outbound)\n2026-06-29T19:13:00.762-04:00 INFO  service  Connected to z6MkwfrBy9mKTfcVELcV4wc6zfN379FPMnAqsxnwt4j2TdQ2 (radicle.jarg.io:8776) (Outbound)\n"
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "connect",
+        "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776",
+        "--timeout",
+        "30s"
+      ],
+      "cwd": null,
+      "duration_seconds": 0.126,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "\u2713 Connecting to z6Mkk7q\u2026PWySA4f@187.77.19.162:8776...\n"
+    },
+    {
+      "cmd": [
+        "rad",
+        "clone",
+        "--timeout",
+        "180s",
+        "--seed",
+        "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f",
+        "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+        "/home/atladmin/df-rad-follower-mirror/readback/decentralized-forge"
+      ],
+      "cwd": "/home/atladmin/df-rad-follower-mirror/readback",
+      "duration_seconds": 12.896,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "\u2713 Seeding policy updated for rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy with scope 'followed'\nFetching rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy from the network, found 3 potential seed(s).\n\u2713 Target met: 1 preferred seed(s).\n\u2713 Creating checkout in .//home/atladmin/df-rad-follower-mirror/readback/decentralized-forge..\n\u2713 Remote df-retained-maintainer@z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr added\n\u2713 Remote-tracking branch df-retained-maintainer@z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr/main created for z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr\n\u2713 Repository successfully cloned under /home/atladmin/df-rad-follower-mirror/readback/decentralized-forge/\n\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 decentralized-forge                                                                                                    \u2502\n\u2502 Decentralized Forge retained-maintainer Radicle repository; evidence-scoped, no durability/security/production claims. \u2502\n\u2502 0 issues \u00b7 0 patches                                                                                                   \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\nRun `cd .//home/atladmin/df-rad-follower-mirror/readback/decentralized-forge` to go to the repository directory.\n"
+    },
+    {
+      "cmd": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/home/atladmin/df-rad-follower-mirror/readback/decentralized-forge",
+      "duration_seconds": 0.004,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "ef16e2ad39d3e13bdcc9d454443c5bbb17733c68\n"
+    },
+    {
+      "cmd": [
+        "rad",
+        "seed",
+        "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+        "--scope",
+        "all",
+        "--no-fetch"
+      ],
+      "cwd": null,
+      "duration_seconds": 0.019,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "\u2713 Inventory updated with rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy\n\u2713 Seeding policy updated for rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy with scope 'all'\n"
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "stop"
+      ],
+      "cwd": null,
+      "duration_seconds": 1.088,
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "\u2713 Node stopped\n"
+    }
+  ],
+  "created_utc": "2026-06-29T23:13:14Z",
+  "expected_commit": "ef16e2ad39d3e13bdcc9d454443c5bbb17733c68",
+  "left_running": false,
+  "listen": "127.0.0.1:8877",
+  "node_id": "z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A",
+  "rad_home": "/home/atladmin/df-rad-follower-mirror/rad-home",
+  "readback_commit": "ef16e2ad39d3e13bdcc9d454443c5bbb17733c68",
+  "readback_matches_expected": true,
+  "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+  "schema_version": "decentralized-forge.radicle-follower-seed-bootstrap.v1",
+  "secret_values_recorded": false,
+  "seed_policy_scope": "all",
+  "source_seed": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776",
+  "state_dir": "/home/atladmin/df-rad-follower-mirror"
+}
