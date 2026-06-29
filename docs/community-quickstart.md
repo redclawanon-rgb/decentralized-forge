@@ -64,3 +64,4 @@ The current bundle workflow is local and fixture-backed. Local onboarding record
 
 The committed onboarding sample at `fixtures/onboarding-sample.registry.json` and `output/onboarding-sample.registry.html` shows the full local path without requiring a separate project.
 To inspect it inside the static workbench, render `output/forge-app-with-onboarding-sample.html` with `render-app --registry fixtures/example-project.registry.json --registry fixtures/portable-lab.registry.json --registry fixtures/onboarding-sample.registry.json`.
+The workbench Project set screen lists the embedded registry inputs and shows the matching recreate command for the current project set.

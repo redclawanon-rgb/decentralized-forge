@@ -704,3 +704,11 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as `output/forge-app-with-onboarding-sample.html`, generated with `render-app --registry fixtures/example-project.registry.json --registry fixtures/portable-lab.registry.json --registry fixtures/onboarding-sample.registry.json`. The default `output/forge-app.html` remains the two-project workbench. CI and `verify-local` regenerate the optional workbench, the bundle includes it through the `output/*.html` rule, and the GitHub attestation subject list includes it. Tests compare regenerated output, inspect embedded app data for exactly demo, portable, and onboarding sample projects, assert the onboarding artifact appears, and keep the no-fetch/no-sign/no-publish checks.
 
 **Gate preserved:** This is static local HTML generation from committed fixture/evidence data only. It does not publish protocol events, sign events, fetch from relays or gateways, add/fetch/pin IPFS content, start daemons, spend money, use wallets, import private keys, replace registry provenance, or claim durability, censorship resistance, broad availability, security, SLSA compliance, or production readiness.
+
+## Loop 58: Workbench project set handoff
+
+**Goal:** Let a reviewer recreate the exact static workbench project set from inside the generated app without reading docs first.
+
+**Current result:** Complete as a Project set screen in `output/forge-app.html` and `output/forge-app-with-onboarding-sample.html`. The app data now embeds `generated_from.output` alongside the registry source paths, and the screen lists those inputs plus a copyable `python scripts/forge_registry.py render-app ... --registry ...` command. Tests compare regenerated workbench outputs, assert the embedded output/registry source paths for the default and onboarding workbenches, and preserve the no-fetch/no-sign/no-publish runtime checks.
+
+**Gate preserved:** This is static local HTML generation from committed fixture/evidence data only. It does not publish protocol events, sign events, fetch from relays or gateways, add/fetch/pin IPFS content, start daemons, spend money, use wallets, import private keys, replace registry provenance, or claim durability, censorship resistance, broad availability, security, SLSA compliance, or production readiness.

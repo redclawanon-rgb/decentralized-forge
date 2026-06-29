@@ -33,6 +33,13 @@ def relative(path: Path) -> str:
         return str(path)
 
 
+def app_output_label(path: Path) -> str:
+    try:
+        return path.resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        return (Path("output") / path.name).as_posix()
+
+
 def read_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -107,6 +114,7 @@ def build_app_data(args: argparse.Namespace) -> dict:
     return {
         "schema_version": "decentralized-forge.static-app-data.v1",
         "generated_from": {
+            "output": app_output_label(args.output),
             "registries": registry_sources,
             "live_evidence_index": relative(args.live_evidence_index),
             "nip34_repo_fixture": relative(args.nip34_repo_fixture),
@@ -263,6 +271,7 @@ def render_html(app_data: dict) -> str:
     .field {{ display: grid; gap: 5px; margin-bottom: 10px; }}
     .field textarea {{ min-height: 142px; resize: vertical; }}
     .output {{ width: 100%; min-height: 240px; resize: vertical; background: #10171b; color: #e8f1f4; }}
+    .command-output {{ min-height: 96px; }}
     .actions {{ display: flex; flex-wrap: wrap; gap: 8px; }}
     .primary, .secondary {{
       min-height: 36px;
@@ -295,6 +304,7 @@ def render_html(app_data: dict) -> str:
       <button data-view="releases" aria-selected="false">Releases</button>
       <button data-view="evidence" aria-selected="false">Evidence</button>
       <button data-view="draft" aria-selected="false">Nostr draft</button>
+      <button data-view="project-set" aria-selected="false">Project set</button>
     </nav>
   </aside>
   <main>
@@ -310,6 +320,7 @@ def render_html(app_data: dict) -> str:
     <section id="view-releases" class="hidden"></section>
     <section id="view-evidence" class="hidden"></section>
     <section id="view-draft" class="hidden"></section>
+    <section id="view-project-set" class="hidden"></section>
   </main>
 </div>
 <script id="forge-data" type="application/json">__DATA_JSON__</script>
@@ -323,6 +334,7 @@ const registry = () => project().registry;
 const text = (value) => value == null || value === '' ? 'not listed' : String(value);
 const badgeClass = (value) => value === true ? 'good' : value === false ? 'warn' : 'blue';
 const escapeHtml = (value) => text(value).replace(/[&<>"']/g, (ch) => ({{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}}[ch]));
+const commandArg = (value) => /^[A-Za-z0-9_./:-]+$/.test(String(value)) ? String(value) : JSON.stringify(String(value));
 
 function badge(label, kind = '') {{
   return `<span class="badge ${{kind}}">${{escapeHtml(label)}}</span>`;
@@ -335,7 +347,7 @@ function meta(rows) {{
 function setView(view) {{
   state.view = view;
   document.querySelectorAll('.nav button').forEach((button) => button.setAttribute('aria-selected', String(button.dataset.view === view)));
-  ['overview', 'collaboration', 'releases', 'evidence', 'draft'].forEach((name) => $(`view-${{name}}`).classList.toggle('hidden', name !== view));
+  ['overview', 'collaboration', 'releases', 'evidence', 'draft', 'project-set'].forEach((name) => $(`view-${{name}}`).classList.toggle('hidden', name !== view));
   render();
 }}
 
@@ -525,6 +537,53 @@ function renderDraft() {{
   updateDraftOutput();
 }}
 
+function projectSetCommand() {{
+  const generated = app.generated_from || {{}};
+  const output = generated.output || 'output/forge-app.html';
+  const registryArgs = (generated.registries || []).map((source) => `--registry ${{commandArg(source)}}`).join(' ');
+  return `python scripts/forge_registry.py render-app ${{commandArg(output)}}${{registryArgs ? ' ' + registryArgs : ''}}`;
+}}
+
+function renderProjectSet() {{
+  const generated = app.generated_from || {{}};
+  const sources = generated.registries || [];
+  const rows = sources.map((source, index) => [
+    `Registry ${{index + 1}}`,
+    source
+  ]);
+  rows.push(['Output', generated.output || 'output/forge-app.html']);
+  rows.push(['Live evidence index', generated.live_evidence_index]);
+  rows.push(['NIP-34 repository fixture', generated.nip34_repo_fixture]);
+  rows.push(['NIP-34 collaboration fixture', generated.nip34_collaboration_fixture]);
+  rows.push(['NIP-34 state/status fixture', generated.nip34_state_status_fixture]);
+  $('view-project-set').innerHTML = `
+    <section class="panel">
+      <h2>Project set</h2>
+      <div class="grid">
+        <div class="span-6">
+          ${{meta(rows)}}
+          ${{badge(`${{app.projects.length}} project${{app.projects.length === 1 ? '' : 's'}}`, 'blue')}}
+          ${{badge('static local render command', 'good')}}
+          ${{badge('no publish or signing action', 'good')}}
+        </div>
+        <div class="span-6">
+          <label class="field">Render command<textarea id="projectSetCommand" class="output command-output" readonly>${{escapeHtml(projectSetCommand())}}</textarea></label>
+          <div class="actions">
+            <button id="copyProjectSetCommand" class="secondary">Copy command</button>
+          </div>
+        </div>
+      </div>
+    </section>`;
+  $('copyProjectSetCommand').onclick = () => {{
+    const output = $('projectSetCommand');
+    output.focus();
+    output.select();
+    if (navigator.clipboard?.writeText) {{
+      navigator.clipboard.writeText(output.value);
+    }}
+  }};
+}}
+
 function render() {{
   renderHeader();
   if (state.view === 'overview') renderOverview();
@@ -532,6 +591,7 @@ function render() {{
   if (state.view === 'releases') renderReleases();
   if (state.view === 'evidence') renderEvidence();
   if (state.view === 'draft') renderDraft();
+  if (state.view === 'project-set') renderProjectSet();
 }}
 
 renderShell();

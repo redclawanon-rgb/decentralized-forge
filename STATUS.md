@@ -1194,9 +1194,25 @@ Verified evidence:
 
 Gate preserved: Loop 57 only renders committed local registry/evidence data into static HTML. It does not publish protocol events, sign events, fetch from relays or gateways, add/fetch/pin IPFS content, start daemons, spend money, use wallets, import private keys, replace registry provenance, or introduce durability, censorship-resistance, broad-availability, security, SLSA, or production-readiness claims.
 
+### Loop 58: Workbench project set handoff
+
+Status: **complete as static in-app recreate command; no live protocol/storage/signing action**.
+
+Outputs:
+
+- `scripts/render_forge_app.py` now embeds `generated_from.output` and renders a Project set screen.
+- `output/forge-app.html` and `output/forge-app-with-onboarding-sample.html` list their embedded registry source paths and show a copyable `render-app --registry ...` command for recreating the current project set.
+- The default workbench command remains the two-project set; the onboarding sample workbench command includes the onboarding registry as the third `--registry` input.
+
+Verified evidence:
+
+- Tests regenerate both workbenches, compare them to the committed outputs, assert the embedded output/registry source paths, and preserve no-fetch/no-sign/no-publish runtime checks.
+
+Gate preserved: Loop 58 only renders committed local registry/evidence data into static HTML. It does not publish protocol events, sign events, fetch from relays or gateways, add/fetch/pin IPFS content, start daemons, spend money, use wallets, import private keys, replace registry provenance, or introduce durability, censorship-resistance, broad-availability, security, SLSA, or production-readiness claims.
+
 ## Next recommended loop
 
-**Next:** Add an in-workbench project import/export panel that reads embedded registry source paths and shows a copyable `render-app --registry ...` command for recreating the current project set, keeping it static and non-publishing. The still-blocked parallel lane is locating an approved `rad` CLI on this Windows host for broader disposable Radicle clone/sync checks.
+**Next:** Add a static bundle handoff screen or section that summarizes the committed verification bundle/report commands from inside the workbench, so a reviewer can move from project inspection to bundle verification without leaving the app. The still-blocked parallel lane is locating an approved `rad` CLI on this Windows host for broader disposable Radicle clone/sync checks.
 
 Recent completed loops:
 
@@ -1226,6 +1242,7 @@ Recent completed loops:
 - Loop 55: local project onboarding command - complete as `onboard-local-project`; chains scaffold, artifact attach, validation, summary, render, bundle refresh, and report generation with local-only boundaries.
 - Loop 56: committed onboarding sample - complete as `fixtures/onboarding-sample.registry.json`, generated sample summary/page/report, tests, CI wiring, and bundle refresh.
 - Loop 57: optional workbench import for onboarding sample - complete as `output/forge-app-with-onboarding-sample.html`; proves `render-app --registry` imports onboarded registries without changing the default workbench.
+- Loop 58: workbench project set handoff - complete as a static Project set screen with embedded output/registry paths and a copyable recreate command.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

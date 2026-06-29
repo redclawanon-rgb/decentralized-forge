@@ -249,6 +249,8 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("Nostr collaboration draft", html)
         self.assertIn("unsigned local draft", html)
         self.assertIn("no relay publish action", html)
+        self.assertIn("Project set", html)
+        self.assertIn("projectSetCommand", html)
         self.assertIn("loop43-nostr-issue-patch-readback", html)
         self.assertIn("selected-relay-issue-patch-readback-verified", html)
 
@@ -260,6 +262,11 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIsNotNone(data_match)
         app_data = json.loads(data_match.group(1))
         self.assertEqual(app_data["schema_version"], "decentralized-forge.static-app-data.v1")
+        self.assertEqual(app_data["generated_from"]["output"], "output/forge-app.html")
+        self.assertEqual(
+            app_data["generated_from"]["registries"],
+            ["fixtures/example-project.registry.json", "fixtures/portable-lab.registry.json"],
+        )
         self.assertEqual(len(app_data["projects"]), 2)
         self.assertEqual(app_data["projects"][0]["registry"]["project"]["id"], "demo-project")
         self.assertEqual({item["type"] for item in app_data["live_nostr_collaboration"]}, {"issue", "patch"})
@@ -311,6 +318,9 @@ class RegistryFixtureTests(unittest.TestCase):
         app_data = json.loads(data_match.group(1))
         project_ids = [project["registry"]["project"]["id"] for project in app_data["projects"]]
         self.assertEqual(project_ids, ["demo-project", "portable-lab", "onboarding-sample"])
+        self.assertIn("Project set", html)
+        self.assertIn("projectSetCommand", html)
+        self.assertEqual(app_data["generated_from"]["output"], "output/forge-app-with-onboarding-sample.html")
         self.assertIn("fixtures/onboarding-sample.registry.json", app_data["generated_from"]["registries"])
         onboarding = [project for project in app_data["projects"] if project["registry"]["project"]["id"] == "onboarding-sample"][0]
         self.assertEqual(onboarding["summary"]["artifact_names"], ["onboarding-sample-artifact.txt"])

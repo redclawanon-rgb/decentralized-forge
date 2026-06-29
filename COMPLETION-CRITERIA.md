@@ -90,6 +90,7 @@ Status: active as a static local app.
 - `scripts/render_forge_app.py` generates `output/forge-app.html` from committed registry fixtures, live-evidence index data, selected-relay Nostr readback evidence, and the registry-shaped keyless-attestation import.
 - `output/forge-app-with-onboarding-sample.html` proves onboarded registries can be imported into the static workbench with explicit `render-app --registry` arguments without changing the default two-project workbench.
 - The app provides project overview, issue/patch inspection, release evidence, evidence filtering, and unsigned local Nostr issue/patch draft generation.
+- The Project set screen shows embedded registry source paths, the generated output path, and a copyable `render-app --registry ...` command for recreating the current workbench.
 - It does not sign, publish, fetch, open WebSockets, use private keys, host a service, or claim production forge readiness.
 
 ### Lane E: Portable Verification Bundle

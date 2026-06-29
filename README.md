@@ -125,6 +125,7 @@ python3 -m webbrowser output/forge-app-with-onboarding-sample.html
 ```
 
 The workbench is a static local app over committed fixtures/evidence. Its Nostr draft screen creates unsigned local JSON only; it does not sign events, import private keys, fetch from relays, open WebSockets, or publish.
+The Project set screen lists the embedded registry sources and output path, and shows a copyable `render-app --registry ...` command for recreating the current workbench.
 
 Scaffold a starter registry fixture from a local Git worktree:
 
