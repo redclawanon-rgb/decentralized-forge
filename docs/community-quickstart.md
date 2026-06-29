@@ -28,6 +28,17 @@ python scripts/forge_registry.py render fixtures/example-project.registry.json o
 
 Open `output/demo-project.html`. Treat it as a readable verification report, not a hosted forge.
 
+## Review The Portable Bundle
+
+```sh
+python scripts/forge_registry.py export-bundle output/decentralized-forge-verification-bundle.zip
+python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip
+python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip
+python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip
+```
+
+Before attaching or describing the bundle outside this repository, read `docs/portable-bundle-review-checklist.md`. The checklist explains the required local checks, report review, non-claims, attachment metadata, and stop conditions.
+
 ## Read Claims Correctly
 
 - `local-fixture` means committed local data was parsed or rendered.
@@ -49,4 +60,4 @@ The intended public tool flow is:
 4. Add optional transport evidence from Nostr, Radicle, IPFS, or hosted attestations.
 5. Export a static report and evidence bundle that others can verify without trusting the original platform.
 
-That importer/bundle workflow is the next product surface. Until it exists, use the fixtures as examples and keep new evidence rows explicit, bounded, and secret-free.
+The current bundle workflow is local and fixture-backed. Until live importers are broader and evidence-backed, use the fixtures as examples and keep new evidence rows explicit, bounded, and secret-free.

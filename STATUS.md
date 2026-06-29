@@ -1074,9 +1074,26 @@ Verified evidence:
 
 Gate preserved: Loop 50 only reads committed/generated local bundle contents and produces a summary. It does not publish protocol events, sign events, fetch from relays, pin storage, start daemons, spend money, use wallets, import private keys, replace registry provenance, or introduce durability, censorship-resistance, broad-availability, security, SLSA, or production-readiness claims.
 
+### Loop 51: Portable bundle review checklist
+
+Status: **complete as release-facing review guidance; no live protocol/storage/signing action**.
+
+Outputs:
+
+- `docs/portable-bundle-review-checklist.md` defines required local checks, `report-bundle` review expectations, non-claims, attachment metadata, stop conditions, and a neutral release-note template.
+- The checklist is included in `output/decentralized-forge-verification-bundle.zip` so bundle consumers receive the review guidance with the evidence package.
+- `docs/community-quickstart.md`, `README.md`, `COMPLETION-CRITERIA.md`, `AGENT-LOOPS.md`, and `.hermes/context.md` now describe the checklist as part of the portable bundle workflow.
+
+Verified evidence:
+
+- Tests assert the checklist includes the required bundle verification/report commands and preserves non-claim boundaries.
+- Bundle export includes `docs/portable-bundle-review-checklist.md` as documentation payload.
+
+Gate preserved: Loop 51 only adds local review documentation. It does not publish protocol events, sign events, fetch from relays, pin storage, start daemons, spend money, use wallets, import private keys, replace registry provenance, or introduce durability, censorship-resistance, broad-availability, security, SLSA, or production-readiness claims.
+
 ## Next recommended loop
 
-**Next:** Add a release-facing bundle review checklist/release-notes artifact that explains how a maintainer should review `report-bundle`, `verify-bundle-cleanroom`, and the explicit non-claims before publishing or attaching the portable bundle. The still-blocked parallel lane is locating an approved `rad` CLI on this Windows host for broader disposable Radicle clone/sync checks.
+**Next:** Add a deterministic bundle release-note/report export that combines `report-bundle --json`, the exact commit SHA, and the checklist stop conditions into a small shareable markdown artifact. The still-blocked parallel lane is locating an approved `rad` CLI on this Windows host for broader disposable Radicle clone/sync checks.
 
 Recent completed loops:
 
@@ -1099,6 +1116,7 @@ Recent completed loops:
 - Loop 48: portable verification bundle - complete as `output/decentralized-forge-verification-bundle.zip` plus `export-bundle`/`verify-bundle`; bundle remains local evidence packaging, not a signing/durability/security proof.
 - Loop 49: clean-room bundle consumer check - complete as `verify-bundle-cleanroom`; verifies an extracted temporary bundle tree without relying on the original checkout.
 - Loop 50: bundle import/report command - complete as `report-bundle`; summarizes ZIP or extracted bundle contents for human review without live action.
+- Loop 51: portable bundle review checklist - complete as `docs/portable-bundle-review-checklist.md`; gives maintainers required checks, non-claims, attachments, stop conditions, and neutral release-note wording.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

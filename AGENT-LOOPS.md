@@ -648,3 +648,11 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as `scripts/forge_registry.py report-bundle`. The command reads either `output/decentralized-forge-verification-bundle.zip` or an extracted bundle directory and emits a concise human report, with `--json` for deterministic machine-readable output. The report summarizes file role counts, registry project identity/counts, evidence protocol/state counts, explicit non-claims, verification gaps, and suggested verification commands. Tests assert the ZIP and extracted-directory report paths agree, the manifest lists the report command, and CI runs `report-bundle --json`.
 
 **Gate preserved:** This is local bundle readback and reporting only. It does not publish protocol events, sign events, fetch from relays, pin storage, start daemons, spend money, use wallets, import private keys, replace registry provenance, or claim durability, censorship resistance, broad availability, security, SLSA compliance, or production readiness.
+
+## Loop 51: Portable bundle review checklist
+
+**Goal:** Give maintainers a release-facing checklist for reviewing and describing the portable bundle without overstating evidence.
+
+**Current result:** Complete as `docs/portable-bundle-review-checklist.md`. The checklist defines required local checks, `report-bundle` review expectations, explicit non-claims, attachment metadata, stop conditions, and neutral release-note wording. The checklist is included in the portable verification bundle, referenced from README/community/completion docs, and covered by tests that assert required commands and claim boundaries remain present.
+
+**Gate preserved:** This is local review documentation only. It does not publish protocol events, sign events, fetch from relays, pin storage, start daemons, spend money, use wallets, import private keys, replace registry provenance, or claim durability, censorship resistance, broad availability, security, SLSA compliance, or production readiness.

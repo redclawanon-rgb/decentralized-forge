@@ -42,6 +42,7 @@ KEYLESS_REGISTRY_IMPORT_PATH = ROOT / "fixtures" / "keyless-attestation.registry
 FIXTURE_PATHS = [FIXTURE_PATH, PORTABLE_FIXTURE_PATH, RADICLE_FIXTURE_PATH]
 RENDERER = ROOT / "scripts" / "render_project_page.py"
 STATIC_PREFLIGHT = ROOT / "scripts" / "preflight_static_artifact.py"
+PORTABLE_BUNDLE_REVIEW_CHECKLIST = ROOT / "docs" / "portable-bundle-review-checklist.md"
 OUTPUT_DEMO_HTML = ROOT / "output" / "demo-project.html"
 OUTPUT_VERIFICATION_BUNDLE = ROOT / "output" / "decentralized-forge-verification-bundle.zip"
 OUTPUT_FORGE_APP_HTML = ROOT / "output" / "forge-app.html"
@@ -278,6 +279,7 @@ class RegistryFixtureTests(unittest.TestCase):
                 "output/forge-app.html",
                 "output/demo-project.summary.json",
                 "output/portable-lab.summary.json",
+                "docs/portable-bundle-review-checklist.md",
                 "scripts/forge_registry.py",
             ]:
                 self.assertIn(expected_path, payload_paths)
@@ -293,6 +295,29 @@ class RegistryFixtureTests(unittest.TestCase):
             manifest_blob = json.dumps(manifest, sort_keys=True).lower()
             for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
                 self.assertNotIn(accidental_secret_marker, manifest_blob)
+
+    def test_portable_bundle_review_checklist_preserves_release_boundaries(self):
+        checklist = PORTABLE_BUNDLE_REVIEW_CHECKLIST.read_text(encoding="utf-8")
+        for required_command in [
+            "python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip",
+            "python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip",
+            "python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip",
+            "python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip --json",
+            "python scripts/forge_registry.py verify-local --skip-npm-ci",
+        ]:
+            self.assertIn(required_command, checklist)
+        for required_boundary in [
+            "not a signed release",
+            "no private key",
+            "no durability",
+            "censorship-resistance",
+            "security guarantee",
+            "SLSA compliance",
+            "production-readiness",
+        ]:
+            self.assertIn(required_boundary, checklist)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, checklist.lower())
 
     def test_live_gate_inventory_is_read_only_and_secret_free(self):
         payload = live_gate_inventory.inventory()

@@ -90,6 +90,7 @@ Status: active as a deterministic generated artifact.
 - `python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip` validates manifest schema, file sizes, SHA-256 hashes, and live-evidence-index bindings.
 - `python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip` extracts the bundle into a temporary directory and runs bundled verification paths from that extracted tree.
 - `python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip` imports either a bundle ZIP or extracted bundle directory and reports project identity, evidence rows, non-claims, verification gaps, and suggested commands.
+- `docs/portable-bundle-review-checklist.md` defines the maintainer review, attachment, non-claim, and stop-condition checklist for release-facing bundle handoffs.
 - It does not replace signing/provenance verification, durable storage evidence, availability evidence, SLSA compliance, or production security review.
 
 ### Lane F: Optional Live Evidence

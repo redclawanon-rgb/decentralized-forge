@@ -274,6 +274,7 @@ def collect_verification_bundle_paths() -> list[Path]:
         "AGENT-LOOPS.md",
         "docs/threat-model.md",
         "docs/community-quickstart.md",
+        "docs/portable-bundle-review-checklist.md",
         "package.json",
         "package-lock.json",
         "scripts/forge_registry.py",
