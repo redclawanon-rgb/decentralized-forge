@@ -84,6 +84,7 @@ As of Loop 53, the project has local CAR/CID fixture verification, local Helia U
 - `scripts/forge_registry.py` — reusable local CLI for local registry scaffolding, validation, rendering, workbench app generation, summaries, evidence-index hash checks, portable verification bundle export/verification/reporting/release-note export, and read-only doctor output
 - `output/demo-project.html` — generated demo project page
 - `output/forge-app.html` — generated local static workbench app; it reads embedded committed fixture/evidence data and does not sign, fetch, open WebSockets, or publish protocol events
+- `output/forge-app-with-onboarding-sample.html` — optional generated workbench app with the committed onboarding sample imported via `render-app --registry`
 - `output/portable-lab.html` — generated second-fixture project page
 - `output/onboarding-sample.registry.html` — generated committed onboarding sample page
 - `output/*.summary.json` — deterministic machine-readable registry summaries
@@ -114,6 +115,13 @@ Regenerate and open the local static forge workbench:
 ```sh
 python3 scripts/forge_registry.py render-app output/forge-app.html
 python3 -m webbrowser output/forge-app.html
+```
+
+Render the same workbench with the committed onboarding sample imported:
+
+```sh
+python3 scripts/forge_registry.py render-app output/forge-app-with-onboarding-sample.html --registry fixtures/example-project.registry.json --registry fixtures/portable-lab.registry.json --registry fixtures/onboarding-sample.registry.json
+python3 -m webbrowser output/forge-app-with-onboarding-sample.html
 ```
 
 The workbench is a static local app over committed fixtures/evidence. Its Nostr draft screen creates unsigned local JSON only; it does not sign events, import private keys, fetch from relays, open WebSockets, or publish.
@@ -185,6 +193,7 @@ python3 scripts/forge_registry.py doctor --json
 python3 scripts/forge_registry.py validate fixtures/example-project.registry.json fixtures/portable-lab.registry.json fixtures/onboarding-sample.registry.json
 python3 scripts/forge_registry.py render fixtures/portable-lab.registry.json output/portable-lab.html
 python3 scripts/forge_registry.py render-app output/forge-app.html
+python3 scripts/forge_registry.py render-app output/forge-app-with-onboarding-sample.html --registry fixtures/example-project.registry.json --registry fixtures/portable-lab.registry.json --registry fixtures/onboarding-sample.registry.json
 python3 scripts/forge_registry.py export-summary fixtures/example-project.registry.json output/demo-project.summary.json
 python3 scripts/forge_registry.py export-summary fixtures/portable-lab.registry.json output/portable-lab.summary.json
 python3 scripts/forge_registry.py export-bundle output/decentralized-forge-verification-bundle.zip

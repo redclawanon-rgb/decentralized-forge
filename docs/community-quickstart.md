@@ -63,3 +63,4 @@ The intended public tool flow is:
 The current bundle workflow is local and fixture-backed. Local onboarding records Git metadata, file hash, size, media type, and `file://` availability only; it does not add/fetch/pin IPFS content, sign releases, publish protocol events, or prove durable availability. Until live importers are broader and evidence-backed, use the fixtures as examples and keep new evidence rows explicit, bounded, and secret-free.
 
 The committed onboarding sample at `fixtures/onboarding-sample.registry.json` and `output/onboarding-sample.registry.html` shows the full local path without requiring a separate project.
+To inspect it inside the static workbench, render `output/forge-app-with-onboarding-sample.html` with `render-app --registry fixtures/example-project.registry.json --registry fixtures/portable-lab.registry.json --registry fixtures/onboarding-sample.registry.json`.

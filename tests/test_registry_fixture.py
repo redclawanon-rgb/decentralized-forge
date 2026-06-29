@@ -49,6 +49,7 @@ PORTABLE_BUNDLE_REVIEW_CHECKLIST = ROOT / "docs" / "portable-bundle-review-check
 OUTPUT_DEMO_HTML = ROOT / "output" / "demo-project.html"
 OUTPUT_VERIFICATION_BUNDLE = ROOT / "output" / "decentralized-forge-verification-bundle.zip"
 OUTPUT_FORGE_APP_HTML = ROOT / "output" / "forge-app.html"
+OUTPUT_FORGE_APP_WITH_ONBOARDING_HTML = ROOT / "output" / "forge-app-with-onboarding-sample.html"
 OUTPUT_PORTABLE_HTML = ROOT / "output" / "portable-lab.html"
 OUTPUT_ONBOARDING_SAMPLE_HTML = ROOT / "output" / "onboarding-sample.registry.html"
 OUTPUT_DEMO_SUMMARY = ROOT / "output" / "demo-project.summary.json"
@@ -278,6 +279,54 @@ class RegistryFixtureTests(unittest.TestCase):
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, html.lower())
 
+    def test_static_forge_app_can_import_onboarding_sample(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            generated = Path(tmpdir) / "forge-app-with-onboarding-sample.html"
+            self.assertEqual(
+                render_forge_app.main(
+                    [
+                        str(generated),
+                        "--registry",
+                        str(FIXTURE_PATH),
+                        "--registry",
+                        str(PORTABLE_FIXTURE_PATH),
+                        "--registry",
+                        str(ONBOARDING_SAMPLE_FIXTURE_PATH),
+                    ]
+                ),
+                0,
+            )
+            self.assertEqual(
+                generated.read_text(encoding="utf-8"),
+                OUTPUT_FORGE_APP_WITH_ONBOARDING_HTML.read_text(encoding="utf-8"),
+            )
+
+        html = OUTPUT_FORGE_APP_WITH_ONBOARDING_HTML.read_text(encoding="utf-8")
+        data_match = re.search(
+            r'<script id="forge-data" type="application/json">(.*?)</script>',
+            html,
+            re.S,
+        )
+        self.assertIsNotNone(data_match)
+        app_data = json.loads(data_match.group(1))
+        project_ids = [project["registry"]["project"]["id"] for project in app_data["projects"]]
+        self.assertEqual(project_ids, ["demo-project", "portable-lab", "onboarding-sample"])
+        self.assertIn("fixtures/onboarding-sample.registry.json", app_data["generated_from"]["registries"])
+        onboarding = [project for project in app_data["projects"] if project["registry"]["project"]["id"] == "onboarding-sample"][0]
+        self.assertEqual(onboarding["summary"]["artifact_names"], ["onboarding-sample-artifact.txt"])
+        self.assertIn("static app does not publish protocol events", app_data["non_claims"])
+        for forbidden_runtime in [
+            "new WebSocket",
+            "fetch(",
+            "SimplePool",
+            "finalizeEvent",
+            "generateSecretKey",
+            "pool.publish",
+        ]:
+            self.assertNotIn(forbidden_runtime, html)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, html.lower())
+
     def test_verification_bundle_is_current_and_self_verifying(self):
         with tempfile.TemporaryDirectory() as tmpdir:
             generated = Path(tmpdir) / "verification-bundle.zip"
@@ -341,6 +390,7 @@ class RegistryFixtureTests(unittest.TestCase):
                 "output/portable-lab.html",
                 "output/onboarding-sample.registry.html",
                 "output/forge-app.html",
+                "output/forge-app-with-onboarding-sample.html",
                 "output/demo-project.summary.json",
                 "output/portable-lab.summary.json",
                 "output/onboarding-sample.registry.summary.json",
@@ -743,6 +793,7 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("if: github.event_name == 'push' && github.ref == 'refs/heads/main'", workflow)
         self.assertIn("npm run verify:helia", workflow)
         self.assertIn("python scripts/forge_registry.py render-app output/forge-app.html", workflow)
+        self.assertIn("python scripts/forge_registry.py render-app output/forge-app-with-onboarding-sample.html --registry fixtures/example-project.registry.json --registry fixtures/portable-lab.registry.json --registry fixtures/onboarding-sample.registry.json", workflow)
         self.assertIn("python scripts/forge_registry.py export-bundle output/decentralized-forge-verification-bundle.zip", workflow)
         self.assertIn("python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip", workflow)
         self.assertIn("python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip", workflow)
@@ -752,6 +803,7 @@ class RegistryFixtureTests(unittest.TestCase):
         for subject in [
             "output/demo-project.html",
             "output/forge-app.html",
+            "output/forge-app-with-onboarding-sample.html",
             "output/portable-lab.html",
             "output/onboarding-sample.registry.html",
             "output/demo-project.summary.json",

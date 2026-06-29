@@ -36,6 +36,7 @@ python scripts/preflight_static_artifact.py
 python scripts/forge_registry.py validate fixtures/example-project.registry.json fixtures/portable-lab.registry.json fixtures/onboarding-sample.registry.json
 python scripts/forge_registry.py render fixtures/portable-lab.registry.json output/portable-lab.html
 python scripts/forge_registry.py render-app output/forge-app.html
+python scripts/forge_registry.py render-app output/forge-app-with-onboarding-sample.html --registry fixtures/example-project.registry.json --registry fixtures/portable-lab.registry.json --registry fixtures/onboarding-sample.registry.json
 python scripts/forge_registry.py export-summary fixtures/example-project.registry.json output/demo-project.summary.json
 python scripts/forge_registry.py export-summary fixtures/portable-lab.registry.json output/portable-lab.summary.json
 python scripts/forge_registry.py export-bundle output/decentralized-forge-verification-bundle.zip
@@ -87,6 +88,7 @@ Status: complete.
 Status: active as a static local app.
 
 - `scripts/render_forge_app.py` generates `output/forge-app.html` from committed registry fixtures, live-evidence index data, selected-relay Nostr readback evidence, and the registry-shaped keyless-attestation import.
+- `output/forge-app-with-onboarding-sample.html` proves onboarded registries can be imported into the static workbench with explicit `render-app --registry` arguments without changing the default two-project workbench.
 - The app provides project overview, issue/patch inspection, release evidence, evidence filtering, and unsigned local Nostr issue/patch draft generation.
 - It does not sign, publish, fetch, open WebSockets, use private keys, host a service, or claim production forge readiness.
 

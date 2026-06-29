@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Decentralized Forge Workbench</title>
+  <style>
+    :root {
+      --ink: #1e2428;
+      --muted: #5e6970;
+      --line: #d7dde1;
+      --panel: #f6f8f9;
+      --paper: #ffffff;
+      --good: #116b4f;
+      --warn: #8a5b00;
+      --bad: #9b2c2c;
+      --blue: #245f9f;
+      --teal: #0f6f74;
+      --rose: #9a3b5a;
+      --shadow: 0 1px 2px rgba(0,0,0,.07);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #eef2f4;
+      font: 14px/1.45 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    button, input, select, textarea { font: inherit; }
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 248px minmax(0, 1fr);
+    }
+    .rail {
+      background: #182126;
+      color: #edf3f5;
+      padding: 18px 14px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+    }
+    .brand { margin: 0 0 18px; font-size: 18px; font-weight: 700; }
+    .project-select {
+      width: 100%;
+      min-height: 36px;
+      border: 1px solid #435059;
+      background: #10171b;
+      color: #fff;
+      border-radius: 6px;
+      padding: 6px 8px;
+    }
+    .nav { display: grid; gap: 6px; margin-top: 18px; }
+    .nav button {
+      min-height: 36px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: #d7e2e7;
+      text-align: left;
+      padding: 8px 10px;
+      cursor: pointer;
+    }
+    .nav button[aria-selected="true"] { background: #2b3941; color: #fff; }
+    main { padding: 22px; min-width: 0; }
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+    h1 { margin: 0; font-size: 26px; line-height: 1.15; letter-spacing: 0; }
+    h2 { margin: 0 0 12px; font-size: 19px; letter-spacing: 0; }
+    h3 { margin: 0 0 8px; font-size: 15px; letter-spacing: 0; }
+    p { margin: 0 0 10px; }
+    .muted { color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px; }
+    .metric, .panel, .item {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      box-shadow: var(--shadow);
+    }
+    .metric { padding: 12px; min-height: 76px; }
+    .metric strong { display: block; font-size: 23px; line-height: 1.1; }
+    .panel { padding: 14px; margin-bottom: 12px; }
+    .item { padding: 12px; margin-bottom: 10px; }
+    .span-3 { grid-column: span 3; }
+    .span-4 { grid-column: span 4; }
+    .span-6 { grid-column: span 6; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .toolbar input, .toolbar select, .field input, .field select, .field textarea {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 9px;
+      background: #fff;
+      min-height: 36px;
+    }
+    .toolbar input { min-width: min(320px, 100%); }
+    .segmented { display: inline-grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+    .segmented button { border: 0; background: #fff; min-height: 34px; padding: 6px 10px; cursor: pointer; }
+    .segmented button[aria-pressed="true"] { background: #244558; color: #fff; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      border-radius: 999px;
+      padding: 3px 8px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      font-size: 12px;
+      margin: 2px 4px 2px 0;
+      max-width: 100%;
+    }
+    .badge.good { border-color: #84baa8; color: var(--good); background: #edf8f4; }
+    .badge.warn { border-color: #d7bf74; color: var(--warn); background: #fff8df; }
+    .badge.bad { border-color: #d9a0a0; color: var(--bad); background: #fff0f0; }
+    .badge.blue { border-color: #9bb9d6; color: var(--blue); background: #eef6ff; }
+    .badge.rose { border-color: #d8a4b6; color: var(--rose); background: #fff2f6; }
+    dl.meta { display: grid; grid-template-columns: minmax(130px, 210px) minmax(0, 1fr); gap: 6px 12px; margin: 0; }
+    dt { color: var(--muted); }
+    dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+    code, textarea.output { font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; }
+    .field { display: grid; gap: 5px; margin-bottom: 10px; }
+    .field textarea { min-height: 142px; resize: vertical; }
+    .output { width: 100%; min-height: 240px; resize: vertical; background: #10171b; color: #e8f1f4; }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .primary, .secondary {
+      min-height: 36px;
+      border-radius: 6px;
+      padding: 7px 11px;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .primary { color: #fff; background: var(--teal); }
+    .secondary { color: var(--ink); background: #fff; border-color: var(--line); }
+    .hidden { display: none !important; }
+    @media (max-width: 860px) {
+      .app { grid-template-columns: 1fr; }
+      .rail { position: relative; height: auto; }
+      main { padding: 14px; }
+      .topbar { display: block; }
+      .span-3, .span-4, .span-6, .span-8 { grid-column: span 12; }
+      dl.meta { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="rail">
+    <p class="brand">Decentralized Forge</p>
+    <select id="projectSelect" class="project-select" aria-label="Project"></select>
+    <nav class="nav" aria-label="Views">
+      <button data-view="overview" aria-selected="true">Overview</button>
+      <button data-view="collaboration" aria-selected="false">Issues & patches</button>
+      <button data-view="releases" aria-selected="false">Releases</button>
+      <button data-view="evidence" aria-selected="false">Evidence</button>
+      <button data-view="draft" aria-selected="false">Nostr draft</button>
+    </nav>
+  </aside>
+  <main>
+    <header class="topbar">
+      <div>
+        <h1 id="projectTitle"></h1>
+        <p id="projectDescription" class="muted"></p>
+      </div>
+      <div id="projectBadges"></div>
+    </header>
+    <section id="view-overview"></section>
+    <section id="view-collaboration" class="hidden"></section>
+    <section id="view-releases" class="hidden"></section>
+    <section id="view-evidence" class="hidden"></section>
+    <section id="view-draft" class="hidden"></section>
+  </main>
+</div>
+<script id="forge-data" type="application/json">{"generated_from": {"keyless_import": "fixtures/keyless-attestation.registry-verification.json", "live_evidence_index": "fixtures/live-evidence-index.json", "nip34_collaboration_fixture": "fixtures/nostr-collaboration-events.json", "nip34_live_readback_fixture": "fixtures/nostr-live-readback-events.json", "nip34_repo_fixture": "fixtures/nostr-repo-announcement.json", "nip34_state_status_fixture": "fixtures/nostr-repo-state-status.json", "registries": ["fixtures/example-project.registry.json", "fixtures/portable-lab.registry.json", "fixtures/onboarding-sample.registry.json"]}, "keyless_import": {"contains_secret_values": false, "created_at": "2026-06-28", "loop": 45, "non_claims": ["does not make fixtures/example-project.registry.json ci.provenance live-verified", "does not claim SLSA compliance", "does not claim production supply-chain security", "does not claim consumer policy verification", "does not use production/private personal signing keys"], "private_keys_used": false, "production_readiness_claim": false, "registry_fixture_provenance_replaced": false, "schema_version": "decentralized-forge.registry-verification-import.v1", "source_commit": "1b6e6c84036c52f6dee0bbbee49fdc5e29787dc7", "source_evidence": "evidence/github-keyless-attestation-2026-06-28.json", "source_workflow_run": "https://github.com/redclawanon-rgb/decentralized-forge/actions/runs/28339280081", "subject_count": 6, "subjects": [{"name": "demo-project.html", "sha256": "423e8be4f2d146661835fd0ed5d6729c7cb3934adf5514e08e13735fb21877b7"}, {"name": "portable-lab.html", "sha256": "874a166500dc057153c6d7b33209e283af828b4a0c6d56b38e24efdcd351529c"}, {"name": "demo-project.summary.json", "sha256": "8d8a22f375a0c59db3dcadc55941953dd1f9553c85d240a1d9093e943de8e862"}, {"name": "portable-lab.summary.json", "sha256": "8fb22a2a121c7aeffa2c14752c2d4ccbb73b05963460fea1b3716621e962a256"}, {"name": "local-release-artifact-2026-06-22.car", "sha256": "a9a26467666f6e60c6f66626fa9c8deabcd906016501081ab59399aff16cf44c"}, {"name": "local-release-artifact.txt", "sha256": "3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0"}], "verification_states": [{"claim_boundary": "Hosted GitHub keyless attestation generation/import only; does not replace the registry fixture ci.provenance row, does not claim SLSA compliance, production supply-chain security, consumer policy verification, or production readiness.", "evidence": "GitHub Actions run 28339280081 generated hosted keyless artifact attestations for 6 prototype artifacts with predicate https://slsa.dev/provenance/v1.", "last_checked_at": "2026-06-28", "live_verified": true, "notes": "Registry-shaped import row kept outside project-registry fixtures to avoid upgrading synthetic fixture provenance fields.", "scope": "github-actions.keyless_artifact_attestation", "state": "live-verified", "synthetic": false}]}, "live_evidence_index": {"claim_policy": {"allowed_claims": ["Radicle local CLI verified for one disposable private temporary-RAD_HOME init/inspect replay", "Nostr selected-relay acceptance/readback verified for one exact prototype event on two relays", "Radicle disposable public seed/remote-clone smoke verified for exact RID rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa", "GitHub Actions generated keyless hosted artifact attestations for six prototype artifacts on main", "Helia local UnixFS/IPFS add-get verified for the local release artifact fixture bytes", "Public gateway preflight queried three gateways and observed no successful readback for the unpinned fixture CID", "Nostr selected-relay issue/patch acceptance/readback verified for two disposable prototype events", "Radicle broader check recorded current-host rad CLI absence plus read-only public route probes", "Registry-shaped keyless attestation import recorded outside project-registry fixtures"], "contains_secret_values": false, "forbidden_claims": ["Radicle durable public seed/network availability verified", "Nostr durability or global propagation verified", "censorship resistance verified", "identity trust verified", "production readiness verified", "full NIP-34 or forge compatibility verified", "security guarantees verified"]}, "created_at": "2026-06-28", "evidence": [{"evidence_file": "evidence/radicle-local-replay-2026-06-22.md", "evidence_sha256": "c625ba4e8173395496b69f3c15f1c22b9f48770ddd57b9da7c14afbae039b1ae", "evidence_size_bytes": 5907, "id": "loop23-radicle-local-cli-replay", "live_network_action": false, "local_cli_verified": true, "non_claims": ["no Radicle node start", "no rad publish", "no public seed publication", "no sync or announce", "no remote peer configuration", "no public network replication verification", "no durability or censorship-resistance claim", "no production-readiness claim"], "notes": "Promotes only the disposable private local replay path. Later Loop 34 evidence separately records one bounded disposable public seed/clone smoke; this row does not imply public-network availability.", "protocol": "radicle", "public_identifiers": {"delegate_did": "did:key:z6MkutM4LWh4y9qdeSMTWW88pMDVJBBhnjkoGPgZq1aSYN2n", "disposable_git_commit": "dfa5aad01c1bad5d2b1cda9919251b41e14ee643", "rid": "rad:z33oByNZxkxXAChhD54B4XiSsQkao", "visibility": "private"}, "scope": "radicle.local_cli_private_replay", "selected_relay_readback_verified": false, "state": "local-cli-verified", "synthetic": false, "verification_summary": "Temporary RAD_HOME plus disposable Git repository completed rad auth, private no-seed rad init, and local rad inspect commands.", "verified_at": "2026-06-22"}, {"evidence_file": "evidence/nostr-loop25-publish-readback-2026-06-22.json", "evidence_sha256": "956088edcbee064dc0a353745baa5e3aefb7dd9e2d6523415b3d57ae53b06f31", "evidence_size_bytes": 11698, "id": "loop25-nostr-selected-relay-readback", "live_network_action": true, "local_cli_verified": true, "non_claims": ["not a durability guarantee", "not proof of global propagation", "not proof of censorship resistance", "not proof of identity trust", "not production readiness", "not full NIP-34 or forge protocol compatibility", "not a security guarantee"], "notes": "Uses only the disposable project key; secret key material remains outside the repo and is not recorded here.", "protocol": "nostr", "public_identifiers": {"event_id": "4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba", "kind": 30617, "pubkey": "6669423ee76d9d5adc8e81df79286c2569edbe5ab84f3e35043db71a54eff5c8", "relays": ["wss://relay.damus.io", "wss://nos.lol"]}, "scope": "nostr.selected_relay_publish_readback", "selected_relay_readback_verified": true, "state": "selected-relay-readback-verified", "synthetic": false, "verification_summary": "Exact prototype/research kind 30617 event was published to and read back from selected relays; local and readback nak verify returned exit code 0.", "verified_at": "2026-06-22"}, {"evidence_file": "evidence/radicle-public-network-smoke-2026-06-22.json", "evidence_sha256": "0300867c473c099e103674633dbe8b3c77b78cfcd9fb2e119bec9ebce3e6cf93", "evidence_size_bytes": 19408, "id": "loop34-radicle-disposable-public-smoke", "live_network_action": true, "local_cli_verified": true, "non_claims": ["not proof of durability", "not proof of censorship resistance", "not a security guarantee", "not proof of global replication", "not proof of identity trust", "not production readiness", "not full Radicle compatibility", "not proof of broad Radicle network availability"], "notes": "Uses only disposable temporary state recorded in Loop 34 evidence. No production/private personal keys, paid infrastructure, direct outreach, persistent seed operation, or broad network availability claim.", "protocol": "radicle", "public_identifiers": {"clone_scope": "separate temporary Radicle profile/node", "rid": "rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa", "seed_scope": "temporary localhost seed node", "visibility": "public"}, "scope": "radicle.disposable_public_seed_clone_smoke", "selected_relay_readback_verified": false, "state": "disposable-public-smoke-verified", "synthetic": false, "verification_summary": "One disposable public Radicle repository was initialized, seeded from a temporary localhost node, synced/announced, cloned through a separate temporary node, and read back successfully.", "verified_at": "2026-06-22"}, {"evidence_file": "evidence/github-keyless-attestation-2026-06-28.json", "evidence_sha256": "c03a1dfe1103686a3a5a1cdcd13f82ac24ee962a8dffc265c3f5ed05fd8f3019", "evidence_size_bytes": 3158, "id": "loop40-github-keyless-artifact-attestation", "live_network_action": true, "local_cli_verified": false, "non_claims": ["not proof of production supply-chain security", "not a registry fixture provenance import", "not a SLSA compliance claim", "not proof of consumer policy verification", "not a durability guarantee", "not production readiness"], "notes": "Uses GitHub OIDC/keyless attestation; no production/private personal signing key is recorded or used.", "protocol": "github-actions", "public_identifiers": {"commit": "1b6e6c84036c52f6dee0bbbee49fdc5e29787dc7", "predicate_type": "https://slsa.dev/provenance/v1", "subject_count": 6, "workflow_run": "https://github.com/redclawanon-rgb/decentralized-forge/actions/runs/28339280081"}, "scope": "ci.keyless_artifact_attestation", "selected_relay_readback_verified": false, "state": "hosted-keyless-attestation-generated", "synthetic": false, "verification_summary": "GitHub Actions run 28339280081 generated a keyless hosted attestation with SLSA provenance predicate for six prototype artifacts after CI passed on main.", "verified_at": "2026-06-28"}, {"evidence_file": "evidence/helia-local-ipfs-add-get-2026-06-28.json", "evidence_sha256": "9b9840fa2defbf750cb902ffb1a87defa615edeb98d27cc381b372372a9f5ef7", "evidence_size_bytes": 3692, "id": "loop41-helia-local-ipfs-add-get", "live_network_action": false, "local_cli_verified": false, "non_claims": ["not proof of public gateway availability", "not proof of pinning", "not proof of durability", "not proof of global availability", "not proof of censorship resistance", "not a security guarantee", "not production readiness"], "notes": "Uses only project-scoped npm dev dependencies and local fixture bytes. No paid storage, wallet, public gateway query, persistent daemon, or production/private personal key was used.", "protocol": "ipfs", "public_identifiers": {"cid": "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua", "implementation": "helia@6.1.4 with @helia/unixfs@7.2.1", "input_sha256": "3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0", "storage_scope": "local non-started in-process Helia instance"}, "scope": "ipfs.helia_local_unixfs_add_get", "selected_relay_readback_verified": false, "state": "local-helia-add-get-verified", "synthetic": false, "verification_summary": "A project-scoped, non-started in-process Helia instance added fixtures/local-release-artifact.txt to local UnixFS/IPFS storage and read back the exact bytes for CID bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua.", "verified_at": "2026-06-28"}, {"evidence_file": "evidence/public-gateway-pinning-preflight-2026-06-28.json", "evidence_sha256": "b6bc7fb71c4142da853ee97b8d7b7ea36d86b78389e9ec9b271c72c5a13fdc0b", "evidence_size_bytes": 2648, "id": "loop42-public-gateway-pinning-preflight", "live_network_action": true, "local_cli_verified": false, "non_claims": ["not proof of public gateway availability", "not proof of pinning", "not proof of durability", "not proof of global availability", "not proof of censorship resistance", "not a security guarantee", "not production readiness"], "notes": "Records one low-volume gateway observation and pinning preflight only. No pinning provider account/token, paid storage, wallet, daemon, or persistent service was used.", "protocol": "ipfs", "public_identifiers": {"cid": "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua", "gateways_checked": 3, "pinning_provider_selected": false, "successful_gateway_readback_count": 0}, "scope": "ipfs.public_gateway_pinning_preflight", "selected_relay_readback_verified": false, "state": "public-gateway-no-readback-observed", "synthetic": false, "verification_summary": "Three public gateways were queried for the local release artifact CID; all timed out and no gateway returned bytes matching the fixture. No pinning provider action was taken.", "verified_at": "2026-06-28"}, {"evidence_file": "evidence/nostr-loop43-issue-patch-readback-2026-06-28.json", "evidence_sha256": "14fa1f2531928e8a7e326310451bc7b4abb154395b1cb23bb83586ced82a998f", "evidence_size_bytes": 12681, "id": "loop43-nostr-issue-patch-readback", "live_network_action": true, "local_cli_verified": false, "non_claims": ["not proof of global propagation", "not proof of relay durability", "not proof of censorship resistance", "not proof of identity trust", "not proof of full NIP-34 or forge protocol compatibility", "not a security guarantee", "not production readiness"], "notes": "Uses one in-memory disposable key generated by nostr-tools. Secret key material is not recorded.", "protocol": "nostr", "public_identifiers": {"event_ids": ["60ec3b293516e56a81e31ea0fa08d61e0d1a64d7e04007abe3f899c172c8cd2c", "868c419fceabff85e9bb9e8588ab10f9ad8cf5643bd7d38cae0ce36fde32c0df"], "kinds": [1621, 1617], "pubkey": "1782a49edc37976030d383b2b3fd74c3a5000bc037dc1a9f6c9d910a80f8e02b", "relays": ["wss://relay.damus.io", "wss://nos.lol"]}, "scope": "nostr.selected_relay_issue_patch_readback", "selected_relay_readback_verified": true, "state": "selected-relay-issue-patch-readback-verified", "synthetic": false, "verification_summary": "Two disposable NIP-34-shaped collaboration events, one issue and one patch, were published to and read back from selected relays with local and readback signature verification.", "verified_at": "2026-06-28"}, {"evidence_file": "evidence/radicle-loop44-broader-check-2026-06-28.json", "evidence_sha256": "e9c90555ba4eacc6b684e6c090700396801c5477f59b004c456d8a5d88971d9c", "evidence_size_bytes": 4345, "id": "loop44-radicle-broader-check", "live_network_action": true, "local_cli_verified": false, "non_claims": ["not a broader Radicle CLI verification", "not proof of durability", "not proof of global replication", "not proof of broad Radicle network availability", "not proof of censorship resistance", "not a security guarantee", "not production readiness"], "notes": "No Radicle identity, RAD_HOME, node, seed, publish, sync, clone, connect, or remote command was run.", "protocol": "radicle", "public_identifiers": {"direct_node_probe_count": 3, "rad_cli_available": false, "rid": "rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa", "web_route_probe_count": 3}, "scope": "radicle.broader_current_host_route_probe", "selected_relay_readback_verified": false, "state": "cli-blocked-readonly-route-probed", "synthetic": false, "verification_summary": "The current Windows host has no rad CLI available, so broader disposable CLI clone/sync was blocked; read-only public Radicle web/node route probes were recorded for the prior disposable RID.", "verified_at": "2026-06-28"}, {"evidence_file": "fixtures/keyless-attestation.registry-verification.json", "evidence_sha256": "fe1f9b025779437fd2dbc069af125a8c3fb3a1e1b1659e03d014aa939f175ab3", "evidence_size_bytes": 2516, "id": "loop45-keyless-attestation-registry-import", "live_network_action": false, "local_cli_verified": false, "non_claims": ["not a replacement for fixtures/example-project.registry.json ci.provenance", "not proof of production supply-chain security", "not a SLSA compliance claim", "not proof of consumer policy verification", "not production readiness"], "notes": "The imported row is registry-shaped evidence only; the existing registry fixture provenance row remains synthetic.", "protocol": "github-actions", "public_identifiers": {"registry_fixture_provenance_replaced": false, "source_commit": "1b6e6c84036c52f6dee0bbbee49fdc5e29787dc7", "source_workflow_run": "https://github.com/redclawanon-rgb/decentralized-forge/actions/runs/28339280081", "subject_count": 6}, "scope": "registry.keyless_attestation_import", "selected_relay_readback_verified": false, "state": "registry-shaped-import-recorded", "synthetic": false, "verification_summary": "Hosted GitHub keyless attestation evidence was imported into a registry-shaped verification row outside the project-registry fixtures.", "verified_at": "2026-06-28"}], "loop": 45, "purpose": "Secret-free index of narrow live/local evidence that can be rendered without upgrading unverified protocol claims.", "schema_version": "decentralized-forge.live-evidence-index.v1"}, "live_nostr_collaboration": [{"claim_boundary": "This proves only that two disposable prototype NIP-34-shaped collaboration events were accepted by and read back from at least one selected public relay during this run.", "id": "60ec3b293516e56a81e31ea0fa08d61e0d1a64d7e04007abe3f899c172c8cd2c", "kind": 1621, "mapped_registry_path": "issues[0]", "pubkey": "1782a49edc37976030d383b2b3fd74c3a5000bc037dc1a9f6c9d910a80f8e02b", "readback_relays": ["wss://nos.lol"], "status": "open", "summary": "Choose how maintainer authority is represented across Nostr, Radicle, DID, and SSH identities.", "title": "Define portable project identity", "type": "issue"}, {"claim_boundary": "This proves only that two disposable prototype NIP-34-shaped collaboration events were accepted by and read back from at least one selected public relay during this run.", "id": "868c419fceabff85e9bb9e8588ab10f9ad8cf5643bd7d38cae0ce36fde32c0df", "kind": 1617, "mapped_registry_path": "patches[0]", "pubkey": "1782a49edc37976030d383b2b3fd74c3a5000bc037dc1a9f6c9d910a80f8e02b", "readback_relays": ["wss://relay.damus.io", "wss://nos.lol"], "status": "proposed", "summary": "diff --git a/docs/fixture-renderer-note.txt b/docs/fixture-renderer-note.txt\nnew file mode 100644\nindex 0000000..1111111\n--- /dev/null\n+++ b/docs/fixture-renderer-note.txt\n@@ -0,0 +1 @@\n+Synthetic patch body for NIP-34 fixture validation only.\n-- \n2.0.0-fixture", "title": "Add static registry renderer", "type": "patch"}], "nip34": {"clone_urls": [{"transport": "git", "url": "file:///home/openclaw/projects/decentralized-forge"}, {"transport": "nostr", "url": "nostr://npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqfixture/demo-project"}, {"transport": "radicle", "url": "rad:zDemoRegistryFixture111111111111111111111111"}], "dry_run": {"collaboration": {"nip35_boundary": {"reason": "NIP-35 is useful as a future torrent/artifact metadata adjunct, but it does not define repository issue or patch collaboration semantics. Loop 6 should model artifact metadata without paid pinning/storage.", "status": "documented-no-collaboration-event"}, "notice": "Synthetic NIP-34 collaboration fixture only. Not signed. Not published. Do not relay.", "relay_tool_check": {"checked_commands": ["nak", "nostril", "strfry", "nostr-rs-relay"], "fallback": "dry-run-fixtures", "usable_local_relay_found": false}, "synthetic_key_policy": {"ids_and_signatures": "not computed; placeholder strings make accidental relay use obvious", "private_keys": "none", "pubkeys": "obvious repeated hex fixture values only"}}, "conformance": {"reports": [{"event_id_computed": false, "id_is_placeholder": true, "kind": 30617, "label": "repository_announcement", "nip34_kind_known": true, "possible_event_id": "a02f6361154bcfcc943faaffc0c8d6c3b23697e1d62addebec3e7e2da6d6934c", "published": false, "serialized_event_payload": "[0,\"0000000000000000000000000000000000000000000000000000000000000000\",1782086400,30617,[[\"d\",\"demo-project\"],[\"name\",\"Demo Decentralized Forge Project\"],[\"description\",\"A local-only fixture showing how a project can be discovered, cloned, discussed, patched, and released without GitHub as the authority.\"],[\"web\",\"file://output/demo-project.html\"],[\"clone\",\"file:///home/openclaw/projects/decentralized-forge\"],[\"clone\",\"nostr://npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqfixture/demo-project\"],[\"clone\",\"rad:zDemoRegistryFixture111111111111111111111111\"],[\"relays\",\"wss://relay.example.invalid\"],[\"maintainers\",\"npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqfixture\"],[\"t\",\"decentralized-forge\"],[\"t\",\"demo\"],[\"t\",\"local-only\"]],\"\"]", "shape": {"content_is_string": true, "created_at_is_int": true, "errors": [], "kind_is_int": true, "pubkey_is_fixture_synthetic": true, "pubkey_is_lower_hex_64": true, "required_fields_present": true, "tags_are_arrays_of_strings": true, "valid_for_local_fixture": true}, "sig_is_placeholder": true, "signed": false}, {"event_id_computed": false, "id_is_placeholder": true, "kind": 1621, "label": "demo-project-issue-1", "nip34_kind_known": true, "possible_event_id": "4af290296f6642a0cc6c37dd05e9a976cadfc333e4c8beaffc2394aba4017bc9", "published": false, "serialized_event_payload": "[0,\"1111111111111111111111111111111111111111111111111111111111111111\",1782086460,1621,[[\"a\",\"30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project\",\"\",\"root\"],[\"subject\",\"Define portable project identity\"],[\"t\",\"decentralized-forge\"],[\"t\",\"identity\"],[\"status\",\"open\"],[\"client\",\"decentralized-forge-fixture\"]],\"Choose how maintainer authority is represented across Nostr, Radicle, DID, and SSH identities.\\n\\nDry-run issue body only; this event has not been signed or relayed.\"]", "shape": {"content_is_string": true, "created_at_is_int": true, "errors": [], "kind_is_int": true, "pubkey_is_fixture_synthetic": true, "pubkey_is_lower_hex_64": true, "required_fields_present": true, "tags_are_arrays_of_strings": true, "valid_for_local_fixture": true}, "sig_is_placeholder": true, "signed": false}, {"event_id_computed": false, "id_is_placeholder": true, "kind": 1617, "label": "demo-project-patch-1", "nip34_kind_known": true, "possible_event_id": "30da7f2de86b051e5125faae03f23a3bffd0aa872858c8629066514ee94c91cc", "published": false, "serialized_event_payload": "[0,\"2222222222222222222222222222222222222222222222222222222222222222\",1782086520,1617,[[\"a\",\"30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project\",\"\",\"root\"],[\"subject\",\"Add static registry renderer\"],[\"t\",\"decentralized-forge\"],[\"t\",\"patch\"],[\"status\",\"proposed\"],[\"client\",\"decentralized-forge-fixture\"]],\"From 2222222222222222222222222222222222222222 Mon Sep 17 00:00:00 2001\\nFrom: Synthetic Contributor <fixture@example.invalid>\\nDate: Mon, 22 Jun 2026 00:02:00 +0000\\nSubject: [PATCH] Add static registry renderer\\n\\nPrototype a deterministic stdlib renderer for project registry fixtures.\\n\\n---\\n docs/fixture-renderer-note.txt | 1 +\\n 1 file changed, 1 insertion(+)\\n create mode 100644 docs/fixture-renderer-note.txt\\n\\ndiff --git a/docs/fixture-renderer-note.txt b/docs/fixture-renderer-note.txt\\nnew file mode 100644\\nindex 0000000..1111111\\n--- /dev/null\\n+++ b/docs/fixture-renderer-note.txt\\n@@ -0,0 +1 @@\\n+Synthetic patch body for NIP-34 fixture validation only.\\n-- \\n2.0.0-fixture\\n\"]", "shape": {"content_is_string": true, "created_at_is_int": true, "errors": [], "kind_is_int": true, "pubkey_is_fixture_synthetic": true, "pubkey_is_lower_hex_64": true, "required_fields_present": true, "tags_are_arrays_of_strings": true, "valid_for_local_fixture": true}, "sig_is_placeholder": true, "signed": false}, {"event_id_computed": false, "id_is_placeholder": true, "kind": 30618, "label": "repository_state_event", "nip34_kind_known": true, "possible_event_id": "2a4c356e480d352e3cc36ee06a9ac7657fb194440e3a87d4e4b4849d35909189", "published": false, "serialized_event_payload": "[0,\"0000000000000000000000000000000000000000000000000000000000000000\",1782086580,30618,[[\"d\",\"demo-project\"],[\"HEAD\",\"ref: refs/heads/main\"],[\"refs/heads/main\",\"32f88a7a42498328a515e4763e28d84216420a98\"],[\"a\",\"30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project\"]],\"\"]", "shape": {"content_is_string": true, "created_at_is_int": true, "errors": [], "kind_is_int": true, "pubkey_is_fixture_synthetic": true, "pubkey_is_lower_hex_64": true, "required_fields_present": true, "tags_are_arrays_of_strings": true, "valid_for_local_fixture": true}, "sig_is_placeholder": true, "signed": false}], "scope": "local-dry-run-fixtures-only", "source": "NIP-01/NIP-34 source-inspected 2026-06-22; no signing, publishing, or fixture id replacement"}, "events": [{"id": "dry-run-issue-event-id-not-computed", "kind": 1621, "pubkey": "1111111111111111111111111111111111111111111111111111111111111111", "published": false, "sig": "dry-run-issue-event-not-signed"}, {"id": "dry-run-patch-event-id-not-computed", "kind": 1617, "pubkey": "2222222222222222222222222222222222222222222222222222222222222222", "published": false, "sig": "dry-run-patch-event-not-signed"}], "repository": {"id": "dry-run-not-computed", "notice": "Synthetic NIP-34 repository announcement fixture only. Not signed. Not published. Do not relay.", "pubkey": "0000000000000000000000000000000000000000000000000000000000000000", "published": false, "sig": "dry-run-not-signed"}, "repository_state_event": {"id": "dry-run-repo-state-id-not-computed", "kind": 30618, "pubkey": "0000000000000000000000000000000000000000000000000000000000000000", "published": false, "sig": "dry-run-repo-state-not-signed"}, "state_status": {"non_claims": {"event_id_computed": false, "live_nip_status_semantics_claimed": false, "private_keys_used": false, "public_ci_status_created": false, "published": false, "relay_fetched": false, "relay_published": false, "signed": false}, "notice": "Synthetic local NIP-34 repository state/status fixture only. Generated from the local git HEAD recorded in source_git_head at fixture creation time; later commits may make it an ancestor rather than current HEAD. Not signed. Not published. Do not relay.", "source_git_head": "32f88a7a42498328a515e4763e28d84216420a98"}}, "issues": [{"author": "1111111111111111111111111111111111111111111111111111111111111111", "content": "Choose how maintainer authority is represented across Nostr, Radicle, DID, and SSH identities.\n\nDry-run issue body only; this event has not been signed or relayed.", "id": "dry-run-issue-event-id-not-computed", "mapped_registry_path": "issues[0]", "repository": "30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project", "source_event_kind": 1621, "source_fixture_name": "demo-project-issue-1", "status": "open", "summary": "Choose how maintainer authority is represented across Nostr, Radicle, DID, and SSH identities.", "title": "Define portable project identity"}], "live_readback": {"claim_boundary": "Imports one verified Loop 25 NIP-34 repository announcement event into the local adapter as selected-relay readback evidence only. This is not durability, global propagation, identity trust, production readiness, security, or full NIP-34/forge compatibility evidence.", "conformance_reports": [{"event_id_computed": true, "event_id_matches_recorded_id": true, "id_is_placeholder": false, "kind": 30617, "label": "loop25-live-repository-announcement", "nip34_kind_known": true, "possible_event_id": "4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba", "published": true, "serialized_event_payload": "[0,\"6669423ee76d9d5adc8e81df79286c2569edbe5ab84f3e35043db71a54eff5c8\",1782142614,30617,[[\"d\",\"decentralized-forge-live-adapter-prototype-2026-06-22\"],[\"name\",\"Decentralized Forge prototype live-adapter test\"],[\"description\",\"Prototype/research NIP-34 repository announcement for Decentralized Forge live-adapter publish/readback verification.\"],[\"web\",\"https://github.com/redclawanon-rgb/decentralized-forge\"],[\"clone\",\"https://github.com/redclawanon-rgb/decentralized-forge.git\"],[\"relays\",\"wss://relay.damus.io\"],[\"relays\",\"wss://nos.lol\"],[\"t\",\"decentralized-forge\"],[\"t\",\"prototype\"],[\"t\",\"research\"],[\"t\",\"live-adapter-test\"]],\"Decentralized Forge prototype/research relay test. This event announces a local/static prototype and live-adapter evidence paths only. It does not claim production readiness, durability, censorship resistance, global propagation, identity trust, security guarantees, or full protocol compatibility.\"]", "shape": {"content_is_string": true, "created_at_is_int": true, "errors": [], "kind_is_int": true, "pubkey_is_fixture_synthetic": false, "pubkey_is_lower_hex_64": true, "required_fields_present": true, "tags_are_arrays_of_strings": true, "valid_for_local_fixture": true}, "sig_is_placeholder": false, "signed": true}], "events": [{"clone_urls": [{"transport": "https", "url": "https://github.com/redclawanon-rgb/decentralized-forge.git"}], "event_id": "4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba", "kind": 30617, "label": "loop25-live-repository-announcement", "local_signature_verified_by_nak": true, "new_event_published_in_loop_29": false, "non_claims": ["not a durability guarantee", "not proof of global propagation", "not proof of censorship resistance", "not proof of identity trust", "not production readiness", "not a security guarantee", "not full NIP-34 or forge protocol compatibility", "does not verify NIP-34 issue, patch, repository-state, status, relay-discovery, subscription, deletion, replacement, or multi-client behavior"], "project": {"description": "Prototype/research NIP-34 repository announcement for Decentralized Forge live-adapter publish/readback verification.", "id": "decentralized-forge-live-adapter-prototype-2026-06-22", "name": "Decentralized Forge prototype live-adapter test", "web_urls": ["https://github.com/redclawanon-rgb/decentralized-forge"]}, "pubkey": "6669423ee76d9d5adc8e81df79286c2569edbe5ab84f3e35043db71a54eff5c8", "publish_relays": ["wss://relay.damus.io", "wss://nos.lol"], "readback_field_match": true, "readback_signature_verified_by_nak": true, "readback_verified_relays": ["wss://relay.damus.io", "wss://nos.lol"], "relay_hints": ["wss://relay.damus.io", "wss://nos.lol"], "selected_relay_readback_verified": true, "topics": ["decentralized-forge", "prototype", "research", "live-adapter-test"]}], "loop": 29, "schema_version": "decentralized-forge.nostr-live-readback-events.v1", "scope": "selected-relay-readback-only", "source_evidence": "evidence/nostr-loop25-publish-readback-2026-06-22.json"}, "maintainers": [{"id_type": "nostr", "public_id": "npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqfixture", "role": "maintainer"}], "patches": [{"author": "2222222222222222222222222222222222222222222222222222222222222222", "content": "From 2222222222222222222222222222222222222222 Mon Sep 17 00:00:00 2001\nFrom: Synthetic Contributor <fixture@example.invalid>\nDate: Mon, 22 Jun 2026 00:02:00 +0000\nSubject: [PATCH] Add static registry renderer\n\nPrototype a deterministic stdlib renderer for project registry fixtures.\n\n---\n docs/fixture-renderer-note.txt | 1 +\n 1 file changed, 1 insertion(+)\n create mode 100644 docs/fixture-renderer-note.txt\n\ndiff --git a/docs/fixture-renderer-note.txt b/docs/fixture-renderer-note.txt\nnew file mode 100644\nindex 0000000..1111111\n--- /dev/null\n+++ b/docs/fixture-renderer-note.txt\n@@ -0,0 +1 @@\n+Synthetic patch body for NIP-34 fixture validation only.\n-- \n2.0.0-fixture\n", "id": "dry-run-patch-event-id-not-computed", "mapped_registry_path": "patches[0]", "repository": "30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project", "source_event_kind": 1617, "source_fixture_name": "demo-project-patch-1", "status": "proposed", "summary": "Prototype a deterministic stdlib renderer for project registry fixtures.", "title": "Add static registry renderer"}], "project": {"description": "A local-only fixture showing how a project can be discovered, cloned, discussed, patched, and released without GitHub as the authority.", "id": "demo-project", "name": "Demo Decentralized Forge Project", "web_urls": ["file://output/demo-project.html"]}, "repository_state": {"fixture_name": "demo-project-repo-state-main", "head": "ref: refs/heads/main", "head_commit": "32f88a7a42498328a515e4763e28d84216420a98", "head_ref": "refs/heads/main", "kind": 30618, "refs": {"refs/heads/main": "32f88a7a42498328a515e4763e28d84216420a98"}, "repo_id_tag": "demo-project", "repository_address": "30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project"}, "status_checks": [{"conclusion": "success", "fixture_name": "demo-project-repo-state-check-stdlib-fixture-validation", "mapped_registry_path": "ci_checks[0]", "name": "stdlib fixture validation", "notes": "Fixture-only projection of an existing local-fake CI record onto the dry-run repository state commit; no public CI status, relay status event, signature, or live NIP behavior is claimed.", "provider": "local-fixture-projection", "published": false, "source_ci_check_id": "local-fake-ci-001", "status": "completed", "synthetic": true, "target_commit": "32f88a7a42498328a515e4763e28d84216420a98", "target_ref": "refs/heads/main", "target_type": "repository_state"}, {"conclusion": "success", "fixture_name": "demo-project-repo-state-check-artifact-hash-provenance-dry-run", "mapped_registry_path": "ci_checks[1]", "name": "artifact hash provenance dry run", "notes": "Fixture-only projection of an existing local-fake provenance check onto the dry-run repository state commit; no Sigstore, in-toto, SLSA, public CI, relay publication, or live NIP status semantics are claimed.", "provider": "local-fixture-projection", "published": false, "source_ci_check_id": "local-fake-ci-002", "status": "completed", "synthetic": true, "target_commit": "32f88a7a42498328a515e4763e28d84216420a98", "target_ref": "refs/heads/main", "target_type": "repository_state"}], "substrates": {"nip34": {"publish_status": "dry-run-only", "relay_hints": ["wss://relay.example.invalid"], "repo_id_tag": "demo-project", "repository_kind": 30617, "topics": ["decentralized-forge", "demo", "local-only"]}}, "verification_states": [{"claim_boundary": "Local dry-run fixture parsed by scripts/nip34_adapter.py only; no relay, signing, key, public status, durability, or production claim.", "evidence": "Imported local repository announcement fixture kind 30617 with placeholder id dry-run-not-computed.", "last_checked_at": "2026-06-22", "live_verified": false, "notes": "Repository tags are mapped to registry project, clone URL, maintainer, and substrate fields.", "scope": "nip34.adapter.repository_announcement", "state": "local-fixture", "synthetic": true}, {"claim_boundary": "Local dry-run fixture parsed by scripts/nip34_adapter.py only; no relay, signing, key, public status, durability, or production claim.", "evidence": "Imported 2 local collaboration fixture event(s) from fixtures/nostr-collaboration-events.json.", "last_checked_at": "2026-06-22", "live_verified": false, "notes": "Issue and patch records are parser projections of dry-run NIP-34-shaped fixture events.", "scope": "nip34.adapter.collaboration_events", "state": "local-fixture", "synthetic": true}, {"claim_boundary": "Local dry-run fixture parsed by scripts/nip34_adapter.py only; no relay, signing, key, public status, durability, or production claim.", "evidence": "Generated 4 local NIP-01/NIP-34 shape report(s) without replacing fixture IDs.", "last_checked_at": "2026-06-22", "live_verified": false, "notes": "Possible event IDs, when present, are local reference hashes only and remain unsigned/unpublished metadata.", "scope": "nip34.adapter.conformance_reports", "state": "source-inspected-mapping", "synthetic": true}, {"claim_boundary": "Local dry-run fixture parsed by scripts/nip34_adapter.py only; no relay, signing, key, public status, durability, or production claim.", "evidence": "Imported local repository state fixture kind 30618 with recorded source_git_head 32f88a7a42498328a515e4763e28d84216420a98.", "last_checked_at": "2026-06-22", "live_verified": false, "notes": "HEAD/ref data is fixture evidence tied to a local Git commit recorded at fixture creation time.", "scope": "nip34.adapter.repository_state", "state": "local-fixture", "synthetic": true}, {"claim_boundary": "Local dry-run fixture parsed by scripts/nip34_adapter.py only; no relay, signing, key, public status, durability, or production claim.", "evidence": "Projected 2 fixture-only status/check row(s) from existing synthetic CI metadata.", "last_checked_at": "2026-06-22", "live_verified": false, "notes": "Status/check rows are display projections only and do not create public CI or live NIP status events.", "scope": "nip34.adapter.status_checks", "state": "synthetic-fixture", "synthetic": true}, {"claim_boundary": "Imports one verified Loop 25 NIP-34 repository announcement event into the local adapter as selected-relay readback evidence only. This is not durability, global propagation, identity trust, production readiness, security, or full NIP-34/forge compatibility evidence.", "evidence": "Imported Loop 25 event 4cd841ac7d3c15c3e2a0ab1e65b5d704b7032adea2d7dcd171ab613657d48eba as selected-relay readback evidence from wss://relay.damus.io, wss://nos.lol; local event-id recomputation matched recorded id.", "last_checked_at": "2026-06-22", "live_verified": true, "notes": "No relay publish/fetch/signing was performed in Loop 29; this row imports already-recorded evidence only.", "scope": "nip34.adapter.live_repository_announcement_readback", "state": "live-verified", "synthetic": false}]}, "non_claims": ["static app does not publish protocol events", "static app does not sign events or use private keys", "static app does not start daemons, spend money, use wallets, or contact paid services", "static app does not claim durability, censorship resistance, broad availability, security, or production readiness"], "projects": [{"registry": {"ci_checks": [{"commit": "1111111111111111111111111111111111111111", "completed_at": "2026-06-22T00:01:00Z", "conclusion": "success", "id": "local-fake-ci-001", "name": "stdlib fixture validation", "notes": "Synthetic local-only status for renderer/protocol mapping; no hosted CI job, secret, token, or public status was created.", "provider": "local-fake", "published": false, "repository": "file:///home/openclaw/projects/decentralized-forge", "started_at": "2026-06-22T00:00:00Z", "status": "completed", "synthetic": true, "url": "file://fixtures/example-project.registry.json#ci_checks/local-fake-ci-001", "workflow": "loop-7-synthetic-ci-model"}, {"commit": "1111111111111111111111111111111111111111", "completed_at": "2026-06-22T00:02:00Z", "conclusion": "success", "id": "local-fake-ci-002", "name": "artifact hash provenance dry run", "notes": "Synthetic local-only passing artifact provenance check over fixture metadata; no Sigstore/cosign/in-toto/SLSA verification occurred.", "provider": "local-fake", "published": false, "repository": "file:///home/openclaw/projects/decentralized-forge", "started_at": "2026-06-22T00:01:00Z", "status": "completed", "synthetic": true, "url": "file://fixtures/example-project.registry.json#ci_checks/local-fake-ci-002", "workflow": "loop-7-synthetic-ci-model"}], "clone_urls": [{"primary": true, "transport": "git", "url": "file:///home/openclaw/projects/decentralized-forge"}, {"transport": "nostr", "url": "nostr://npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqfixture/demo-project"}, {"transport": "radicle", "url": "rad:zDemoRegistryFixture111111111111111111111111"}], "created_at": "2026-06-22T00:00:00Z", "issues": [{"author": "npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqfixture", "id": "ISSUE-1", "status": "open", "summary": "Choose how maintainer authority is represented across Nostr, Radicle, DID, and SSH identities.", "title": "Define portable project identity"}], "maintainers": [{"id_type": "nostr", "name": "Synthetic Maintainer", "public_id": "npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqfixture", "role": "owner"}, {"id_type": "radicle", "name": "Radicle Placeholder", "public_id": "rad:zDemoRegistryFixture111111111111111111111111", "role": "mirror-admin"}], "patches": [{"author": "npub1contributorfixture0000000000000000000000000000000000000000", "id": "PATCH-1", "status": "proposed", "summary": "Prototype a deterministic stdlib renderer for project registry fixtures.", "title": "Add static registry renderer"}], "project": {"default_branch": "main", "description": "A local-only fixture showing how a project can be discovered, cloned, discussed, patched, and released without GitHub as the authority.", "id": "demo-project", "name": "Demo Decentralized Forge Project", "web_urls": ["file://output/demo-project.html"]}, "releases": [{"artifacts": [{"attestation": "fake-local-attestation:artifact_sha256=3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0;commit=1111111111111111111111111111111111111111;repo=decentralized-forge;synthetic=true;no-slsa-claim=true", "availability": {"durability_claim": false, "live_ipfs_verified": false, "local_fixture": true, "notes": "Local file fixture only; no paid pinning/storage, wallet, Filecoin/Arweave spend, or durability claim.", "paid_storage": false, "pinned": false}, "cid": "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua", "content_addresses": [{"cid": "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua", "cid_version": 1, "derived_from_local_fixture": true, "matches_artifact_hash": true, "multibase": "base32", "multicodec": "raw", "multihash": "sha2-256", "notes": "CIDv1 raw/base32 shape computed locally from the fixture bytes; no IPFS add, fetch, pin, gateway, or network availability was verified.", "protocol": "ipfs", "verification_status": "local-computed-not-fetched"}], "hashes": {"sha256": "3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0"}, "media_type": "text/plain", "name": "local-release-artifact.txt", "provenance": {"artifact_name": "local-release-artifact.txt", "artifact_sha256": "3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0", "boundaries": ["no-real-signature", "no-private-key", "no-cosign", "no-rekor", "no-in-toto-verification", "no-slsa-level-claim", "no-public-ci-status"], "builder": "local-fake-ci/loop-7", "ci_check_ids": ["local-fake-ci-001", "local-fake-ci-002"], "commit": "1111111111111111111111111111111111111111", "materials": [{"digest": {"gitCommit": "1111111111111111111111111111111111111111"}, "uri": "file:///home/openclaw/projects/decentralized-forge@1111111111111111111111111111111111111111"}], "predicate_type": "https://example.invalid/decentralized-forge/fake-slsa-provenance/v0", "repository": "file:///home/openclaw/projects/decentralized-forge", "status": "synthetic-local-only", "synthetic": true, "tag": "v0.0.1-demo", "verification": {"local_schema_only": true, "notes": "Fake local attestation fixture for data modeling only; not a DSSE envelope, not signed, not uploaded to Rekor, not a SLSA compliance claim.", "real_in_toto_verified": false, "real_sigstore_verified": false, "slsa_level_claimed": false, "uses_private_key": false, "uses_real_signature": false}}, "sha256": "3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0", "signature": "unsigned-fixture", "size_bytes": 241, "uri": "file://fixtures/local-release-artifact.txt"}], "tag": "v0.0.1-demo", "version": "0.0.1-demo"}], "schema_version": "decentralized-forge.project-registry.v1", "signature": {"algorithm": "none", "status": "unsigned-fixture", "value": ""}, "substrates": {"forgefed": {"actor": "https://forge.example.invalid/actors/demo-project", "status": "mapping-only-no-public-actor"}, "ipfs": {"artifact_cids": ["bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua"], "cid_status": "local-computed-not-fetched", "durability_claim": false, "live_ipfs_verified": false, "paid_storage": false, "pinning_status": "not-pinned"}, "nip34": {"publish_status": "dry-run-only", "relay_hints": ["wss://relay.example.invalid"], "repo_id_tag": "demo-project", "repository_kind": 30617}, "radicle": {"rid": "rad:zDemoRegistryFixture111111111111111111111111", "status": "placeholder-pending-local-spike"}, "sigstore_slsa": {"attestation_fixture": "artifact.provenance plus artifact.attestation string", "private_keys_used": false, "production_claim": "none", "provenance_status": "synthetic-local-only", "real_cosign_verified": false, "real_in_toto_verified": false, "real_sigstore_verified": false, "rekor_uploaded": false, "release_signature_status": "fake-local-unsigned-fixture", "slsa_level_claimed": false}}, "updated_at": "2026-06-22T00:00:00Z", "verification_states": [{"claim_boundary": "Local static registry fixture only; not a hosted production forge or signed authority.", "evidence": "fixtures/example-project.registry.json rendered by scripts/render_project_page.py and covered by stdlib tests", "last_checked_at": "2026-06-22T00:00:00Z", "live_verified": false, "notes": "Renderer output is deterministic local HTML from fixture data.", "scope": "registry.renderer", "state": "local-fixture", "synthetic": false}, {"claim_boundary": "Dry-run NIP-34/NIP-01 shapes only; no relay publish/readback, live relay fetch, signing, event-id replacement, or public status semantics claim.", "evidence": "fixtures/nostr-repo-announcement.json, fixtures/nostr-collaboration-events.json, and fixtures/nostr-repo-state-status.json parsed locally by scripts/nip34_adapter.py", "last_checked_at": "2026-06-22T00:00:00Z", "live_verified": false, "notes": "Possible event IDs in conformance reports are local references only.", "scope": "nostr.nip34.repository-collaboration-state-status", "state": "synthetic-fixture", "synthetic": true}, {"claim_boundary": "Mapping placeholder only; no rad CLI replay, real RID verification, seed publish, or network verification.", "evidence": "Radicle source/manpage/examples inspected from /tmp/radicle-heartwood at commit 90aaec1c9eee77a0beebece48f460c1424c1c8bd", "last_checked_at": "2026-06-22T00:00:00Z", "live_verified": false, "notes": "Kept as a bridge to the dedicated Radicle-backed fixture.", "scope": "radicle.mapping", "state": "source-inspected-mapping", "synthetic": true}, {"claim_boundary": "Local content-address metadata only; no IPFS add/fetch/pin/gateway availability, paid storage, or durability claim.", "evidence": "SHA-256 and CIDv1 raw/base32-compatible value computed from fixtures/local-release-artifact.txt by local tests", "last_checked_at": "2026-06-22T00:00:00Z", "live_verified": false, "notes": "CID shape matches fixture bytes but network availability is unverified.", "scope": "artifact-metadata.ipfs", "state": "local-fixture", "synthetic": false}, {"claim_boundary": "Synthetic local schema data only; no hosted CI, public commit status, real signature, Sigstore/cosign/in-toto verification, Rekor upload, or SLSA claim.", "evidence": "local-fake CI records and fake provenance/attestation strings in fixtures/example-project.registry.json", "last_checked_at": "2026-06-22T00:00:00Z", "live_verified": false, "notes": "The fake attestation repeats fixture coordinates for parser/renderer tests.", "scope": "ci.provenance", "state": "synthetic-fixture", "synthetic": true}]}, "source": "fixtures/example-project.registry.json", "summary": {"artifact_cids": ["bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua"], "artifact_names": ["local-release-artifact.txt"], "clone_transports": ["git", "nostr", "radicle"], "counts": {"artifacts": 1, "ci_checks": 2, "clone_urls": 3, "issues": 1, "maintainers": 2, "patches": 1, "releases": 1, "verification_states": 5}, "non_claims": {"censorship_resistance_verified": false, "durable_storage_verified": false, "production_ready": false, "security_guarantee": false}, "project": {"default_branch": "main", "id": "demo-project", "name": "Demo Decentralized Forge Project"}, "release_versions": ["0.0.1-demo"], "schema_version": "decentralized-forge.registry-summary.v1", "source": "fixtures/example-project.registry.json", "verification": {"by_state": {"local-fixture": 2, "source-inspected-mapping": 1, "synthetic-fixture": 2}, "live_verified": 0, "synthetic": 3, "total": 5}}}, {"registry": {"clone_urls": [{"primary": true, "transport": "git", "url": "file://fixtures/portable-lab.registry.json"}, {"transport": "other", "url": "urn:decentralized-forge:portable-lab"}], "created_at": "2026-06-28T00:00:00Z", "issues": [{"author": "did:example:portable-lab-fixture", "id": "PL-1", "status": "open", "summary": "Keep a second fixture in the repository so CLI validation and exports are not tied to the demo project.", "title": "Confirm non-demo registry export"}], "maintainers": [{"id_type": "did", "name": "Portable Fixture Maintainer", "public_id": "did:example:portable-lab-fixture", "role": "owner"}], "patches": [{"author": "did:example:portable-lab-fixture", "id": "PL-PATCH-1", "status": "proposed", "summary": "Synthetic patch record for second-fixture collaboration coverage; no live patch federation is claimed.", "title": "Add portable export summary"}], "project": {"default_branch": "main", "description": "A second local-only fixture used to prove registry tooling can validate and export another project without demo-specific code.", "id": "portable-lab", "name": "Portable Lab Registry Fixture", "web_urls": ["file://output/portable-lab.html"]}, "releases": [{"artifacts": [{"attestation": "absent", "availability": {"durability_claim": false, "live_ipfs_verified": false, "local_fixture": false, "notes": "Synthetic non-byte-backed placeholder for second-fixture parser coverage only; no artifact file, CID, pin, paid storage, wallet, or durability claim exists.", "paid_storage": false, "pinned": false}, "hashes": {"sha256": "2222222222222222222222222222222222222222222222222222222222222222"}, "media_type": "text/plain", "name": "portable-lab-placeholder.txt", "sha256": "2222222222222222222222222222222222222222222222222222222222222222", "signature": "unsigned-fixture", "size_bytes": 0, "uri": "file://output/portable-lab-placeholder.txt"}], "tag": "v0.0.1-portable", "version": "0.0.1-portable"}], "schema_version": "decentralized-forge.project-registry.v1", "signature": {"algorithm": "none", "status": "unsigned-fixture", "value": ""}, "substrates": {"forgefed": {"actor": "https://forge.example.invalid/actors/portable-lab", "status": "mapping-only-no-public-actor"}, "ipfs": {"artifact_cids": [], "cid_status": "no-artifact-cid", "durability_claim": false, "live_ipfs_verified": false, "paid_storage": false, "pinning_status": "not-pinned"}, "sigstore_slsa": {"private_keys_used": false, "production_claim": "none", "provenance_status": "absent", "real_cosign_verified": false, "real_in_toto_verified": false, "real_sigstore_verified": false, "rekor_uploaded": false, "release_signature_status": "absent", "slsa_level_claimed": false}}, "updated_at": "2026-06-28T00:00:00Z", "verification_states": [{"claim_boundary": "Second local registry fixture only; no live protocol, durable storage, signing, or production claim.", "evidence": "fixtures/portable-lab.registry.json rendered by scripts/forge_registry.py and covered by tests", "last_checked_at": "2026-06-28T00:00:00Z", "live_verified": false, "notes": "Exists to prove reusable tooling over a non-demo registry object.", "scope": "registry.renderer", "state": "local-fixture", "synthetic": false}, {"claim_boundary": "No Radicle live mapping, seed, clone, or network availability claim for this fixture.", "evidence": "No Radicle identity or RID is attached to the portable-lab fixture.", "last_checked_at": "2026-06-28T00:00:00Z", "live_verified": false, "notes": "The fixture intentionally exercises non-Radicle registry portability.", "scope": "radicle.mapping", "state": "live-unverified", "synthetic": false}, {"claim_boundary": "Parser coverage only; no local artifact bytes, CID, IPFS add/fetch, pin, paid storage, or durability claim.", "evidence": "Synthetic placeholder artifact metadata in fixtures/portable-lab.registry.json.", "last_checked_at": "2026-06-28T00:00:00Z", "live_verified": false, "notes": "Real artifact metadata remains covered by fixtures/example-project.registry.json.", "scope": "artifact-metadata.ipfs", "state": "synthetic-fixture", "synthetic": true}, {"claim_boundary": "No hosted CI, signing, Sigstore, in-toto, Rekor, SLSA, or public status claim.", "evidence": "No CI/provenance rows are attached to the portable-lab fixture.", "last_checked_at": "2026-06-28T00:00:00Z", "live_verified": false, "notes": "Synthetic provenance remains isolated to the demo fixture.", "scope": "ci.provenance", "state": "live-unverified", "synthetic": false}]}, "source": "fixtures/portable-lab.registry.json", "summary": {"artifact_cids": [], "artifact_names": ["portable-lab-placeholder.txt"], "clone_transports": ["git", "other"], "counts": {"artifacts": 1, "ci_checks": 0, "clone_urls": 2, "issues": 1, "maintainers": 1, "patches": 1, "releases": 1, "verification_states": 4}, "non_claims": {"censorship_resistance_verified": false, "durable_storage_verified": false, "production_ready": false, "security_guarantee": false}, "project": {"default_branch": "main", "id": "portable-lab", "name": "Portable Lab Registry Fixture"}, "release_versions": ["0.0.1-portable"], "schema_version": "decentralized-forge.registry-summary.v1", "source": "fixtures/portable-lab.registry.json", "verification": {"by_state": {"live-unverified": 2, "local-fixture": 1, "synthetic-fixture": 1}, "live_verified": 0, "synthetic": 1, "total": 4}}}, {"registry": {"clone_urls": [{"primary": true, "transport": "git", "url": "file://."}], "created_at": "2026-06-29T11:59:56-04:00", "issues": [], "maintainers": [{"id_type": "other", "name": "Local Import Maintainer Placeholder", "public_id": "local-import-placeholder", "role": "maintainer-placeholder"}], "patches": [], "project": {"default_branch": "main", "description": "Committed local onboarding sample generated from this repository without live protocol publication.", "id": "onboarding-sample", "name": "Onboarding Sample", "web_urls": []}, "releases": [{"artifacts": [{"attestation": "absent", "availability": {"durability_claim": false, "live_ipfs_verified": false, "local_fixture": true, "notes": "Local file metadata only; no IPFS add, fetch, pin, gateway readback, paid storage, wallet, signing, or durability claim.", "paid_storage": false, "pinned": false}, "hashes": {"sha256": "3d41830af2bae95ed043b6a49175ee183e0a7e39dcefeff8a04a672a9cfb2945"}, "media_type": "text/plain", "name": "onboarding-sample-artifact.txt", "sha256": "3d41830af2bae95ed043b6a49175ee183e0a7e39dcefeff8a04a672a9cfb2945", "signature": "unsigned-local-artifact-metadata", "size_bytes": 261, "uri": "file://fixtures/onboarding-sample-artifact.txt"}], "tag": "v0.1.0-local", "version": "0.1.0-local"}], "schema_version": "decentralized-forge.project-registry.v1", "signature": {"algorithm": "none", "status": "unsigned-fixture", "value": ""}, "substrates": {"forgefed": {"status": "not-configured-local-import"}, "ipfs": {"artifact_cids": [], "cid_status": "no-artifact-cid", "durability_claim": false, "live_ipfs_verified": false, "paid_storage": false, "pinning_status": "not-pinned"}, "sigstore_slsa": {"private_keys_used": false, "production_claim": "none", "provenance_status": "absent", "real_cosign_verified": false, "real_in_toto_verified": false, "real_sigstore_verified": false, "rekor_uploaded": false, "release_signature_status": "absent", "slsa_level_claimed": false}}, "updated_at": "2026-06-29T00:00:00Z", "verification_states": [{"claim_boundary": "Local registry scaffold only; no live protocol publication, signing, durable storage, hosted service, or production readiness claim.", "evidence": "Generated from local Git worktree file://. at commit 33fc4ed4a009111da8e3ae4b1c9468d34265c5e1.", "last_checked_at": "2026-06-29T11:59:56-04:00", "live_verified": false, "notes": "Replace placeholder maintainer identity, add artifacts/evidence, and rerun validation before sharing.", "scope": "registry.local_import_scaffold", "state": "local-fixture", "synthetic": false}, {"claim_boundary": "Local file metadata only; no IPFS add, fetch, pin, gateway readback, paid storage, wallet, signing, durable storage, or production readiness claim.", "evidence": "Attached local artifact metadata for onboarding-sample-artifact.txt at file://fixtures/onboarding-sample-artifact.txt with sha256 3d41830af2bae95ed043b6a49175ee183e0a7e39dcefeff8a04a672a9cfb2945.", "last_checked_at": "2026-06-29T00:00:00Z", "live_verified": false, "notes": "Artifact bytes were hashed locally and referenced with a file URI; availability beyond this local file was not verified.", "scope": "registry.local_artifact_metadata", "state": "local-fixture", "synthetic": false}]}, "source": "fixtures/onboarding-sample.registry.json", "summary": {"artifact_cids": [], "artifact_names": ["onboarding-sample-artifact.txt"], "clone_transports": ["git"], "counts": {"artifacts": 1, "ci_checks": 0, "clone_urls": 1, "issues": 0, "maintainers": 1, "patches": 0, "releases": 1, "verification_states": 2}, "non_claims": {"censorship_resistance_verified": false, "durable_storage_verified": false, "production_ready": false, "security_guarantee": false}, "project": {"default_branch": "main", "id": "onboarding-sample", "name": "Onboarding Sample"}, "release_versions": ["0.1.0-local"], "schema_version": "decentralized-forge.registry-summary.v1", "source": "fixtures/onboarding-sample.registry.json", "verification": {"by_state": {"local-fixture": 2}, "live_verified": 0, "synthetic": 0, "total": 2}}}], "schema_version": "decentralized-forge.static-app-data.v1"}</script>
+<script>
+const app = JSON.parse(document.getElementById('forge-data').textContent);
+let state = { projectIndex: 0, view: 'overview', evidenceProtocol: 'all', evidenceQuery: '', collabFilter: 'all', draftType: 'issue' };
+
+const $ = (id) => document.getElementById(id);
+const project = () => app.projects[state.projectIndex];
+const registry = () => project().registry;
+const text = (value) => value == null || value === '' ? 'not listed' : String(value);
+const badgeClass = (value) => value === true ? 'good' : value === false ? 'warn' : 'blue';
+const escapeHtml = (value) => text(value).replace(/[&<>"']/g, (ch) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+
+function badge(label, kind = '') {
+  return `<span class="badge ${kind}">${escapeHtml(label)}</span>`;
+}
+
+function meta(rows) {
+  return `<dl class="meta">${rows.map(([k, v]) => `<dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd>`).join('')}</dl>`;
+}
+
+function setView(view) {
+  state.view = view;
+  document.querySelectorAll('.nav button').forEach((button) => button.setAttribute('aria-selected', String(button.dataset.view === view)));
+  ['overview', 'collaboration', 'releases', 'evidence', 'draft'].forEach((name) => $(`view-${name}`).classList.toggle('hidden', name !== view));
+  render();
+}
+
+function renderShell() {
+  const select = $('projectSelect');
+  select.innerHTML = app.projects.map((item, index) => `<option value="${index}">${escapeHtml(item.registry.project.name)}</option>`).join('');
+  select.value = String(state.projectIndex);
+  select.onchange = () => { state.projectIndex = Number(select.value); render(); };
+  document.querySelectorAll('.nav button').forEach((button) => button.onclick = () => setView(button.dataset.view));
+}
+
+function renderHeader() {
+  const reg = registry();
+  $('projectTitle').textContent = reg.project.name;
+  $('projectDescription').textContent = reg.project.description;
+  $('projectBadges').innerHTML = [
+    badge(reg.project.default_branch, 'blue'),
+    badge(`${reg.clone_urls.length} clone URL${reg.clone_urls.length === 1 ? '' : 's'}`, 'blue'),
+    badge(`${app.live_evidence_index.evidence.length} evidence rows`, 'good')
+  ].join('');
+}
+
+function renderOverview() {
+  const reg = registry();
+  const summary = project().summary;
+  $('view-overview').innerHTML = `
+    <div class="grid">
+      ${metric('Issues', summary.counts.issues)}
+      ${metric('Patches', summary.counts.patches)}
+      ${metric('Artifacts', summary.counts.artifacts)}
+      ${metric('Evidence', app.live_evidence_index.evidence.length)}
+    </div>
+    <div class="grid">
+      <section class="panel span-6"><h2>Maintainers</h2>${reg.maintainers.map((m) => `<div class="item">${meta([['Name', m.name], ['ID type', m.id_type], ['Public ID', m.public_id], ['Role', m.role]])}</div>`).join('')}</section>
+      <section class="panel span-6"><h2>Clone URLs</h2>${reg.clone_urls.map((clone) => `<div class="item">${badge(clone.transport, 'blue')}<code>${escapeHtml(clone.url)}</code></div>`).join('')}</section>
+      <section class="panel span-12"><h2>Trust boundary</h2>${app.non_claims.map((claim) => badge(claim, 'warn')).join('')}</section>
+    </div>`;
+}
+
+function metric(label, value) {
+  return `<div class="metric span-3"><strong>${escapeHtml(value)}</strong><span class="muted">${escapeHtml(label)}</span></div>`;
+}
+
+function collaborationRows() {
+  const localIssues = (registry().issues || []).map((item) => ({...item, type: 'issue', evidence: 'local registry fixture'}));
+  const localPatches = (registry().patches || []).map((item) => ({...item, type: 'patch', evidence: 'local registry fixture'}));
+  const live = app.live_nostr_collaboration.map((item) => ({...item, evidence: 'selected-relay readback'}));
+  return [...live, ...localIssues, ...localPatches].filter((item) => state.collabFilter === 'all' || item.type === state.collabFilter);
+}
+
+function renderCollaboration() {
+  $('view-collaboration').innerHTML = `
+    <div class="toolbar">
+      <select id="collabFilter" aria-label="Collaboration filter">
+        <option value="all">All records</option>
+        <option value="issue">Issues</option>
+        <option value="patch">Patches</option>
+      </select>
+      ${badge('selected-relay readback is narrow evidence', 'warn')}
+    </div>
+    <div id="collabList"></div>`;
+  $('collabFilter').value = state.collabFilter;
+  $('collabFilter').onchange = (event) => { state.collabFilter = event.target.value; renderCollaboration(); };
+  $('collabList').innerHTML = collaborationRows().map((item) => `
+    <article class="item">
+      <h3>${escapeHtml(item.title || item.id)}</h3>
+      <p class="muted">${escapeHtml(item.summary || item.content || '')}</p>
+      ${badge(item.type, item.type === 'issue' ? 'blue' : 'rose')}
+      ${badge(item.status || 'readback', 'good')}
+      ${badge(item.evidence, item.evidence.includes('readback') ? 'good' : 'warn')}
+      ${item.readback_relays ? item.readback_relays.map((relay) => badge(relay, 'blue')).join('') : ''}
+      ${meta([['ID', item.id], ['Mapped path', item.mapped_registry_path], ['Boundary', item.claim_boundary || 'local fixture only']])}
+    </article>`).join('');
+}
+
+function renderReleases() {
+  const releases = registry().releases || [];
+  $('view-releases').innerHTML = releases.map((release) => `
+    <section class="panel">
+      <h2>${escapeHtml(release.version)} <span class="muted">${escapeHtml(release.tag)}</span></h2>
+      ${(release.artifacts || []).map((artifact) => `
+        <article class="item">
+          <h3>${escapeHtml(artifact.name)}</h3>
+          ${meta([['SHA-256', artifact.sha256], ['CID', artifact.cid], ['URI', artifact.uri], ['Signature', artifact.signature]])}
+          ${badge('local fixture: ' + text(artifact.availability?.local_fixture), badgeClass(artifact.availability?.local_fixture))}
+          ${badge('pinned: ' + text(artifact.availability?.pinned), badgeClass(artifact.availability?.pinned))}
+          ${badge('durability claim: ' + text(artifact.availability?.durability_claim), badgeClass(!artifact.availability?.durability_claim))}
+        </article>`).join('')}
+    </section>`).join('');
+}
+
+function renderEvidence() {
+  const protocols = ['all', ...new Set(app.live_evidence_index.evidence.map((item) => item.protocol))];
+  const query = state.evidenceQuery.toLowerCase();
+  const rows = app.live_evidence_index.evidence.filter((item) => {
+    const protocolOk = state.evidenceProtocol === 'all' || item.protocol === state.evidenceProtocol;
+    const queryOk = !query || JSON.stringify(item).toLowerCase().includes(query);
+    return protocolOk && queryOk;
+  });
+  $('view-evidence').innerHTML = `
+    <div class="toolbar">
+      <select id="evidenceProtocol" aria-label="Evidence protocol">${protocols.map((p) => `<option value="${p}">${p}</option>`).join('')}</select>
+      <input id="evidenceQuery" type="search" value="${escapeHtml(state.evidenceQuery)}" placeholder="Filter evidence" aria-label="Filter evidence">
+    </div>
+    <div id="evidenceList"></div>`;
+  $('evidenceProtocol').value = state.evidenceProtocol;
+  $('evidenceProtocol').onchange = (event) => { state.evidenceProtocol = event.target.value; renderEvidence(); };
+  $('evidenceQuery').oninput = (event) => { state.evidenceQuery = event.target.value; renderEvidence(); };
+  $('evidenceList').innerHTML = rows.map((item) => `
+    <article class="item">
+      <h3>${escapeHtml(item.id)}</h3>
+      <p>${escapeHtml(item.verification_summary)}</p>
+      ${badge(item.protocol, 'blue')}
+      ${badge(item.state, item.synthetic ? 'warn' : 'good')}
+      ${badge('live network: ' + item.live_network_action, badgeClass(item.live_network_action))}
+      ${badge('selected relay: ' + item.selected_relay_readback_verified, badgeClass(item.selected_relay_readback_verified))}
+      ${meta([['Evidence file', item.evidence_file], ['Evidence SHA-256', item.evidence_sha256], ['Scope', item.scope], ['Non-claims', item.non_claims.join('; ')]])}
+    </article>`).join('');
+}
+
+function currentRepoAddress() {
+  return app.nip34.repository?.address || '30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project';
+}
+
+function draftEvent() {
+  const title = $('draftTitle')?.value || '';
+  const body = $('draftBody')?.value || '';
+  const status = $('draftStatus')?.value || 'open';
+  const kind = state.draftType === 'issue' ? 1621 : 1617;
+  return {
+    draft_notice: 'unsigned local draft; not signed, not published, not relayed',
+    kind,
+    created_at: Math.floor(Date.now() / 1000),
+    tags: [
+      ['a', currentRepoAddress(), '', 'root'],
+      ['subject', title],
+      ['status', status],
+      ['t', 'decentralized-forge'],
+      ['client', 'decentralized-forge-static-workbench']
+    ],
+    content: body,
+    non_claims: app.non_claims
+  };
+}
+
+function updateDraftOutput() {
+  $('draftOutput').value = JSON.stringify(draftEvent(), null, 2);
+}
+
+function renderDraft() {
+  $('view-draft').innerHTML = `
+    <section class="panel">
+      <h2>Nostr collaboration draft</h2>
+      <div class="segmented" role="group" aria-label="Draft type">
+        <button id="draftIssue" aria-pressed="${state.draftType === 'issue'}">Issue</button>
+        <button id="draftPatch" aria-pressed="${state.draftType === 'patch'}">Patch</button>
+      </div>
+      <div class="grid" style="margin-top:12px">
+        <div class="span-6">
+          <label class="field">Title<input id="draftTitle" value="${state.draftType === 'issue' ? 'Define portable project identity' : 'Add static registry renderer'}"></label>
+          <label class="field">Status<select id="draftStatus"><option value="open">open</option><option value="proposed">proposed</option><option value="review">review</option></select></label>
+          <label class="field">Body<textarea id="draftBody">${state.draftType === 'issue' ? 'Track a concrete collaboration question for the project.' : 'Summarize a patch proposal or paste a small format-patch body.'}</textarea></label>
+          <div class="actions">
+            <button id="refreshDraft" class="primary">Refresh draft</button>
+            <button id="downloadDraft" class="secondary">Download JSON</button>
+          </div>
+        </div>
+        <div class="span-6">
+          <label class="field">Draft JSON<textarea id="draftOutput" class="output" readonly></textarea></label>
+          ${badge('unsigned local draft', 'warn')}${badge('no relay publish action', 'good')}
+        </div>
+      </div>
+    </section>`;
+  $('draftIssue').onclick = () => { state.draftType = 'issue'; renderDraft(); };
+  $('draftPatch').onclick = () => { state.draftType = 'patch'; renderDraft(); };
+  ['draftTitle', 'draftStatus', 'draftBody'].forEach((id) => $(id).oninput = updateDraftOutput);
+  $('refreshDraft').onclick = updateDraftOutput;
+  $('downloadDraft').onclick = () => {
+    updateDraftOutput();
+    const blob = new Blob([$('draftOutput').value + '\n'], { type: 'application/json' });
+    const anchor = document.createElement('a');
+    anchor.href = URL.createObjectURL(blob);
+    anchor.download = `nostr-${state.draftType}-draft.json`;
+    anchor.click();
+    URL.revokeObjectURL(anchor.href);
+  };
+  updateDraftOutput();
+}
+
+function render() {
+  renderHeader();
+  if (state.view === 'overview') renderOverview();
+  if (state.view === 'collaboration') renderCollaboration();
+  if (state.view === 'releases') renderReleases();
+  if (state.view === 'evidence') renderEvidence();
+  if (state.view === 'draft') renderDraft();
+}
+
+renderShell();
+render();
+</script>
+</body>
+</html>

@@ -684,13 +684,25 @@ def regenerate_portable_outputs() -> None:
         ]
     )
     render_forge_app.main([str(ROOT / "output" / "forge-app.html")])
+    onboarding_registry = ROOT / "fixtures" / "onboarding-sample.registry.json"
+    if onboarding_registry.is_file():
+        render_forge_app.main(
+            [
+                str(ROOT / "output" / "forge-app-with-onboarding-sample.html"),
+                "--registry",
+                str(ROOT / "fixtures" / "example-project.registry.json"),
+                "--registry",
+                str(ROOT / "fixtures" / "portable-lab.registry.json"),
+                "--registry",
+                str(onboarding_registry),
+            ]
+        )
     for registry_path, summary_path in [
         (ROOT / "fixtures" / "example-project.registry.json", ROOT / "output" / "demo-project.summary.json"),
         (ROOT / "fixtures" / "portable-lab.registry.json", ROOT / "output" / "portable-lab.summary.json"),
     ]:
         registry = render_project_page.load_registry(registry_path)
         write_json(summary_path, registry_summary(registry, registry_path))
-    onboarding_registry = ROOT / "fixtures" / "onboarding-sample.registry.json"
     if onboarding_registry.is_file():
         render_project_page.main([str(onboarding_registry), str(ROOT / "output" / "onboarding-sample.registry.html")])
         registry = render_project_page.load_registry(onboarding_registry)
@@ -1646,6 +1658,18 @@ def command_verify_local(args: argparse.Namespace) -> int:
         ],
         [sys.executable, "scripts/forge_registry.py", "render", "fixtures/portable-lab.registry.json", "output/portable-lab.html"],
         [sys.executable, "scripts/forge_registry.py", "render-app", "output/forge-app.html"],
+        [
+            sys.executable,
+            "scripts/forge_registry.py",
+            "render-app",
+            "output/forge-app-with-onboarding-sample.html",
+            "--registry",
+            "fixtures/example-project.registry.json",
+            "--registry",
+            "fixtures/portable-lab.registry.json",
+            "--registry",
+            "fixtures/onboarding-sample.registry.json",
+        ],
         [sys.executable, "scripts/forge_registry.py", "export-summary", "fixtures/example-project.registry.json", "output/demo-project.summary.json"],
         [sys.executable, "scripts/forge_registry.py", "export-summary", "fixtures/portable-lab.registry.json", "output/portable-lab.summary.json"],
         [sys.executable, "scripts/forge_registry.py", "export-bundle", "output/decentralized-forge-verification-bundle.zip"],
