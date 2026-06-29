@@ -392,11 +392,13 @@ def write_deterministic_zip(output: Path, paths: list[Path], manifest: dict) -> 
         for path in paths:
             rel = relative(path)
             info = zipfile.ZipInfo(rel, ZIP_FIXED_DATE_TIME)
+            info.create_system = 3
             info.compress_type = zipfile.ZIP_STORED
             info.external_attr = 0o644 << 16
             archive.writestr(info, bundle_file_bytes(path))
 
         info = zipfile.ZipInfo(DEFAULT_BUNDLE_MANIFEST_PATH, ZIP_FIXED_DATE_TIME)
+        info.create_system = 3
         info.compress_type = zipfile.ZIP_STORED
         info.external_attr = 0o644 << 16
         archive.writestr(info, stable_json_bytes(manifest))
