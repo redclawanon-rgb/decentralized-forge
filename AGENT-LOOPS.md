@@ -784,3 +784,27 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as `evidence/radicle-vps-follower-public-readback-2026-06-29.json` and `.md`. The `openclaw` VPS runs a fresh follower Radicle identity, not the retained maintainer identity, at `z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776`. A fresh reader on `ubuntu-work` connected to that public seed address, cloned retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy`, and verified `HEAD` matched commit `610fc3da9757d0cb123aa5976db552b991b766d4`. The retained quickstart helper now prefers the Loop 67 row and prints the public VPS seed address.
 
 **Gate preserved:** This is one public direct-seed readback through a VPS follower seed. It does not copy retained maintainer key material to the VPS, commit or bundle secret state, use production/private personal keys, spend money beyond the already-available VPS, contact specific people, or claim permanent durability, future default public-routing availability, censorship resistance, global replication, identity trust, security, SLSA compliance, full Radicle compatibility, or production readiness.
+
+## Loop 68: Public VPS follower seed service hardening
+
+**Goal:** Move the public follower seed from a hand-started process to a restart-safe service.
+
+**Current result:** Complete as `evidence/radicle-vps-follower-systemd-service-2026-06-29.json` and `.md`. `openclaw` runs `decentralized-forge-radicle-seed.service` as an enabled user-level `systemd` service with `Restart=always`, user lingering enabled, and `radicle-node --listen 0.0.0.0:8776 --force`. The VPS stores follower seed state and a private local passphrase EnvironmentFile; retained maintainer key material was not copied to the VPS. After an explicit service restart, a fresh `ubuntu-work` reader cloned the retained RID from the public seed and verified commit `610fc3da9757d0cb123aa5976db552b991b766d4`.
+
+**Gate preserved:** This proves restart-safe user-service operation plus post-restart direct-seed readback. It does not prove permanent durability, security, identity trust, censorship resistance, global replication, default public routing, or production readiness.
+
+## Loop 69: Public seed health check
+
+**Goal:** Make the public Radicle seed check a repeatable command.
+
+**Current result:** Complete as `scripts/check_public_radicle_seed.py`, `evidence/radicle-public-seed-health-check-2026-06-29.json`, and `.md`. The script creates a fresh temporary Radicle profile, connects to one explicit seed, clones one RID, checks `git rev-parse HEAD`, stops the reader node, and removes temporary state by default. The first run from `ubuntu-work` cloned the retained RID from the public `openclaw` seed and verified commit `610fc3da9757d0cb123aa5976db552b991b766d4`.
+
+**Gate preserved:** This is a point-in-time health check, not a durability, automatic update, security, identity-trust, default-routing, or production-readiness claim.
+
+## Loop 70: Public seed update propagation
+
+**Goal:** Prove the public follower seed can serve an updated retained RID commit, not just a one-time snapshot.
+
+**Current result:** Complete as `evidence/radicle-public-seed-update-propagation-2026-06-29.json` and `.md`. The retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` advanced from `610fc3da9757d0cb123aa5976db552b991b766d4` to `64efbada294d4a57c014a27398b92e344c6d68aa`. The `openclaw` follower synced the update through a temporary bridge to the retained maintainer seed, then the bridge and maintainer seed were stopped. A fresh reader on `ubuntu-work` connected to the public VPS seed and cloned the updated commit.
+
+**Gate preserved:** This proves one manual update propagation through the public follower seed. It does not prove automatic future propagation, permanent durability, security, identity trust, global replication, default public routing, or production readiness.

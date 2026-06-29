@@ -1373,7 +1373,7 @@ Gate preserved: Loop 67 does not copy retained maintainer key material to the VP
 
 ## Next recommended loop
 
-**Next:** Harden the public follower seed: add a restart policy or runbook on `openclaw`, add a repeated health-check/readback after a time gap, and record what happens if the VPS process restarts. The caveat remains that permanent durability still requires persistent seeding or independent mirrors.
+**Next:** Add independent mirror/fallback seed coverage or a scheduled external health-check readout. The caveat remains that permanent durability still requires independent operators, backups, and repeated checks over time.
 
 Recent completed loops:
 
@@ -1413,6 +1413,9 @@ Recent completed loops:
 - Loop 65: retained RID independent follower-seed readback - complete as the same RID advanced to commit `7262f69b82e442263d6261414f6b771be04c6b6f`; reader A cloned from retained maintainer seed and reader B cloned from reader A acting as a follower seed.
 - Loop 66: retained seed restart/readback rehearsal - complete as the same RID advanced to commit `4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8`; fresh readers cloned before and after retained seed restart on the same local address.
 - Loop 67: public VPS follower-seed readback - complete as `openclaw` served retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` at commit `610fc3da9757d0cb123aa5976db552b991b766d4` to a fresh reader on `ubuntu-work`.
+- Loop 68: public VPS follower seed service hardening - complete as an enabled user-level `systemd` service on `openclaw` with restart policy, linger enabled, retained maintainer key material kept off the VPS, and post-restart fresh public readback.
+- Loop 69: repeatable public seed health check - complete as `scripts/check_public_radicle_seed.py` plus fresh-profile public readback evidence from `ubuntu-work`.
+- Loop 70: public seed update propagation - complete as the same retained RID advanced to commit `64efbada294d4a57c014a27398b92e344c6d68aa`, the `openclaw` follower synced it through a temporary bridge, the bridge and maintainer seed were stopped, and a fresh reader cloned the updated commit from the public VPS seed.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

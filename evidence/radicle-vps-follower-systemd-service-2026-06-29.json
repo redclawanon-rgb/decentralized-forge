@@ -1,0 +1,58 @@
+{
+  "schema_version": "decentralized-forge.radicle-vps-follower-systemd-service.v1",
+  "loop": 68,
+  "created_utc": "2026-06-29T22:24:08Z",
+  "scope": "Restart-safe user systemd service for the openclaw public Radicle follower seed",
+  "source_evidence": "evidence/radicle-vps-follower-public-readback-2026-06-29.json",
+  "post_restart_health_check": "evidence/radicle-public-seed-health-check-2026-06-29.json",
+  "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+  "expected_commit": "610fc3da9757d0cb123aa5976db552b991b766d4",
+  "vps_host": "openclaw",
+  "vps_public_ip": "187.77.19.162",
+  "vps_seed_node_id": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f",
+  "vps_seed_address": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776",
+  "service": {
+    "manager": "systemd --user",
+    "name": "decentralized-forge-radicle-seed.service",
+    "path": "~/.config/systemd/user/decentralized-forge-radicle-seed.service",
+    "enabled": true,
+    "active_after_restart": true,
+    "restart_policy": "always",
+    "restart_sec": 10,
+    "listen_addr": "0.0.0.0:8776",
+    "exec_start": "radicle-node --listen 0.0.0.0:8776 --force",
+    "exec_start_pre": "rad seed rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy --scope all --no-fetch",
+    "no_new_privileges": true,
+    "linger_enabled": true,
+    "boot_start_expected_for_user_service": true
+  },
+  "secret_handling": {
+    "passphrase_source_path": "~/df-rad-follower/follower.passphrase",
+    "environment_file_path": "~/df-rad-follower/radicle-node.env",
+    "environment_file_mode": "0600",
+    "secret_values_recorded": false,
+    "retained_maintainer_key_material_copied_to_vps": false
+  },
+  "verification": {
+    "systemd_restart_succeeded": true,
+    "service_reported_active_running": true,
+    "node_status_after_restart": "running",
+    "node_id_after_restart": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f",
+    "post_restart_fresh_reader_host": "ubuntu-work",
+    "post_restart_public_readback_commit": "610fc3da9757d0cb123aa5976db552b991b766d4",
+    "post_restart_public_readback_matches_expected": true
+  },
+  "installed_tooling": [
+    "scripts/install_radicle_user_seed_service.py",
+    "scripts/check_public_radicle_seed.py"
+  ],
+  "actions_not_taken": [
+    "retained maintainer key material was not copied to the VPS",
+    "no committed file contains the VPS follower passphrase",
+    "no root system service was installed",
+    "no paid infrastructure, wallet, spending, or direct outreach was introduced",
+    "no durability, censorship-resistance, security, global-replication, identity-trust, or production-readiness claim is made",
+    "no default public-routing availability claim is made"
+  ],
+  "claim_boundary": "This records that the openclaw follower seed runs under an enabled user-level systemd service with restart policy and user lingering enabled, and that a fresh reader cloned the expected retained RID commit after an explicit service restart. It is still not a permanent durability, security, identity-trust, censorship-resistance, global-replication, default public-routing, or production-readiness guarantee."
+}

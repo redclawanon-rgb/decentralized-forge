@@ -265,20 +265,27 @@ def live_evidence_entry(entry_id: str, index_path: Path = DEFAULT_LIVE_EVIDENCE_
 
 def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_INDEX) -> dict:
     try:
-        entry = live_evidence_entry("loop67-radicle-vps-follower-public-readback", index_path)
+        entry = live_evidence_entry("loop70-radicle-public-seed-update-propagation", index_path)
     except ValueError:
         try:
-            entry = live_evidence_entry("loop66-radicle-seed-restart-check", index_path)
+            entry = live_evidence_entry("loop67-radicle-vps-follower-public-readback", index_path)
         except ValueError:
             try:
-                entry = live_evidence_entry("loop65-radicle-independent-availability-check", index_path)
+                entry = live_evidence_entry("loop66-radicle-seed-restart-check", index_path)
             except ValueError:
-                entry = live_evidence_entry("loop63-radicle-retained-update-check", index_path)
+                try:
+                    entry = live_evidence_entry("loop65-radicle-independent-availability-check", index_path)
+                except ValueError:
+                    entry = live_evidence_entry("loop63-radicle-retained-update-check", index_path)
     public = entry.get("public_identifiers")
     if not isinstance(public, dict):
         raise ValueError(f"{entry.get('id', 'retained Radicle evidence')} missing public_identifiers")
 
-    is_public_vps_seed = entry.get("id") == "loop67-radicle-vps-follower-public-readback"
+    is_public_vps_seed = entry.get("id") in {
+        "loop67-radicle-vps-follower-public-readback",
+        "loop70-radicle-public-seed-update-propagation",
+    }
+    is_public_vps_update = entry.get("id") == "loop70-radicle-public-seed-update-propagation"
     is_independent_availability = entry.get("id") == "loop65-radicle-independent-availability-check"
     is_seed_restart = entry.get("id") == "loop66-radicle-seed-restart-check"
     required = ["rid", "current_source_commit", "retained_state_committed", "secret_values_recorded"]
@@ -310,14 +317,16 @@ def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_I
     if public[matches_key] is not True:
         raise ValueError(f"{entry['id']} readback did not match source")
     if is_public_vps_seed and public["public_seed_address_reachable"] is not True:
-        raise ValueError("loop67 public VPS seed address was not reachable")
+        raise ValueError(f"{entry['id']} public VPS seed address was not reachable")
     if is_seed_restart and public["same_seed_node_after_restart"] is not True:
         raise ValueError("loop66 seed restart did not preserve the retained seed node identity")
     if is_independent_availability and public["follower_seed_succeeded"] is not True:
         raise ValueError("loop65 follower seed did not succeed")
     if public["retained_state_committed"] is not False or public["secret_values_recorded"] is not False:
         raise ValueError(f"{entry['id']} retained Radicle evidence is not secret-free")
-    if is_public_vps_seed:
+    if is_public_vps_update:
+        availability_mode = "public VPS follower-seed update readback"
+    elif is_public_vps_seed:
         availability_mode = "public VPS follower-seed readback"
     elif is_seed_restart:
         availability_mode = "local seed restart readback"
@@ -363,6 +372,7 @@ def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_I
             "not a security guarantee",
             "not production readiness",
             "not a committed secret or key backup",
+            *(["not proof of automatic future update propagation"] if is_public_vps_update else []),
             *(
                 ["not maintainer key material on the VPS"]
                 if is_public_vps_seed
@@ -791,6 +801,7 @@ def collect_verification_bundle_paths() -> list[Path]:
         "AGENT-LOOPS.md",
         "docs/threat-model.md",
         "docs/community-quickstart.md",
+        "docs/first-decentralized-repo-milestone.md",
         "docs/radicle-persistent-seed-plan.md",
         "docs/radicle-retained-rid-quickstart.md",
         relative(DEFAULT_BUNDLE_REVIEW_CHECKLIST),
@@ -801,6 +812,9 @@ def collect_verification_bundle_paths() -> list[Path]:
         "scripts/render_forge_app.py",
         "scripts/nip34_adapter.py",
         "scripts/preflight_static_artifact.py",
+        "scripts/check_public_radicle_seed.py",
+        "scripts/install_radicle_user_seed_service.py",
+        "scripts/radicle_seed_host_control.py",
         "scripts/run_radicle_fresh_readback_check.py",
         "scripts/run_radicle_independent_availability_check.py",
         "scripts/run_radicle_project_repo_smoke.py",
@@ -1816,6 +1830,9 @@ def command_verify_local(args: argparse.Namespace) -> int:
         [sys.executable, "-m", "py_compile", "scripts/run_radicle_retained_update_check.py"],
         [sys.executable, "-m", "py_compile", "scripts/run_radicle_seed_restart_check.py"],
         [sys.executable, "-m", "py_compile", "scripts/run_radicle_update_continuity_check.py"],
+        [sys.executable, "-m", "py_compile", "scripts/check_public_radicle_seed.py"],
+        [sys.executable, "-m", "py_compile", "scripts/install_radicle_user_seed_service.py"],
+        [sys.executable, "-m", "py_compile", "scripts/radicle_seed_host_control.py"],
         [
             sys.executable,
             "scripts/nip34_adapter.py",

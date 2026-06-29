@@ -140,6 +140,8 @@ Loop 66 added retained seed restart/readback evidence for the retained RID. `scr
 
 Loop 67 added public VPS follower-seed readback evidence for the retained RID. The `openclaw` VPS follower seed at `z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776` served commit `610fc3da9757d0cb123aa5976db552b991b766d4` to a fresh reader on `ubuntu-work`, and retained maintainer key material was not copied to the VPS. This is the first usable public direct-seed path, but it still does not prove permanent durability, default public routing, broad replication, identity trust, security, or production readiness.
 
+Loops 68-70 complete the first usable decentralized repo milestone. The `openclaw` follower seed now runs as an enabled user-level `systemd` service, `scripts/check_public_radicle_seed.py` provides a repeatable fresh-profile health check, and the retained RID advanced to `64efbada294d4a57c014a27398b92e344c6d68aa` with fresh public readback from the VPS follower after the temporary maintainer bridge and maintainer seed were stopped. This satisfies the current MVP usability target: a user can clone the project from a published Radicle seed address and verify the expected retained-RID commit. It still does not satisfy permanent durability, automatic future propagation, independent multi-seed availability, security, identity trust, default public routing, or production readiness.
+
 ## Release Rule
 
 Milestone 1 is complete as an evidence-scoped static prototype after CI passed on `main` for commit `e69fd5b22e8ec27f52a11e582b705e212690a865`, the README points to this file, and `STATUS.md` names the current completion state without contradicting the evidence index.

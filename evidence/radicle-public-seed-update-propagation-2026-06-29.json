@@ -1,0 +1,55 @@
+{
+  "schema_version": "decentralized-forge.radicle-public-seed-update-propagation.v1",
+  "loop": 70,
+  "created_utc": "2026-06-29T22:29:55Z",
+  "scope": "Retained RID update propagated through the public openclaw follower seed",
+  "source_evidence": "evidence/radicle-vps-follower-systemd-service-2026-06-29.json",
+  "public_health_check_evidence": "evidence/radicle-public-seed-update-health-check-2026-06-29.json",
+  "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+  "prior_public_seed_commit": "610fc3da9757d0cb123aa5976db552b991b766d4",
+  "updated_commit": "64efbada294d4a57c014a27398b92e344c6d68aa",
+  "retained_maintainer_host": "ubuntu-work",
+  "retained_maintainer_node_id": "z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr",
+  "vps_host": "openclaw",
+  "vps_seed_node_id": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f",
+  "vps_seed_address": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776",
+  "retained_update": {
+    "ubuntu_work_checkout_commit": "64efbada294d4a57c014a27398b92e344c6d68aa",
+    "seed_restart_script_passed": true,
+    "retained_rid_advanced_to_updated_commit": true
+  },
+  "vps_sync": {
+    "temporary_bridge_used": true,
+    "temporary_bridge_stopped": true,
+    "maintainer_seed_started_for_sync": true,
+    "maintainer_seed_stopped_after_sync": true,
+    "vps_connected_to_retained_maintainer_seed": true,
+    "vps_sync_from_retained_maintainer_seed_succeeded": true,
+    "vps_local_clone_readback_commit": "64efbada294d4a57c014a27398b92e344c6d68aa",
+    "vps_local_clone_readback_matches_updated_commit": true,
+    "vps_seed_policy_scope": "all"
+  },
+  "public_readback": {
+    "fresh_reader_host": "ubuntu-work",
+    "fresh_reader_connected_to_public_seed": true,
+    "fresh_reader_clone_succeeded": true,
+    "fresh_reader_readback_commit": "64efbada294d4a57c014a27398b92e344c6d68aa",
+    "fresh_reader_readback_matches_updated_commit": true,
+    "fresh_reader_temp_state_removed": true
+  },
+  "verification_passed": true,
+  "secret_values_recorded": false,
+  "retained_maintainer_key_material_copied_to_vps": false,
+  "actions_not_taken": [
+    "retained maintainer key material was not copied to the VPS",
+    "temporary SSH bridge was stopped after the VPS follower synced the update",
+    "ubuntu-work retained maintainer seed was stopped after VPS sync",
+    "fresh reader temporary Radicle state was removed after verification",
+    "no committed file contains secret passphrases or Radicle key material",
+    "no paid infrastructure, wallet, spending, or direct outreach was introduced",
+    "no permanent durability, censorship-resistance, security, global-replication, identity-trust, full-compatibility, or production-readiness claim is made",
+    "no automatic future-update propagation claim is made",
+    "no default public-routing availability claim is made"
+  ],
+  "claim_boundary": "This records one retained-RID update from commit 610fc3da9757d0cb123aa5976db552b991b766d4 to 64efbada294d4a57c014a27398b92e344c6d68aa, a temporary maintainer-seed bridge used to let the openclaw follower sync it, bridge and maintainer shutdown afterward, and a fresh public direct-seed readback from openclaw at the updated commit. It is not proof of automatic future propagation, permanent durability, security, identity trust, global replication, default public routing, or production readiness."
+}

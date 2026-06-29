@@ -83,6 +83,10 @@ As of Loop 67, the project has local CAR/CID fixture verification, local Helia U
 - `evidence/radicle-independent-availability-check-2026-06-29.json` and `.md` — Loop 65 retained RID update to commit `7262f69b82e442263d6261414f6b771be04c6b6f` with independent follower-seed readback
 - `evidence/radicle-seed-restart-check-2026-06-29.json` and `.md` — Loop 66 retained seed restart/readback rehearsal advancing RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` to commit `4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8`
 - `evidence/radicle-vps-follower-public-readback-2026-06-29.json` and `.md` — Loop 67 public VPS follower-seed readback for retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` at commit `610fc3da9757d0cb123aa5976db552b991b766d4`
+- `evidence/radicle-vps-follower-systemd-service-2026-06-29.json` and `.md` — Loop 68 enabled user-level `systemd` service for the public `openclaw` follower seed with post-restart readback
+- `evidence/radicle-public-seed-health-check-2026-06-29.json` and `.md` — Loop 69 repeatable fresh-profile health check for the public Radicle seed
+- `evidence/radicle-public-seed-update-propagation-2026-06-29.json` and `.md` — Loop 70 retained RID update propagation through the public `openclaw` follower seed to commit `64efbada294d4a57c014a27398b92e344c6d68aa`
+- `docs/first-decentralized-repo-milestone.md` — first usable public Radicle direct-seed clone milestone and non-claims
 - `fixtures/keyless-attestation.registry-verification.json` — Loop 45 registry-shaped keyless-attestation import kept outside project-registry fixtures
 - `fixtures/local-release-artifact.txt` — local-only release artifact fixture with stdlib-tested SHA-256/CIDv1 metadata
 - `fixtures/nostr-repo-state-status.json` — local-only `kind: 30618` repository state fixture generated from the recorded local Git HEAD at fixture creation time plus fixture-only synthetic status/check projections
@@ -98,6 +102,9 @@ As of Loop 67, the project has local CAR/CID fixture verification, local Helia U
 - `scripts/run_radicle_retained_delegate_check.py` — Docker/Linux-oriented retained-maintainer workflow that keeps project-scoped Radicle state under gitignored `.tmp/` and records fresh readback evidence without committing secrets
 - `scripts/run_radicle_retained_update_check.py` — host/WSL-oriented retained same-RID update check that reuses local retained Radicle state without Docker
 - `scripts/run_radicle_seed_restart_check.py` — host/WSL-oriented retained seed restart/readback rehearsal
+- `scripts/install_radicle_user_seed_service.py` — Linux host helper for installing a user-level `systemd` Radicle follower seed service without printing secrets
+- `scripts/check_public_radicle_seed.py` — fresh-profile public Radicle seed clone/readback health check
+- `scripts/radicle_seed_host_control.py` — Linux host helper for starting/stopping a Radicle seed profile from a local passphrase file without printing secrets
 - `scripts/run_radicle_update_continuity_check.py` — Docker/Linux-oriented same-RID update-continuity check for fresh-peer publication versus default delegate readback
 - `output/demo-project.html` — generated demo project page
 - `output/forge-app.html` — generated local static workbench app; it reads embedded committed fixture/evidence data and does not sign, fetch, open WebSockets, or publish protocol events

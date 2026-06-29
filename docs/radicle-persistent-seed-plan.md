@@ -5,7 +5,10 @@ This plan defines the minimum path from the current retained-RID evidence to a u
 ## Current Evidence
 
 - Retained RID: `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy`
-- Current verified commit: `610fc3da9757d0cb123aa5976db552b991b766d4`
+- Current verified commit: `64efbada294d4a57c014a27398b92e344c6d68aa`
+- Loop 70 evidence: `evidence/radicle-public-seed-update-propagation-2026-06-29.json`
+- Loop 69 evidence: `evidence/radicle-public-seed-health-check-2026-06-29.json`
+- Loop 68 evidence: `evidence/radicle-vps-follower-systemd-service-2026-06-29.json`
 - Loop 67 evidence: `evidence/radicle-vps-follower-public-readback-2026-06-29.json`
 - Loop 66 evidence: `evidence/radicle-seed-restart-check-2026-06-29.json`
 - Loop 65 evidence: `evidence/radicle-independent-availability-check-2026-06-29.json`
@@ -14,8 +17,11 @@ This plan defines the minimum path from the current retained-RID evidence to a u
 - Reader B cloned the retained RID from reader A and read back the same commit.
 - Loop 66 started the retained seed on a local address, verified a fresh clone, stopped the seed, restarted it on the same local address with the same retained node ID, and verified a second fresh clone after restart.
 - Loop 67 started a public VPS follower seed at `z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776`; a fresh reader on a separate Linux machine cloned the retained RID from that seed and read back the expected commit.
+- Loop 68 installed the `openclaw` follower seed as an enabled user-level `systemd` service with restart policy and verified a fresh public readback after explicit service restart.
+- Loop 69 added `scripts/check_public_radicle_seed.py` and used it for a fresh-profile public seed health check.
+- Loop 70 advanced the same retained RID to `64efbada294d4a57c014a27398b92e344c6d68aa`, synced the `openclaw` follower through a temporary maintainer bridge, stopped the bridge and maintainer seed, and verified a fresh public readback from the VPS follower seed.
 
-This proves an independent follower-seed handoff, a local seed restart/readback rehearsal, and one public direct-seed readback through the VPS follower. It does not prove durability, broad public routing, or default public-routing availability.
+This proves an independent follower-seed handoff, a local seed restart/readback rehearsal, a restart-safe public follower service, a repeatable health check, and one manual update propagation through the VPS follower. It does not prove durability, broad public routing, automatic future update propagation, or default public-routing availability.
 
 ## Usable Product Claim To Target
 
@@ -66,7 +72,7 @@ rad node start
 rad node connect z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776 --timeout 30s
 rad clone --timeout 120s --seed z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy decentralized-forge
 cd decentralized-forge
-test "$(git rev-parse HEAD)" = "610fc3da9757d0cb123aa5976db552b991b766d4"
+test "$(git rev-parse HEAD)" = "64efbada294d4a57c014a27398b92e344c6d68aa"
 ```
 
 Record health-check evidence only if command output is secret-free.
