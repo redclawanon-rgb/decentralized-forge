@@ -986,9 +986,24 @@ Outputs:
 
 Gate preserved: No spending, paid infrastructure, wallet, production/private personal key, direct outreach, persistent service, pinning action, Radicle CLI action, registry provenance replacement, SLSA compliance claim, durability claim, broad availability claim, censorship-resistance claim, security guarantee, or production-readiness claim was introduced.
 
+### Loop 46: Trust hardening and public-tool readiness
+
+Status: **complete as local trust-contract hardening; no new live protocol/storage/signing action**.
+
+Outputs:
+
+- `schemas/live-evidence-index.schema.json` defines the live evidence index shape.
+- `fixtures/live-evidence-index.json` now records `evidence_sha256` and `evidence_size_bytes` for each source evidence file.
+- `scripts/forge_registry.py` now includes `validate-evidence-index`, `refresh-evidence-hashes`, and read-only `doctor` commands.
+- CI and `verify-local` check evidence hashes, evidence path bounds, selected secret markers, and claim-boundary guardrails.
+- `docs/threat-model.md` records what the tool helps with and what it does not yet solve.
+- `docs/community-quickstart.md` explains the current community verification workflow and future bundle/import direction.
+
+Gate preserved: Loop 46 performs local validation, hashing, documentation, and rendering only. It does not run live Nostr/Radicle/IPFS actions, spend money, use wallets, use production/private personal keys, start persistent services, replace registry provenance, or introduce durability, censorship-resistance, broad-availability, security, SLSA, or production-readiness claims.
+
 ## Next recommended loop
 
-**Next:** Either install/locate an approved `rad` CLI on this Windows host for the blocked broader disposable Radicle clone/sync loop, or build the next product surface around the now-recorded live evidence rows.
+**Next:** Build the product surface around the recorded trust model: an exportable verification bundle command that packages registry JSON, source evidence files, evidence-index hashes, deterministic summaries, rendered HTML, and a verifier manifest. The still-blocked parallel lane is locating an approved `rad` CLI on this Windows host for broader disposable Radicle clone/sync checks.
 
 Recent completed loops:
 

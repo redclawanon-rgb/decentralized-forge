@@ -608,3 +608,11 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as `fixtures/keyless-attestation.registry-verification.json`. The import records one `live-verified` registry-shaped row for `github-actions.keyless_artifact_attestation` outside the project-registry fixtures, tied to GitHub Actions run 28339280081 and six prototype artifact subjects.
 
 **Gate preserved:** `fixtures/example-project.registry.json` keeps `ci.provenance` synthetic. No SLSA compliance, production supply-chain security, consumer policy verification, production/private signing key, or production-readiness claim.
+
+## Loop 46: Trust hardening and public-tool readiness
+
+**Goal:** Make the recorded evidence set harder to tamper with or misunderstand before building a broader public tool surface.
+
+**Current result:** Complete as local trust-contract hardening. Added `schemas/live-evidence-index.schema.json`, evidence-file `evidence_sha256` and `evidence_size_bytes` metadata in `fixtures/live-evidence-index.json`, `validate-evidence-index`, `refresh-evidence-hashes`, and read-only `doctor` commands in `scripts/forge_registry.py`, CI coverage for those commands, and public-facing `docs/threat-model.md` plus `docs/community-quickstart.md`.
+
+**Gate preserved:** No new live protocol/storage/signing action, spending, wallet, production/private personal key, direct outreach, persistent service, registry provenance replacement, SLSA compliance claim, durability claim, broad availability claim, censorship-resistance claim, security guarantee, or production-readiness claim.

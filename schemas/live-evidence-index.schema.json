@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/decentralized-forge/live-evidence-index.schema.json",
+  "title": "Decentralized Forge Live Evidence Index",
+  "description": "Secret-free index of bounded live/local evidence rows and their explicit non-claims.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "loop",
+    "created_at",
+    "purpose",
+    "claim_policy",
+    "evidence"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "decentralized-forge.live-evidence-index.v1"
+    },
+    "loop": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1
+    },
+    "claim_policy": {
+      "type": "object",
+      "required": [
+        "contains_secret_values",
+        "allowed_claims",
+        "forbidden_claims"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "contains_secret_values": {
+          "const": false
+        },
+        "allowed_claims": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "forbidden_claims": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "protocol",
+          "scope",
+          "state",
+          "verified_at",
+          "evidence_file",
+          "evidence_sha256",
+          "evidence_size_bytes",
+          "verification_summary",
+          "live_network_action",
+          "local_cli_verified",
+          "selected_relay_readback_verified",
+          "synthetic",
+          "public_identifiers",
+          "non_claims",
+          "notes"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "protocol": {
+            "enum": [
+              "github-actions",
+              "ipfs",
+              "nostr",
+              "radicle"
+            ]
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          },
+          "state": {
+            "type": "string",
+            "minLength": 1
+          },
+          "verified_at": {
+            "type": "string"
+          },
+          "evidence_file": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(evidence|fixtures)/[^\\\\]+$"
+          },
+          "evidence_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "evidence_size_bytes": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "verification_summary": {
+            "type": "string",
+            "minLength": 1
+          },
+          "live_network_action": {
+            "type": "boolean"
+          },
+          "local_cli_verified": {
+            "type": "boolean"
+          },
+          "selected_relay_readback_verified": {
+            "type": "boolean"
+          },
+          "synthetic": {
+            "type": "boolean"
+          },
+          "public_identifiers": {
+            "type": "object"
+          },
+          "non_claims": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

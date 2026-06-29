@@ -67,6 +67,7 @@ REQUIRED_PHRASES = [
     "loop43-nostr-issue-patch-readback",
     "loop44-radicle-broader-check",
     "loop45-keyless-attestation-registry-import",
+    "Evidence SHA-256",
     "Selected-relay readback verified",
 ]
 

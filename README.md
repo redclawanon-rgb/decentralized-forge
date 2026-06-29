@@ -53,6 +53,8 @@ As of Loop 45, the project has local CAR/CID fixture verification, local Helia U
 - `docs/artifact-metadata.md` — Loop 6 release artifact metadata, local CID fixture, and no-pinning/no-durability boundaries
 - `docs/ci-provenance-model.md` — synthetic local CI/provenance model plus hosted keyless attestation boundary
 - `docs/public-collaboration.md` — Loop 9 public collaboration stance, first issue set, and public update draft
+- `docs/threat-model.md` — public threat model, what the prototype helps with, and explicit non-goals
+- `docs/community-quickstart.md` — current community verification workflow and future bundle/import path
 - `docs/live-adapter-replay-plan.md` — Loop 20 safe live-gated Radicle/Nostr replay prerequisites, evidence checklist, rollback, and non-claim gates
 - `docs/live-completion-gates.md` — optional post-Milestone-1 live IPFS, Nostr, Radicle, and signing gates
 - `docs/autonomy/README.md` — approval-bounded next-loop controller usage and automation limits
@@ -62,6 +64,7 @@ As of Loop 45, the project has local CAR/CID fixture verification, local Helia U
 - `fixtures/portable-lab.registry.json` — second local-only registry fixture for non-demo CLI/export coverage
 - `fixtures/live-adapter-replay-checklist.json` — secret-free replay gate/checklist state advanced through Loop 35
 - `fixtures/live-evidence-index.json` — secret-free index of Radicle, Nostr, IPFS/gateway, GitHub keyless attestation, local Helia, and registry-shaped import evidence plus explicit non-claims
+- `schemas/live-evidence-index.schema.json` — live evidence index schema contract
 - `evidence/github-keyless-attestation-2026-06-28.json` — Loop 40 hosted keyless artifact attestation evidence from GitHub Actions
 - `evidence/helia-local-ipfs-add-get-2026-06-28.json` — Loop 41 project-scoped local Helia UnixFS/IPFS add-get evidence for the release artifact fixture
 - `evidence/public-gateway-pinning-preflight-2026-06-28.json` — Loop 42 public gateway/pinning preflight with zero matching gateway readbacks and no pinning action
@@ -74,6 +77,7 @@ As of Loop 45, the project has local CAR/CID fixture verification, local Helia U
 - `scripts/nip34_adapter.py` — stdlib parser/export helper that round-trips dry-run NIP-34 repository, issue, patch, repository state, fixture-only status/check data, and local NIP-01 conformance metadata back to registry-shaped concepts without relay publishing
 - `scripts/render_project_page.py` — stdlib renderer for static project pages, including verification-state labels, artifact availability, content-address, CI/provenance, substrate detail sections, optional local NIP-34 fixture adapter import/display, and optional live-evidence index display
 - `scripts/preflight_static_artifact.py` — stdlib preflight for generated static artifact freshness, expected local/synthetic boundary sections, optional NIP-34 fixture sections, optional live evidence index, and selected unsupported claim phrases
+- `scripts/forge_registry.py` — reusable local CLI for validation, rendering, summaries, evidence-index hash checks, and read-only doctor output
 - `output/demo-project.html` — generated demo project page
 - `output/portable-lab.html` — generated second-fixture project page
 - `output/*.summary.json` — deterministic machine-readable registry summaries
@@ -103,12 +107,26 @@ Run the static artifact preflight before release-oriented edits, screenshots, pu
 python3 scripts/preflight_static_artifact.py
 ```
 
-The preflight is stdlib-only. It checks that `output/demo-project.html` exists, is byte-for-byte current with the renderer plus all optional NIP-34 fixtures and the Loop 26 live evidence index, includes expected local/synthetic/non-claim sections, includes the optional NIP-34 fixture adapter/state/status/conformance sections, includes the live evidence index section, and omits selected unsupported live-protocol/security/durability claim phrases.
+The preflight is stdlib-only. It checks that `output/demo-project.html` exists, is byte-for-byte current with the renderer plus all optional NIP-34 fixtures and the current live evidence index, includes expected local/synthetic/non-claim sections, includes the optional NIP-34 fixture adapter/state/status/conformance sections, includes the live evidence index section, and omits selected unsupported live-protocol/security/durability claim phrases.
+
+Run read-only local readiness and evidence-index integrity checks:
+
+```sh
+npm run forge:doctor
+npm run verify:evidence-index
+```
+
+The live evidence index records each source evidence file's SHA-256 and byte size. Refresh those fields only after intentionally updating evidence files:
+
+```sh
+npm run refresh:evidence-hashes
+```
 
 Run the full local verification suite:
 
 ```sh
 python3 -m json.tool schemas/project-registry.schema.json
+python3 -m json.tool schemas/live-evidence-index.schema.json
 python3 -m json.tool fixtures/example-project.registry.json
 python3 -m json.tool fixtures/portable-lab.registry.json
 python3 -m json.tool fixtures/radicle-backed-project.registry.json
@@ -120,6 +138,9 @@ python3 -m json.tool fixtures/live-evidence-index.json
 python3 -m json.tool fixtures/keyless-attestation.registry-verification.json
 python3 scripts/nip34_adapter.py fixtures/nostr-repo-announcement.json fixtures/nostr-collaboration-events.json fixtures/nostr-repo-state-status.json
 python3 scripts/preflight_static_artifact.py
+python3 scripts/forge_registry.py validate-evidence-index fixtures/live-evidence-index.json
+python3 scripts/forge_registry.py refresh-evidence-hashes fixtures/live-evidence-index.json --check
+python3 scripts/forge_registry.py doctor --json
 python3 scripts/forge_registry.py validate fixtures/example-project.registry.json fixtures/portable-lab.registry.json
 python3 scripts/forge_registry.py render fixtures/portable-lab.registry.json output/portable-lab.html
 python3 scripts/forge_registry.py export-summary fixtures/example-project.registry.json output/demo-project.summary.json

@@ -39,6 +39,7 @@ jobs:
       - name: Validate JSON fixtures
         run: |
           python -m json.tool schemas/project-registry.schema.json
+          python -m json.tool schemas/live-evidence-index.schema.json
           python -m json.tool fixtures/example-project.registry.json
           python -m json.tool fixtures/portable-lab.registry.json
           python -m json.tool fixtures/radicle-backed-project.registry.json
@@ -57,6 +58,9 @@ jobs:
 
       - name: Verify reusable registry CLI
         run: |
+          python scripts/forge_registry.py validate-evidence-index fixtures/live-evidence-index.json
+          python scripts/forge_registry.py refresh-evidence-hashes fixtures/live-evidence-index.json --check
+          python scripts/forge_registry.py doctor --json
           python scripts/forge_registry.py validate fixtures/example-project.registry.json fixtures/portable-lab.registry.json
           python scripts/forge_registry.py render fixtures/portable-lab.registry.json output/portable-lab.html
           python scripts/forge_registry.py export-summary fixtures/example-project.registry.json output/demo-project.summary.json

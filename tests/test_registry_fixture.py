@@ -18,6 +18,7 @@ import next_loop_controller
 import preflight_static_artifact
 
 SCHEMA_PATH = ROOT / "schemas" / "project-registry.schema.json"
+LIVE_EVIDENCE_SCHEMA_PATH = ROOT / "schemas" / "live-evidence-index.schema.json"
 FIXTURE_PATH = ROOT / "fixtures" / "example-project.registry.json"
 PORTABLE_FIXTURE_PATH = ROOT / "fixtures" / "portable-lab.registry.json"
 RADICLE_FIXTURE_PATH = ROOT / "fixtures" / "radicle-backed-project.registry.json"
@@ -114,9 +115,42 @@ class RegistryFixtureTests(unittest.TestCase):
 
     def test_schema_and_fixtures_are_valid_json_objects(self):
         self.assertIsInstance(self.schema, dict)
+        self.assertIsInstance(json.loads(LIVE_EVIDENCE_SCHEMA_PATH.read_text(encoding="utf-8")), dict)
         for fixture in self.fixtures:
             self.assertIsInstance(fixture, dict)
             self.assertEqual(fixture["schema_version"], "decentralized-forge.project-registry.v1")
+
+    def test_live_evidence_index_hashes_match_recorded_files(self):
+        errors = forge_registry.validate_live_evidence_index(LIVE_EVIDENCE_INDEX_PATH)
+        self.assertEqual(errors, [])
+        refreshed = forge_registry.refresh_live_evidence_hashes(LIVE_EVIDENCE_INDEX_PATH)
+        self.assertEqual(refreshed, self.live_evidence_index)
+        for item in self.live_evidence_index["evidence"]:
+            evidence_path = ROOT / item["evidence_file"]
+            self.assertTrue(evidence_path.is_file())
+            self.assertEqual(item["evidence_sha256"], hashlib.sha256(evidence_path.read_bytes()).hexdigest())
+            self.assertEqual(item["evidence_size_bytes"], evidence_path.stat().st_size)
+
+    def test_live_evidence_index_validator_rejects_stale_hashes(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp_index = Path(tmpdir) / "live-evidence-index.json"
+            tampered = json.loads(json.dumps(self.live_evidence_index))
+            tampered["evidence"][0]["evidence_sha256"] = "0" * 64
+            tmp_index.write_text(json.dumps(tampered), encoding="utf-8")
+            errors = forge_registry.validate_live_evidence_index(tmp_index)
+            self.assertTrue(any("evidence_sha256 does not match" in error for error in errors))
+
+    def test_forge_registry_doctor_is_read_only_and_secret_free(self):
+        report = forge_registry.doctor_report()
+        self.assertEqual(report["schema_version"], "decentralized-forge.doctor.v1")
+        self.assertTrue(report["checks"]["live_evidence_index_valid"])
+        self.assertIn("git", report["tools"])
+        self.assertIn("rad", report["tools"])
+        combined = json.dumps(report).lower()
+        self.assertIn("no live protocol actions", combined)
+        self.assertIn("does not publish protocol events", combined)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, combined)
 
     def test_forge_registry_cli_exports_deterministic_summaries(self):
         demo_summary = forge_registry.registry_summary(self.fixture, FIXTURE_PATH)
