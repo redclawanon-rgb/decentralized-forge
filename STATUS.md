@@ -1284,9 +1284,29 @@ Verified evidence:
 
 Gate preserved: Loop 62 does not commit or bundle the retained Radicle secret state, keep a persistent public seed service running, use production/private personal keys, spend money, contact specific people, or introduce permanent-durability, future-default-routing-availability, censorship-resistance, global-replication, security, SLSA, identity-trust, full-compatibility, or production-readiness claims.
 
+### Loop 63: Retained Radicle same-RID update
+
+Status: **complete as retained same-RID update with fresh direct-seed readback; default public-routing readback not observed in this run**.
+
+Outputs:
+
+- `scripts/run_radicle_retained_update_check.py` reuses retained project-scoped Radicle maintainer state without Docker.
+- `evidence/radicle-retained-update-check-2026-06-29.json` and `.md` record the same retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` advancing from commit `dfc10b8f029c5eb886db2025dcc06c6490e28504` to commit `f800bae387f33452fdeb79ecf5c795d25f7246ac`.
+- The final passing run used host-local Ubuntu WSL retained state, avoiding Docker exposure for secret-bearing Radicle state and avoiding Radicle node sockets on the Windows-mounted filesystem.
+- A fresh explicit direct-seed clone read back commit `f800bae387f33452fdeb79ecf5c795d25f7246ac`.
+- Fresh default public-routing clone was attempted but did not read back the updated commit in this run.
+- `fixtures/live-evidence-index.json` now imports the Loop 63 evidence row and bumps the live evidence index to loop 63.
+
+Verified evidence:
+
+- Direct evidence tests assert same RID, prior/current ancestry, update advancement, retained profile availability, matching worktree/current commit, successful push, successful explicit direct-seed readback, default public-routing non-observation, and no secret-marker leakage.
+- Evidence-index tests assert the Loop 63 row, canonical evidence hash/size metadata, retained-state non-commitment, direct-seed readback boundary, and bounded non-claims.
+
+Gate preserved: Loop 63 does not commit or bundle retained Radicle secret state, keep a persistent public seed service running, use production/private personal keys, spend money, contact specific people, or introduce permanent-durability, future-default-routing-availability, censorship-resistance, global-replication, security, SLSA, identity-trust, full-compatibility, or production-readiness claims.
+
 ## Next recommended loop
 
-**Next:** Use the retained maintainer lane for a true update-continuity run: after the Loop 62 evidence/docs commit lands, rerun `scripts/run_radicle_retained_delegate_check.py` from the new clean commit and verify that the same retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` advances to the newer commit with fresh readback. The caveat remains that permanent durability still requires persistent seeding or independent mirrors.
+**Next:** Turn the retained direct-seed lane into a documented community clone path: add a small "clone the current Radicle repo" quickstart using RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy`, the retained peer ID `z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr`, and explicit non-claims. The caveat remains that permanent durability still requires persistent seeding or independent mirrors.
 
 Recent completed loops:
 
@@ -1321,6 +1341,7 @@ Recent completed loops:
 - Loop 60: fresh-state Radicle RID readback - complete as brand-new temporary profile clone/readback of `rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr` at commit `fd3f1898d81a4b00be9095c62e3c07fc1a792a95`, without reusing the original Loop 59 seed profile or explicit original-seed connection.
 - Loop 61: Radicle update continuity check - complete as fresh-peer publication of current commit `00404656bcb17ad1aab241fb0ab0dd60487d9699` to the same RID, while default readback remained on the original delegate commit.
 - Loop 62: retained Radicle maintainer lane - complete as retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` with fresh default and direct-seed readback of commit `dfc10b8f029c5eb886db2025dcc06c6490e28504`.
+- Loop 63: retained Radicle same-RID update - complete as the same RID advanced to commit `f800bae387f33452fdeb79ecf5c795d25f7246ac`, with fresh direct-seed readback matching the updated commit and default public-routing readback not observed.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

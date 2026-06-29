@@ -23,7 +23,7 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-STATE_ROOT = ROOT / ".tmp" / "radicle-retained-delegate"
+STATE_ROOT = Path(os.environ.get("DF_RADICLE_RETAINED_STATE_ROOT", ROOT / ".tmp" / "radicle-retained-delegate"))
 RAD_HOME = STATE_ROOT / "maintainer-rad-home"
 WORKTREE = STATE_ROOT / "maintainer-worktree"
 PASSPHRASE_FILE = STATE_ROOT / "maintainer.passphrase"
@@ -51,7 +51,7 @@ def load_or_create_passphrase() -> tuple[str, bool]:
 def redact(text: str) -> str:
     if REAL_PASS:
         text = text.replace(REAL_PASS, PASS)
-    return text.replace(str(STATE_ROOT), ".tmp/radicle-retained-delegate")
+    return text.replace(str(STATE_ROOT), "<retained-state-root>")
 
 
 def run(cmd, cwd=None, env=None, input_text=None, timeout=30, allow_fail=False):

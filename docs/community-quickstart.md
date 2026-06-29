@@ -76,4 +76,6 @@ Loop 61 adds `evidence/radicle-update-continuity-check-2026-06-29.json`. A fresh
 
 Loop 62 adds `evidence/radicle-retained-delegate-check-2026-06-29.json`. A retained project-scoped Radicle maintainer identity under gitignored `.tmp/radicle-retained-delegate` published RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` for commit `dfc10b8f029c5eb886db2025dcc06c6490e28504`; a fresh default clone and an explicit direct-seed clone both read back that commit. The retained secret state is not committed or bundled.
 
+Loop 63 adds `evidence/radicle-retained-update-check-2026-06-29.json`. The same retained RID advanced to commit `f800bae387f33452fdeb79ecf5c795d25f7246ac`, and a fresh explicit direct-seed clone read back that updated commit. Default public-routing readback was attempted but not observed in that run.
+
 Treat those as exact run evidence only. They do not prove permanent durability, future default public-routing availability, broad network replication, identity trust, security, or production readiness.
