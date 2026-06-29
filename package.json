@@ -16,6 +16,7 @@
     "refresh:evidence-hashes": "python scripts/forge_registry.py refresh-evidence-hashes fixtures/live-evidence-index.json",
     "forge:doctor": "python scripts/forge_registry.py doctor",
     "report:bundle": "python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip",
+    "report:bundle-release-note": "python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip",
     "next:loop": "python scripts/next_loop_controller.py --write-report",
     "next:check": "python scripts/next_loop_controller.py --check"
   },

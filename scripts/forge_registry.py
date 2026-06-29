@@ -28,6 +28,7 @@ DEFAULT_LIVE_EVIDENCE_INDEX = ROOT / "fixtures" / "live-evidence-index.json"
 DEFAULT_LIVE_EVIDENCE_SCHEMA = ROOT / "schemas" / "live-evidence-index.schema.json"
 DEFAULT_BUNDLE_OUTPUT = ROOT / "output" / "decentralized-forge-verification-bundle.zip"
 DEFAULT_BUNDLE_MANIFEST_PATH = "verification-bundle.manifest.json"
+DEFAULT_BUNDLE_REVIEW_CHECKLIST = ROOT / "docs" / "portable-bundle-review-checklist.md"
 ZIP_FIXED_DATE_TIME = (2026, 1, 1, 0, 0, 0)
 
 SECRET_MARKERS = ("nsec1", "-----begin", "private key:", "seed phrase:", "api_token")
@@ -274,7 +275,7 @@ def collect_verification_bundle_paths() -> list[Path]:
         "AGENT-LOOPS.md",
         "docs/threat-model.md",
         "docs/community-quickstart.md",
-        "docs/portable-bundle-review-checklist.md",
+        relative(DEFAULT_BUNDLE_REVIEW_CHECKLIST),
         "package.json",
         "package-lock.json",
         "scripts/forge_registry.py",
@@ -379,6 +380,7 @@ def build_verification_bundle_manifest(paths: list[Path]) -> dict:
             "python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip",
             "python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip",
             "python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip",
+            "python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip",
             "python scripts/forge_registry.py verify-local --skip-npm-ci",
         ],
         "non_claims": [
@@ -835,6 +837,114 @@ def format_bundle_report(report: dict) -> str:
     return "\n".join(lines)
 
 
+def git_output(args: list[str]) -> str | None:
+    result = subprocess.run(
+        ["git", *args],
+        cwd=ROOT,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if result.returncode != 0:
+        return None
+    return result.stdout.strip()
+
+
+def git_commit_sha() -> str:
+    return git_output(["rev-parse", "HEAD"]) or "unknown"
+
+
+def git_worktree_clean() -> bool | None:
+    status = git_output(["status", "--porcelain"])
+    if status is None:
+        return None
+    return status == ""
+
+
+def extract_checklist_stop_conditions(checklist_path: Path = DEFAULT_BUNDLE_REVIEW_CHECKLIST) -> list[str]:
+    text = checklist_path.read_text(encoding="utf-8")
+    marker = "## Stop Conditions"
+    if marker not in text:
+        return []
+    stop_section = text.split(marker, 1)[1].split("\n## ", 1)[0]
+    return [line.removeprefix("- ").strip() for line in stop_section.splitlines() if line.startswith("- ")]
+
+
+def format_bundle_release_note(bundle_path: Path = DEFAULT_BUNDLE_OUTPUT, checklist_path: Path = DEFAULT_BUNDLE_REVIEW_CHECKLIST) -> str:
+    report = bundle_report(bundle_path)
+    bundle_bytes = bundle_path.read_bytes()
+    stop_conditions = extract_checklist_stop_conditions(checklist_path)
+    commit = git_commit_sha()
+    clean = git_worktree_clean()
+    clean_label = "unknown" if clean is None else str(clean).lower()
+
+    lines = [
+        "# Decentralized Forge Portable Bundle Release Note",
+        "",
+        f"- commit: `{commit}`",
+        f"- bundle: `{relative(bundle_path)}`",
+        f"- bundle_sha256: `{hashlib.sha256(bundle_bytes).hexdigest()}`",
+        f"- bundle_size_bytes: `{len(bundle_bytes)}`",
+        f"- verification: `{'valid' if report['verification']['valid'] else 'invalid'}`",
+        f"- working_tree_clean_at_export: `{clean_label}`",
+        "",
+        "## Scope",
+        "",
+        "This is a local verification package over committed fixtures, generated outputs, source evidence files, and verifier scripts. It is not a production forge, signed release, durability proof, broad availability proof, censorship-resistance proof, security guarantee, or SLSA compliance claim.",
+        "",
+        "## Bundle Summary",
+        "",
+        f"- files: `{report['bundle']['file_count']}`",
+        f"- roles: {', '.join(f'`{role}={count}`' for role, count in report['bundle']['role_counts'].items())}",
+        f"- evidence_entries: `{report['evidence']['entry_count']}`",
+        f"- live_network_action_entries: `{report['evidence']['live_network_action_count']}`",
+        f"- selected_relay_readback_entries: `{report['evidence']['selected_relay_readback_count']}`",
+        "",
+        "## Projects",
+        "",
+    ]
+
+    for project in report["projects"]:
+        counts = project["counts"]
+        lines.append(
+            f"- `{project['project']['id']}`: {project['project']['name']} "
+            f"(issues={counts['issues']}, patches={counts['patches']}, releases={counts['releases']}, "
+            f"verification_states={project['verification']['total']})"
+        )
+
+    lines.extend(["", "## Required Verification Commands", ""])
+    for command in report["bundle"]["suggested_verification_commands"]:
+        lines.append(f"- `{command}`")
+    lines.append(f"- `python scripts/forge_registry.py export-bundle {relative(bundle_path)}`")
+    lines.append(f"- `python scripts/forge_registry.py report-bundle {relative(bundle_path)} --json`")
+
+    lines.extend(["", "## Non-Claims", ""])
+    for item in report["non_claims"]:
+        lines.append(f"- {item}")
+
+    lines.extend(["", "## Verification Gaps", ""])
+    for item in report["verification_gaps"]:
+        lines.append(f"- {item}")
+
+    lines.extend(["", "## Stop Conditions", ""])
+    for item in stop_conditions:
+        lines.append(f"- {item}")
+
+    lines.extend(
+        [
+            "",
+            "## Attachments",
+            "",
+            f"- `{relative(bundle_path)}`",
+            f"- `docs/portable-bundle-review-checklist.md`",
+            "- this release note, generated after the target commit exists",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
 def command_validate(args: argparse.Namespace) -> int:
     for registry_path in args.registries:
         render_project_page.load_registry(registry_path)
@@ -912,6 +1022,17 @@ def command_report_bundle(args: argparse.Namespace) -> int:
     else:
         print(format_bundle_report(report))
     return 0 if report["verification"]["valid"] else 1
+
+
+def command_export_bundle_release_note(args: argparse.Namespace) -> int:
+    note = format_bundle_release_note(args.bundle)
+    if args.output is None:
+        print(note)
+    else:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(f"{note}\n", encoding="utf-8", newline="\n")
+        print(f"wrote bundle release note: {relative(args.output)}")
+    return 0
 
 
 def command_validate_evidence_index(args: argparse.Namespace) -> int:
@@ -1079,6 +1200,7 @@ def command_verify_local(args: argparse.Namespace) -> int:
         [sys.executable, "scripts/forge_registry.py", "verify-bundle", "output/decentralized-forge-verification-bundle.zip"],
         [sys.executable, "scripts/forge_registry.py", "verify-bundle-cleanroom", "output/decentralized-forge-verification-bundle.zip"],
         [sys.executable, "scripts/forge_registry.py", "report-bundle", "output/decentralized-forge-verification-bundle.zip", "--json"],
+        [sys.executable, "scripts/forge_registry.py", "export-bundle-release-note", "output/decentralized-forge-verification-bundle.zip"],
         [sys.executable, "scripts/live_gate_inventory.py"],
         [sys.executable, "-m", "unittest", "discover", "-s", "tests"],
     ]
@@ -1155,6 +1277,14 @@ def build_parser() -> argparse.ArgumentParser:
     report_bundle.add_argument("source", type=Path, nargs="?", default=DEFAULT_BUNDLE_OUTPUT)
     report_bundle.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
     report_bundle.set_defaults(func=command_report_bundle)
+
+    export_bundle_release_note = subparsers.add_parser(
+        "export-bundle-release-note",
+        help="Emit a release-facing markdown note for a portable verification bundle",
+    )
+    export_bundle_release_note.add_argument("bundle", type=Path, nargs="?", default=DEFAULT_BUNDLE_OUTPUT)
+    export_bundle_release_note.add_argument("output", type=Path, nargs="?", default=None)
+    export_bundle_release_note.set_defaults(func=command_export_bundle_release_note)
 
     evidence_index = subparsers.add_parser("validate-evidence-index", help="Validate live evidence index paths, hashes, and claim boundaries")
     evidence_index.add_argument("index", type=Path, nargs="?", default=DEFAULT_LIVE_EVIDENCE_INDEX)

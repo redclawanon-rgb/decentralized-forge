@@ -268,6 +268,10 @@ class RegistryFixtureTests(unittest.TestCase):
                 "python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip",
                 manifest["suggested_verification_commands"],
             )
+            self.assertIn(
+                "python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip",
+                manifest["suggested_verification_commands"],
+            )
             payload_paths = {item["path"] for item in manifest["files"]}
             for expected_path in [
                 "fixtures/example-project.registry.json",
@@ -303,6 +307,7 @@ class RegistryFixtureTests(unittest.TestCase):
             "python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip",
             "python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip",
             "python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip --json",
+            "python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip",
             "python scripts/forge_registry.py verify-local --skip-npm-ci",
         ]:
             self.assertIn(required_command, checklist)
@@ -318,6 +323,34 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn(required_boundary, checklist)
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, checklist.lower())
+
+    def test_bundle_release_note_export_is_reviewable_and_secret_free(self):
+        note = forge_registry.format_bundle_release_note(OUTPUT_VERIFICATION_BUNDLE)
+        self.assertIn("# Decentralized Forge Portable Bundle Release Note", note)
+        self.assertIn(f"- commit: `{self.current_git_head()}`", note)
+        self.assertIn("- bundle_sha256: `", note)
+        self.assertIn("- verification: `valid`", note)
+        self.assertIn("python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip", note)
+        self.assertIn("python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip", note)
+        self.assertIn("python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip --json", note)
+        self.assertIn("Stop Conditions", note)
+        self.assertIn("report-bundle` shows", note)
+        self.assertIn("not a production forge", note)
+        self.assertIn("not a production forge, signed release, durability proof", note)
+        for project_id in ["demo-project", "portable-lab", "rad:zLoop4RadicleFixture1111111111111111111111111"]:
+            self.assertIn(project_id, note)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, note.lower())
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output = Path(tmpdir) / "bundle-release-note.md"
+            exit_code = forge_registry.main([
+                "export-bundle-release-note",
+                str(OUTPUT_VERIFICATION_BUNDLE),
+                str(output),
+            ])
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(output.read_text(encoding="utf-8"), f"{note}\n")
 
     def test_live_gate_inventory_is_read_only_and_secret_free(self):
         payload = live_gate_inventory.inventory()
@@ -421,6 +454,7 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip", workflow)
         self.assertIn("python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip", workflow)
         self.assertIn("python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip --json", workflow)
+        self.assertIn("python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip", workflow)
         for subject in [
             "output/demo-project.html",
             "output/forge-app.html",

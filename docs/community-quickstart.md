@@ -35,9 +35,10 @@ python scripts/forge_registry.py export-bundle output/decentralized-forge-verifi
 python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip
 python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip
 python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip
+python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip
 ```
 
-Before attaching or describing the bundle outside this repository, read `docs/portable-bundle-review-checklist.md`. The checklist explains the required local checks, report review, non-claims, attachment metadata, and stop conditions.
+Before attaching or describing the bundle outside this repository, read `docs/portable-bundle-review-checklist.md`. The checklist explains the required local checks, report review, release-note export, non-claims, attachment metadata, and stop conditions.
 
 ## Read Claims Correctly
 

@@ -14,6 +14,7 @@ python scripts/forge_registry.py verify-bundle output/decentralized-forge-verifi
 python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip
 python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip
 python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip --json
+python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip
 python scripts/forge_registry.py verify-local --skip-npm-ci
 ```
 
@@ -63,6 +64,7 @@ If publishing a release-like update, attach or reference:
 - the exact commit SHA
 - the GitHub Actions run URL, if the commit was pushed
 - the `report-bundle` text output or a JSON report generated with `--json`
+- the release note generated with `export-bundle-release-note`
 - the command list used to verify the bundle
 
 Do not describe the bundle as a production release, signed release, durable storage proof, or censorship-resistant mirror.
@@ -90,6 +92,7 @@ Verified locally with:
 - python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip
 - python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip
 - python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip
+- python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip
 
 Scope: local verification package over committed fixtures, generated outputs, source evidence files, and verifier scripts. This is not a production forge, signed release, durability proof, broad availability proof, censorship-resistance proof, security guarantee, or SLSA compliance claim.
 ```

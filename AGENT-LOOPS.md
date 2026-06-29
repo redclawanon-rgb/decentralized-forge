@@ -656,3 +656,11 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as `docs/portable-bundle-review-checklist.md`. The checklist defines required local checks, `report-bundle` review expectations, explicit non-claims, attachment metadata, stop conditions, and neutral release-note wording. The checklist is included in the portable verification bundle, referenced from README/community/completion docs, and covered by tests that assert required commands and claim boundaries remain present.
 
 **Gate preserved:** This is local review documentation only. It does not publish protocol events, sign events, fetch from relays, pin storage, start daemons, spend money, use wallets, import private keys, replace registry provenance, or claim durability, censorship resistance, broad availability, security, SLSA compliance, or production readiness.
+
+## Loop 52: Bundle release-note export
+
+**Goal:** Generate a shareable release-facing markdown note from the current bundle report, exact commit SHA, and checklist stop conditions.
+
+**Current result:** Complete as `scripts/forge_registry.py export-bundle-release-note`. The command emits markdown to stdout by default, or writes a file when an output path is supplied. The note includes the current Git commit, bundle SHA-256 and byte size, verification status, project summaries, required commands, non-claims, verification gaps, stop conditions from `docs/portable-bundle-review-checklist.md`, and attachment guidance. It is wired into `verify-local`, CI, npm scripts, README, community quickstart, completion criteria, checklist, tests, and the bundle manifest suggested commands.
+
+**Gate preserved:** This is local readback and markdown export only. It does not publish protocol events, sign events, fetch from relays, pin storage, start daemons, spend money, use wallets, import private keys, replace registry provenance, or claim durability, censorship resistance, broad availability, security, SLSA compliance, or production readiness.

@@ -41,6 +41,7 @@ python scripts/forge_registry.py export-bundle output/decentralized-forge-verifi
 python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip
 python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip
 python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip --json
+python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip
 python scripts/live_gate_inventory.py
 python -m unittest discover -s tests
 npm ci
@@ -62,7 +63,7 @@ Status: complete.
 
 Status: complete.
 
-- `scripts/forge_registry.py` provides `validate`, `render`, `render-app`, `export-summary`, `export-bundle`, `verify-bundle`, `verify-bundle-cleanroom`, `report-bundle`, and `verify-local` commands.
+- `scripts/forge_registry.py` provides `validate`, `render`, `render-app`, `export-summary`, `export-bundle`, `verify-bundle`, `verify-bundle-cleanroom`, `report-bundle`, `export-bundle-release-note`, and `verify-local` commands.
 - The CLI uses the same validation paths as the renderer and tests.
 - Deterministic JSON summaries are generated under `output/*.summary.json`.
 
@@ -90,6 +91,7 @@ Status: active as a deterministic generated artifact.
 - `python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip` validates manifest schema, file sizes, SHA-256 hashes, and live-evidence-index bindings.
 - `python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip` extracts the bundle into a temporary directory and runs bundled verification paths from that extracted tree.
 - `python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip` imports either a bundle ZIP or extracted bundle directory and reports project identity, evidence rows, non-claims, verification gaps, and suggested commands.
+- `python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip` emits a shareable markdown note with the exact current commit SHA, bundle digest, report summary, non-claims, verification gaps, and checklist stop conditions.
 - `docs/portable-bundle-review-checklist.md` defines the maintainer review, attachment, non-claim, and stop-condition checklist for release-facing bundle handoffs.
 - It does not replace signing/provenance verification, durable storage evidence, availability evidence, SLSA compliance, or production security review.
 

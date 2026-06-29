@@ -1091,9 +1091,26 @@ Verified evidence:
 
 Gate preserved: Loop 51 only adds local review documentation. It does not publish protocol events, sign events, fetch from relays, pin storage, start daemons, spend money, use wallets, import private keys, replace registry provenance, or introduce durability, censorship-resistance, broad-availability, security, SLSA, or production-readiness claims.
 
+### Loop 52: Bundle release-note export
+
+Status: **complete as deterministic release-facing markdown export; no live protocol/storage/signing action**.
+
+Outputs:
+
+- `scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip` emits a markdown release note to stdout by default, or writes a file when an output path is supplied.
+- The release note includes the exact current Git commit SHA, bundle SHA-256, bundle byte size, verification status, project summaries, required commands, non-claims, verification gaps, checklist stop conditions, and attachment list.
+- `npm run report:bundle-release-note`, CI, `verify-local`, the bundle manifest suggested commands, README, community quickstart, completion criteria, and checklist now reference the command.
+
+Verified evidence:
+
+- Tests assert the release note includes the current commit SHA, bundle digest field, required verification/report commands, project IDs, stop conditions, and non-claim boundaries, and that optional file output is byte-for-byte the generated note.
+- CI runs `export-bundle-release-note` after bundle export, direct verification, clean-room verification, and JSON bundle reporting.
+
+Gate preserved: Loop 52 only reads local committed/generated evidence and emits markdown. It does not publish protocol events, sign events, fetch from relays, pin storage, start daemons, spend money, use wallets, import private keys, replace registry provenance, or introduce durability, censorship-resistance, broad-availability, security, SLSA, or production-readiness claims.
+
 ## Next recommended loop
 
-**Next:** Add a deterministic bundle release-note/report export that combines `report-bundle --json`, the exact commit SHA, and the checklist stop conditions into a small shareable markdown artifact. The still-blocked parallel lane is locating an approved `rad` CLI on this Windows host for broader disposable Radicle clone/sync checks.
+**Next:** Add a local import wizard command that scaffolds a new registry fixture from a repository path and emits validation guidance, without live protocol publication or stronger claims. The still-blocked parallel lane is locating an approved `rad` CLI on this Windows host for broader disposable Radicle clone/sync checks.
 
 Recent completed loops:
 
@@ -1117,6 +1134,7 @@ Recent completed loops:
 - Loop 49: clean-room bundle consumer check - complete as `verify-bundle-cleanroom`; verifies an extracted temporary bundle tree without relying on the original checkout.
 - Loop 50: bundle import/report command - complete as `report-bundle`; summarizes ZIP or extracted bundle contents for human review without live action.
 - Loop 51: portable bundle review checklist - complete as `docs/portable-bundle-review-checklist.md`; gives maintainers required checks, non-claims, attachments, stop conditions, and neutral release-note wording.
+- Loop 52: bundle release-note export - complete as `export-bundle-release-note`; emits shareable markdown tied to the current commit, bundle digest, report summary, non-claims, gaps, and checklist stop conditions.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 
