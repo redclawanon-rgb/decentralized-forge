@@ -1265,9 +1265,28 @@ Verified evidence:
 
 Gate preserved: Loop 61 does not reuse the original Loop 59 delegate key, keep persistent seed state, use production/private personal keys, spend money, contact specific people, or introduce canonical-continuity, permanent-durability, censorship-resistance, global-replication, security, SLSA, identity-trust, full-compatibility, or production-readiness claims.
 
+### Loop 62: Retained Radicle maintainer lane
+
+Status: **complete as retained project-scoped maintainer RID with fresh default and direct-seed readback**.
+
+Outputs:
+
+- `scripts/run_radicle_retained_delegate_check.py` creates or reuses gitignored project-scoped Radicle maintainer state under `.tmp/radicle-retained-delegate`.
+- `evidence/radicle-retained-delegate-check-2026-06-29.json` and `.md` record retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` for source commit `dfc10b8f029c5eb886db2025dcc06c6490e28504`.
+- A fresh default clone read back commit `dfc10b8f029c5eb886db2025dcc06c6490e28504`.
+- An explicit direct-seed clone from the retained node also read back commit `dfc10b8f029c5eb886db2025dcc06c6490e28504`.
+- `fixtures/live-evidence-index.json` now imports the Loop 62 evidence row and bumps the live evidence index to loop 62.
+
+Verified evidence:
+
+- Direct evidence tests assert retained state stays under gitignored `.tmp`, no secret values are recorded, the retained RID/delegate/peer identifiers are public-shaped, the worktree/source commits match, publish/seed/sync succeeded, and both default and direct-seed readbacks matched the source commit.
+- Evidence-index tests assert the Loop 62 row, canonical evidence hash/size metadata, retained-state non-commitment, matching readback commits, and bounded non-claims.
+
+Gate preserved: Loop 62 does not commit or bundle the retained Radicle secret state, keep a persistent public seed service running, use production/private personal keys, spend money, contact specific people, or introduce permanent-durability, future-default-routing-availability, censorship-resistance, global-replication, security, SLSA, identity-trust, full-compatibility, or production-readiness claims.
+
 ## Next recommended loop
 
-**Next:** Establish a real maintainer/delegate continuity lane: create or document a retained project-scoped Radicle delegate identity, initialize a new project RID or migrate authority deliberately, publish the current commit, and verify that a default fresh clone reads back the current commit. The caveat remains that permanent durability still requires persistent seeding or independent mirrors.
+**Next:** Use the retained maintainer lane for a true update-continuity run: after the Loop 62 evidence/docs commit lands, rerun `scripts/run_radicle_retained_delegate_check.py` from the new clean commit and verify that the same retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` advances to the newer commit with fresh readback. The caveat remains that permanent durability still requires persistent seeding or independent mirrors.
 
 Recent completed loops:
 
@@ -1301,6 +1320,7 @@ Recent completed loops:
 - Loop 59: project-scoped Radicle repository smoke - complete as RID `rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr` for commit `fd3f1898d81a4b00be9095c62e3c07fc1a792a95`, seeded/synced/cloned/read back from separate temporary Radicle state with bounded non-claims.
 - Loop 60: fresh-state Radicle RID readback - complete as brand-new temporary profile clone/readback of `rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr` at commit `fd3f1898d81a4b00be9095c62e3c07fc1a792a95`, without reusing the original Loop 59 seed profile or explicit original-seed connection.
 - Loop 61: Radicle update continuity check - complete as fresh-peer publication of current commit `00404656bcb17ad1aab241fb0ab0dd60487d9699` to the same RID, while default readback remained on the original delegate commit.
+- Loop 62: retained Radicle maintainer lane - complete as retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` with fresh default and direct-seed readback of commit `dfc10b8f029c5eb886db2025dcc06c6490e28504`.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

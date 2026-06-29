@@ -74,4 +74,6 @@ Loop 60 adds `evidence/radicle-fresh-readback-check-2026-06-29.json`, which clon
 
 Loop 61 adds `evidence/radicle-update-continuity-check-2026-06-29.json`. A fresh non-original Radicle identity pushed current commit `00404656bcb17ad1aab241fb0ab0dd60487d9699` to the same RID under its own peer namespace, but a default fresh clone still checked out the original delegate main at `fd3f1898d81a4b00be9095c62e3c07fc1a792a95`.
 
-Treat those as exact run evidence only. They do not prove canonical default-branch update continuity, permanent durability, broad network replication, identity trust, security, or production readiness.
+Loop 62 adds `evidence/radicle-retained-delegate-check-2026-06-29.json`. A retained project-scoped Radicle maintainer identity under gitignored `.tmp/radicle-retained-delegate` published RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` for commit `dfc10b8f029c5eb886db2025dcc06c6490e28504`; a fresh default clone and an explicit direct-seed clone both read back that commit. The retained secret state is not committed or bundled.
+
+Treat those as exact run evidence only. They do not prove permanent durability, future default public-routing availability, broad network replication, identity trust, security, or production readiness.

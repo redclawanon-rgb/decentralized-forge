@@ -128,6 +128,8 @@ Loop 60 added a fresh-state readback check for the same RID and commit. A brand-
 
 Loop 61 added update-continuity evidence for the same RID. A fresh non-original Radicle identity pushed current commit `00404656bcb17ad1aab241fb0ab0dd60487d9699` to `rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr` under its own peer namespace, but a default fresh clone still checked out the original delegate main at `fd3f1898d81a4b00be9095c62e3c07fc1a792a95`. This identifies the next real usability requirement: retained maintainer delegate state or a deliberate multi-peer/ref policy for canonical update continuity.
 
+Loop 62 added the retained maintainer lane. A project-scoped Radicle identity and maintainer worktree now live under gitignored `.tmp/radicle-retained-delegate`, outside the portable bundle and outside committed evidence. Using that retained state, the project published RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` for commit `dfc10b8f029c5eb886db2025dcc06c6490e28504`; a fresh default clone and an explicit direct-seed clone both read back the same commit. This is the first usable retained-maintainer Radicle path, but it still does not prove permanent durability, future default-routing availability, broad replication, identity trust, security, or production readiness.
+
 ## Release Rule
 
 Milestone 1 is complete as an evidence-scoped static prototype after CI passed on `main` for commit `e69fd5b22e8ec27f52a11e582b705e212690a865`, the README points to this file, and `STATUS.md` names the current completion state without contradicting the evidence index.

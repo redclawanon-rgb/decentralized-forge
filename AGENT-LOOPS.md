@@ -736,3 +736,11 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as `scripts/run_radicle_update_continuity_check.py` plus `evidence/radicle-update-continuity-check-2026-06-29.json` and `.md`. A fresh non-original Radicle identity cloned `rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr`, imported current source commit `00404656bcb17ad1aab241fb0ab0dd60487d9699`, pushed `main` to `rad://zWGy1Ssjb7tBbwDbdGLqeHCsUqwr/<fresh-peer-id>`, and synced with public seeds. A separate fresh readback clone still checked out the original delegate branch at `fd3f1898d81a4b00be9095c62e3c07fc1a792a95`, so canonical/default update continuity was not observed.
 
 **Gate preserved:** This is one exact update-continuity observation. It does not reuse the original delegate key, keep persistent seed state, use production/private personal keys, spend money, contact specific people, or claim canonical continuity, permanent durability, censorship resistance, global replication, identity trust, security, SLSA compliance, full Radicle compatibility, or production readiness.
+
+## Loop 62: Retained Radicle maintainer lane
+
+**Goal:** Create or reuse project-scoped retained Radicle maintainer state so the project has a real update lane instead of only disposable RIDs.
+
+**Current result:** Complete as `scripts/run_radicle_retained_delegate_check.py` plus `evidence/radicle-retained-delegate-check-2026-06-29.json` and `.md`. The script keeps reusable Radicle state under gitignored `.tmp/radicle-retained-delegate`, not in the repository or verification bundle. Using that state, RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` published source commit `dfc10b8f029c5eb886db2025dcc06c6490e28504`; a fresh default clone and explicit direct-seed clone both read back the same commit.
+
+**Gate preserved:** This is one retained project-scoped maintainer observation. It does not commit or bundle secret state, keep a persistent public seed service running, use production/private personal keys, spend money, contact specific people, or claim permanent durability, future default public-routing availability, censorship resistance, global replication, identity trust, security, SLSA compliance, full Radicle compatibility, or production readiness.

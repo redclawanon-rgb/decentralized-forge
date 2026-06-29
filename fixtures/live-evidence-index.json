@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-evidence-index.v1",
-  "loop": 61,
+  "loop": 62,
   "created_at": "2026-06-29",
   "purpose": "Secret-free index of narrow live/local evidence that can be rendered without upgrading unverified protocol claims.",
   "claim_policy": {
@@ -17,7 +17,8 @@
       "Registry-shaped keyless attestation import recorded outside project-registry fixtures",
       "Current decentralized-forge commit initialized as a public Radicle repo and cloned/read back from a separate temporary profile",
       "Recorded Radicle RID cloned/read back from a fresh temporary Radicle profile without reusing the original Loop 59 seed profile",
-      "Current project commit published to the recorded Radicle RID under a fresh peer namespace, while default readback remained on the original delegate commit"
+      "Current project commit published to the recorded Radicle RID under a fresh peer namespace, while default readback remained on the original delegate commit",
+      "Retained project-scoped Radicle maintainer state published a new RID and fresh default plus direct-seed readbacks matched the source commit"
     ],
     "forbidden_claims": [
       "Radicle durable public seed/network availability verified",
@@ -419,6 +420,46 @@
         "not full Radicle compatibility"
       ],
       "notes": "The useful finding is architectural: same-RID non-original peer publication works, but default clone/readback follows the original delegate branch. A real usable decentralized repo needs retained maintainer delegate state or a deliberate multi-peer/ref policy."
+    },
+    {
+      "id": "loop62-radicle-retained-delegate-check",
+      "protocol": "radicle",
+      "scope": "radicle.retained_project_delegate_readback_check",
+      "state": "retained-delegate-default-readback-verified",
+      "verified_at": "2026-06-29",
+      "evidence_file": "evidence/radicle-retained-delegate-check-2026-06-29.json",
+      "evidence_sha256": "6b4cd0edbdab91aaaf6bff41e0d6b129b74f39f3c7714eba9dd3739e67144b02",
+      "evidence_size_bytes": 32279,
+      "verification_summary": "A retained project-scoped Radicle maintainer state under gitignored .tmp published RID rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy, and fresh default plus explicit-seed readbacks matched the source commit.",
+      "live_network_action": true,
+      "local_cli_verified": true,
+      "selected_relay_readback_verified": false,
+      "synthetic": false,
+      "public_identifiers": {
+        "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+        "delegate_did": "did:key:z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr",
+        "retained_peer_id": "z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr",
+        "source_commit": "dfc10b8f029c5eb886db2025dcc06c6490e28504",
+        "default_readback_commit": "dfc10b8f029c5eb886db2025dcc06c6490e28504",
+        "default_readback_matches_source": true,
+        "direct_seed_readback_commit": "dfc10b8f029c5eb886db2025dcc06c6490e28504",
+        "direct_seed_readback_matches_source": true,
+        "retained_state_scope": ".tmp/radicle-retained-delegate",
+        "retained_state_committed": false,
+        "secret_values_recorded": false
+      },
+      "non_claims": [
+        "not proof of permanent durability",
+        "not proof of future default public-routing availability",
+        "not proof of censorship resistance",
+        "not a security guarantee",
+        "not proof of global replication",
+        "not proof of identity trust",
+        "not production readiness",
+        "not full Radicle compatibility",
+        "not a committed secret or key backup"
+      ],
+      "notes": "This is the first retained maintainer lane: the reusable Radicle identity/worktree remain outside Git under .tmp so future updates can target the same RID. It still does not keep a persistent public seed service running or prove long-term availability."
     }
   ]
 }

@@ -1,15 +1,15 @@
 {
   "bundle": {
-    "file_count": 71,
+    "file_count": 74,
     "name": "decentralized-forge portable verification bundle",
     "role_counts": {
       "documentation": 7,
       "fixture": 14,
       "generated-output": 8,
       "schema": 2,
-      "source-evidence": 28,
+      "source-evidence": 30,
       "supporting-file": 2,
-      "verifier-tooling": 10
+      "verifier-tooling": 11
     },
     "schema_version": "decentralized-forge.verification-bundle.v1",
     "scope": "portable local verification package; no live protocol actions, signing, spending, or publishing",
@@ -154,16 +154,27 @@
         "state": "fresh-peer-update-default-readback-original-delegate",
         "synthetic": false,
         "verification_summary": "A fresh non-original Radicle identity pushed the current project commit to the same RID under its own peer namespace, but a default fresh clone still checked out the original delegate main at the prior commit."
+      },
+      {
+        "evidence_file": "evidence/radicle-retained-delegate-check-2026-06-29.json",
+        "id": "loop62-radicle-retained-delegate-check",
+        "live_network_action": true,
+        "protocol": "radicle",
+        "scope": "radicle.retained_project_delegate_readback_check",
+        "selected_relay_readback_verified": false,
+        "state": "retained-delegate-default-readback-verified",
+        "synthetic": false,
+        "verification_summary": "A retained project-scoped Radicle maintainer state under gitignored .tmp published RID rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy, and fresh default plus explicit-seed readbacks matched the source commit."
       }
     ],
-    "entry_count": 12,
+    "entry_count": 13,
     "index_path": "fixtures/live-evidence-index.json",
-    "live_network_action_count": 9,
+    "live_network_action_count": 10,
     "protocol_counts": {
       "github-actions": 2,
       "ipfs": 2,
       "nostr": 2,
-      "radicle": 6
+      "radicle": 7
     },
     "selected_relay_readback_count": 2,
     "state_counts": {
@@ -177,6 +188,7 @@
       "project-repo-radicle-readback-verified": 1,
       "public-gateway-no-readback-observed": 1,
       "registry-shaped-import-recorded": 1,
+      "retained-delegate-default-readback-verified": 1,
       "selected-relay-issue-patch-readback-verified": 1,
       "selected-relay-readback-verified": 1
     },
