@@ -18,6 +18,7 @@ import live_gate_inventory
 import next_loop_controller
 import preflight_static_artifact
 import render_forge_app
+import render_project_page
 
 SCHEMA_PATH = ROOT / "schemas" / "project-registry.schema.json"
 LIVE_EVIDENCE_SCHEMA_PATH = ROOT / "schemas" / "live-evidence-index.schema.json"
@@ -351,6 +352,62 @@ class RegistryFixtureTests(unittest.TestCase):
             ])
             self.assertEqual(exit_code, 0)
             self.assertEqual(output.read_text(encoding="utf-8"), f"{note}\n")
+
+    def test_scaffold_registry_from_local_git_repo_is_valid_and_bounded(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            repo = Path(tmpdir) / "sample-widget"
+            repo.mkdir()
+            subprocess.run(["git", "init", "-b", "main"], cwd=repo, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+            (repo / "README.md").write_text("# Sample Widget\n", encoding="utf-8")
+            subprocess.run(["git", "add", "README.md"], cwd=repo, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+            subprocess.run(
+                [
+                    "git",
+                    "-c",
+                    "user.name=Fixture Author",
+                    "-c",
+                    "user.email=fixture@example.invalid",
+                    "commit",
+                    "-m",
+                    "initial",
+                ],
+                cwd=repo,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True,
+            )
+            output = Path(tmpdir) / "sample-widget.registry.json"
+            exit_code = forge_registry.main([
+                "scaffold-registry",
+                str(repo),
+                str(output),
+                "--project-id",
+                "sample-widget",
+                "--name",
+                "Sample Widget",
+            ])
+            self.assertEqual(exit_code, 0)
+
+            registry = json.loads(output.read_text(encoding="utf-8"))
+            render_project_page.validate_registry(registry)
+            self.assertEqual(registry["project"]["id"], "sample-widget")
+            self.assertEqual(registry["project"]["name"], "Sample Widget")
+            self.assertEqual(registry["project"]["default_branch"], "main")
+            self.assertEqual(registry["clone_urls"][0]["transport"], "git")
+            self.assertTrue(registry["clone_urls"][0]["url"].startswith("file://"))
+            self.assertEqual(registry["maintainers"][0]["public_id"], "local-import-placeholder")
+            self.assertEqual(registry["signature"]["status"], "unsigned-fixture")
+            self.assertEqual(registry["verification_states"][0]["scope"], "registry.local_import_scaffold")
+            self.assertFalse(registry["verification_states"][0]["live_verified"])
+            combined = json.dumps(registry).lower()
+            for required_boundary in ["no live protocol publication", "no live protocol", "no-artifact-cid", "not-pinned"]:
+                self.assertIn(required_boundary, combined)
+            for unsupported_claim in ["production ready", "durably stored", "pinned and available", "slsa compliant"]:
+                self.assertNotIn(unsupported_claim, combined)
+            guidance = forge_registry.scaffold_registry_guidance(output)
+            self.assertIn(f"python scripts/forge_registry.py validate {output}", guidance[0])
+            self.assertTrue(any("Review placeholder maintainer identity" in item for item in guidance))
 
     def test_live_gate_inventory_is_read_only_and_secret_free(self):
         payload = live_gate_inventory.inventory()

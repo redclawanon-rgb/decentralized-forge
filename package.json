@@ -12,6 +12,7 @@
     "live:nostr-issue-patch": "node scripts/run_nostr_issue_patch_readback.mjs",
     "live:radicle-check": "node scripts/run_radicle_broader_check.mjs",
     "import:keyless-attestation": "python scripts/import_keyless_attestation_registry.py",
+    "scaffold:registry": "python scripts/forge_registry.py scaffold-registry",
     "verify:evidence-index": "python scripts/forge_registry.py validate-evidence-index fixtures/live-evidence-index.json",
     "refresh:evidence-hashes": "python scripts/forge_registry.py refresh-evidence-hashes fixtures/live-evidence-index.json",
     "forge:doctor": "python scripts/forge_registry.py doctor",

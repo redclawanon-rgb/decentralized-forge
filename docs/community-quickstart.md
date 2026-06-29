@@ -55,7 +55,7 @@ None of those labels means production readiness, durable storage, global propaga
 
 The intended public tool flow is:
 
-1. Create or import a project registry JSON file.
+1. Scaffold a local registry JSON file with `python scripts/forge_registry.py scaffold-registry path/to/repo fixtures/project.registry.json`.
 2. Attach release artifact hashes and content-address metadata.
 3. Run local validation and rendering.
 4. Add optional transport evidence from Nostr, Radicle, IPFS, or hosted attestations.

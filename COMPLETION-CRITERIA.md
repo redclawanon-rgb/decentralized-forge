@@ -63,9 +63,10 @@ Status: complete.
 
 Status: complete.
 
-- `scripts/forge_registry.py` provides `validate`, `render`, `render-app`, `export-summary`, `export-bundle`, `verify-bundle`, `verify-bundle-cleanroom`, `report-bundle`, `export-bundle-release-note`, and `verify-local` commands.
+- `scripts/forge_registry.py` provides `validate`, `scaffold-registry`, `render`, `render-app`, `export-summary`, `export-bundle`, `verify-bundle`, `verify-bundle-cleanroom`, `report-bundle`, `export-bundle-release-note`, and `verify-local` commands.
 - The CLI uses the same validation paths as the renderer and tests.
 - Deterministic JSON summaries are generated under `output/*.summary.json`.
+- `scaffold-registry` creates a valid unsigned local registry fixture from a local Git worktree with placeholder maintainer identity and explicit non-claims.
 
 ### Lane C: Multi-Project Fixture Coverage
 

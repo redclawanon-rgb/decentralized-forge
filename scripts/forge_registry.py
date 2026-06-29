@@ -12,6 +12,7 @@ import sys
 import tempfile
 import zipfile
 from collections import Counter
+from datetime import datetime, timezone
 from pathlib import Path
 
 import nip34_adapter
@@ -245,6 +246,155 @@ def refresh_live_evidence_hashes(index_path: Path = DEFAULT_LIVE_EVIDENCE_INDEX)
         item["evidence_sha256"] = sha256_file(evidence_path)
         item["evidence_size_bytes"] = len(canonical_evidence_bytes(evidence_path))
     return index
+
+
+def slugify_project_id(value: str) -> str:
+    slug = "".join(ch.lower() if ch.isalnum() else "-" for ch in value).strip("-")
+    while "--" in slug:
+        slug = slug.replace("--", "-")
+    return slug or "local-import"
+
+
+def title_from_project_id(value: str) -> str:
+    return " ".join(part.capitalize() for part in value.replace("_", "-").split("-") if part) or "Local Import"
+
+
+def git_value_at(cwd: Path, *args: str) -> str | None:
+    result = subprocess.run(
+        ["git", *args],
+        cwd=cwd,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if result.returncode != 0:
+        return None
+    return result.stdout.strip()
+
+
+def local_repo_metadata(repo_path: Path) -> dict:
+    repo = repo_path.resolve()
+    if not repo.is_dir():
+        raise ValueError(f"repository path is not a directory: {repo_path}")
+    worktree = git_value_at(repo, "rev-parse", "--show-toplevel")
+    if not worktree:
+        raise ValueError(f"repository path is not inside a Git worktree: {repo_path}")
+    root = Path(worktree).resolve()
+    head = git_value_at(root, "rev-parse", "HEAD") or "0" * 40
+    branch = git_value_at(root, "branch", "--show-current") or "main"
+    committed_at = git_value_at(root, "log", "-1", "--format=%cI") or datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    repo_name = root.name
+    return {
+        "root": root,
+        "head": head,
+        "branch": branch,
+        "committed_at": committed_at,
+        "repo_name": repo_name,
+    }
+
+
+def scaffold_registry_from_repo(
+    repo_path: Path,
+    *,
+    project_id: str | None = None,
+    name: str | None = None,
+    description: str | None = None,
+) -> dict:
+    metadata = local_repo_metadata(repo_path)
+    inferred_id = slugify_project_id(project_id or metadata["repo_name"])
+    project_name = name or title_from_project_id(inferred_id)
+    project_description = description or (
+        f"Local-only registry scaffold for {project_name}. Generated from a local Git worktree without live protocol publication."
+    )
+    repo_uri = metadata["root"].as_uri()
+    timestamp = metadata["committed_at"]
+    head = metadata["head"]
+    branch = metadata["branch"]
+
+    return {
+        "schema_version": "decentralized-forge.project-registry.v1",
+        "project": {
+            "id": inferred_id,
+            "name": project_name,
+            "description": project_description,
+            "default_branch": branch,
+            "web_urls": [],
+        },
+        "maintainers": [
+            {
+                "name": "Local Import Maintainer Placeholder",
+                "id_type": "other",
+                "public_id": "local-import-placeholder",
+                "role": "maintainer-placeholder",
+            }
+        ],
+        "clone_urls": [
+            {
+                "transport": "git",
+                "url": repo_uri,
+                "primary": True,
+            }
+        ],
+        "issues": [],
+        "patches": [],
+        "releases": [],
+        "substrates": {
+            "forgefed": {
+                "status": "not-configured-local-import",
+            },
+            "ipfs": {
+                "artifact_cids": [],
+                "cid_status": "no-artifact-cid",
+                "pinning_status": "not-pinned",
+                "live_ipfs_verified": False,
+                "paid_storage": False,
+                "durability_claim": False,
+            },
+            "sigstore_slsa": {
+                "release_signature_status": "absent",
+                "provenance_status": "absent",
+                "real_sigstore_verified": False,
+                "real_cosign_verified": False,
+                "real_in_toto_verified": False,
+                "slsa_level_claimed": False,
+                "rekor_uploaded": False,
+                "private_keys_used": False,
+                "production_claim": "none",
+            },
+        },
+        "verification_states": [
+            {
+                "scope": "registry.local_import_scaffold",
+                "state": "local-fixture",
+                "evidence": f"Generated from local Git worktree {repo_uri} at commit {head}.",
+                "live_verified": False,
+                "synthetic": False,
+                "claim_boundary": "Local registry scaffold only; no live protocol publication, signing, durable storage, hosted service, or production readiness claim.",
+                "last_checked_at": timestamp,
+                "notes": "Replace placeholder maintainer identity, add artifacts/evidence, and rerun validation before sharing.",
+            }
+        ],
+        "signature": {
+            "status": "unsigned-fixture",
+            "algorithm": "none",
+            "value": "",
+        },
+        "created_at": timestamp,
+        "updated_at": timestamp,
+    }
+
+
+def scaffold_registry_guidance(output: Path) -> list[str]:
+    rel = relative(output)
+    return [
+        f"python scripts/forge_registry.py validate {rel}",
+        f"python scripts/forge_registry.py export-summary {rel} output/{output.stem}.summary.json",
+        f"python scripts/forge_registry.py render {rel} output/{output.stem}.html",
+        "Review placeholder maintainer identity before sharing.",
+        "Add release artifacts, hashes, evidence rows, and protocol mappings only when separately verified.",
+        "Do not claim signing, durability, broad availability, censorship resistance, security, SLSA compliance, or production readiness from this scaffold.",
+    ]
 
 
 def bundle_role(path: str) -> str:
@@ -979,6 +1129,23 @@ def command_export_summary(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_scaffold_registry(args: argparse.Namespace) -> int:
+    registry = scaffold_registry_from_repo(
+        args.repository,
+        project_id=args.project_id,
+        name=args.name,
+        description=args.description,
+    )
+    write_json(args.output, registry)
+    render_project_page.load_registry(args.output)
+    print(f"wrote registry scaffold: {relative(args.output)}")
+    print("- scope: local Git worktree import only; no live protocol publication, signing, or durability claim")
+    print("- next steps:")
+    for item in scaffold_registry_guidance(args.output):
+        print(f"  - {item}")
+    return 0
+
+
 def command_render_app(args: argparse.Namespace) -> int:
     render_args = [str(args.output)]
     for registry in args.registries:
@@ -1245,6 +1412,14 @@ def build_parser() -> argparse.ArgumentParser:
     export_summary.add_argument("registry", type=Path)
     export_summary.add_argument("output", type=Path)
     export_summary.set_defaults(func=command_export_summary)
+
+    scaffold_registry = subparsers.add_parser("scaffold-registry", help="Create a local-only registry fixture from a Git worktree")
+    scaffold_registry.add_argument("repository", type=Path, help="Local Git worktree to scaffold")
+    scaffold_registry.add_argument("output", type=Path, help="Registry fixture JSON to write")
+    scaffold_registry.add_argument("--project-id", help="Override the generated project id")
+    scaffold_registry.add_argument("--name", help="Override the generated project name")
+    scaffold_registry.add_argument("--description", help="Override the generated project description")
+    scaffold_registry.set_defaults(func=command_scaffold_registry)
 
     render_app = subparsers.add_parser("render-app", help="Render the static forge workbench app")
     render_app.add_argument("output", type=Path, nargs="?", default=render_forge_app.DEFAULT_OUTPUT)

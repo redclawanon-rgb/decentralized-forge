@@ -664,3 +664,11 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as `scripts/forge_registry.py export-bundle-release-note`. The command emits markdown to stdout by default, or writes a file when an output path is supplied. The note includes the current Git commit, bundle SHA-256 and byte size, verification status, project summaries, required commands, non-claims, verification gaps, stop conditions from `docs/portable-bundle-review-checklist.md`, and attachment guidance. It is wired into `verify-local`, CI, npm scripts, README, community quickstart, completion criteria, checklist, tests, and the bundle manifest suggested commands.
 
 **Gate preserved:** This is local readback and markdown export only. It does not publish protocol events, sign events, fetch from relays, pin storage, start daemons, spend money, use wallets, import private keys, replace registry provenance, or claim durability, censorship resistance, broad availability, security, SLSA compliance, or production readiness.
+
+## Loop 53: Local registry import scaffold
+
+**Goal:** Let a maintainer create a valid starter registry fixture from a local Git repository without hand-authoring every required field.
+
+**Current result:** Complete as `scripts/forge_registry.py scaffold-registry <repo> <output>`. The command reads local Git worktree metadata only, writes a valid unsigned local registry fixture with placeholder maintainer identity, file-based clone URL, empty collaboration/release sections, absent IPFS/provenance claims, and a local import verification state. It validates the output immediately and prints next-step guidance. Tests create a temporary Git repository and assert the scaffold is valid and non-claim bounded. `npm run scaffold:registry -- <repo> <output>` exposes the workflow through package scripts.
+
+**Gate preserved:** This is local Git metadata readback and fixture writing only. It does not publish protocol events, sign events, fetch from remotes, pin storage, start daemons, spend money, use wallets, import private keys, replace registry provenance, or claim durability, censorship resistance, broad availability, security, SLSA compliance, or production readiness.
