@@ -228,12 +228,17 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertEqual(generated.read_bytes(), OUTPUT_VERIFICATION_BUNDLE.read_bytes())
 
         self.assertEqual(forge_registry.verify_verification_bundle(OUTPUT_VERIFICATION_BUNDLE), [])
+        self.assertEqual(forge_registry.verify_verification_bundle_cleanroom(OUTPUT_VERIFICATION_BUNDLE), [])
         with zipfile.ZipFile(OUTPUT_VERIFICATION_BUNDLE, "r") as archive:
             self.assertIn(forge_registry.DEFAULT_BUNDLE_MANIFEST_PATH, archive.namelist())
             manifest = json.loads(archive.read(forge_registry.DEFAULT_BUNDLE_MANIFEST_PATH).decode("utf-8"))
             self.assertEqual(manifest["file_count"], len(manifest["files"]))
             self.assertEqual(manifest["evidence_index"]["entry_count"], len(self.live_evidence_index["evidence"]))
             self.assertIn("bundle does not publish protocol events", manifest["non_claims"])
+            self.assertIn(
+                "python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip",
+                manifest["suggested_verification_commands"],
+            )
             payload_paths = {item["path"] for item in manifest["files"]}
             for expected_path in [
                 "fixtures/example-project.registry.json",
@@ -361,6 +366,7 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("python scripts/forge_registry.py render-app output/forge-app.html", workflow)
         self.assertIn("python scripts/forge_registry.py export-bundle output/decentralized-forge-verification-bundle.zip", workflow)
         self.assertIn("python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip", workflow)
+        self.assertIn("python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip", workflow)
         for subject in [
             "output/demo-project.html",
             "output/forge-app.html",

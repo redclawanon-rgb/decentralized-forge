@@ -39,6 +39,7 @@ python scripts/forge_registry.py export-summary fixtures/example-project.registr
 python scripts/forge_registry.py export-summary fixtures/portable-lab.registry.json output/portable-lab.summary.json
 python scripts/forge_registry.py export-bundle output/decentralized-forge-verification-bundle.zip
 python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip
+python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip
 python scripts/live_gate_inventory.py
 python -m unittest discover -s tests
 npm ci
@@ -60,7 +61,7 @@ Status: complete.
 
 Status: complete.
 
-- `scripts/forge_registry.py` provides `validate`, `render`, `render-app`, `export-summary`, `export-bundle`, `verify-bundle`, and `verify-local` commands.
+- `scripts/forge_registry.py` provides `validate`, `render`, `render-app`, `export-summary`, `export-bundle`, `verify-bundle`, `verify-bundle-cleanroom`, and `verify-local` commands.
 - The CLI uses the same validation paths as the renderer and tests.
 - Deterministic JSON summaries are generated under `output/*.summary.json`.
 
@@ -86,6 +87,7 @@ Status: active as a deterministic generated artifact.
 
 - `output/decentralized-forge-verification-bundle.zip` contains committed fixtures, schemas, source evidence files, generated HTML, summaries, the static workbench app, verifier scripts, and `verification-bundle.manifest.json`.
 - `python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip` validates manifest schema, file sizes, SHA-256 hashes, and live-evidence-index bindings.
+- `python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip` extracts the bundle into a temporary directory and runs bundled verification paths from that extracted tree.
 - It does not replace signing/provenance verification, durable storage evidence, availability evidence, SLSA compliance, or production security review.
 
 ### Lane F: Optional Live Evidence

@@ -68,6 +68,7 @@ jobs:
           python scripts/forge_registry.py export-summary fixtures/portable-lab.registry.json output/portable-lab.summary.json
           python scripts/forge_registry.py export-bundle output/decentralized-forge-verification-bundle.zip
           python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip
+          python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip
 
       - name: Inventory live gates without live actions
         run: python scripts/live_gate_inventory.py

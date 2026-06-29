@@ -632,3 +632,11 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as local bundle export/verification. Added `scripts/forge_registry.py export-bundle` and `verify-bundle`, generated `output/decentralized-forge-verification-bundle.zip`, and wired the commands into `verify-local`, CI, tests, and attestation subjects. The ZIP contains schemas, fixtures, source evidence, generated HTML, summaries, `output/forge-app.html`, verifier scripts, package metadata, and `verification-bundle.manifest.json`. The verifier checks manifest schema, file sizes, SHA-256 hashes, required payloads, and live-evidence-index bindings. Tests compare a freshly generated bundle byte-for-byte against the committed bundle.
 
 **Gate preserved:** This is local packaging of existing committed/generated evidence only. It does not publish protocol events, sign events, fetch from relays, pin storage, start daemons, spend money, use wallets, import private keys, replace registry provenance, or claim durability, censorship resistance, broad availability, security, SLSA compliance, or production readiness.
+
+## Loop 49: Clean-room bundle consumer check
+
+**Goal:** Verify that the portable bundle can be consumed from a temporary extracted tree without depending on the original checkout.
+
+**Current result:** Complete as `scripts/forge_registry.py verify-bundle-cleanroom`. The command direct-verifies the ZIP, safely extracts it to a temporary directory with path-traversal checks, copies the ZIP into the extracted tree, and runs bundled checks from that tree: manifest JSON validation, `verify-bundle`, `validate-evidence-index`, and static artifact preflight. The bundle manifest now lists the clean-room command as a suggested verification command, tests assert the clean-room verifier passes, and CI runs it after bundle export/direct verification.
+
+**Gate preserved:** This is temporary local extraction and verification only. It does not publish protocol events, sign events, fetch from relays, pin storage, start daemons, spend money, use wallets, import private keys, replace registry provenance, or claim durability, censorship resistance, broad availability, security, SLSA compliance, or production readiness.

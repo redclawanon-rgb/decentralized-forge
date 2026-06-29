@@ -9,6 +9,7 @@ import json
 import shutil
 import subprocess
 import sys
+import tempfile
 import zipfile
 from collections import Counter
 from pathlib import Path
@@ -375,6 +376,7 @@ def build_verification_bundle_manifest(paths: list[Path]) -> dict:
         },
         "suggested_verification_commands": [
             "python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip",
+            "python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip",
             "python scripts/forge_registry.py verify-local --skip-npm-ci",
         ],
         "non_claims": [
@@ -502,6 +504,99 @@ def verify_verification_bundle(bundle_path: Path) -> list[str]:
     return errors
 
 
+def safe_extract_bundle(bundle_path: Path, destination: Path) -> list[str]:
+    errors: list[str] = []
+    try:
+        with zipfile.ZipFile(bundle_path, "r") as archive:
+            seen: set[str] = set()
+            destination_root = destination.resolve()
+            for info in archive.infolist():
+                name = info.filename
+                if not name or name.endswith("/"):
+                    continue
+                if name in seen:
+                    errors.append(f"duplicate zip entry: {name}")
+                    continue
+                seen.add(name)
+                if "\\" in name:
+                    errors.append(f"zip entry must use forward slashes: {name}")
+                    continue
+                path = Path(name)
+                if path.is_absolute() or ".." in path.parts:
+                    errors.append(f"zip entry escapes bundle root: {name}")
+                    continue
+                target = (destination_root / path).resolve()
+                try:
+                    target.relative_to(destination_root)
+                except ValueError:
+                    errors.append(f"zip entry escapes bundle root: {name}")
+                    continue
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(archive.read(info))
+    except (OSError, zipfile.BadZipFile) as exc:
+        return [f"cannot extract bundle: {exc}"]
+    return errors
+
+
+def run_cleanroom_command(command: list[str], cwd: Path) -> list[str]:
+    result = subprocess.run(
+        command,
+        cwd=cwd,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if result.returncode == 0:
+        return []
+    output = "\n".join(part for part in [result.stdout.strip(), result.stderr.strip()] if part)
+    return [f"cleanroom command failed ({' '.join(command)}): {output}"]
+
+
+def verify_verification_bundle_cleanroom(bundle_path: Path) -> list[str]:
+    errors = verify_verification_bundle(bundle_path)
+    if errors:
+        return errors
+
+    with tempfile.TemporaryDirectory(prefix="df-bundle-cleanroom-") as tmpdir:
+        cleanroom = Path(tmpdir)
+        errors = safe_extract_bundle(bundle_path, cleanroom)
+        if errors:
+            return errors
+
+        copied_bundle = cleanroom / "output" / "decentralized-forge-verification-bundle.zip"
+        copied_bundle.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(bundle_path, copied_bundle)
+
+        manifest_path = cleanroom / DEFAULT_BUNDLE_MANIFEST_PATH
+        if not manifest_path.is_file():
+            return [f"cleanroom missing {DEFAULT_BUNDLE_MANIFEST_PATH}"]
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            return [f"cleanroom cannot read manifest: {exc}"]
+
+        suggested = manifest.get("suggested_verification_commands")
+        if not isinstance(suggested, list):
+            return ["cleanroom manifest suggested_verification_commands must be an array"]
+        for expected in [
+            "python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip",
+            "python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip",
+        ]:
+            if expected not in suggested:
+                errors.append(f"cleanroom manifest missing suggested command: {expected}")
+
+        commands = [
+            [sys.executable, "-m", "json.tool", DEFAULT_BUNDLE_MANIFEST_PATH],
+            [sys.executable, "scripts/forge_registry.py", "verify-bundle", "output/decentralized-forge-verification-bundle.zip"],
+            [sys.executable, "scripts/forge_registry.py", "validate-evidence-index", "fixtures/live-evidence-index.json"],
+            [sys.executable, "scripts/preflight_static_artifact.py"],
+        ]
+        for command in commands:
+            errors.extend(run_cleanroom_command(command, cleanroom))
+    return errors
+
+
 def command_validate(args: argparse.Namespace) -> int:
     for registry_path in args.registries:
         render_project_page.load_registry(registry_path)
@@ -559,6 +654,16 @@ def command_verify_bundle(args: argparse.Namespace) -> int:
             print(f"bundle verification error: {error}", file=sys.stderr)
         return 1
     print(f"valid verification bundle: {relative(args.bundle)}")
+    return 0
+
+
+def command_verify_bundle_cleanroom(args: argparse.Namespace) -> int:
+    errors = verify_verification_bundle_cleanroom(args.bundle)
+    if errors:
+        for error in errors:
+            print(f"cleanroom bundle verification error: {error}", file=sys.stderr)
+        return 1
+    print(f"valid cleanroom verification bundle: {relative(args.bundle)}")
     return 0
 
 
@@ -725,6 +830,7 @@ def command_verify_local(args: argparse.Namespace) -> int:
         [sys.executable, "scripts/forge_registry.py", "export-summary", "fixtures/portable-lab.registry.json", "output/portable-lab.summary.json"],
         [sys.executable, "scripts/forge_registry.py", "export-bundle", "output/decentralized-forge-verification-bundle.zip"],
         [sys.executable, "scripts/forge_registry.py", "verify-bundle", "output/decentralized-forge-verification-bundle.zip"],
+        [sys.executable, "scripts/forge_registry.py", "verify-bundle-cleanroom", "output/decentralized-forge-verification-bundle.zip"],
         [sys.executable, "scripts/live_gate_inventory.py"],
         [sys.executable, "-m", "unittest", "discover", "-s", "tests"],
     ]
@@ -789,6 +895,13 @@ def build_parser() -> argparse.ArgumentParser:
     verify_bundle = subparsers.add_parser("verify-bundle", help="Verify a portable verification bundle manifest and payload hashes")
     verify_bundle.add_argument("bundle", type=Path, nargs="?", default=DEFAULT_BUNDLE_OUTPUT)
     verify_bundle.set_defaults(func=command_verify_bundle)
+
+    verify_bundle_cleanroom = subparsers.add_parser(
+        "verify-bundle-cleanroom",
+        help="Extract a portable verification bundle into a temporary clean-room tree and run bundled checks",
+    )
+    verify_bundle_cleanroom.add_argument("bundle", type=Path, nargs="?", default=DEFAULT_BUNDLE_OUTPUT)
+    verify_bundle_cleanroom.set_defaults(func=command_verify_bundle_cleanroom)
 
     evidence_index = subparsers.add_parser("validate-evidence-index", help="Validate live evidence index paths, hashes, and claim boundaries")
     evidence_index.add_argument("index", type=Path, nargs="?", default=DEFAULT_LIVE_EVIDENCE_INDEX)
