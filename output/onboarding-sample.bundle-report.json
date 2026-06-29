@@ -1,15 +1,15 @@
 {
   "bundle": {
-    "file_count": 65,
+    "file_count": 68,
     "name": "decentralized-forge portable verification bundle",
     "role_counts": {
       "documentation": 7,
       "fixture": 14,
       "generated-output": 8,
       "schema": 2,
-      "source-evidence": 24,
+      "source-evidence": 26,
       "supporting-file": 2,
-      "verifier-tooling": 8
+      "verifier-tooling": 9
     },
     "schema_version": "decentralized-forge.verification-bundle.v1",
     "scope": "portable local verification package; no live protocol actions, signing, spending, or publishing",
@@ -132,21 +132,33 @@
         "state": "project-repo-radicle-readback-verified",
         "synthetic": false,
         "verification_summary": "The current decentralized-forge commit was initialized as a public Radicle repository, seeded from disposable temporary state, cloned by a separate temporary Radicle profile, and read back at the exact source commit."
+      },
+      {
+        "evidence_file": "evidence/radicle-fresh-readback-check-2026-06-29.json",
+        "id": "loop60-radicle-fresh-readback-check",
+        "live_network_action": true,
+        "protocol": "radicle",
+        "scope": "radicle.project_repo_fresh_network_readback_check",
+        "selected_relay_readback_verified": false,
+        "state": "fresh-network-readback-observed",
+        "synthetic": false,
+        "verification_summary": "The Loop 59 Radicle RID was cloned from a brand-new temporary Radicle profile without reusing the original seed profile or explicitly connecting to the original seed node, and the cloned commit matched the expected Loop 59 commit."
       }
     ],
-    "entry_count": 10,
+    "entry_count": 11,
     "index_path": "fixtures/live-evidence-index.json",
-    "live_network_action_count": 7,
+    "live_network_action_count": 8,
     "protocol_counts": {
       "github-actions": 2,
       "ipfs": 2,
       "nostr": 2,
-      "radicle": 4
+      "radicle": 5
     },
     "selected_relay_readback_count": 2,
     "state_counts": {
       "cli-blocked-readonly-route-probed": 1,
       "disposable-public-smoke-verified": 1,
+      "fresh-network-readback-observed": 1,
       "hosted-keyless-attestation-generated": 1,
       "local-cli-verified": 1,
       "local-helia-add-get-verified": 1,

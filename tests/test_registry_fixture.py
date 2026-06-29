@@ -42,6 +42,7 @@ PUBLIC_GATEWAY_PREFLIGHT_PATH = ROOT / "evidence" / "public-gateway-pinning-pref
 NOSTR_ISSUE_PATCH_READBACK_PATH = ROOT / "evidence" / "nostr-loop43-issue-patch-readback-2026-06-28.json"
 RADICLE_BROADER_CHECK_PATH = ROOT / "evidence" / "radicle-loop44-broader-check-2026-06-28.json"
 RADICLE_PROJECT_REPO_SMOKE_PATH = ROOT / "evidence" / "radicle-project-repo-smoke-2026-06-29.json"
+RADICLE_FRESH_READBACK_CHECK_PATH = ROOT / "evidence" / "radicle-fresh-readback-check-2026-06-29.json"
 KEYLESS_REGISTRY_IMPORT_PATH = ROOT / "fixtures" / "keyless-attestation.registry-verification.json"
 FIXTURE_PATHS = [FIXTURE_PATH, PORTABLE_FIXTURE_PATH, RADICLE_FIXTURE_PATH]
 RENDERER = ROOT / "scripts" / "render_project_page.py"
@@ -272,7 +273,7 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertEqual(app_data["projects"][0]["registry"]["project"]["id"], "demo-project")
         self.assertEqual({item["type"] for item in app_data["live_nostr_collaboration"]}, {"issue", "patch"})
         self.assertEqual(len(app_data["live_nostr_collaboration"]), 2)
-        self.assertEqual(app_data["live_evidence_index"]["loop"], 59)
+        self.assertEqual(app_data["live_evidence_index"]["loop"], 60)
         self.assertIn("static app does not publish protocol events", app_data["non_claims"])
 
         for forbidden_runtime in [
@@ -1478,6 +1479,38 @@ class RegistryFixtureTests(unittest.TestCase):
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "api_token"]:
             self.assertNotIn(accidental_secret_marker, evidence_blob)
 
+    def test_loop60_radicle_fresh_readback_check_is_bounded(self):
+        evidence = json.loads(RADICLE_FRESH_READBACK_CHECK_PATH.read_text(encoding="utf-8"))
+
+        self.assertEqual(evidence["schema_version"], "decentralized-forge.radicle-fresh-readback-check.v1")
+        self.assertEqual(evidence["loop"], 60)
+        self.assertTrue(evidence["verification_passed"])
+        self.assertEqual(evidence["source_evidence"], "evidence/radicle-project-repo-smoke-2026-06-29.json")
+        self.assertEqual(evidence["target_rid"], "rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr")
+        self.assertEqual(evidence["expected_commit"], evidence["clone_commit"])
+        self.assertFalse(evidence["original_seed_profile_reused"])
+        self.assertFalse(evidence["explicit_original_seed_used"])
+        self.assertTrue(evidence["node_started"])
+        self.assertTrue(evidence["clone_succeeded"])
+        self.assertTrue(evidence["readback_commit_matches_expected"])
+        self.assertTrue(evidence["fresh_network_readback_observed"])
+
+        command_words = json.dumps([command["cmd"] for command in evidence["commands"]]).lower()
+        self.assertNotIn("node connect", command_words)
+        self.assertNotIn("--seed", command_words)
+
+        evidence_blob = json.dumps(evidence).lower()
+        for required in [
+            "fresh temporary radicle profile",
+            "no original loop 59 rad_home or seed repository was reused",
+            "no explicit connection to the original loop 59 seed node was requested",
+            "normal network path",
+            "not a durability",
+        ]:
+            self.assertIn(required, evidence_blob)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "api_token"]:
+            self.assertNotIn(accidental_secret_marker, evidence_blob)
+
     def test_loop45_keyless_attestation_registry_import_is_bounded(self):
         evidence = json.loads(KEYLESS_REGISTRY_IMPORT_PATH.read_text(encoding="utf-8"))
 
@@ -1695,7 +1728,7 @@ class RegistryFixtureTests(unittest.TestCase):
     def test_loop26_live_evidence_index_imports_only_bounded_evidence(self):
         index = self.live_evidence_index
         self.assertEqual(index["schema_version"], "decentralized-forge.live-evidence-index.v1")
-        self.assertEqual(index["loop"], 59)
+        self.assertEqual(index["loop"], 60)
         self.assertFalse(index["claim_policy"]["contains_secret_values"])
         by_id = {item["id"]: item for item in index["evidence"]}
         self.assertEqual(
@@ -1711,6 +1744,7 @@ class RegistryFixtureTests(unittest.TestCase):
                 "loop44-radicle-broader-check",
                 "loop45-keyless-attestation-registry-import",
                 "loop59-radicle-project-repo-smoke",
+                "loop60-radicle-fresh-readback-check",
             },
         )
 
@@ -1814,6 +1848,22 @@ class RegistryFixtureTests(unittest.TestCase):
             radicle_project["public_identifiers"]["clone_commit"],
         )
         self.assertIn("not proof of broad Radicle network availability", radicle_project["non_claims"])
+
+        radicle_fresh = by_id["loop60-radicle-fresh-readback-check"]
+        self.assertEqual(radicle_fresh["protocol"], "radicle")
+        self.assertEqual(radicle_fresh["state"], "fresh-network-readback-observed")
+        self.assertTrue(radicle_fresh["live_network_action"])
+        self.assertTrue(radicle_fresh["local_cli_verified"])
+        self.assertFalse(radicle_fresh["selected_relay_readback_verified"])
+        self.assertEqual(radicle_fresh["evidence_file"], "evidence/radicle-fresh-readback-check-2026-06-29.json")
+        self.assertEqual(radicle_fresh["public_identifiers"]["rid"], radicle_project["public_identifiers"]["rid"])
+        self.assertEqual(
+            radicle_fresh["public_identifiers"]["expected_commit"],
+            radicle_fresh["public_identifiers"]["clone_commit"],
+        )
+        self.assertFalse(radicle_fresh["public_identifiers"]["original_seed_profile_reused"])
+        self.assertFalse(radicle_fresh["public_identifiers"]["explicit_original_seed_used"])
+        self.assertIn("not proof of permanent durability", radicle_fresh["non_claims"])
 
     def test_loop40_github_keyless_attestation_evidence_is_bounded(self):
         index = self.live_evidence_index

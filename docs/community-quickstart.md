@@ -70,4 +70,6 @@ The workbench Project set screen lists the embedded registry inputs and shows th
 
 Loop 59 records the first project-scoped Radicle repository smoke for this repo in `evidence/radicle-project-repo-smoke-2026-06-29.json`. The recorded RID is `rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr`, tied to source commit `fd3f1898d81a4b00be9095c62e3c07fc1a792a95`, with a separate temporary Radicle profile clone/readback of that same commit.
 
-Treat that as exact run evidence only. It does not prove durable availability, broad network replication, identity trust, security, or production readiness.
+Loop 60 adds `evidence/radicle-fresh-readback-check-2026-06-29.json`, which cloned the same RID from a brand-new temporary Radicle profile without reusing the original Loop 59 seed profile or explicitly connecting to its original seed node. The clone resolved the expected commit `fd3f1898d81a4b00be9095c62e3c07fc1a792a95`.
+
+Treat those as exact run evidence only. They do not prove permanent durability, broad network replication, identity trust, security, or production readiness.

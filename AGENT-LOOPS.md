@@ -720,3 +720,11 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as `scripts/run_radicle_project_repo_smoke.py` plus `evidence/radicle-project-repo-smoke-2026-06-29.json` and `.md`. The script ran in a Linux Docker container with Radicle 1.9.1 installed into a repo-local temp prefix, cloned the current checkout into temporary state, initialized it as public RID `rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr`, seeded/synced it from a temporary Radicle profile, cloned it from a separate temporary profile, and verified the cloned commit matched source commit `fd3f1898d81a4b00be9095c62e3c07fc1a792a95`. The live evidence index is now loop 59 and imports the new evidence row.
 
 **Gate preserved:** This is bounded project-scoped Radicle evidence only. It does not keep a persistent seed, use production/private personal keys, spend money, use paid infrastructure, contact specific people, or claim durability, censorship resistance, broad availability, identity trust, security, SLSA compliance, full Radicle compatibility, or production readiness.
+
+## Loop 60: Fresh-state Radicle RID readback
+
+**Goal:** Check whether the Loop 59 project RID can be fetched from fresh Radicle state without relying on the original temporary seed profile.
+
+**Current result:** Complete as `scripts/run_radicle_fresh_readback_check.py` plus `evidence/radicle-fresh-readback-check-2026-06-29.json` and `.md`. The script ran in a Linux Docker container with Radicle 1.9.1, created a brand-new temporary `RAD_HOME`, started a fresh node, cloned `rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr` through Radicle's normal network path without `rad node connect` or `--seed`, and verified the cloned commit matched the Loop 59 expected commit `fd3f1898d81a4b00be9095c62e3c07fc1a792a95`. The live evidence index is now loop 60 and imports the new evidence row.
+
+**Gate preserved:** This is one exact fresh-state readback observation. It does not keep a persistent seed, use production/private personal keys, spend money, use paid infrastructure, contact specific people, or claim permanent durability, censorship resistance, global replication, identity trust, security, SLSA compliance, full Radicle compatibility, or production readiness.

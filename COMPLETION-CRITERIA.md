@@ -124,6 +124,8 @@ Loop 41 added project-scoped local Helia UnixFS/IPFS add-get readback evidence f
 
 Loop 59 added the first project-scoped Radicle repository smoke for this repo: RID `rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr` at commit `fd3f1898d81a4b00be9095c62e3c07fc1a792a95`, seeded/synced from temporary state and cloned/read back from a separate temporary Radicle profile. This is exact evidence for that bounded run only; it does not claim durable availability, broad network replication, identity trust, security, or production readiness.
 
+Loop 60 added a fresh-state readback check for the same RID and commit. A brand-new temporary Radicle profile cloned `rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr` at commit `fd3f1898d81a4b00be9095c62e3c07fc1a792a95` without reusing the original Loop 59 seed profile or explicitly connecting to the original seed node. This strengthens the first decentralized-repo evidence beyond localhost-only smoke, but still does not claim permanent durability, broad replication, identity trust, security, or production readiness.
+
 ## Release Rule
 
 Milestone 1 is complete as an evidence-scoped static prototype after CI passed on `main` for commit `e69fd5b22e8ec27f52a11e582b705e212690a865`, the README points to this file, and `STATUS.md` names the current completion state without contradicting the evidence index.

@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-evidence-index.v1",
-  "loop": 59,
+  "loop": 60,
   "created_at": "2026-06-29",
   "purpose": "Secret-free index of narrow live/local evidence that can be rendered without upgrading unverified protocol claims.",
   "claim_policy": {
@@ -15,7 +15,8 @@
       "Nostr selected-relay issue/patch acceptance/readback verified for two disposable prototype events",
       "Radicle broader check recorded current-host rad CLI absence plus read-only public route probes",
       "Registry-shaped keyless attestation import recorded outside project-registry fixtures",
-      "Current decentralized-forge commit initialized as a public Radicle repo and cloned/read back from a separate temporary profile"
+      "Current decentralized-forge commit initialized as a public Radicle repo and cloned/read back from a separate temporary profile",
+      "Recorded Radicle RID cloned/read back from a fresh temporary Radicle profile without reusing the original Loop 59 seed profile"
     ],
     "forbidden_claims": [
       "Radicle durable public seed/network availability verified",
@@ -351,6 +352,38 @@
         "not proof of broad Radicle network availability"
       ],
       "notes": "Uses only temporary project-scoped Radicle state in a Linux container. Private key material and passphrase were not recorded, and temporary seed/clone state was removed after evidence capture."
+    },
+    {
+      "id": "loop60-radicle-fresh-readback-check",
+      "protocol": "radicle",
+      "scope": "radicle.project_repo_fresh_network_readback_check",
+      "state": "fresh-network-readback-observed",
+      "verified_at": "2026-06-29",
+      "evidence_file": "evidence/radicle-fresh-readback-check-2026-06-29.json",
+      "evidence_sha256": "d91ab430709dd75371af4ca8fe1af4f4c079f5ac7e8d5c9a22bf32d3eaf1d72c",
+      "evidence_size_bytes": 12230,
+      "verification_summary": "The Loop 59 Radicle RID was cloned from a brand-new temporary Radicle profile without reusing the original seed profile or explicitly connecting to the original seed node, and the cloned commit matched the expected Loop 59 commit.",
+      "live_network_action": true,
+      "local_cli_verified": true,
+      "selected_relay_readback_verified": false,
+      "synthetic": false,
+      "public_identifiers": {
+        "rid": "rad:zWGy1Ssjb7tBbwDbdGLqeHCsUqwr",
+        "expected_commit": "fd3f1898d81a4b00be9095c62e3c07fc1a792a95",
+        "clone_commit": "fd3f1898d81a4b00be9095c62e3c07fc1a792a95",
+        "original_seed_profile_reused": false,
+        "explicit_original_seed_used": false
+      },
+      "non_claims": [
+        "not proof of permanent durability",
+        "not proof of censorship resistance",
+        "not a security guarantee",
+        "not proof of global replication",
+        "not proof of identity trust",
+        "not production readiness",
+        "not full Radicle compatibility"
+      ],
+      "notes": "Fresh-state readback was observed once through Radicle's normal network path. This strengthens the project-repo evidence beyond localhost-only smoke but is still not a long-term availability guarantee."
     }
   ]
 }
