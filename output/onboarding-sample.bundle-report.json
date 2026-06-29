@@ -1,13 +1,13 @@
 {
   "bundle": {
-    "file_count": 85,
+    "file_count": 87,
     "name": "decentralized-forge portable verification bundle",
     "role_counts": {
       "documentation": 9,
       "fixture": 14,
       "generated-output": 8,
       "schema": 2,
-      "source-evidence": 36,
+      "source-evidence": 38,
       "supporting-file": 2,
       "verifier-tooling": 14
     },
@@ -199,16 +199,27 @@
         "state": "retained-rid-seed-restart-readback-verified",
         "synthetic": false,
         "verification_summary": "The retained Radicle RID advanced to current commit 4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8; a fresh reader cloned from the retained seed before restart, the seed stopped and restarted on the same local address with the same node ID, and a second fresh reader cloned the same commit after restart."
+      },
+      {
+        "evidence_file": "evidence/radicle-vps-follower-public-readback-2026-06-29.json",
+        "id": "loop67-radicle-vps-follower-public-readback",
+        "live_network_action": true,
+        "protocol": "radicle",
+        "scope": "radicle.retained_project_vps_follower_public_readback",
+        "selected_relay_readback_verified": false,
+        "state": "public-vps-follower-seed-readback-verified",
+        "synthetic": false,
+        "verification_summary": "The openclaw VPS follower seed at z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776 served retained RID rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy to a fresh reader on ubuntu-work, whose clone read back commit 610fc3da9757d0cb123aa5976db552b991b766d4."
       }
     ],
-    "entry_count": 16,
+    "entry_count": 17,
     "index_path": "fixtures/live-evidence-index.json",
-    "live_network_action_count": 13,
+    "live_network_action_count": 14,
     "protocol_counts": {
       "github-actions": 2,
       "ipfs": 2,
       "nostr": 2,
-      "radicle": 10
+      "radicle": 11
     },
     "selected_relay_readback_count": 2,
     "state_counts": {
@@ -221,6 +232,7 @@
       "local-helia-add-get-verified": 1,
       "project-repo-radicle-readback-verified": 1,
       "public-gateway-no-readback-observed": 1,
+      "public-vps-follower-seed-readback-verified": 1,
       "registry-shaped-import-recorded": 1,
       "retained-delegate-default-readback-verified": 1,
       "retained-rid-direct-seed-update-readback-verified": 1,

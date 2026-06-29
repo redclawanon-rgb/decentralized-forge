@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-evidence-index.v1",
-  "loop": 66,
+  "loop": 67,
   "created_at": "2026-06-29",
   "purpose": "Secret-free index of narrow live/local evidence that can be rendered without upgrading unverified protocol claims.",
   "claim_policy": {
@@ -21,7 +21,8 @@
       "Retained project-scoped Radicle maintainer state published a new RID and fresh default plus direct-seed readbacks matched the source commit",
       "The same retained Radicle RID advanced from the Loop 62 commit to the next Git commit, with fresh direct-seed readback matching the updated commit",
       "The same retained Radicle RID advanced to the current published commit, a fresh reader cloned from the retained seed, and a second fresh reader cloned from that first reader acting as a follower seed",
-      "The same retained Radicle RID advanced to the current published commit, a fresh reader cloned from the retained seed before restart, and another fresh reader cloned from the retained seed after restart on the same local address"
+      "The same retained Radicle RID advanced to the current published commit, a fresh reader cloned from the retained seed before restart, and another fresh reader cloned from the retained seed after restart on the same local address",
+      "A public VPS follower seed served the retained Radicle RID to a fresh reader from a separate Linux machine, and readback matched the expected commit"
     ],
     "forbidden_claims": [
       "Radicle durable public seed/network availability verified",
@@ -601,6 +602,54 @@
         "not a committed secret or key backup"
       ],
       "notes": "This is a retained-RID seed restart rehearsal: one fresh reader cloned before restart and another cloned after restart from the retained seed on the same local address. It improves operational usability evidence but still does not publish a reachable public seed address or prove durable availability."
+    },
+    {
+      "id": "loop67-radicle-vps-follower-public-readback",
+      "protocol": "radicle",
+      "scope": "radicle.retained_project_vps_follower_public_readback",
+      "state": "public-vps-follower-seed-readback-verified",
+      "verified_at": "2026-06-29",
+      "evidence_file": "evidence/radicle-vps-follower-public-readback-2026-06-29.json",
+      "evidence_sha256": "d4531a5c68fa014702190045b65af315b225da2a08912385327f6aa87b0f8fc6",
+      "evidence_size_bytes": 4270,
+      "verification_summary": "The openclaw VPS follower seed at z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776 served retained RID rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy to a fresh reader on ubuntu-work, whose clone read back commit 610fc3da9757d0cb123aa5976db552b991b766d4.",
+      "live_network_action": true,
+      "local_cli_verified": true,
+      "selected_relay_readback_verified": false,
+      "synthetic": false,
+      "public_identifiers": {
+        "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+        "prior_verified_commit": "4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8",
+        "current_source_commit": "610fc3da9757d0cb123aa5976db552b991b766d4",
+        "same_retained_rid": true,
+        "vps_host": "openclaw",
+        "vps_public_ip": "187.77.19.162",
+        "vps_seed_node_id": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f",
+        "vps_seed_address": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776",
+        "vps_seed_left_running": true,
+        "public_seed_address_reachable": true,
+        "fresh_reader_host": "ubuntu-work",
+        "fresh_reader_readback_commit": "610fc3da9757d0cb123aa5976db552b991b766d4",
+        "fresh_reader_readback_matches_expected": true,
+        "retained_state_copied_to_vps": false,
+        "retained_state_committed": false,
+        "secret_values_recorded": false,
+        "temporary_bridge_stopped_after_bootstrap": true,
+        "maintainer_seed_stopped_after_bootstrap": true
+      },
+      "non_claims": [
+        "not proof of permanent durability",
+        "not proof of future default public-routing availability",
+        "not proof of censorship resistance",
+        "not a security guarantee",
+        "not proof of global replication",
+        "not proof of identity trust",
+        "not production readiness",
+        "not full Radicle compatibility",
+        "not a committed secret or key backup",
+        "not maintainer key material on the VPS"
+      ],
+      "notes": "This is the first public direct-seed readback through a VPS follower seed. It proves a fresh reader can clone the retained RID from the published openclaw seed address for this run, while preserving the boundary that durability, default public routing, and production readiness are not claimed."
     }
   ]
 }

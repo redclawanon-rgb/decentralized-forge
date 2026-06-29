@@ -48,6 +48,7 @@ RADICLE_RETAINED_DELEGATE_CHECK_PATH = ROOT / "evidence" / "radicle-retained-del
 RADICLE_RETAINED_UPDATE_CHECK_PATH = ROOT / "evidence" / "radicle-retained-update-check-2026-06-29.json"
 RADICLE_INDEPENDENT_AVAILABILITY_CHECK_PATH = ROOT / "evidence" / "radicle-independent-availability-check-2026-06-29.json"
 RADICLE_SEED_RESTART_CHECK_PATH = ROOT / "evidence" / "radicle-seed-restart-check-2026-06-29.json"
+RADICLE_VPS_FOLLOWER_PUBLIC_READBACK_PATH = ROOT / "evidence" / "radicle-vps-follower-public-readback-2026-06-29.json"
 KEYLESS_REGISTRY_IMPORT_PATH = ROOT / "fixtures" / "keyless-attestation.registry-verification.json"
 FIXTURE_PATHS = [FIXTURE_PATH, PORTABLE_FIXTURE_PATH, RADICLE_FIXTURE_PATH]
 RENDERER = ROOT / "scripts" / "render_project_page.py"
@@ -280,7 +281,7 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertEqual(app_data["projects"][0]["registry"]["project"]["id"], "demo-project")
         self.assertEqual({item["type"] for item in app_data["live_nostr_collaboration"]}, {"issue", "patch"})
         self.assertEqual(len(app_data["live_nostr_collaboration"]), 2)
-        self.assertEqual(app_data["live_evidence_index"]["loop"], 66)
+        self.assertEqual(app_data["live_evidence_index"]["loop"], 67)
         self.assertIn("static app does not publish protocol events", app_data["non_claims"])
 
         for forbidden_runtime in [
@@ -1778,47 +1779,94 @@ class RegistryFixtureTests(unittest.TestCase):
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "api_token"]:
             self.assertNotIn(accidental_secret_marker, evidence_blob)
 
+    def test_loop67_radicle_vps_follower_public_readback_is_bounded(self):
+        prior = json.loads(RADICLE_SEED_RESTART_CHECK_PATH.read_text(encoding="utf-8"))
+        evidence = json.loads(RADICLE_VPS_FOLLOWER_PUBLIC_READBACK_PATH.read_text(encoding="utf-8"))
+
+        self.assertEqual(evidence["schema_version"], "decentralized-forge.radicle-vps-follower-public-readback.v1")
+        self.assertEqual(evidence["loop"], 67)
+        self.assertTrue(evidence["verification_passed"])
+        self.assertEqual(evidence["source_evidence"], "evidence/radicle-seed-restart-check-2026-06-29.json")
+        self.assertEqual(evidence["target_rid"], prior["target_rid"])
+        self.assertEqual(evidence["expected_commit"], "610fc3da9757d0cb123aa5976db552b991b766d4")
+        self.assertEqual(evidence["vps_host"], "openclaw")
+        self.assertEqual(evidence["vps_public_ip"], "187.77.19.162")
+        self.assertEqual(
+            evidence["vps_seed_address"],
+            "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776",
+        )
+        self.assertTrue(evidence["vps_seed_left_running"])
+        self.assertTrue(evidence["public_seed_address_reachable"])
+        self.assertTrue(evidence["coordinator_tcp_test_succeeded"])
+        self.assertTrue(evidence["ubuntu_work_tcp_test_succeeded"])
+        self.assertFalse(evidence["retained_state_copied_to_vps"])
+        self.assertTrue(evidence["vps_follower_clone_from_retained_seed_succeeded"])
+        self.assertEqual(evidence["vps_follower_readback_commit"], evidence["expected_commit"])
+        self.assertTrue(evidence["vps_follower_readback_matches_expected"])
+        self.assertTrue(evidence["temporary_bridge_used_for_vps_bootstrap"])
+        self.assertTrue(evidence["temporary_bridge_stopped_after_bootstrap"])
+        self.assertTrue(evidence["maintainer_seed_stopped_after_bootstrap"])
+        self.assertEqual(evidence["fresh_reader_host"], "ubuntu-work")
+        self.assertIn("/tmp/df-openclaw-public-readback-*", evidence["fresh_reader_state_shape"])
+        self.assertTrue(evidence["fresh_reader_connected_to_public_seed"])
+        self.assertTrue(evidence["fresh_reader_clone_succeeded"])
+        self.assertEqual(evidence["fresh_reader_readback_commit"], evidence["expected_commit"])
+        self.assertTrue(evidence["fresh_reader_readback_matches_expected"])
+        self.assertFalse(evidence["secret_values_recorded"])
+
+        evidence_blob = json.dumps(evidence).lower()
+        for required in [
+            "public vps follower-seed readback",
+            "retained maintainer key material was not copied to the vps",
+            "fresh reader on ubuntu-work connected to openclaw",
+            "not a permanent durability",
+        ]:
+            self.assertIn(required, evidence_blob)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "api_token"]:
+            self.assertNotIn(accidental_secret_marker, evidence_blob)
+
     def test_radicle_retained_quickstart_is_evidence_bounded(self):
-        evidence = json.loads(RADICLE_SEED_RESTART_CHECK_PATH.read_text(encoding="utf-8"))
+        evidence = json.loads(RADICLE_VPS_FOLLOWER_PUBLIC_READBACK_PATH.read_text(encoding="utf-8"))
         model = forge_registry.retained_radicle_quickstart_model()
         rendered = forge_registry.format_retained_radicle_quickstart(model)
 
         self.assertEqual(model["schema_version"], "decentralized-forge.radicle-retained-quickstart.v1")
-        self.assertEqual(model["source_evidence_id"], "loop66-radicle-seed-restart-check")
-        self.assertEqual(model["source_evidence_file"], "evidence/radicle-seed-restart-check-2026-06-29.json")
+        self.assertEqual(model["source_evidence_id"], "loop67-radicle-vps-follower-public-readback")
+        self.assertEqual(model["source_evidence_file"], "evidence/radicle-vps-follower-public-readback-2026-06-29.json")
         self.assertEqual(model["rid"], evidence["target_rid"])
-        self.assertEqual(model["expected_commit"], evidence["current_source_commit"])
-        self.assertEqual(model["readback_commit"], evidence["second_reader"]["readback_commit"])
-        self.assertEqual(model["availability_mode"], "local seed restart readback")
-        self.assertFalse(model["follower_seed_succeeded"])
-        self.assertTrue(model["seed_restart_verified"])
-        self.assertFalse(model["persistent_seed_service_left_running"])
-        self.assertFalse(model["seed_address_publicly_reachable"])
+        self.assertEqual(model["expected_commit"], evidence["expected_commit"])
+        self.assertEqual(model["readback_commit"], evidence["fresh_reader_readback_commit"])
+        self.assertEqual(model["availability_mode"], "public VPS follower-seed readback")
+        self.assertTrue(model["follower_seed_succeeded"])
+        self.assertFalse(model["seed_restart_verified"])
+        self.assertTrue(model["persistent_seed_service_left_running"])
+        self.assertTrue(model["seed_address_publicly_reachable"])
         self.assertFalse(model["default_public_routing_observed"])
         self.assertFalse(model["retained_state_committed"])
         self.assertFalse(model["secret_values_recorded"])
-        self.assertIn("rad node connect <seed-peer-id>@<reachable-host>:<port> --timeout 30s", model["commands"])
+        self.assertIn(f"rad node connect {evidence['vps_seed_address']} --timeout 30s", model["commands"])
         self.assertIn(
-            f"rad clone --timeout 120s --seed <seed-peer-id> {evidence['target_rid']} decentralized-forge",
+            f"rad clone --timeout 120s --seed {evidence['vps_follower_node_id']} {evidence['target_rid']} decentralized-forge",
             model["commands"],
         )
-        self.assertIn(f"git rev-parse HEAD prints {evidence['current_source_commit']}", model["expected_verification"])
+        self.assertIn(f"git rev-parse HEAD prints {evidence['expected_commit']}", model["expected_verification"])
         for required_nonclaim in [
             "not a default public-routing claim",
-            "not a persistent public seed service claim",
             "not a durability guarantee",
             "not a committed secret or key backup",
+            "not maintainer key material on the VPS",
         ]:
             self.assertIn(required_nonclaim, model["non_claims"])
             self.assertIn(required_nonclaim, rendered)
 
         self.assertIn("Retained Radicle direct-seed quickstart", rendered)
         self.assertIn(evidence["target_rid"], rendered)
-        self.assertIn(evidence["current_source_commit"], rendered)
-        self.assertIn("availability mode: `local seed restart readback`", rendered)
-        self.assertIn("seed restart verified in evidence: `true`", rendered)
-        self.assertIn("public seed address observed: `false`", rendered)
-        self.assertIn("persistent seed service left running: `false`", rendered)
+        self.assertIn(evidence["expected_commit"], rendered)
+        self.assertIn(evidence["vps_seed_address"], rendered)
+        self.assertIn("availability mode: `public VPS follower-seed readback`", rendered)
+        self.assertIn("follower seed succeeded in evidence: `true`", rendered)
+        self.assertIn("public seed address observed: `true`", rendered)
+        self.assertIn("persistent seed service left running: `true`", rendered)
         self.assertIn("default public routing observed: `false`", rendered)
 
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -1838,25 +1886,25 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertNotIn(accidental_secret_marker, combined)
 
     def test_radicle_retained_rid_quickstart_doc_matches_latest_availability(self):
-        evidence = json.loads(RADICLE_SEED_RESTART_CHECK_PATH.read_text(encoding="utf-8"))
+        evidence = json.loads(RADICLE_VPS_FOLLOWER_PUBLIC_READBACK_PATH.read_text(encoding="utf-8"))
         doc = RADICLE_RETAINED_RID_QUICKSTART.read_text(encoding="utf-8")
 
         self.assertIn("python scripts/forge_registry.py radicle-retained-quickstart", doc)
         self.assertIn(evidence["target_rid"], doc)
-        self.assertIn(evidence["current_source_commit"], doc)
-        self.assertIn("evidence/radicle-seed-restart-check-2026-06-29.json", doc)
-        self.assertIn("<seed-peer-id>@<reachable-host>:<port>", doc)
-        self.assertIn("rad node connect <seed-peer-id>@<reachable-host>:<port> --timeout 30s", doc)
+        self.assertIn(evidence["expected_commit"], doc)
+        self.assertIn(evidence["vps_seed_address"], doc)
+        self.assertIn("evidence/radicle-vps-follower-public-readback-2026-06-29.json", doc)
+        self.assertIn(f"rad node connect {evidence['vps_seed_address']} --timeout 30s", doc)
         self.assertIn(
-            f"rad clone --timeout 120s --seed <seed-peer-id> {evidence['target_rid']} decentralized-forge",
+            f"rad clone --timeout 120s --seed {evidence['vps_follower_node_id']} {evidence['target_rid']} decentralized-forge",
             doc,
         )
         for required_boundary in [
-            "Loop 66 proved a local retained-seed restart/readback rehearsal",
-            "not a persistent public seed service claim",
+            "Loop 67 proved a public direct-seed readback",
             "not a durability guarantee",
             "not proof of broad Radicle network availability",
             "not production readiness",
+            "not maintainer key material on the VPS",
             "docs/radicle-persistent-seed-plan.md",
         ]:
             self.assertIn(required_boundary, doc)
@@ -1864,17 +1912,19 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertNotIn(accidental_secret_marker, doc.lower())
 
     def test_radicle_persistent_seed_plan_is_bounded(self):
-        evidence = json.loads(RADICLE_SEED_RESTART_CHECK_PATH.read_text(encoding="utf-8"))
+        evidence = json.loads(RADICLE_VPS_FOLLOWER_PUBLIC_READBACK_PATH.read_text(encoding="utf-8"))
         plan = RADICLE_PERSISTENT_SEED_PLAN.read_text(encoding="utf-8")
 
         self.assertIn(evidence["target_rid"], plan)
-        self.assertIn(evidence["current_source_commit"], plan)
+        self.assertIn(evidence["expected_commit"], plan)
+        self.assertIn(evidence["vps_seed_address"], plan)
+        self.assertIn("evidence/radicle-vps-follower-public-readback-2026-06-29.json", plan)
         self.assertIn("evidence/radicle-seed-restart-check-2026-06-29.json", plan)
         self.assertIn("evidence/radicle-independent-availability-check-2026-06-29.json", plan)
         self.assertIn("A user can clone decentralized-forge from a published Radicle seed address", plan)
         self.assertIn("rad node start", plan)
         self.assertIn("rad seed", plan)
-        self.assertIn("rad node connect <seed-peer-id>@<reachable-host>:<port> --timeout 30s", plan)
+        self.assertIn(f"rad node connect {evidence['vps_seed_address']} --timeout 30s", plan)
         for required_boundary in [
             "Do not claim durable storage",
             "Do not commit the passphrase",
@@ -2103,7 +2153,7 @@ class RegistryFixtureTests(unittest.TestCase):
     def test_loop26_live_evidence_index_imports_only_bounded_evidence(self):
         index = self.live_evidence_index
         self.assertEqual(index["schema_version"], "decentralized-forge.live-evidence-index.v1")
-        self.assertEqual(index["loop"], 66)
+        self.assertEqual(index["loop"], 67)
         self.assertFalse(index["claim_policy"]["contains_secret_values"])
         by_id = {item["id"]: item for item in index["evidence"]}
         self.assertEqual(
@@ -2125,6 +2175,7 @@ class RegistryFixtureTests(unittest.TestCase):
                 "loop63-radicle-retained-update-check",
                 "loop65-radicle-independent-availability-check",
                 "loop66-radicle-seed-restart-check",
+                "loop67-radicle-vps-follower-public-readback",
             },
         )
 
@@ -2384,6 +2435,41 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("not proof of public seed address reachability", radicle_seed_restart["non_claims"])
         self.assertIn("not proof of separate-network availability", radicle_seed_restart["non_claims"])
         self.assertIn("not an always-on persistent public seed service", radicle_seed_restart["non_claims"])
+
+        radicle_vps = by_id["loop67-radicle-vps-follower-public-readback"]
+        self.assertEqual(radicle_vps["protocol"], "radicle")
+        self.assertEqual(radicle_vps["state"], "public-vps-follower-seed-readback-verified")
+        self.assertTrue(radicle_vps["live_network_action"])
+        self.assertTrue(radicle_vps["local_cli_verified"])
+        self.assertFalse(radicle_vps["selected_relay_readback_verified"])
+        self.assertFalse(radicle_vps["synthetic"])
+        self.assertEqual(radicle_vps["evidence_file"], "evidence/radicle-vps-follower-public-readback-2026-06-29.json")
+        self.assertEqual(radicle_vps["public_identifiers"]["rid"], radicle_seed_restart["public_identifiers"]["rid"])
+        self.assertEqual(
+            radicle_vps["public_identifiers"]["prior_verified_commit"],
+            radicle_seed_restart["public_identifiers"]["current_source_commit"],
+        )
+        self.assertTrue(radicle_vps["public_identifiers"]["same_retained_rid"])
+        self.assertEqual(radicle_vps["public_identifiers"]["current_source_commit"], "610fc3da9757d0cb123aa5976db552b991b766d4")
+        self.assertEqual(
+            radicle_vps["public_identifiers"]["vps_seed_address"],
+            "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776",
+        )
+        self.assertTrue(radicle_vps["public_identifiers"]["vps_seed_left_running"])
+        self.assertTrue(radicle_vps["public_identifiers"]["public_seed_address_reachable"])
+        self.assertEqual(radicle_vps["public_identifiers"]["fresh_reader_host"], "ubuntu-work")
+        self.assertEqual(
+            radicle_vps["public_identifiers"]["fresh_reader_readback_commit"],
+            radicle_vps["public_identifiers"]["current_source_commit"],
+        )
+        self.assertTrue(radicle_vps["public_identifiers"]["fresh_reader_readback_matches_expected"])
+        self.assertFalse(radicle_vps["public_identifiers"]["retained_state_copied_to_vps"])
+        self.assertFalse(radicle_vps["public_identifiers"]["retained_state_committed"])
+        self.assertFalse(radicle_vps["public_identifiers"]["secret_values_recorded"])
+        self.assertTrue(radicle_vps["public_identifiers"]["temporary_bridge_stopped_after_bootstrap"])
+        self.assertTrue(radicle_vps["public_identifiers"]["maintainer_seed_stopped_after_bootstrap"])
+        self.assertIn("not maintainer key material on the VPS", radicle_vps["non_claims"])
+        self.assertIn("not proof of future default public-routing availability", radicle_vps["non_claims"])
 
     def test_loop40_github_keyless_attestation_evidence_is_bounded(self):
         index = self.live_evidence_index

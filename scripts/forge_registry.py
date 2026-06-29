@@ -265,20 +265,26 @@ def live_evidence_entry(entry_id: str, index_path: Path = DEFAULT_LIVE_EVIDENCE_
 
 def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_INDEX) -> dict:
     try:
-        entry = live_evidence_entry("loop66-radicle-seed-restart-check", index_path)
+        entry = live_evidence_entry("loop67-radicle-vps-follower-public-readback", index_path)
     except ValueError:
         try:
-            entry = live_evidence_entry("loop65-radicle-independent-availability-check", index_path)
+            entry = live_evidence_entry("loop66-radicle-seed-restart-check", index_path)
         except ValueError:
-            entry = live_evidence_entry("loop63-radicle-retained-update-check", index_path)
+            try:
+                entry = live_evidence_entry("loop65-radicle-independent-availability-check", index_path)
+            except ValueError:
+                entry = live_evidence_entry("loop63-radicle-retained-update-check", index_path)
     public = entry.get("public_identifiers")
     if not isinstance(public, dict):
         raise ValueError(f"{entry.get('id', 'retained Radicle evidence')} missing public_identifiers")
 
+    is_public_vps_seed = entry.get("id") == "loop67-radicle-vps-follower-public-readback"
     is_independent_availability = entry.get("id") == "loop65-radicle-independent-availability-check"
     is_seed_restart = entry.get("id") == "loop66-radicle-seed-restart-check"
     required = ["rid", "current_source_commit", "retained_state_committed", "secret_values_recorded"]
-    if is_seed_restart:
+    if is_public_vps_seed:
+        required.extend(["vps_seed_address", "fresh_reader_readback_commit", "fresh_reader_readback_matches_expected", "public_seed_address_reachable"])
+    elif is_seed_restart:
         required.extend(["second_reader_readback_commit", "second_reader_readback_matches_source", "same_seed_node_after_restart"])
     elif is_independent_availability:
         required.extend(["reader_b_readback_commit", "reader_b_readback_matches_source", "follower_seed_succeeded"])
@@ -287,7 +293,10 @@ def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_I
     missing = [key for key in required if key not in public]
     if missing:
         raise ValueError(f"{entry['id']} retained Radicle evidence missing fields: {', '.join(missing)}")
-    if is_seed_restart:
+    if is_public_vps_seed:
+        readback_key = "fresh_reader_readback_commit"
+        matches_key = "fresh_reader_readback_matches_expected"
+    elif is_seed_restart:
         readback_key = "second_reader_readback_commit"
         matches_key = "second_reader_readback_matches_source"
     elif is_independent_availability:
@@ -300,13 +309,17 @@ def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_I
         raise ValueError(f"{entry['id']} readback commit does not match current source commit")
     if public[matches_key] is not True:
         raise ValueError(f"{entry['id']} readback did not match source")
+    if is_public_vps_seed and public["public_seed_address_reachable"] is not True:
+        raise ValueError("loop67 public VPS seed address was not reachable")
     if is_seed_restart and public["same_seed_node_after_restart"] is not True:
         raise ValueError("loop66 seed restart did not preserve the retained seed node identity")
     if is_independent_availability and public["follower_seed_succeeded"] is not True:
         raise ValueError("loop65 follower seed did not succeed")
     if public["retained_state_committed"] is not False or public["secret_values_recorded"] is not False:
         raise ValueError(f"{entry['id']} retained Radicle evidence is not secret-free")
-    if is_seed_restart:
+    if is_public_vps_seed:
+        availability_mode = "public VPS follower-seed readback"
+    elif is_seed_restart:
         availability_mode = "local seed restart readback"
     elif is_independent_availability:
         availability_mode = "independent follower-seed readback"
@@ -321,19 +334,19 @@ def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_I
         "expected_commit": public["current_source_commit"],
         "readback_commit": public[readback_key],
         "availability_mode": availability_mode,
-        "follower_seed_succeeded": bool(public.get("follower_seed_succeeded", False)),
+        "follower_seed_succeeded": bool(public.get("follower_seed_succeeded", public.get("vps_seed_left_running", False))),
         "seed_restart_verified": bool(public.get("same_seed_node_after_restart", False)),
-        "persistent_seed_service_left_running": bool(public.get("persistent_seed_service_left_running", False)),
-        "seed_address_publicly_reachable": bool(public.get("seed_address_publicly_reachable", False)),
+        "persistent_seed_service_left_running": bool(public.get("persistent_seed_service_left_running", public.get("vps_seed_left_running", False))),
+        "seed_address_publicly_reachable": bool(public.get("public_seed_address_reachable", public.get("seed_address_publicly_reachable", False))),
         "default_public_routing_observed": bool(public.get("default_readback_matches_source", False)),
         "retained_state_committed": public["retained_state_committed"],
         "secret_values_recorded": public["secret_values_recorded"],
-        "seed_peer_hint": "<seed-peer-id>@<reachable-host>:<port>",
+        "seed_peer_hint": public.get("vps_seed_address", "<seed-peer-id>@<reachable-host>:<port>"),
         "commands": [
             "rad auth --alias decentralized-forge-reader --stdin",
             "rad node start",
-            "rad node connect <seed-peer-id>@<reachable-host>:<port> --timeout 30s",
-            f"rad clone --timeout 120s --seed <seed-peer-id> {public['rid']} decentralized-forge",
+            f"rad node connect {public.get('vps_seed_address', '<seed-peer-id>@<reachable-host>:<port>')} --timeout 30s",
+            f"rad clone --timeout 120s --seed {public.get('vps_seed_node_id', '<seed-peer-id>')} {public['rid']} decentralized-forge",
             "cd decentralized-forge",
             "git rev-parse HEAD",
         ],
@@ -343,7 +356,6 @@ def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_I
         ],
         "non_claims": [
             "not a default public-routing claim",
-            "not a persistent public seed service claim",
             "not a durability guarantee",
             "not proof of broad Radicle network availability",
             "not proof of censorship resistance",
@@ -351,6 +363,11 @@ def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_I
             "not a security guarantee",
             "not production readiness",
             "not a committed secret or key backup",
+            *(
+                ["not maintainer key material on the VPS"]
+                if is_public_vps_seed
+                else ["not a persistent public seed service claim"]
+            ),
         ],
     }
 

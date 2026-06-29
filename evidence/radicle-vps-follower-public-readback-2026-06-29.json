@@ -1,0 +1,79 @@
+{
+  "schema_version": "decentralized-forge.radicle-vps-follower-public-readback.v1",
+  "loop": 67,
+  "created_utc": "2026-06-29T21:58:27Z",
+  "scope": "Public VPS follower-seed readback for retained project Radicle RID",
+  "source_evidence": "evidence/radicle-seed-restart-check-2026-06-29.json",
+  "target_rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+  "expected_commit": "610fc3da9757d0cb123aa5976db552b991b766d4",
+  "retained_maintainer_host": "ubuntu-work",
+  "retained_maintainer_node_id": "z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr",
+  "retained_state_copied_to_vps": false,
+  "retained_state_scope": "ubuntu-work ~/df-rad; not committed; not bundled",
+  "vps_host": "openclaw",
+  "vps_public_ip": "187.77.19.162",
+  "vps_follower_node_id": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f",
+  "vps_seed_address": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776",
+  "vps_listen_addr": "0.0.0.0:8776",
+  "vps_seed_left_running": true,
+  "vps_follower_clone_from_retained_seed_succeeded": true,
+  "vps_follower_readback_commit": "610fc3da9757d0cb123aa5976db552b991b766d4",
+  "vps_follower_readback_matches_expected": true,
+  "temporary_bridge_used_for_vps_bootstrap": true,
+  "temporary_bridge_stopped_after_bootstrap": true,
+  "maintainer_seed_stopped_after_bootstrap": true,
+  "coordinator_tcp_test_succeeded": true,
+  "ubuntu_work_tcp_test_succeeded": true,
+  "public_seed_address_reachable": true,
+  "fresh_reader_host": "ubuntu-work",
+  "fresh_reader_state_shape": "/tmp/df-openclaw-public-readback-* (removed)",
+  "fresh_reader_connected_to_public_seed": true,
+  "fresh_reader_clone_succeeded": true,
+  "fresh_reader_readback_commit": "610fc3da9757d0cb123aa5976db552b991b766d4",
+  "fresh_reader_readback_matches_expected": true,
+  "verification_passed": true,
+  "secret_values_recorded": false,
+  "commands": [
+    {
+      "host": "openclaw",
+      "summary": "Started fresh VPS follower Radicle node on 0.0.0.0:8776, cloned retained RID through a temporary bootstrap connection to the retained seed, verified HEAD, and seeded the RID with scope all.",
+      "secret_values_recorded": false,
+      "result": {
+        "node_id": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f",
+        "readback_commit": "610fc3da9757d0cb123aa5976db552b991b766d4",
+        "readback_matches_expected": true
+      }
+    },
+    {
+      "host": "coordinator",
+      "summary": "Test-NetConnection to 187.77.19.162:8776 returned TcpTestSucceeded true.",
+      "secret_values_recorded": false,
+      "result": {
+        "tcp_test_succeeded": true
+      }
+    },
+    {
+      "host": "ubuntu-work",
+      "summary": "nc -vz -w 5 187.77.19.162 8776 succeeded, then a fresh temporary Radicle profile connected to the VPS seed, cloned the retained RID, and verified HEAD.",
+      "secret_values_recorded": false,
+      "result": {
+        "seed": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776",
+        "readback_commit": "610fc3da9757d0cb123aa5976db552b991b766d4",
+        "readback_matches_expected": true
+      }
+    }
+  ],
+  "actions_not_taken": [
+    "retained maintainer key material was not copied to the VPS",
+    "no secret passphrase or Radicle key material was written to committed evidence",
+    "fresh reader temporary Radicle state was removed after verification",
+    "temporary SSH bootstrap bridge was stopped after the VPS follower cloned the RID",
+    "ubuntu-work retained maintainer seed was stopped after VPS bootstrap",
+    "no production/private personal keys were used",
+    "no paid infrastructure, wallet, spending, or direct outreach was introduced by this loop",
+    "no permanent durability, censorship-resistance, security, global replication, identity-trust, or production-readiness claim is made",
+    "no future default public-routing availability claim is made",
+    "no full Radicle compatibility claim is made"
+  ],
+  "claim_boundary": "This records one public direct-seed readback through a VPS follower seed: a fresh reader on ubuntu-work connected to openclaw at 187.77.19.162:8776, cloned the retained Radicle RID, and read back the expected commit. It is not a permanent durability, default public-routing, global replication, security, identity-trust, or production-readiness guarantee."
+}

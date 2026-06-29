@@ -1353,9 +1353,27 @@ Verified evidence:
 
 Gate preserved: Loop 66 does not publish a stable public seed address, prove separate-network reachability, leave a persistent public seed service running, commit or bundle retained Radicle secret state, use production/private personal keys, spend money, contact specific people, or introduce permanent-durability, future-default-routing-availability, censorship-resistance, global-replication, security, SLSA, identity-trust, full-compatibility, or production-readiness claims.
 
+## Loop 67: Public VPS follower-seed readback
+
+Outputs:
+
+- `evidence/radicle-vps-follower-public-readback-2026-06-29.json` and `.md` record the first public direct-seed readback for retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy`.
+- The `openclaw` VPS follower seed runs at `z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776`.
+- The VPS follower seed is a fresh follower identity; retained maintainer key material was not copied to the VPS.
+- A fresh reader on `ubuntu-work` connected to the public VPS seed, cloned the retained RID, and read back commit `610fc3da9757d0cb123aa5976db552b991b766d4`.
+- `fixtures/live-evidence-index.json` now imports the Loop 67 evidence row and bumps the live evidence index to loop 67.
+- The retained quickstart helper now prefers the Loop 67 row and prints the public VPS seed address.
+
+Verified evidence:
+
+- TCP reachability to `187.77.19.162:8776` was observed from the coordinator and from `ubuntu-work`.
+- Direct evidence tests assert public seed address, fresh-reader readback, retained-state non-copy to VPS, secret-free committed evidence, and non-claim boundaries.
+
+Gate preserved: Loop 67 does not copy retained maintainer key material to the VPS, commit or bundle secret state, use production/private personal keys, introduce new spending beyond the already-available VPS, contact specific people, or introduce permanent-durability, future-default-routing-availability, censorship-resistance, global-replication, security, SLSA, identity-trust, full-compatibility, or production-readiness claims.
+
 ## Next recommended loop
 
-**Next:** Move from local seed-restart evidence to a reachable seed pilot: choose a free host/network target, run the retained seed on a stable reachable address, and verify clone/readback from a separate network context before publishing any stable seed address. The caveat remains that permanent durability still requires persistent seeding or independent mirrors.
+**Next:** Harden the public follower seed: add a restart policy or runbook on `openclaw`, add a repeated health-check/readback after a time gap, and record what happens if the VPS process restarts. The caveat remains that permanent durability still requires persistent seeding or independent mirrors.
 
 Recent completed loops:
 
@@ -1394,6 +1412,7 @@ Recent completed loops:
 - Loop 64: retained RID community direct-seed quickstart - complete as `docs/radicle-retained-rid-quickstart.md` plus `radicle-retained-quickstart`, a read-only evidence-derived recipe for maintainer-assisted direct-seed clones.
 - Loop 65: retained RID independent follower-seed readback - complete as the same RID advanced to commit `7262f69b82e442263d6261414f6b771be04c6b6f`; reader A cloned from retained maintainer seed and reader B cloned from reader A acting as a follower seed.
 - Loop 66: retained seed restart/readback rehearsal - complete as the same RID advanced to commit `4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8`; fresh readers cloned before and after retained seed restart on the same local address.
+- Loop 67: public VPS follower-seed readback - complete as `openclaw` served retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` at commit `610fc3da9757d0cb123aa5976db552b991b766d4` to a fresh reader on `ubuntu-work`.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

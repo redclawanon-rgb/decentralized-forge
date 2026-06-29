@@ -82,12 +82,14 @@ Loop 65 adds `evidence/radicle-independent-availability-check-2026-06-29.json`. 
 
 Loop 66 adds `evidence/radicle-seed-restart-check-2026-06-29.json`. The same retained RID advanced to commit `4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8`; a fresh reader cloned from the retained seed before restart, the seed stopped and restarted on the same local address with the same retained node ID, and another fresh reader cloned the same commit after restart.
 
+Loop 67 adds `evidence/radicle-vps-follower-public-readback-2026-06-29.json`. The same retained RID advanced to commit `610fc3da9757d0cb123aa5976db552b991b766d4`; the `openclaw` VPS follower seed at `z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776` served that RID to a fresh reader on `ubuntu-work`, and readback matched the expected commit.
+
 The current community clone path for that retained RID is `docs/radicle-retained-rid-quickstart.md` or the read-only helper:
 
 ```sh
 python scripts/forge_registry.py radicle-retained-quickstart
 ```
 
-That path requires a seed operator to provide a reachable seed address in the form `<seed-peer-id>@<reachable-host>:<port>` and verifies the clone by checking `git rev-parse HEAD` against the expected commit printed by the helper.
+That path now uses the public `openclaw` seed address from Loop 67 and verifies the clone by checking `git rev-parse HEAD` against the expected commit printed by the helper.
 
-Treat those as exact run evidence only. They do not prove permanent durability, future default public-routing availability, public seed address reachability, separate-network availability, broad network replication, identity trust, security, or production readiness.
+Treat those as exact run evidence only. They do not prove permanent durability, future default public-routing availability, broad network replication, identity trust, security, or production readiness.

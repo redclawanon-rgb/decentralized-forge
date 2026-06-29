@@ -5,15 +5,17 @@ This plan defines the minimum path from the current retained-RID evidence to a u
 ## Current Evidence
 
 - Retained RID: `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy`
-- Current verified commit: `4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8`
+- Current verified commit: `610fc3da9757d0cb123aa5976db552b991b766d4`
+- Loop 67 evidence: `evidence/radicle-vps-follower-public-readback-2026-06-29.json`
 - Loop 66 evidence: `evidence/radicle-seed-restart-check-2026-06-29.json`
 - Loop 65 evidence: `evidence/radicle-independent-availability-check-2026-06-29.json`
 - Reader A cloned the retained RID from the retained maintainer seed.
 - Reader A then acted as a follower seed.
 - Reader B cloned the retained RID from reader A and read back the same commit.
 - Loop 66 started the retained seed on a local address, verified a fresh clone, stopped the seed, restarted it on the same local address with the same retained node ID, and verified a second fresh clone after restart.
+- Loop 67 started a public VPS follower seed at `z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776`; a fresh reader on a separate Linux machine cloned the retained RID from that seed and read back the expected commit.
 
-This proves an independent follower-seed handoff and a local seed restart/readback rehearsal. It does not prove durability, broad public routing, public reachability, or separate-network availability.
+This proves an independent follower-seed handoff, a local seed restart/readback rehearsal, and one public direct-seed readback through the VPS follower. It does not prove durability, broad public routing, or default public-routing availability.
 
 ## Usable Product Claim To Target
 
@@ -61,10 +63,10 @@ The health check should run from separate disposable state:
 ```sh
 rad auth --alias decentralized-forge-healthcheck --stdin
 rad node start
-rad node connect <seed-peer-id>@<reachable-host>:<port> --timeout 30s
-rad clone --timeout 120s --seed <seed-peer-id> rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy decentralized-forge
+rad node connect z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776 --timeout 30s
+rad clone --timeout 120s --seed z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy decentralized-forge
 cd decentralized-forge
-test "$(git rev-parse HEAD)" = "4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8"
+test "$(git rev-parse HEAD)" = "610fc3da9757d0cb123aa5976db552b991b766d4"
 ```
 
 Record health-check evidence only if command output is secret-free.

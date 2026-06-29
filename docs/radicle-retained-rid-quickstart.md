@@ -8,13 +8,13 @@ The verified retained RID is:
 rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy
 ```
 
-Loop 66 verified that this RID advanced to commit:
+Loop 67 verified that this RID advanced to commit:
 
 ```text
-4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8
+610fc3da9757d0cb123aa5976db552b991b766d4
 ```
 
-The strongest matching evidence is `evidence/radicle-seed-restart-check-2026-06-29.json`: one fresh reader cloned from the retained seed before restart, the retained seed stopped and restarted on the same local address with the same node ID, and another fresh reader cloned the same commit after restart.
+The strongest matching evidence is `evidence/radicle-vps-follower-public-readback-2026-06-29.json`: a fresh reader on `ubuntu-work` connected to the public `openclaw` VPS follower seed and cloned the retained RID at the expected commit.
 
 ## Generate The Current Recipe
 
@@ -34,26 +34,26 @@ The command reads `fixtures/live-evidence-index.json`, checks the strongest reta
 
 ## Maintainer-Assisted Direct-Seed Clone
 
-Loop 66 proved a local retained-seed restart/readback rehearsal, and Loop 65 proved an independent follower-seed handoff. Neither loop created a persistent public seed service, observed a publicly reachable seed address, or proved default public-routing availability. The supported community path is therefore direct seed:
+Loop 67 proved a public direct-seed readback through the `openclaw` VPS follower seed. Default public-routing availability is still not claimed, so the supported community path is direct seed:
 
-1. A maintainer or follower starts a reachable Radicle seed for the retained RID.
-2. The seed operator shares a session-specific peer address in this shape: `<seed-peer-id>@<reachable-host>:<port>`.
+1. Use the current public seed address: `z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776`.
+2. Connect to that peer from a fresh Radicle profile.
 3. The reader uses Radicle 1.9.1 or compatible tooling to connect to that peer and clone the retained RID.
-4. The reader checks that `git rev-parse HEAD` prints `4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8`.
+4. The reader checks that `git rev-parse HEAD` prints `610fc3da9757d0cb123aa5976db552b991b766d4`.
 
 Template commands:
 
 ```sh
 rad auth --alias decentralized-forge-reader --stdin
 rad node start
-rad node connect <seed-peer-id>@<reachable-host>:<port> --timeout 30s
-rad clone --timeout 120s --seed <seed-peer-id> rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy decentralized-forge
+rad node connect z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776 --timeout 30s
+rad clone --timeout 120s --seed z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy decentralized-forge
 cd decentralized-forge
 git rev-parse HEAD
 ```
 
 ## Claim Boundary
 
-This quickstart is a narrow reproduction path for the retained RID evidence. It is not a default public-routing claim, not a persistent public seed service claim, not a durability guarantee, not proof of broad Radicle network availability, not proof of censorship resistance, not proof of identity trust, not a security guarantee, not production readiness, and not a committed secret or key backup.
+This quickstart is a narrow reproduction path for the retained RID evidence. It is not a default public-routing claim, not a durability guarantee, not proof of broad Radicle network availability, not proof of censorship resistance, not proof of identity trust, not a security guarantee, not production readiness, not a committed secret or key backup, and not maintainer key material on the VPS.
 
 The persistent-seed plan is `docs/radicle-persistent-seed-plan.md`.
