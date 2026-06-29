@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-evidence-index.v1",
-  "loop": 65,
+  "loop": 66,
   "created_at": "2026-06-29",
   "purpose": "Secret-free index of narrow live/local evidence that can be rendered without upgrading unverified protocol claims.",
   "claim_policy": {
@@ -20,7 +20,8 @@
       "Current project commit published to the recorded Radicle RID under a fresh peer namespace, while default readback remained on the original delegate commit",
       "Retained project-scoped Radicle maintainer state published a new RID and fresh default plus direct-seed readbacks matched the source commit",
       "The same retained Radicle RID advanced from the Loop 62 commit to the next Git commit, with fresh direct-seed readback matching the updated commit",
-      "The same retained Radicle RID advanced to the current published commit, a fresh reader cloned from the retained seed, and a second fresh reader cloned from that first reader acting as a follower seed"
+      "The same retained Radicle RID advanced to the current published commit, a fresh reader cloned from the retained seed, and a second fresh reader cloned from that first reader acting as a follower seed",
+      "The same retained Radicle RID advanced to the current published commit, a fresh reader cloned from the retained seed before restart, and another fresh reader cloned from the retained seed after restart on the same local address"
     ],
     "forbidden_claims": [
       "Radicle durable public seed/network availability verified",
@@ -548,6 +549,58 @@
         "not a committed secret or key backup"
       ],
       "notes": "This is the first retained-RID follower-seed readback: one fresh reader cloned from the retained maintainer seed, then a second fresh reader cloned from the first reader acting as a follower seed. It improves usability evidence but still does not keep a seed service running or prove durable availability."
+    },
+    {
+      "id": "loop66-radicle-seed-restart-check",
+      "protocol": "radicle",
+      "scope": "radicle.retained_project_seed_restart_check",
+      "state": "retained-rid-seed-restart-readback-verified",
+      "verified_at": "2026-06-29",
+      "evidence_file": "evidence/radicle-seed-restart-check-2026-06-29.json",
+      "evidence_sha256": "3ba6788691d03a67f7d14155ea2b784886f40237a8f5eb10cd5aad9376e35c46",
+      "evidence_size_bytes": 41769,
+      "verification_summary": "The retained Radicle RID advanced to current commit 4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8; a fresh reader cloned from the retained seed before restart, the seed stopped and restarted on the same local address with the same node ID, and a second fresh reader cloned the same commit after restart.",
+      "live_network_action": true,
+      "local_cli_verified": true,
+      "selected_relay_readback_verified": false,
+      "synthetic": false,
+      "public_identifiers": {
+        "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+        "prior_verified_commit": "7262f69b82e442263d6261414f6b771be04c6b6f",
+        "current_source_commit": "4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8",
+        "same_retained_rid": true,
+        "advanced_from_prior_verified_commit": true,
+        "seed_listen_addr": "127.0.0.1:8799",
+        "seed_address_publicly_reachable": false,
+        "separate_host_readback_observed": false,
+        "first_seed_node_id": "z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr",
+        "restart_seed_node_id": "z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr",
+        "same_seed_node_after_restart": true,
+        "first_reader_readback_commit": "4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8",
+        "first_reader_readback_matches_source": true,
+        "second_reader_readback_commit": "4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8",
+        "second_reader_readback_matches_source": true,
+        "retained_state_scope": "host-local WSL retained state",
+        "reader_state_scope": "temporary WSL /tmp reader states removed after evidence capture",
+        "retained_state_committed": false,
+        "secret_values_recorded": false,
+        "persistent_seed_service_left_running": false
+      },
+      "non_claims": [
+        "not proof of permanent durability",
+        "not proof of future default public-routing availability",
+        "not proof of public seed address reachability",
+        "not proof of separate-network availability",
+        "not proof of censorship resistance",
+        "not a security guarantee",
+        "not proof of global replication",
+        "not proof of identity trust",
+        "not production readiness",
+        "not full Radicle compatibility",
+        "not an always-on persistent public seed service",
+        "not a committed secret or key backup"
+      ],
+      "notes": "This is a retained-RID seed restart rehearsal: one fresh reader cloned before restart and another cloned after restart from the retained seed on the same local address. It improves operational usability evidence but still does not publish a reachable public seed address or prove durable availability."
     }
   ]
 }

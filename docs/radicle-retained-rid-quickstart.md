@@ -8,13 +8,13 @@ The verified retained RID is:
 rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy
 ```
 
-Loop 65 verified that this RID advanced to commit:
+Loop 66 verified that this RID advanced to commit:
 
 ```text
-7262f69b82e442263d6261414f6b771be04c6b6f
+4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8
 ```
 
-The strongest matching evidence is `evidence/radicle-independent-availability-check-2026-06-29.json`: reader A cloned from the retained maintainer seed, then reader A acted as a follower seed and reader B cloned the same commit from reader A.
+The strongest matching evidence is `evidence/radicle-seed-restart-check-2026-06-29.json`: one fresh reader cloned from the retained seed before restart, the retained seed stopped and restarted on the same local address with the same node ID, and another fresh reader cloned the same commit after restart.
 
 ## Generate The Current Recipe
 
@@ -34,12 +34,12 @@ The command reads `fixtures/live-evidence-index.json`, checks the strongest reta
 
 ## Maintainer-Assisted Direct-Seed Clone
 
-Loop 65 proved an independent follower-seed handoff, but it still did not create a persistent public seed service or prove default public-routing availability. The supported community path is therefore direct seed:
+Loop 66 proved a local retained-seed restart/readback rehearsal, and Loop 65 proved an independent follower-seed handoff. Neither loop created a persistent public seed service, observed a publicly reachable seed address, or proved default public-routing availability. The supported community path is therefore direct seed:
 
 1. A maintainer or follower starts a reachable Radicle seed for the retained RID.
 2. The seed operator shares a session-specific peer address in this shape: `<seed-peer-id>@<reachable-host>:<port>`.
 3. The reader uses Radicle 1.9.1 or compatible tooling to connect to that peer and clone the retained RID.
-4. The reader checks that `git rev-parse HEAD` prints `7262f69b82e442263d6261414f6b771be04c6b6f`.
+4. The reader checks that `git rev-parse HEAD` prints `4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8`.
 
 Template commands:
 

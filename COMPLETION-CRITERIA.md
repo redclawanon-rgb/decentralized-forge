@@ -136,6 +136,8 @@ Loop 64 added the retained RID community handoff. `docs/radicle-retained-rid-qui
 
 Loop 65 added independent follower-seed readback evidence for the retained RID. `scripts/run_radicle_independent_availability_check.py` advanced the same RID to commit `7262f69b82e442263d6261414f6b771be04c6b6f`; reader A cloned from the retained maintainer seed, seeded the RID from its own temporary Radicle profile, and reader B cloned the same commit from reader A. `docs/radicle-persistent-seed-plan.md` records the minimum service plan for turning this into a reachable seed path later. This improves usability evidence, but it still does not prove default public routing, persistent public seed operation, permanent durability, broad replication, identity trust, security, or production readiness.
 
+Loop 66 added retained seed restart/readback evidence for the retained RID. `scripts/run_radicle_seed_restart_check.py` advanced the same RID to commit `4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8`; a fresh reader cloned from the retained seed before restart, the seed stopped and restarted on the same local address with the same node ID, and another fresh reader cloned the same commit after restart. This improves operational usability evidence, but it still does not prove public seed reachability, separate-network availability, default public routing, always-on persistent seed operation, permanent durability, broad replication, identity trust, security, or production readiness.
+
 ## Release Rule
 
 Milestone 1 is complete as an evidence-scoped static prototype after CI passed on `main` for commit `e69fd5b22e8ec27f52a11e582b705e212690a865`, the README points to this file, and `STATUS.md` names the current completion state without contradicting the evidence index.

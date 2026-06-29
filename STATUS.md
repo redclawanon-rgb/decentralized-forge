@@ -1334,9 +1334,28 @@ Verified evidence:
 
 Gate preserved: Loop 65 does not commit or bundle retained Radicle secret state, keep a persistent public seed service running, use production/private personal keys, spend money, contact specific people, or introduce permanent-durability, future-default-routing-availability, censorship-resistance, global-replication, security, SLSA, identity-trust, full-compatibility, or production-readiness claims.
 
+## Loop 66: Retained seed restart/readback rehearsal
+
+Outputs:
+
+- `scripts/run_radicle_seed_restart_check.py` advances the retained RID to the current checkout and tests retained seed restart/readback behavior.
+- `evidence/radicle-seed-restart-check-2026-06-29.json` and `.md` record retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` advancing to commit `4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8`.
+- A first fresh temporary Radicle profile cloned from the retained seed before restart.
+- The retained seed stopped and restarted on `127.0.0.1:8799` with the same retained node ID.
+- A second fresh temporary Radicle profile cloned from the retained seed after restart and read back the same commit.
+- `fixtures/live-evidence-index.json` now imports the Loop 66 evidence row and bumps the live evidence index to loop 66.
+- The retained quickstart helper now prefers the Loop 66 row when present and prints commit `4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8`.
+
+Verified evidence:
+
+- Direct evidence tests assert same retained RID, current source commit, pre-restart readback, retained seed stop, post-restart same node ID, post-restart readback, final stop, secret-free committed evidence, and non-claim boundaries.
+- Evidence-index tests assert the Loop 66 row, canonical evidence hash/size metadata, no public seed reachability claim, no separate-host readback claim, retained-state non-commitment, and bounded non-claims.
+
+Gate preserved: Loop 66 does not publish a stable public seed address, prove separate-network reachability, leave a persistent public seed service running, commit or bundle retained Radicle secret state, use production/private personal keys, spend money, contact specific people, or introduce permanent-durability, future-default-routing-availability, censorship-resistance, global-replication, security, SLSA, identity-trust, full-compatibility, or production-readiness claims.
+
 ## Next recommended loop
 
-**Next:** Move from temporary follower-seed evidence to a reachable seed pilot: choose a free host/network target, run a bounded persistent-seed dry run or service rehearsal, and verify clone/readback from a separate network context before publishing any stable seed address. The caveat remains that permanent durability still requires persistent seeding or independent mirrors.
+**Next:** Move from local seed-restart evidence to a reachable seed pilot: choose a free host/network target, run the retained seed on a stable reachable address, and verify clone/readback from a separate network context before publishing any stable seed address. The caveat remains that permanent durability still requires persistent seeding or independent mirrors.
 
 Recent completed loops:
 
@@ -1374,6 +1393,7 @@ Recent completed loops:
 - Loop 63: retained Radicle same-RID update - complete as the same RID advanced to commit `f800bae387f33452fdeb79ecf5c795d25f7246ac`, with fresh direct-seed readback matching the updated commit and default public-routing readback not observed.
 - Loop 64: retained RID community direct-seed quickstart - complete as `docs/radicle-retained-rid-quickstart.md` plus `radicle-retained-quickstart`, a read-only evidence-derived recipe for maintainer-assisted direct-seed clones.
 - Loop 65: retained RID independent follower-seed readback - complete as the same RID advanced to commit `7262f69b82e442263d6261414f6b771be04c6b6f`; reader A cloned from retained maintainer seed and reader B cloned from reader A acting as a follower seed.
+- Loop 66: retained seed restart/readback rehearsal - complete as the same RID advanced to commit `4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8`; fresh readers cloned before and after retained seed restart on the same local address.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

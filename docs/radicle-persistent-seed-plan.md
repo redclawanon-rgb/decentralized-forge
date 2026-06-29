@@ -5,13 +5,15 @@ This plan defines the minimum path from the current retained-RID evidence to a u
 ## Current Evidence
 
 - Retained RID: `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy`
-- Current verified commit: `7262f69b82e442263d6261414f6b771be04c6b6f`
+- Current verified commit: `4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8`
+- Loop 66 evidence: `evidence/radicle-seed-restart-check-2026-06-29.json`
 - Loop 65 evidence: `evidence/radicle-independent-availability-check-2026-06-29.json`
 - Reader A cloned the retained RID from the retained maintainer seed.
 - Reader A then acted as a follower seed.
 - Reader B cloned the retained RID from reader A and read back the same commit.
+- Loop 66 started the retained seed on a local address, verified a fresh clone, stopped the seed, restarted it on the same local address with the same retained node ID, and verified a second fresh clone after restart.
 
-This proves an independent follower-seed handoff for one run. It does not prove durability or broad public routing.
+This proves an independent follower-seed handoff and a local seed restart/readback rehearsal. It does not prove durability, broad public routing, public reachability, or separate-network availability.
 
 ## Usable Product Claim To Target
 
@@ -62,7 +64,7 @@ rad node start
 rad node connect <seed-peer-id>@<reachable-host>:<port> --timeout 30s
 rad clone --timeout 120s --seed <seed-peer-id> rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy decentralized-forge
 cd decentralized-forge
-test "$(git rev-parse HEAD)" = "7262f69b82e442263d6261414f6b771be04c6b6f"
+test "$(git rev-parse HEAD)" = "4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8"
 ```
 
 Record health-check evidence only if command output is secret-free.

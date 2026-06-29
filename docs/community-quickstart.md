@@ -80,6 +80,8 @@ Loop 63 adds `evidence/radicle-retained-update-check-2026-06-29.json`. The same 
 
 Loop 65 adds `evidence/radicle-independent-availability-check-2026-06-29.json`. The same retained RID advanced to commit `7262f69b82e442263d6261414f6b771be04c6b6f`; a fresh reader cloned from the retained maintainer seed, then a second fresh reader cloned from the first reader acting as a follower seed.
 
+Loop 66 adds `evidence/radicle-seed-restart-check-2026-06-29.json`. The same retained RID advanced to commit `4c8cd6183e2e12d1c62af7d2f013fb085b2d6bf8`; a fresh reader cloned from the retained seed before restart, the seed stopped and restarted on the same local address with the same retained node ID, and another fresh reader cloned the same commit after restart.
+
 The current community clone path for that retained RID is `docs/radicle-retained-rid-quickstart.md` or the read-only helper:
 
 ```sh
@@ -88,4 +90,4 @@ python scripts/forge_registry.py radicle-retained-quickstart
 
 That path requires a seed operator to provide a reachable seed address in the form `<seed-peer-id>@<reachable-host>:<port>` and verifies the clone by checking `git rev-parse HEAD` against the expected commit printed by the helper.
 
-Treat those as exact run evidence only. They do not prove permanent durability, future default public-routing availability, broad network replication, identity trust, security, or production readiness.
+Treat those as exact run evidence only. They do not prove permanent durability, future default public-routing availability, public seed address reachability, separate-network availability, broad network replication, identity trust, security, or production readiness.

@@ -265,32 +265,53 @@ def live_evidence_entry(entry_id: str, index_path: Path = DEFAULT_LIVE_EVIDENCE_
 
 def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_INDEX) -> dict:
     try:
-        entry = live_evidence_entry("loop65-radicle-independent-availability-check", index_path)
+        entry = live_evidence_entry("loop66-radicle-seed-restart-check", index_path)
     except ValueError:
-        entry = live_evidence_entry("loop63-radicle-retained-update-check", index_path)
+        try:
+            entry = live_evidence_entry("loop65-radicle-independent-availability-check", index_path)
+        except ValueError:
+            entry = live_evidence_entry("loop63-radicle-retained-update-check", index_path)
     public = entry.get("public_identifiers")
     if not isinstance(public, dict):
         raise ValueError(f"{entry.get('id', 'retained Radicle evidence')} missing public_identifiers")
 
     is_independent_availability = entry.get("id") == "loop65-radicle-independent-availability-check"
+    is_seed_restart = entry.get("id") == "loop66-radicle-seed-restart-check"
     required = ["rid", "current_source_commit", "retained_state_committed", "secret_values_recorded"]
-    if is_independent_availability:
+    if is_seed_restart:
+        required.extend(["second_reader_readback_commit", "second_reader_readback_matches_source", "same_seed_node_after_restart"])
+    elif is_independent_availability:
         required.extend(["reader_b_readback_commit", "reader_b_readback_matches_source", "follower_seed_succeeded"])
     else:
         required.extend(["direct_seed_readback_commit", "direct_seed_readback_matches_source", "default_readback_matches_source"])
     missing = [key for key in required if key not in public]
     if missing:
         raise ValueError(f"{entry['id']} retained Radicle evidence missing fields: {', '.join(missing)}")
-    readback_key = "reader_b_readback_commit" if is_independent_availability else "direct_seed_readback_commit"
-    matches_key = "reader_b_readback_matches_source" if is_independent_availability else "direct_seed_readback_matches_source"
+    if is_seed_restart:
+        readback_key = "second_reader_readback_commit"
+        matches_key = "second_reader_readback_matches_source"
+    elif is_independent_availability:
+        readback_key = "reader_b_readback_commit"
+        matches_key = "reader_b_readback_matches_source"
+    else:
+        readback_key = "direct_seed_readback_commit"
+        matches_key = "direct_seed_readback_matches_source"
     if public[readback_key] != public["current_source_commit"]:
         raise ValueError(f"{entry['id']} readback commit does not match current source commit")
     if public[matches_key] is not True:
         raise ValueError(f"{entry['id']} readback did not match source")
+    if is_seed_restart and public["same_seed_node_after_restart"] is not True:
+        raise ValueError("loop66 seed restart did not preserve the retained seed node identity")
     if is_independent_availability and public["follower_seed_succeeded"] is not True:
         raise ValueError("loop65 follower seed did not succeed")
     if public["retained_state_committed"] is not False or public["secret_values_recorded"] is not False:
         raise ValueError(f"{entry['id']} retained Radicle evidence is not secret-free")
+    if is_seed_restart:
+        availability_mode = "local seed restart readback"
+    elif is_independent_availability:
+        availability_mode = "independent follower-seed readback"
+    else:
+        availability_mode = "maintainer direct-seed readback"
 
     return {
         "schema_version": "decentralized-forge.radicle-retained-quickstart.v1",
@@ -299,8 +320,11 @@ def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_I
         "rid": public["rid"],
         "expected_commit": public["current_source_commit"],
         "readback_commit": public[readback_key],
-        "availability_mode": "independent follower-seed readback" if is_independent_availability else "maintainer direct-seed readback",
+        "availability_mode": availability_mode,
         "follower_seed_succeeded": bool(public.get("follower_seed_succeeded", False)),
+        "seed_restart_verified": bool(public.get("same_seed_node_after_restart", False)),
+        "persistent_seed_service_left_running": bool(public.get("persistent_seed_service_left_running", False)),
+        "seed_address_publicly_reachable": bool(public.get("seed_address_publicly_reachable", False)),
         "default_public_routing_observed": bool(public.get("default_readback_matches_source", False)),
         "retained_state_committed": public["retained_state_committed"],
         "secret_values_recorded": public["secret_values_recorded"],
@@ -340,6 +364,9 @@ def format_retained_radicle_quickstart(model: dict) -> str:
         f"- expected commit: `{model['expected_commit']}`",
         f"- availability mode: `{model['availability_mode']}`",
         f"- follower seed succeeded in evidence: `{str(model['follower_seed_succeeded']).lower()}`",
+        f"- seed restart verified in evidence: `{str(model['seed_restart_verified']).lower()}`",
+        f"- public seed address observed: `{str(model['seed_address_publicly_reachable']).lower()}`",
+        f"- persistent seed service left running: `{str(model['persistent_seed_service_left_running']).lower()}`",
         f"- default public routing observed: `{str(model['default_public_routing_observed']).lower()}`",
         f"- seed address needed: `{model['seed_peer_hint']}`",
         "",
@@ -762,6 +789,7 @@ def collect_verification_bundle_paths() -> list[Path]:
         "scripts/run_radicle_project_repo_smoke.py",
         "scripts/run_radicle_retained_delegate_check.py",
         "scripts/run_radicle_retained_update_check.py",
+        "scripts/run_radicle_seed_restart_check.py",
         "scripts/run_radicle_update_continuity_check.py",
         "scripts/verify_car_cid_fixture.mjs",
         "scripts/verify_helia_fixture.mjs",
@@ -1769,6 +1797,7 @@ def command_verify_local(args: argparse.Namespace) -> int:
         [sys.executable, "-m", "py_compile", "scripts/run_radicle_project_repo_smoke.py"],
         [sys.executable, "-m", "py_compile", "scripts/run_radicle_retained_delegate_check.py"],
         [sys.executable, "-m", "py_compile", "scripts/run_radicle_retained_update_check.py"],
+        [sys.executable, "-m", "py_compile", "scripts/run_radicle_seed_restart_check.py"],
         [sys.executable, "-m", "py_compile", "scripts/run_radicle_update_continuity_check.py"],
         [
             sys.executable,
