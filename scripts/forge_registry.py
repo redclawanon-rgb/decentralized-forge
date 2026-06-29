@@ -527,6 +527,88 @@ def attach_local_artifact_guidance(registry_path: Path) -> list[str]:
     ]
 
 
+def default_onboarding_registry_path(repo_path: Path, project_id: str | None = None) -> Path:
+    metadata = local_repo_metadata(repo_path)
+    slug = slugify_project_id(project_id or metadata["repo_name"])
+    return ROOT / "fixtures" / f"{slug}.registry.json"
+
+
+def onboard_local_project(
+    repo_path: Path,
+    artifact_path: Path,
+    *,
+    registry_output: Path | None = None,
+    summary_output: Path | None = None,
+    html_output: Path | None = None,
+    bundle_output: Path = DEFAULT_BUNDLE_OUTPUT,
+    report_json_output: Path | None = None,
+    project_id: str | None = None,
+    project_name: str | None = None,
+    description: str | None = None,
+    version: str = "0.0.0-local",
+    tag: str | None = None,
+    artifact_name: str | None = None,
+    media_type: str | None = None,
+    timestamp: str | None = None,
+) -> dict:
+    registry_path = registry_output or default_onboarding_registry_path(repo_path, project_id)
+    stem = registry_path.stem
+    summary_path = summary_output or ROOT / "output" / f"{stem}.summary.json"
+    html_path = html_output or ROOT / "output" / f"{stem}.html"
+
+    registry = scaffold_registry_from_repo(
+        repo_path,
+        project_id=project_id,
+        name=project_name,
+        description=description,
+    )
+    write_json(registry_path, registry)
+
+    registry = attach_local_artifact_to_registry(
+        registry_path,
+        artifact_path,
+        version=version,
+        tag=tag,
+        name=artifact_name,
+        media_type=media_type,
+        timestamp=timestamp,
+    )
+    write_json(registry_path, registry)
+    validated_registry = render_project_page.load_registry(registry_path)
+    write_json(summary_path, registry_summary(validated_registry, registry_path))
+
+    render_exit = render_project_page.main([str(registry_path), str(html_path)])
+    if render_exit:
+        raise ValueError(f"render failed for onboarded registry: {registry_path}")
+
+    manifest = create_verification_bundle(bundle_output)
+    bundle_errors = verify_verification_bundle(bundle_output)
+    if bundle_errors:
+        raise ValueError(f"onboarding bundle verification failed: {'; '.join(bundle_errors)}")
+    report = bundle_report(bundle_output)
+    if report_json_output is not None:
+        write_json(report_json_output, report)
+
+    return {
+        "registry": validated_registry,
+        "paths": {
+            "registry": registry_path,
+            "summary": summary_path,
+            "html": html_path,
+            "bundle": bundle_output,
+            "report_json": report_json_output,
+        },
+        "bundle_manifest": manifest,
+        "bundle_report": report,
+        "non_claims": [
+            "local onboarding does not publish protocol events",
+            "local onboarding does not sign events or use private keys",
+            "local onboarding does not add, fetch, or pin IPFS content",
+            "local onboarding does not claim durability, censorship resistance, broad availability, security, SLSA compliance, or production readiness",
+        ],
+    }
+
+
 def bundle_role(path: str) -> str:
     if path.startswith("schemas/"):
         return "schema"
@@ -545,7 +627,7 @@ def bundle_role(path: str) -> str:
 
 def collect_verification_bundle_paths() -> list[Path]:
     paths: set[Path] = set()
-    for pattern in ["schemas/*.json", "fixtures/*.json", "fixtures/*.txt", "evidence/*"]:
+    for pattern in ["schemas/*.json", "fixtures/*.json", "fixtures/*.txt", "evidence/*", "output/*.html", "output/*.summary.json"]:
         paths.update(path for path in ROOT.glob(pattern) if path.is_file())
 
     for relative_path in [
@@ -565,11 +647,7 @@ def collect_verification_bundle_paths() -> list[Path]:
         "scripts/preflight_static_artifact.py",
         "scripts/verify_car_cid_fixture.mjs",
         "scripts/verify_helia_fixture.mjs",
-        "output/demo-project.html",
-        "output/portable-lab.html",
         "output/forge-app.html",
-        "output/demo-project.summary.json",
-        "output/portable-lab.summary.json",
     ]:
         path = ROOT / relative_path
         if path.is_file():
@@ -1296,6 +1374,43 @@ def command_attach_local_artifact(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_onboard_local_project(args: argparse.Namespace) -> int:
+    result = onboard_local_project(
+        args.repository,
+        args.artifact,
+        registry_output=args.registry,
+        summary_output=args.summary,
+        html_output=args.html,
+        bundle_output=args.bundle,
+        report_json_output=args.report_json,
+        project_id=args.project_id,
+        project_name=args.project_name,
+        description=args.description,
+        version=args.version,
+        tag=args.tag,
+        artifact_name=args.artifact_name,
+        media_type=args.media_type,
+        timestamp=args.timestamp,
+    )
+    paths = result["paths"]
+    report = result["bundle_report"]
+    registry = result["registry"]
+    print(f"onboarded local project: {registry['project']['id']}")
+    print("- scope: local scaffold, local artifact metadata, local render, and local bundle/report refresh only")
+    print(f"- registry: {relative(paths['registry'])}")
+    print(f"- summary: {relative(paths['summary'])}")
+    print(f"- html: {relative(paths['html'])}")
+    print(f"- bundle: {relative(paths['bundle'])}")
+    if paths["report_json"] is not None:
+        print(f"- report_json: {relative(paths['report_json'])}")
+    print(f"- bundle_valid: {str(report['verification']['valid']).lower()}")
+    print(f"- bundle_files: {report['bundle']['file_count']}")
+    print("- non-claims:")
+    for item in result["non_claims"]:
+        print(f"  - {item}")
+    return 0
+
+
 def command_render_app(args: argparse.Namespace) -> int:
     render_args = [str(args.output)]
     for registry in args.registries:
@@ -1583,6 +1698,27 @@ def build_parser() -> argparse.ArgumentParser:
     attach_local_artifact.add_argument("--media-type", help="Override guessed media type")
     attach_local_artifact.add_argument("--timestamp", help="Override updated_at and verification timestamp")
     attach_local_artifact.set_defaults(func=command_attach_local_artifact)
+
+    onboard = subparsers.add_parser(
+        "onboard-local-project",
+        help="Scaffold, attach a local artifact, validate, render, and refresh bundle/report outputs",
+    )
+    onboard.add_argument("repository", type=Path, help="Local Git worktree to onboard")
+    onboard.add_argument("artifact", type=Path, help="Local artifact file to hash and reference")
+    onboard.add_argument("--registry", type=Path, help="Registry fixture JSON to write; defaults to fixtures/<project-id>.registry.json")
+    onboard.add_argument("--summary", type=Path, help="Summary JSON to write; defaults to output/<registry-stem>.summary.json")
+    onboard.add_argument("--html", type=Path, help="Rendered HTML to write; defaults to output/<registry-stem>.html")
+    onboard.add_argument("--bundle", type=Path, default=DEFAULT_BUNDLE_OUTPUT, help="Verification bundle to refresh")
+    onboard.add_argument("--report-json", type=Path, help="Optional bundle report JSON to write after refresh")
+    onboard.add_argument("--project-id", help="Override the generated project id")
+    onboard.add_argument("--project-name", help="Override the generated project name")
+    onboard.add_argument("--description", help="Override the generated project description")
+    onboard.add_argument("--version", default="0.0.0-local", help="Release version to create or update")
+    onboard.add_argument("--tag", help="Release tag; defaults to --version")
+    onboard.add_argument("--artifact-name", help="Artifact display name; defaults to the file name")
+    onboard.add_argument("--media-type", help="Override guessed media type")
+    onboard.add_argument("--timestamp", help="Override artifact verification timestamp")
+    onboard.set_defaults(func=command_onboard_local_project)
 
     render_app = subparsers.add_parser("render-app", help="Render the static forge workbench app")
     render_app.add_argument("output", type=Path, nargs="?", default=render_forge_app.DEFAULT_OUTPUT)

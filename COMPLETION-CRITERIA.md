@@ -63,11 +63,12 @@ Status: complete.
 
 Status: complete.
 
-- `scripts/forge_registry.py` provides `validate`, `scaffold-registry`, `attach-local-artifact`, `render`, `render-app`, `export-summary`, `export-bundle`, `verify-bundle`, `verify-bundle-cleanroom`, `report-bundle`, `export-bundle-release-note`, and `verify-local` commands.
+- `scripts/forge_registry.py` provides `validate`, `scaffold-registry`, `attach-local-artifact`, `onboard-local-project`, `render`, `render-app`, `export-summary`, `export-bundle`, `verify-bundle`, `verify-bundle-cleanroom`, `report-bundle`, `export-bundle-release-note`, and `verify-local` commands.
 - The CLI uses the same validation paths as the renderer and tests.
 - Deterministic JSON summaries are generated under `output/*.summary.json`.
 - `scaffold-registry` creates a valid unsigned local registry fixture from a local Git worktree with placeholder maintainer identity and explicit non-claims.
 - `attach-local-artifact` updates a registry fixture with raw file SHA-256, byte size, media type, `file://` URI, and local-only availability/non-claims without IPFS add/fetch/pin, signing, paid storage, or durability claims.
+- `onboard-local-project` chains scaffold, local artifact attach, validation, summary export, rendering, bundle refresh, and bundle report export without live protocol, storage, signing, or production-readiness claims.
 
 ### Lane C: Multi-Project Fixture Coverage
 

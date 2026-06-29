@@ -55,10 +55,9 @@ None of those labels means production readiness, durable storage, global propaga
 
 The intended public tool flow is:
 
-1. Scaffold a local registry JSON file with `python scripts/forge_registry.py scaffold-registry path/to/repo fixtures/project.registry.json`.
-2. Attach local release artifact metadata with `python scripts/forge_registry.py attach-local-artifact fixtures/project.registry.json path/to/artifact --version 0.1.0-local --tag v0.1.0-local`.
-3. Run local validation and rendering.
-4. Add optional transport evidence from Nostr, Radicle, IPFS, or hosted attestations.
-5. Export a static report and evidence bundle that others can verify without trusting the original platform.
+1. Run the chained local path with `python scripts/forge_registry.py onboard-local-project path/to/repo path/to/artifact --project-id project --version 0.1.0-local --tag v0.1.0-local`.
+2. Or run the individual steps: scaffold with `scaffold-registry`, attach artifact metadata with `attach-local-artifact`, then validate and render.
+3. Add optional transport evidence from Nostr, Radicle, IPFS, or hosted attestations.
+4. Export a static report and evidence bundle that others can verify without trusting the original platform.
 
-The current bundle workflow is local and fixture-backed. Local artifact attachment records file hash, size, media type, and `file://` availability only; it does not add/fetch/pin IPFS content, sign releases, or prove durable availability. Until live importers are broader and evidence-backed, use the fixtures as examples and keep new evidence rows explicit, bounded, and secret-free.
+The current bundle workflow is local and fixture-backed. Local onboarding records Git metadata, file hash, size, media type, and `file://` availability only; it does not add/fetch/pin IPFS content, sign releases, publish protocol events, or prove durable availability. Until live importers are broader and evidence-backed, use the fixtures as examples and keep new evidence rows explicit, bounded, and secret-free.

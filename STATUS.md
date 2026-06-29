@@ -1142,9 +1142,26 @@ Verified evidence:
 
 Gate preserved: Loop 54 only reads local file bytes and updates a local fixture. It does not publish protocol events, sign events, fetch from relays or gateways, add/fetch/pin IPFS content, start daemons, spend money, use wallets, import private keys, replace registry provenance, or introduce durability, censorship-resistance, broad-availability, security, SLSA, or production-readiness claims.
 
+### Loop 55: Local project onboarding command
+
+Status: **complete as chained local onboarding; no live protocol/storage/signing action**.
+
+Outputs:
+
+- `scripts/forge_registry.py onboard-local-project <repo> <artifact>` chains local registry scaffold, local artifact metadata attachment, validation, summary export, HTML rendering, verification bundle refresh, bundle verification, and bundle report generation.
+- The command defaults to `fixtures/<project-id>.registry.json`, `output/<registry-stem>.summary.json`, `output/<registry-stem>.html`, and `output/decentralized-forge-verification-bundle.zip`, with options to override each output for dry runs.
+- `collect_verification_bundle_paths()` now includes repository-local `output/*.html` and `output/*.summary.json` generated outputs in addition to the fixed workbench artifacts.
+- `npm run onboard:local-project -- <repo> <artifact> --project-id <id> --version <version>` exposes the workflow through package scripts.
+
+Verified evidence:
+
+- Tests create a temporary Git repository and binary artifact, run the onboarding command with temporary output paths, validate the registry, inspect summary/HTML output, verify the produced bundle, and assert the report/non-claim boundaries.
+
+Gate preserved: Loop 55 only reads local Git metadata and local file bytes, then writes local fixture/generated/bundle/report outputs. It does not publish protocol events, sign events, fetch from relays or gateways, add/fetch/pin IPFS content, start daemons, spend money, use wallets, import private keys, replace registry provenance, or introduce durability, censorship-resistance, broad-availability, security, SLSA, or production-readiness claims.
+
 ## Next recommended loop
 
-**Next:** Add a local project onboarding command that chains scaffold, local artifact attach, validation, summary export, rendering, and bundle/report refresh for an arbitrary local project while preserving the same non-live/non-signing boundaries. The still-blocked parallel lane is locating an approved `rad` CLI on this Windows host for broader disposable Radicle clone/sync checks.
+**Next:** Add a committed onboarding sample fixture/report generated through `onboard-local-project` against a tiny local sample repository, so reviewers can inspect the full one-command path without supplying their own project. The still-blocked parallel lane is locating an approved `rad` CLI on this Windows host for broader disposable Radicle clone/sync checks.
 
 Recent completed loops:
 
@@ -1171,6 +1188,7 @@ Recent completed loops:
 - Loop 52: bundle release-note export - complete as `export-bundle-release-note`; emits shareable markdown tied to the current commit, bundle digest, report summary, non-claims, gaps, and checklist stop conditions.
 - Loop 53: local registry import scaffold - complete as `scaffold-registry`; creates a valid unsigned local registry fixture from a local Git worktree with placeholder identity and non-claim guidance.
 - Loop 54: local artifact metadata attach - complete as `attach-local-artifact`; records local file hash, size, media type, URI, availability, and verification state without IPFS add/fetch/pin or signing.
+- Loop 55: local project onboarding command - complete as `onboard-local-project`; chains scaffold, artifact attach, validation, summary, render, bundle refresh, and report generation with local-only boundaries.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

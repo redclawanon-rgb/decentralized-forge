@@ -495,6 +495,96 @@ class RegistryFixtureTests(unittest.TestCase):
             for unsupported_claim in ["production ready", "durably stored", "pinned and available", "slsa compliant"]:
                 self.assertNotIn(unsupported_claim, combined)
 
+    def test_onboard_local_project_chains_local_outputs_and_bundle_report(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            repo = Path(tmpdir) / "onboard-widget"
+            repo.mkdir()
+            subprocess.run(["git", "init", "-b", "main"], cwd=repo, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+            (repo / "README.md").write_text("# Onboard Widget\n", encoding="utf-8")
+            subprocess.run(["git", "add", "README.md"], cwd=repo, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+            subprocess.run(
+                [
+                    "git",
+                    "-c",
+                    "user.name=Fixture Author",
+                    "-c",
+                    "user.email=fixture@example.invalid",
+                    "commit",
+                    "-m",
+                    "initial",
+                ],
+                cwd=repo,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True,
+            )
+            artifact_path = Path(tmpdir) / "onboard-widget.bin"
+            artifact_bytes = b"\x00local onboarding artifact bytes\n"
+            artifact_path.write_bytes(artifact_bytes)
+            registry_path = Path(tmpdir) / "onboard-widget.registry.json"
+            summary_path = Path(tmpdir) / "onboard-widget.summary.json"
+            html_path = Path(tmpdir) / "onboard-widget.html"
+            bundle_path = Path(tmpdir) / "verification-bundle.zip"
+            report_path = Path(tmpdir) / "bundle-report.json"
+
+            exit_code = forge_registry.main([
+                "onboard-local-project",
+                str(repo),
+                str(artifact_path),
+                "--registry",
+                str(registry_path),
+                "--summary",
+                str(summary_path),
+                "--html",
+                str(html_path),
+                "--bundle",
+                str(bundle_path),
+                "--report-json",
+                str(report_path),
+                "--project-id",
+                "onboard-widget",
+                "--project-name",
+                "Onboard Widget",
+                "--version",
+                "0.2.0-local",
+                "--tag",
+                "v0.2.0-local",
+                "--timestamp",
+                "2026-06-29T00:00:00Z",
+            ])
+            self.assertEqual(exit_code, 0)
+
+            registry = json.loads(registry_path.read_text(encoding="utf-8"))
+            render_project_page.validate_registry(registry)
+            artifact = registry["releases"][0]["artifacts"][0]
+            expected_sha256 = hashlib.sha256(artifact_bytes).hexdigest()
+            self.assertEqual(registry["project"]["id"], "onboard-widget")
+            self.assertEqual(registry["project"]["name"], "Onboard Widget")
+            self.assertEqual(registry["releases"][0]["version"], "0.2.0-local")
+            self.assertEqual(artifact["name"], "onboard-widget.bin")
+            self.assertEqual(artifact["media_type"], "application/octet-stream")
+            self.assertEqual(artifact["size_bytes"], len(artifact_bytes))
+            self.assertEqual(artifact["sha256"], expected_sha256)
+            self.assertTrue(artifact["uri"].startswith("file://"))
+
+            summary = json.loads(summary_path.read_text(encoding="utf-8"))
+            self.assertEqual(summary["project"]["id"], "onboard-widget")
+            self.assertEqual(summary["counts"]["artifacts"], 1)
+            self.assertEqual(summary["artifact_names"], ["onboard-widget.bin"])
+            html = html_path.read_text(encoding="utf-8")
+            self.assertIn("Onboard Widget", html)
+            self.assertIn("onboard-widget.bin", html)
+            self.assertEqual(forge_registry.verify_verification_bundle(bundle_path), [])
+            report = json.loads(report_path.read_text(encoding="utf-8"))
+            self.assertTrue(report["verification"]["valid"])
+            self.assertEqual(report["source"], str(bundle_path))
+            combined = json.dumps({"registry": registry, "summary": summary, "report": report}).lower()
+            for required_boundary in ["local registry scaffold only", "local file metadata only", "no ipfs add", "not-pinned"]:
+                self.assertIn(required_boundary, combined)
+            for unsupported_claim in ["production ready", "durably stored", "pinned and available", "slsa compliant"]:
+                self.assertNotIn(unsupported_claim, combined)
+
     def test_live_gate_inventory_is_read_only_and_secret_free(self):
         payload = live_gate_inventory.inventory()
         self.assertEqual(payload["schema_version"], "decentralized-forge.live-gate-inventory.v1")

@@ -14,6 +14,7 @@
     "import:keyless-attestation": "python scripts/import_keyless_attestation_registry.py",
     "scaffold:registry": "python scripts/forge_registry.py scaffold-registry",
     "attach:artifact": "python scripts/forge_registry.py attach-local-artifact",
+    "onboard:local-project": "python scripts/forge_registry.py onboard-local-project",
     "verify:evidence-index": "python scripts/forge_registry.py validate-evidence-index fixtures/live-evidence-index.json",
     "refresh:evidence-hashes": "python scripts/forge_registry.py refresh-evidence-hashes fixtures/live-evidence-index.json",
     "forge:doctor": "python scripts/forge_registry.py doctor",

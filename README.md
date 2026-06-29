@@ -117,12 +117,13 @@ The workbench is a static local app over committed fixtures/evidence. Its Nostr 
 Scaffold a starter registry fixture from a local Git worktree:
 
 ```sh
+python3 scripts/forge_registry.py onboard-local-project ../some-local-repo path/to/artifact --project-id some-local-repo --version 0.1.0-local --tag v0.1.0-local
 python3 scripts/forge_registry.py scaffold-registry ../some-local-repo fixtures/some-local-repo.registry.json
 python3 scripts/forge_registry.py attach-local-artifact fixtures/some-local-repo.registry.json path/to/artifact --version 0.1.0-local --tag v0.1.0-local
 python3 scripts/forge_registry.py validate fixtures/some-local-repo.registry.json
 ```
 
-The scaffold command reads local Git metadata only. It writes an unsigned local fixture with placeholder maintainer identity, file-based clone URL, absent artifact/provenance claims, and explicit non-claims. The local artifact attach command records exact file SHA-256, byte size, media type, `file://` URI, and local-only availability while preserving no-IPFS, no-pinning, no-signing, no-paid-storage, and no-durability boundaries. Review and replace the placeholder identity, then add protocol evidence only after it is separately verified.
+The onboarding command chains scaffold, local artifact attachment, validation, summary export, HTML rendering, and bundle/report refresh. The scaffold command reads local Git metadata only. It writes an unsigned local fixture with placeholder maintainer identity, file-based clone URL, absent artifact/provenance claims, and explicit non-claims. The local artifact attach command records exact file SHA-256, byte size, media type, `file://` URI, and local-only availability while preserving no-IPFS, no-pinning, no-signing, no-paid-storage, and no-durability boundaries. Review and replace the placeholder identity, then add protocol evidence only after it is separately verified.
 
 Regenerate and verify the portable verification bundle:
 
