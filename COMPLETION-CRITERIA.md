@@ -37,6 +37,8 @@ python scripts/forge_registry.py render fixtures/portable-lab.registry.json outp
 python scripts/forge_registry.py render-app output/forge-app.html
 python scripts/forge_registry.py export-summary fixtures/example-project.registry.json output/demo-project.summary.json
 python scripts/forge_registry.py export-summary fixtures/portable-lab.registry.json output/portable-lab.summary.json
+python scripts/forge_registry.py export-bundle output/decentralized-forge-verification-bundle.zip
+python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip
 python scripts/live_gate_inventory.py
 python -m unittest discover -s tests
 npm ci
@@ -58,7 +60,7 @@ Status: complete.
 
 Status: complete.
 
-- `scripts/forge_registry.py` provides `validate`, `render`, `render-app`, `export-summary`, and `verify-local` commands.
+- `scripts/forge_registry.py` provides `validate`, `render`, `render-app`, `export-summary`, `export-bundle`, `verify-bundle`, and `verify-local` commands.
 - The CLI uses the same validation paths as the renderer and tests.
 - Deterministic JSON summaries are generated under `output/*.summary.json`.
 
@@ -78,7 +80,15 @@ Status: active as a static local app.
 - The app provides project overview, issue/patch inspection, release evidence, evidence filtering, and unsigned local Nostr issue/patch draft generation.
 - It does not sign, publish, fetch, open WebSockets, use private keys, host a service, or claim production forge readiness.
 
-### Lane E: Optional Live Evidence
+### Lane E: Portable Verification Bundle
+
+Status: active as a deterministic generated artifact.
+
+- `output/decentralized-forge-verification-bundle.zip` contains committed fixtures, schemas, source evidence files, generated HTML, summaries, the static workbench app, verifier scripts, and `verification-bundle.manifest.json`.
+- `python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip` validates manifest schema, file sizes, SHA-256 hashes, and live-evidence-index bindings.
+- It does not replace signing/provenance verification, durable storage evidence, availability evidence, SLSA compliance, or production security review.
+
+### Lane F: Optional Live Evidence
 
 Status: active under standing approval.
 

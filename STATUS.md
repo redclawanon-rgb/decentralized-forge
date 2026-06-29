@@ -1020,9 +1020,27 @@ Verified evidence:
 
 Gate preserved: Loop 47 is local static UI generation only. It does not open WebSockets, fetch from relays, sign events, publish events, import private keys, spend money, use wallets, start persistent services, replace registry provenance, or introduce durability, censorship-resistance, broad-availability, security, SLSA, or production-readiness claims.
 
+### Loop 48: Portable verification bundle
+
+Status: **complete as deterministic local bundle export/verification; no live protocol/storage/signing action**.
+
+Outputs:
+
+- `scripts/forge_registry.py export-bundle output/decentralized-forge-verification-bundle.zip` regenerates the portable outputs and writes a deterministic ZIP with fixed file order and ZIP metadata.
+- The bundle includes schemas, fixtures, source evidence files, generated HTML, deterministic summaries, `output/forge-app.html`, verifier scripts, package metadata, and `verification-bundle.manifest.json`.
+- `scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip` validates the manifest, file sizes, SHA-256 hashes, required payloads, and live-evidence-index evidence bindings.
+- CI exports/verifies the bundle and includes it in keyless artifact attestation subjects.
+
+Verified evidence:
+
+- `python -m unittest tests.test_registry_fixture.RegistryFixtureTests.test_verification_bundle_is_current_and_self_verifying` passed.
+- Bundle verification passed for `output/decentralized-forge-verification-bundle.zip`; manifest records 56 payload files and 9 indexed evidence entries.
+
+Gate preserved: Loop 48 packages existing local/generated evidence only. It does not publish protocol events, sign events, fetch from relays, pin storage, start daemons, spend money, use wallets, import private keys, replace registry provenance, or introduce durability, censorship-resistance, broad-availability, security, SLSA, or production-readiness claims.
+
 ## Next recommended loop
 
-**Next:** Package the product surface into a portable verification bundle command that includes registry JSON, source evidence files, evidence-index hashes, deterministic summaries, rendered HTML, the static workbench app, and a verifier manifest. The still-blocked parallel lane is locating an approved `rad` CLI on this Windows host for broader disposable Radicle clone/sync checks.
+**Next:** Add a clean-room bundle consumer/import check that unpacks `output/decentralized-forge-verification-bundle.zip` into a temporary directory and verifies the manifest and suggested commands without relying on the original checkout. The still-blocked parallel lane is locating an approved `rad` CLI on this Windows host for broader disposable Radicle clone/sync checks.
 
 Recent completed loops:
 
@@ -1042,6 +1060,7 @@ Recent completed loops:
 - Loop 45: registry-shaped keyless-attestation import - complete as `fixtures/keyless-attestation.registry-verification.json`; project registry provenance remains synthetic.
 - Loop 46: trust hardening and public-tool readiness - complete as evidence hash checks, read-only doctor output, schema validation, threat model, and community quickstart.
 - Loop 47: static forge workbench app - complete as `scripts/render_forge_app.py` plus `output/forge-app.html`; app remains static, local, unsigned, and non-publishing.
+- Loop 48: portable verification bundle - complete as `output/decentralized-forge-verification-bundle.zip` plus `export-bundle`/`verify-bundle`; bundle remains local evidence packaging, not a signing/durability/security proof.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

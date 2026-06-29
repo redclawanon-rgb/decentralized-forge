@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -42,6 +43,7 @@ FIXTURE_PATHS = [FIXTURE_PATH, PORTABLE_FIXTURE_PATH, RADICLE_FIXTURE_PATH]
 RENDERER = ROOT / "scripts" / "render_project_page.py"
 STATIC_PREFLIGHT = ROOT / "scripts" / "preflight_static_artifact.py"
 OUTPUT_DEMO_HTML = ROOT / "output" / "demo-project.html"
+OUTPUT_VERIFICATION_BUNDLE = ROOT / "output" / "decentralized-forge-verification-bundle.zip"
 OUTPUT_FORGE_APP_HTML = ROOT / "output" / "forge-app.html"
 OUTPUT_PORTABLE_HTML = ROOT / "output" / "portable-lab.html"
 OUTPUT_DEMO_SUMMARY = ROOT / "output" / "demo-project.summary.json"
@@ -218,6 +220,47 @@ class RegistryFixtureTests(unittest.TestCase):
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, html.lower())
 
+    def test_verification_bundle_is_current_and_self_verifying(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            generated = Path(tmpdir) / "verification-bundle.zip"
+            manifest = forge_registry.create_verification_bundle(generated)
+            self.assertEqual(manifest["schema_version"], "decentralized-forge.verification-bundle.v1")
+            self.assertEqual(generated.read_bytes(), OUTPUT_VERIFICATION_BUNDLE.read_bytes())
+
+        self.assertEqual(forge_registry.verify_verification_bundle(OUTPUT_VERIFICATION_BUNDLE), [])
+        with zipfile.ZipFile(OUTPUT_VERIFICATION_BUNDLE, "r") as archive:
+            self.assertIn(forge_registry.DEFAULT_BUNDLE_MANIFEST_PATH, archive.namelist())
+            manifest = json.loads(archive.read(forge_registry.DEFAULT_BUNDLE_MANIFEST_PATH).decode("utf-8"))
+            self.assertEqual(manifest["file_count"], len(manifest["files"]))
+            self.assertEqual(manifest["evidence_index"]["entry_count"], len(self.live_evidence_index["evidence"]))
+            self.assertIn("bundle does not publish protocol events", manifest["non_claims"])
+            payload_paths = {item["path"] for item in manifest["files"]}
+            for expected_path in [
+                "fixtures/example-project.registry.json",
+                "fixtures/portable-lab.registry.json",
+                "fixtures/live-evidence-index.json",
+                "evidence/nostr-loop43-issue-patch-readback-2026-06-28.json",
+                "output/demo-project.html",
+                "output/portable-lab.html",
+                "output/forge-app.html",
+                "output/demo-project.summary.json",
+                "output/portable-lab.summary.json",
+                "scripts/forge_registry.py",
+            ]:
+                self.assertIn(expected_path, payload_paths)
+
+            entries = {item["id"]: item for item in manifest["evidence_index"]["entries"]}
+            self.assertEqual(set(entries), {item["id"] for item in self.live_evidence_index["evidence"]})
+            for evidence_item in self.live_evidence_index["evidence"]:
+                manifest_item = entries[evidence_item["id"]]
+                self.assertEqual(manifest_item["evidence_file"], evidence_item["evidence_file"])
+                self.assertEqual(manifest_item["evidence_sha256"], evidence_item["evidence_sha256"])
+                self.assertEqual(manifest_item["evidence_size_bytes"], evidence_item["evidence_size_bytes"])
+
+            manifest_blob = json.dumps(manifest, sort_keys=True).lower()
+            for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+                self.assertNotIn(accidental_secret_marker, manifest_blob)
+
     def test_live_gate_inventory_is_read_only_and_secret_free(self):
         payload = live_gate_inventory.inventory()
         self.assertEqual(payload["schema_version"], "decentralized-forge.live-gate-inventory.v1")
@@ -316,12 +359,15 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("if: github.event_name == 'push' && github.ref == 'refs/heads/main'", workflow)
         self.assertIn("npm run verify:helia", workflow)
         self.assertIn("python scripts/forge_registry.py render-app output/forge-app.html", workflow)
+        self.assertIn("python scripts/forge_registry.py export-bundle output/decentralized-forge-verification-bundle.zip", workflow)
+        self.assertIn("python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip", workflow)
         for subject in [
             "output/demo-project.html",
             "output/forge-app.html",
             "output/portable-lab.html",
             "output/demo-project.summary.json",
             "output/portable-lab.summary.json",
+            "output/decentralized-forge-verification-bundle.zip",
             "evidence/local-release-artifact-2026-06-22.car",
             "fixtures/local-release-artifact.txt",
         ]:

@@ -9,6 +9,7 @@ import json
 import shutil
 import subprocess
 import sys
+import zipfile
 from collections import Counter
 from pathlib import Path
 
@@ -24,6 +25,9 @@ DEFAULT_NIP34_STATE_STATUS_FIXTURE = ROOT / "fixtures" / "nostr-repo-state-statu
 DEFAULT_NIP34_LIVE_READBACK_FIXTURE = ROOT / "fixtures" / "nostr-live-readback-events.json"
 DEFAULT_LIVE_EVIDENCE_INDEX = ROOT / "fixtures" / "live-evidence-index.json"
 DEFAULT_LIVE_EVIDENCE_SCHEMA = ROOT / "schemas" / "live-evidence-index.schema.json"
+DEFAULT_BUNDLE_OUTPUT = ROOT / "output" / "decentralized-forge-verification-bundle.zip"
+DEFAULT_BUNDLE_MANIFEST_PATH = "verification-bundle.manifest.json"
+ZIP_FIXED_DATE_TIME = (2026, 1, 1, 0, 0, 0)
 
 SECRET_MARKERS = ("nsec1", "-----begin", "private key:", "seed phrase:", "api_token")
 FORBIDDEN_LIVE_CLAIM_MARKERS = (
@@ -104,6 +108,10 @@ def write_json(path: Path, payload: object) -> None:
     path.write_text(f"{json.dumps(payload, indent=2, sort_keys=True)}\n", encoding="utf-8")
 
 
+def stable_json_bytes(payload: object) -> bytes:
+    return f"{json.dumps(payload, indent=2, sort_keys=True)}\n".encode("utf-8")
+
+
 def canonical_evidence_bytes(path: Path) -> bytes:
     """Return cross-platform evidence bytes with text line endings normalized."""
     return path.read_bytes().replace(b"\r\n", b"\n")
@@ -111,6 +119,10 @@ def canonical_evidence_bytes(path: Path) -> bytes:
 
 def sha256_file(path: Path) -> str:
     return hashlib.sha256(canonical_evidence_bytes(path)).hexdigest()
+
+
+def sha256_raw_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def safe_repo_relative_path(value: str) -> Path:
@@ -230,6 +242,260 @@ def refresh_live_evidence_hashes(index_path: Path = DEFAULT_LIVE_EVIDENCE_INDEX)
     return index
 
 
+def bundle_role(path: str) -> str:
+    if path.startswith("schemas/"):
+        return "schema"
+    if path.startswith("fixtures/"):
+        return "fixture"
+    if path.startswith("evidence/"):
+        return "source-evidence"
+    if path.startswith("output/"):
+        return "generated-output"
+    if path.startswith("scripts/"):
+        return "verifier-tooling"
+    if path.startswith("docs/") or path in {"README.md", "STATUS.md", "COMPLETION-CRITERIA.md", "AGENT-LOOPS.md"}:
+        return "documentation"
+    return "supporting-file"
+
+
+def collect_verification_bundle_paths() -> list[Path]:
+    paths: set[Path] = set()
+    for pattern in ["schemas/*.json", "fixtures/*.json", "fixtures/*.txt", "evidence/*"]:
+        paths.update(path for path in ROOT.glob(pattern) if path.is_file())
+
+    for relative_path in [
+        "README.md",
+        "STATUS.md",
+        "COMPLETION-CRITERIA.md",
+        "AGENT-LOOPS.md",
+        "docs/threat-model.md",
+        "docs/community-quickstart.md",
+        "package.json",
+        "package-lock.json",
+        "scripts/forge_registry.py",
+        "scripts/render_project_page.py",
+        "scripts/render_forge_app.py",
+        "scripts/nip34_adapter.py",
+        "scripts/preflight_static_artifact.py",
+        "scripts/verify_car_cid_fixture.mjs",
+        "scripts/verify_helia_fixture.mjs",
+        "output/demo-project.html",
+        "output/portable-lab.html",
+        "output/forge-app.html",
+        "output/demo-project.summary.json",
+        "output/portable-lab.summary.json",
+    ]:
+        path = ROOT / relative_path
+        if path.is_file():
+            paths.add(path)
+
+    return sorted(paths, key=relative)
+
+
+def regenerate_portable_outputs() -> None:
+    render_project_page.main(
+        [
+            str(ROOT / "fixtures" / "example-project.registry.json"),
+            str(ROOT / "output" / "demo-project.html"),
+            "--nip34-repo-fixture",
+            str(DEFAULT_NIP34_REPO_FIXTURE),
+            "--nip34-collaboration-fixture",
+            str(DEFAULT_NIP34_COLLAB_FIXTURE),
+            "--nip34-state-status-fixture",
+            str(DEFAULT_NIP34_STATE_STATUS_FIXTURE),
+            "--nip34-live-readback-fixture",
+            str(DEFAULT_NIP34_LIVE_READBACK_FIXTURE),
+            "--live-evidence-index",
+            str(DEFAULT_LIVE_EVIDENCE_INDEX),
+        ]
+    )
+    render_project_page.main(
+        [
+            str(ROOT / "fixtures" / "portable-lab.registry.json"),
+            str(ROOT / "output" / "portable-lab.html"),
+        ]
+    )
+    render_forge_app.main([str(ROOT / "output" / "forge-app.html")])
+    for registry_path, summary_path in [
+        (ROOT / "fixtures" / "example-project.registry.json", ROOT / "output" / "demo-project.summary.json"),
+        (ROOT / "fixtures" / "portable-lab.registry.json", ROOT / "output" / "portable-lab.summary.json"),
+    ]:
+        registry = render_project_page.load_registry(registry_path)
+        write_json(summary_path, registry_summary(registry, registry_path))
+
+
+def build_verification_bundle_manifest(paths: list[Path]) -> dict:
+    files = []
+    for path in paths:
+        rel = relative(path)
+        files.append(
+            {
+                "path": rel,
+                "bundle_path": rel,
+                "role": bundle_role(rel),
+                "sha256": sha256_raw_file(path),
+                "size_bytes": path.stat().st_size,
+            }
+        )
+
+    live_evidence_index = json.loads(DEFAULT_LIVE_EVIDENCE_INDEX.read_text(encoding="utf-8"))
+    indexed_evidence = []
+    for item in live_evidence_index.get("evidence", []):
+        if not isinstance(item, dict):
+            continue
+        evidence_file = item.get("evidence_file")
+        indexed_evidence.append(
+            {
+                "id": item.get("id"),
+                "protocol": item.get("protocol"),
+                "state": item.get("state"),
+                "evidence_file": evidence_file,
+                "bundle_path": evidence_file,
+                "evidence_sha256": item.get("evidence_sha256"),
+                "evidence_size_bytes": item.get("evidence_size_bytes"),
+            }
+        )
+
+    return {
+        "schema_version": "decentralized-forge.verification-bundle.v1",
+        "bundle_name": "decentralized-forge portable verification bundle",
+        "scope": "portable local verification package; no live protocol actions, signing, spending, or publishing",
+        "manifest_path": DEFAULT_BUNDLE_MANIFEST_PATH,
+        "file_count": len(files),
+        "files": files,
+        "evidence_index": {
+            "path": relative(DEFAULT_LIVE_EVIDENCE_INDEX),
+            "schema_version": live_evidence_index.get("schema_version"),
+            "entry_count": len(indexed_evidence),
+            "entries": indexed_evidence,
+        },
+        "suggested_verification_commands": [
+            "python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip",
+            "python scripts/forge_registry.py verify-local --skip-npm-ci",
+        ],
+        "non_claims": [
+            "bundle does not publish protocol events",
+            "bundle does not sign events or use private keys",
+            "bundle does not start daemons, spend money, use wallets, or contact paid services",
+            "bundle does not claim durability, censorship resistance, broad availability, security, SLSA compliance, or production readiness",
+        ],
+    }
+
+
+def write_deterministic_zip(output: Path, paths: list[Path], manifest: dict) -> None:
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_STORED) as archive:
+        for path in paths:
+            rel = relative(path)
+            info = zipfile.ZipInfo(rel, ZIP_FIXED_DATE_TIME)
+            info.compress_type = zipfile.ZIP_STORED
+            info.external_attr = 0o644 << 16
+            archive.writestr(info, path.read_bytes())
+
+        info = zipfile.ZipInfo(DEFAULT_BUNDLE_MANIFEST_PATH, ZIP_FIXED_DATE_TIME)
+        info.compress_type = zipfile.ZIP_STORED
+        info.external_attr = 0o644 << 16
+        archive.writestr(info, stable_json_bytes(manifest))
+
+
+def create_verification_bundle(output: Path = DEFAULT_BUNDLE_OUTPUT) -> dict:
+    regenerate_portable_outputs()
+    paths = collect_verification_bundle_paths()
+    manifest = build_verification_bundle_manifest(paths)
+    write_deterministic_zip(output, paths, manifest)
+    return manifest
+
+
+def verify_verification_bundle(bundle_path: Path) -> list[str]:
+    errors: list[str] = []
+    try:
+        with zipfile.ZipFile(bundle_path, "r") as archive:
+            names = set(archive.namelist())
+            if DEFAULT_BUNDLE_MANIFEST_PATH not in names:
+                return [f"missing {DEFAULT_BUNDLE_MANIFEST_PATH}"]
+            manifest = json.loads(archive.read(DEFAULT_BUNDLE_MANIFEST_PATH).decode("utf-8"))
+            if manifest.get("schema_version") != "decentralized-forge.verification-bundle.v1":
+                errors.append("unsupported verification bundle schema_version")
+            if manifest.get("scope") != "portable local verification package; no live protocol actions, signing, spending, or publishing":
+                errors.append("unexpected verification bundle scope")
+            files = manifest.get("files")
+            if not isinstance(files, list) or not files:
+                return errors + ["manifest.files must be a non-empty array"]
+            if manifest.get("file_count") != len(files):
+                errors.append("manifest.file_count does not match files length")
+
+            seen_paths: set[str] = set()
+            for offset, item in enumerate(files):
+                prefix = f"files[{offset}]"
+                if not isinstance(item, dict):
+                    errors.append(f"{prefix} must be an object")
+                    continue
+                rel = item.get("path")
+                bundle_name = item.get("bundle_path")
+                if not isinstance(rel, str) or not rel:
+                    errors.append(f"{prefix}.path is required")
+                    continue
+                if rel in seen_paths:
+                    errors.append(f"{prefix}.path duplicates {rel}")
+                seen_paths.add(rel)
+                if bundle_name != rel:
+                    errors.append(f"{prefix}.bundle_path must match path")
+                if rel not in names:
+                    errors.append(f"{prefix}.path missing from zip: {rel}")
+                    continue
+                data = archive.read(rel)
+                if item.get("size_bytes") != len(data):
+                    errors.append(f"{prefix}.size_bytes does not match {rel}")
+                if item.get("sha256") != hashlib.sha256(data).hexdigest():
+                    errors.append(f"{prefix}.sha256 does not match {rel}")
+                if item.get("role") != bundle_role(rel):
+                    errors.append(f"{prefix}.role does not match expected role")
+
+            for required in [
+                "fixtures/example-project.registry.json",
+                "fixtures/portable-lab.registry.json",
+                "fixtures/live-evidence-index.json",
+                "output/demo-project.html",
+                "output/portable-lab.html",
+                "output/forge-app.html",
+                "output/demo-project.summary.json",
+                "output/portable-lab.summary.json",
+            ]:
+                if required not in seen_paths:
+                    errors.append(f"required payload missing from manifest: {required}")
+
+            evidence_index = manifest.get("evidence_index")
+            if not isinstance(evidence_index, dict):
+                errors.append("manifest.evidence_index must be an object")
+            else:
+                entries = evidence_index.get("entries", [])
+                if evidence_index.get("entry_count") != len(entries):
+                    errors.append("manifest.evidence_index.entry_count does not match entries length")
+                for offset, item in enumerate(entries):
+                    prefix = f"evidence_index.entries[{offset}]"
+                    evidence_file = item.get("evidence_file")
+                    if evidence_file not in names:
+                        errors.append(f"{prefix}.evidence_file missing from zip: {evidence_file}")
+                        continue
+                    data = archive.read(evidence_file)
+                    canonical_data = data.replace(b"\r\n", b"\n")
+                    if item.get("evidence_sha256") != hashlib.sha256(canonical_data).hexdigest():
+                        errors.append(f"{prefix}.evidence_sha256 does not match bundled evidence")
+                    if item.get("evidence_size_bytes") != len(canonical_data):
+                        errors.append(f"{prefix}.evidence_size_bytes does not match bundled evidence")
+
+            combined = json.dumps(manifest, sort_keys=True).lower()
+            for marker in SECRET_MARKERS:
+                if marker in combined:
+                    errors.append(f"manifest contains secret marker {marker!r}")
+            for phrase in ["does not publish protocol events", "does not sign events", "does not claim durability"]:
+                if phrase not in combined:
+                    errors.append(f"manifest missing non-claim phrase: {phrase}")
+    except (OSError, zipfile.BadZipFile, json.JSONDecodeError, UnicodeDecodeError) as exc:
+        return [f"cannot verify bundle: {exc}"]
+    return errors
+
+
 def command_validate(args: argparse.Namespace) -> int:
     for registry_path in args.registries:
         render_project_page.load_registry(registry_path)
@@ -269,6 +535,25 @@ def command_render_app(args: argparse.Namespace) -> int:
     for registry in args.registries:
         render_args.extend(["--registry", str(registry)])
     return render_forge_app.main(render_args)
+
+
+def command_export_bundle(args: argparse.Namespace) -> int:
+    manifest = create_verification_bundle(args.output)
+    print(f"wrote verification bundle: {relative(args.output)}")
+    print(f"- manifest: {DEFAULT_BUNDLE_MANIFEST_PATH}")
+    print(f"- files: {manifest['file_count']}")
+    print(f"- evidence entries: {manifest['evidence_index']['entry_count']}")
+    return 0
+
+
+def command_verify_bundle(args: argparse.Namespace) -> int:
+    errors = verify_verification_bundle(args.bundle)
+    if errors:
+        for error in errors:
+            print(f"bundle verification error: {error}", file=sys.stderr)
+        return 1
+    print(f"valid verification bundle: {relative(args.bundle)}")
+    return 0
 
 
 def command_validate_evidence_index(args: argparse.Namespace) -> int:
@@ -432,6 +717,8 @@ def command_verify_local(args: argparse.Namespace) -> int:
         [sys.executable, "scripts/forge_registry.py", "render-app", "output/forge-app.html"],
         [sys.executable, "scripts/forge_registry.py", "export-summary", "fixtures/example-project.registry.json", "output/demo-project.summary.json"],
         [sys.executable, "scripts/forge_registry.py", "export-summary", "fixtures/portable-lab.registry.json", "output/portable-lab.summary.json"],
+        [sys.executable, "scripts/forge_registry.py", "export-bundle", "output/decentralized-forge-verification-bundle.zip"],
+        [sys.executable, "scripts/forge_registry.py", "verify-bundle", "output/decentralized-forge-verification-bundle.zip"],
         [sys.executable, "scripts/live_gate_inventory.py"],
         [sys.executable, "-m", "unittest", "discover", "-s", "tests"],
     ]
@@ -488,6 +775,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="Registry fixture to include; may be repeated",
     )
     render_app.set_defaults(func=command_render_app)
+
+    export_bundle = subparsers.add_parser("export-bundle", help="Export a deterministic portable verification bundle")
+    export_bundle.add_argument("output", type=Path, nargs="?", default=DEFAULT_BUNDLE_OUTPUT)
+    export_bundle.set_defaults(func=command_export_bundle)
+
+    verify_bundle = subparsers.add_parser("verify-bundle", help="Verify a portable verification bundle manifest and payload hashes")
+    verify_bundle.add_argument("bundle", type=Path, nargs="?", default=DEFAULT_BUNDLE_OUTPUT)
+    verify_bundle.set_defaults(func=command_verify_bundle)
 
     evidence_index = subparsers.add_parser("validate-evidence-index", help="Validate live evidence index paths, hashes, and claim boundaries")
     evidence_index.add_argument("index", type=Path, nargs="?", default=DEFAULT_LIVE_EVIDENCE_INDEX)

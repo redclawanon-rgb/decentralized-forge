@@ -66,6 +66,8 @@ jobs:
           python scripts/forge_registry.py render-app output/forge-app.html
           python scripts/forge_registry.py export-summary fixtures/example-project.registry.json output/demo-project.summary.json
           python scripts/forge_registry.py export-summary fixtures/portable-lab.registry.json output/portable-lab.summary.json
+          python scripts/forge_registry.py export-bundle output/decentralized-forge-verification-bundle.zip
+          python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip
 
       - name: Inventory live gates without live actions
         run: python scripts/live_gate_inventory.py
@@ -92,5 +94,6 @@ jobs:
             output/portable-lab.html
             output/demo-project.summary.json
             output/portable-lab.summary.json
+            output/decentralized-forge-verification-bundle.zip
             evidence/local-release-artifact-2026-06-22.car
             fixtures/local-release-artifact.txt

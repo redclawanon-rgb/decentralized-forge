@@ -19,3 +19,4 @@ evidence/*.md text eol=lf
 
 # CAR fixtures are binary evidence.
 evidence/*.car binary
+output/*.zip binary
