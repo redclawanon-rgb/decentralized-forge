@@ -25,7 +25,7 @@ This repo starts as a research/spec/prototype workspace. The first milestone is 
 
 This repository is a **local registry/static renderer prototype** with a generated static workbench app, protocol-mapping fixtures, and narrow, evidence-backed live checks. It is public for collaboration, but it is not a production forge and does not claim durable storage, broad protocol availability, censorship resistance, security guarantees, or production readiness.
 
-As of Loop 49, the project has local CAR/CID fixture verification, local Helia UnixFS/IPFS add-get evidence for the same fixture bytes, a bounded public gateway/pinning preflight, selected-relay Nostr repository-announcement plus issue/patch readback evidence, one disposable Radicle local/private replay, one disposable public Radicle seed/remote-clone smoke, a current-host Radicle route probe, hosted GitHub keyless artifact attestation evidence, a separate registry-shaped keyless-attestation import, evidence hash hardening, a local static workbench app, a deterministic portable verification bundle, and a clean-room bundle consumer check. Those checks are deliberately scoped to the exact evidence files in this repo.
+As of Loop 50, the project has local CAR/CID fixture verification, local Helia UnixFS/IPFS add-get evidence for the same fixture bytes, a bounded public gateway/pinning preflight, selected-relay Nostr repository-announcement plus issue/patch readback evidence, one disposable Radicle local/private replay, one disposable public Radicle seed/remote-clone smoke, a current-host Radicle route probe, hosted GitHub keyless artifact attestation evidence, a separate registry-shaped keyless-attestation import, evidence hash hardening, a local static workbench app, a deterministic portable verification bundle, a clean-room bundle consumer check, and a bundle import/report command. Those checks are deliberately scoped to the exact evidence files in this repo.
 
 | Area | Current state | Not claimed |
 |---|---|---|
@@ -119,9 +119,10 @@ Regenerate and verify the portable verification bundle:
 python3 scripts/forge_registry.py export-bundle output/decentralized-forge-verification-bundle.zip
 python3 scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip
 python3 scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip
+python3 scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip
 ```
 
-The bundle is deterministic and includes a manifest with payload sizes, SHA-256 hashes, evidence-index bindings, suggested verification commands, and explicit non-claims. The clean-room verifier extracts the bundle to a temporary directory, copies the bundle into that extracted tree, and runs bundled checks from there rather than from the original checkout. It is not a release-signing, durability, availability, security, or production-readiness proof.
+The bundle is deterministic and includes a manifest with payload sizes, SHA-256 hashes, evidence-index bindings, suggested verification commands, and explicit non-claims. The clean-room verifier extracts the bundle to a temporary directory, copies the bundle into that extracted tree, and runs bundled checks from there rather than from the original checkout. The report command reads either the ZIP or an extracted bundle directory and summarizes project identity, evidence rows, non-claims, verification gaps, and suggested commands. It is not a release-signing, durability, availability, security, or production-readiness proof.
 
 Run the static artifact preflight before release-oriented edits, screenshots, pushes, or public updates:
 
@@ -171,6 +172,7 @@ python3 scripts/forge_registry.py export-summary fixtures/portable-lab.registry.
 python3 scripts/forge_registry.py export-bundle output/decentralized-forge-verification-bundle.zip
 python3 scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip
 python3 scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip
+python3 scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip --json
 python3 scripts/live_gate_inventory.py
 python3 -m unittest discover -s tests
 npm run verify:car-cid

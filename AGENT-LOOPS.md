@@ -640,3 +640,11 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as `scripts/forge_registry.py verify-bundle-cleanroom`. The command direct-verifies the ZIP, safely extracts it to a temporary directory with path-traversal checks, copies the ZIP into the extracted tree, and runs bundled checks from that tree: manifest JSON validation, `verify-bundle`, `validate-evidence-index`, and static artifact preflight. The bundle manifest now lists the clean-room command as a suggested verification command, tests assert the clean-room verifier passes, and CI runs it after bundle export/direct verification.
 
 **Gate preserved:** This is temporary local extraction and verification only. It does not publish protocol events, sign events, fetch from relays, pin storage, start daemons, spend money, use wallets, import private keys, replace registry provenance, or claim durability, censorship resistance, broad availability, security, SLSA compliance, or production readiness.
+
+## Loop 50: Bundle import/report command
+
+**Goal:** Let a reviewer inspect a portable bundle or extracted bundle directory without manually reading manifest and evidence JSON.
+
+**Current result:** Complete as `scripts/forge_registry.py report-bundle`. The command reads either `output/decentralized-forge-verification-bundle.zip` or an extracted bundle directory and emits a concise human report, with `--json` for deterministic machine-readable output. The report summarizes file role counts, registry project identity/counts, evidence protocol/state counts, explicit non-claims, verification gaps, and suggested verification commands. Tests assert the ZIP and extracted-directory report paths agree, the manifest lists the report command, and CI runs `report-bundle --json`.
+
+**Gate preserved:** This is local bundle readback and reporting only. It does not publish protocol events, sign events, fetch from relays, pin storage, start daemons, spend money, use wallets, import private keys, replace registry provenance, or claim durability, censorship resistance, broad availability, security, SLSA compliance, or production readiness.

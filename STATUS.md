@@ -1056,9 +1056,27 @@ Verified evidence:
 
 Gate preserved: Loop 49 only unpacks and verifies the local bundle in temporary storage. It does not publish protocol events, sign events, fetch from relays, pin storage, start daemons, spend money, use wallets, import private keys, replace registry provenance, or introduce durability, censorship-resistance, broad-availability, security, SLSA, or production-readiness claims.
 
+### Loop 50: Bundle import/report command
+
+Status: **complete as local bundle import/readback reporting; no live protocol/storage/signing action**.
+
+Outputs:
+
+- `scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip` reads a portable bundle ZIP and emits a human review report.
+- `scripts/forge_registry.py report-bundle <extracted-bundle-dir> --json` reads an extracted bundle directory and emits deterministic JSON with project identity summaries, file role counts, evidence protocol/state counts, non-claims, verification gaps, and suggested commands.
+- The bundle manifest now lists `report-bundle` as a suggested verification command.
+- CI runs the report command in JSON mode after exporting and verifying the bundle.
+
+Verified evidence:
+
+- `python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip` produced a valid report locally.
+- Tests assert that ZIP and extracted-directory reports are valid and agree on bundle/evidence content.
+
+Gate preserved: Loop 50 only reads committed/generated local bundle contents and produces a summary. It does not publish protocol events, sign events, fetch from relays, pin storage, start daemons, spend money, use wallets, import private keys, replace registry provenance, or introduce durability, censorship-resistance, broad-availability, security, SLSA, or production-readiness claims.
+
 ## Next recommended loop
 
-**Next:** Add a bundle import/report command that reads an extracted bundle and produces a concise human review report for project identity, evidence rows, non-claims, and verification gaps. The still-blocked parallel lane is locating an approved `rad` CLI on this Windows host for broader disposable Radicle clone/sync checks.
+**Next:** Add a release-facing bundle review checklist/release-notes artifact that explains how a maintainer should review `report-bundle`, `verify-bundle-cleanroom`, and the explicit non-claims before publishing or attaching the portable bundle. The still-blocked parallel lane is locating an approved `rad` CLI on this Windows host for broader disposable Radicle clone/sync checks.
 
 Recent completed loops:
 
@@ -1080,6 +1098,7 @@ Recent completed loops:
 - Loop 47: static forge workbench app - complete as `scripts/render_forge_app.py` plus `output/forge-app.html`; app remains static, local, unsigned, and non-publishing.
 - Loop 48: portable verification bundle - complete as `output/decentralized-forge-verification-bundle.zip` plus `export-bundle`/`verify-bundle`; bundle remains local evidence packaging, not a signing/durability/security proof.
 - Loop 49: clean-room bundle consumer check - complete as `verify-bundle-cleanroom`; verifies an extracted temporary bundle tree without relying on the original checkout.
+- Loop 50: bundle import/report command - complete as `report-bundle`; summarizes ZIP or extracted bundle contents for human review without live action.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

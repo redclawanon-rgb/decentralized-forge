@@ -377,6 +377,7 @@ def build_verification_bundle_manifest(paths: list[Path]) -> dict:
         "suggested_verification_commands": [
             "python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip",
             "python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip",
+            "python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip",
             "python scripts/forge_registry.py verify-local --skip-npm-ci",
         ],
         "non_claims": [
@@ -597,6 +598,242 @@ def verify_verification_bundle_cleanroom(bundle_path: Path) -> list[str]:
     return errors
 
 
+def bundle_source_type(source: Path) -> str:
+    return "directory" if source.is_dir() else "zip"
+
+
+def read_bundle_source_bytes(source: Path, bundle_path: str) -> bytes:
+    path = Path(bundle_path)
+    if path.is_absolute() or ".." in path.parts or "\\" in bundle_path:
+        raise ValueError(f"invalid bundle path: {bundle_path}")
+    if source.is_dir():
+        source_root = source.resolve()
+        target = (source_root / path).resolve()
+        try:
+            target.relative_to(source_root)
+        except ValueError as exc:
+            raise ValueError(f"bundle path escapes source root: {bundle_path}") from exc
+        return target.read_bytes()
+    with zipfile.ZipFile(source, "r") as archive:
+        return archive.read(bundle_path)
+
+
+def read_bundle_source_json(source: Path, bundle_path: str) -> dict:
+    payload = json.loads(read_bundle_source_bytes(source, bundle_path).decode("utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError(f"{bundle_path} must contain a JSON object")
+    return payload
+
+
+def verify_bundle_source(source: Path) -> list[str]:
+    if source.is_dir():
+        manifest_path = source / DEFAULT_BUNDLE_MANIFEST_PATH
+        if not manifest_path.is_file():
+            return [f"missing {DEFAULT_BUNDLE_MANIFEST_PATH}"]
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            return [f"cannot verify extracted bundle: {exc}"]
+        errors: list[str] = []
+        if manifest.get("schema_version") != "decentralized-forge.verification-bundle.v1":
+            errors.append("unsupported verification bundle schema_version")
+        if manifest.get("scope") != "portable local verification package; no live protocol actions, signing, spending, or publishing":
+            errors.append("unexpected verification bundle scope")
+        files = manifest.get("files")
+        if not isinstance(files, list) or not files:
+            return ["manifest.files must be a non-empty array"]
+        if manifest.get("file_count") != len(files):
+            errors.append("manifest.file_count does not match files length")
+        seen_paths: set[str] = set()
+        for offset, item in enumerate(files):
+            prefix = f"files[{offset}]"
+            if not isinstance(item, dict):
+                errors.append(f"{prefix} must be an object")
+                continue
+            rel = item.get("path")
+            bundle_name = item.get("bundle_path")
+            if not isinstance(rel, str) or not rel:
+                errors.append(f"{prefix}.path is required")
+                continue
+            if rel in seen_paths:
+                errors.append(f"{prefix}.path duplicates {rel}")
+            seen_paths.add(rel)
+            if bundle_name != rel:
+                errors.append(f"{prefix}.bundle_path must match path")
+            if item.get("role") != bundle_role(rel):
+                errors.append(f"{prefix}.role does not match expected role")
+            try:
+                data = read_bundle_source_bytes(source, rel)
+            except (KeyError, OSError, ValueError) as exc:
+                errors.append(f"{prefix}.path missing from extracted bundle: {rel} ({exc})")
+                continue
+            if item.get("size_bytes") != len(data):
+                errors.append(f"{prefix}.size_bytes does not match {rel}")
+            if item.get("sha256") != hashlib.sha256(data).hexdigest():
+                errors.append(f"{prefix}.sha256 does not match {rel}")
+        evidence_index = manifest.get("evidence_index")
+        if not isinstance(evidence_index, dict):
+            errors.append("manifest.evidence_index must be an object")
+        else:
+            entries = evidence_index.get("entries", [])
+            if evidence_index.get("entry_count") != len(entries):
+                errors.append("manifest.evidence_index.entry_count does not match entries length")
+            for offset, item in enumerate(entries):
+                prefix = f"evidence_index.entries[{offset}]"
+                evidence_file = item.get("evidence_file") if isinstance(item, dict) else None
+                if not isinstance(evidence_file, str):
+                    errors.append(f"{prefix}.evidence_file is required")
+                    continue
+                try:
+                    data = read_bundle_source_bytes(source, evidence_file).replace(b"\r\n", b"\n")
+                except (KeyError, OSError, ValueError) as exc:
+                    errors.append(f"{prefix}.evidence_file missing from extracted bundle: {evidence_file} ({exc})")
+                    continue
+                if item.get("evidence_sha256") != hashlib.sha256(data).hexdigest():
+                    errors.append(f"{prefix}.evidence_sha256 does not match bundled evidence")
+                if item.get("evidence_size_bytes") != len(data):
+                    errors.append(f"{prefix}.evidence_size_bytes does not match bundled evidence")
+        return errors
+    return verify_verification_bundle(source)
+
+
+def bundle_report(source: Path) -> dict:
+    errors = verify_bundle_source(source)
+    manifest = read_bundle_source_json(source, DEFAULT_BUNDLE_MANIFEST_PATH)
+    files = manifest.get("files", [])
+    file_roles = Counter(item.get("role", "unknown") for item in files if isinstance(item, dict))
+
+    projects = []
+    for item in files:
+        if not isinstance(item, dict):
+            continue
+        rel = item.get("path")
+        if not isinstance(rel, str) or not rel.startswith("fixtures/") or not rel.endswith(".registry.json"):
+            continue
+        registry = read_bundle_source_json(source, rel)
+        if registry.get("schema_version") != "decentralized-forge.project-registry.v1":
+            continue
+        projects.append(registry_summary(registry, Path(rel)))
+
+    evidence_index_path = manifest.get("evidence_index", {}).get("path", relative(DEFAULT_LIVE_EVIDENCE_INDEX))
+    evidence_index = read_bundle_source_json(source, evidence_index_path)
+    evidence_entries = evidence_index.get("evidence", [])
+    if not isinstance(evidence_entries, list):
+        evidence_entries = []
+    protocols = Counter(item.get("protocol", "unknown") for item in evidence_entries if isinstance(item, dict))
+    states = Counter(item.get("state", "unknown") for item in evidence_entries if isinstance(item, dict))
+
+    evidence_summary_entries = []
+    for item in evidence_entries:
+        if not isinstance(item, dict):
+            continue
+        evidence_summary_entries.append(
+            {
+                "id": item.get("id"),
+                "protocol": item.get("protocol"),
+                "state": item.get("state"),
+                "scope": item.get("scope"),
+                "evidence_file": item.get("evidence_file"),
+                "verification_summary": item.get("verification_summary"),
+                "live_network_action": item.get("live_network_action"),
+                "selected_relay_readback_verified": item.get("selected_relay_readback_verified"),
+                "synthetic": item.get("synthetic"),
+            }
+        )
+
+    verification_gaps = [
+        "Durable storage, pinning, and broad availability remain unverified unless supported by a future evidence row.",
+        "Censorship resistance, identity trust, production readiness, and security guarantees remain outside the bundle claim boundary.",
+        "Live protocol checks are evidence-scoped to the recorded files and do not imply full NIP-34, Radicle, IPFS, or forge compatibility.",
+        "The report is a local import/readback summary only; it does not sign, publish, fetch, pin, start daemons, spend money, or contact paid services.",
+    ]
+
+    return {
+        "schema_version": "decentralized-forge.bundle-report.v1",
+        "source": relative(source),
+        "source_type": bundle_source_type(source),
+        "verification": {
+            "valid": not errors,
+            "errors": errors,
+        },
+        "bundle": {
+            "schema_version": manifest.get("schema_version"),
+            "name": manifest.get("bundle_name"),
+            "scope": manifest.get("scope"),
+            "file_count": manifest.get("file_count"),
+            "role_counts": dict(sorted(file_roles.items())),
+            "suggested_verification_commands": manifest.get("suggested_verification_commands", []),
+        },
+        "projects": projects,
+        "evidence": {
+            "index_path": evidence_index_path,
+            "entry_count": len(evidence_summary_entries),
+            "protocol_counts": dict(sorted(protocols.items())),
+            "state_counts": dict(sorted(states.items())),
+            "live_network_action_count": sum(1 for item in evidence_entries if isinstance(item, dict) and item.get("live_network_action") is True),
+            "selected_relay_readback_count": sum(
+                1 for item in evidence_entries if isinstance(item, dict) and item.get("selected_relay_readback_verified") is True
+            ),
+            "synthetic_count": sum(1 for item in evidence_entries if isinstance(item, dict) and item.get("synthetic") is True),
+            "entries": evidence_summary_entries,
+        },
+        "non_claims": manifest.get("non_claims", []),
+        "verification_gaps": verification_gaps,
+    }
+
+
+def format_bundle_report(report: dict) -> str:
+    lines = [
+        "Decentralized Forge bundle report",
+        f"- source: {report['source']} ({report['source_type']})",
+        f"- verification: {'valid' if report['verification']['valid'] else 'invalid'}",
+        f"- files: {report['bundle']['file_count']}",
+    ]
+    role_counts = report["bundle"]["role_counts"]
+    if role_counts:
+        lines.append(f"- roles: {', '.join(f'{role}={count}' for role, count in role_counts.items())}")
+
+    lines.append("")
+    lines.append("Projects")
+    for project in report["projects"]:
+        counts = project["counts"]
+        verification = project["verification"]
+        lines.append(
+            f"- {project['project']['id']}: {project['project']['name']} "
+            f"(maintainers={counts['maintainers']}, clone_urls={counts['clone_urls']}, "
+            f"issues={counts['issues']}, patches={counts['patches']}, releases={counts['releases']}, "
+            f"verification_states={verification['total']})"
+        )
+
+    evidence = report["evidence"]
+    lines.append("")
+    lines.append("Evidence")
+    lines.append(
+        f"- entries: {evidence['entry_count']}; protocols: "
+        f"{', '.join(f'{key}={value}' for key, value in evidence['protocol_counts'].items())}"
+    )
+    lines.append(
+        f"- live_network_action={evidence['live_network_action_count']}; "
+        f"selected_relay_readback={evidence['selected_relay_readback_count']}; synthetic={evidence['synthetic_count']}"
+    )
+
+    lines.append("")
+    lines.append("Non-claims")
+    for item in report["non_claims"]:
+        lines.append(f"- {item}")
+
+    lines.append("")
+    lines.append("Verification gaps")
+    for item in report["verification_gaps"]:
+        lines.append(f"- {item}")
+
+    lines.append("")
+    lines.append("Suggested commands")
+    for item in report["bundle"]["suggested_verification_commands"]:
+        lines.append(f"- {item}")
+    return "\n".join(lines)
+
+
 def command_validate(args: argparse.Namespace) -> int:
     for registry_path in args.registries:
         render_project_page.load_registry(registry_path)
@@ -665,6 +902,15 @@ def command_verify_bundle_cleanroom(args: argparse.Namespace) -> int:
         return 1
     print(f"valid cleanroom verification bundle: {relative(args.bundle)}")
     return 0
+
+
+def command_report_bundle(args: argparse.Namespace) -> int:
+    report = bundle_report(args.source)
+    if args.json:
+        print(json.dumps(report, indent=2, sort_keys=True))
+    else:
+        print(format_bundle_report(report))
+    return 0 if report["verification"]["valid"] else 1
 
 
 def command_validate_evidence_index(args: argparse.Namespace) -> int:
@@ -831,6 +1077,7 @@ def command_verify_local(args: argparse.Namespace) -> int:
         [sys.executable, "scripts/forge_registry.py", "export-bundle", "output/decentralized-forge-verification-bundle.zip"],
         [sys.executable, "scripts/forge_registry.py", "verify-bundle", "output/decentralized-forge-verification-bundle.zip"],
         [sys.executable, "scripts/forge_registry.py", "verify-bundle-cleanroom", "output/decentralized-forge-verification-bundle.zip"],
+        [sys.executable, "scripts/forge_registry.py", "report-bundle", "output/decentralized-forge-verification-bundle.zip", "--json"],
         [sys.executable, "scripts/live_gate_inventory.py"],
         [sys.executable, "-m", "unittest", "discover", "-s", "tests"],
     ]
@@ -902,6 +1149,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     verify_bundle_cleanroom.add_argument("bundle", type=Path, nargs="?", default=DEFAULT_BUNDLE_OUTPUT)
     verify_bundle_cleanroom.set_defaults(func=command_verify_bundle_cleanroom)
+
+    report_bundle = subparsers.add_parser("report-bundle", help="Summarize a portable bundle ZIP or extracted bundle directory")
+    report_bundle.add_argument("source", type=Path, nargs="?", default=DEFAULT_BUNDLE_OUTPUT)
+    report_bundle.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+    report_bundle.set_defaults(func=command_report_bundle)
 
     evidence_index = subparsers.add_parser("validate-evidence-index", help="Validate live evidence index paths, hashes, and claim boundaries")
     evidence_index.add_argument("index", type=Path, nargs="?", default=DEFAULT_LIVE_EVIDENCE_INDEX)
