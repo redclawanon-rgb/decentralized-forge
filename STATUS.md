@@ -1125,9 +1125,26 @@ Verified evidence:
 
 Gate preserved: Loop 53 only reads local Git metadata and writes a local fixture. It does not publish protocol events, sign events, fetch from remotes, pin storage, start daemons, spend money, use wallets, import private keys, replace registry provenance, or introduce durability, censorship-resistance, broad-availability, security, SLSA, or production-readiness claims.
 
+### Loop 54: Local artifact metadata attach
+
+Status: **complete as local file artifact metadata; no IPFS/storage/signing action**.
+
+Outputs:
+
+- `scripts/forge_registry.py attach-local-artifact <registry> <artifact>` updates a registry fixture in place with a release artifact entry.
+- The command records raw file SHA-256, byte size, media type, `file://` URI, local-only availability, unsigned local artifact metadata, and a `registry.local_artifact_metadata` verification state.
+- Re-running the command with the same release/tag/artifact name replaces the existing artifact entry instead of duplicating it.
+- `npm run attach:artifact -- <registry> <artifact> --version <version>` exposes the same workflow through package scripts.
+
+Verified evidence:
+
+- Tests create a temporary Git repository, scaffold a registry, attach a CRLF-containing local artifact, validate the output, assert raw-byte SHA-256/size/media-type/URI fields, assert idempotency, and check non-claim boundaries.
+
+Gate preserved: Loop 54 only reads local file bytes and updates a local fixture. It does not publish protocol events, sign events, fetch from relays or gateways, add/fetch/pin IPFS content, start daemons, spend money, use wallets, import private keys, replace registry provenance, or introduce durability, censorship-resistance, broad-availability, security, SLSA, or production-readiness claims.
+
 ## Next recommended loop
 
-**Next:** Add an artifact attach command for local files that updates a scaffolded registry with SHA-256, size, media type, and explicit local-only availability/non-claims, without IPFS add/fetch/pin or signing. The still-blocked parallel lane is locating an approved `rad` CLI on this Windows host for broader disposable Radicle clone/sync checks.
+**Next:** Add a local project onboarding command that chains scaffold, local artifact attach, validation, summary export, rendering, and bundle/report refresh for an arbitrary local project while preserving the same non-live/non-signing boundaries. The still-blocked parallel lane is locating an approved `rad` CLI on this Windows host for broader disposable Radicle clone/sync checks.
 
 Recent completed loops:
 
@@ -1153,6 +1170,7 @@ Recent completed loops:
 - Loop 51: portable bundle review checklist - complete as `docs/portable-bundle-review-checklist.md`; gives maintainers required checks, non-claims, attachments, stop conditions, and neutral release-note wording.
 - Loop 52: bundle release-note export - complete as `export-bundle-release-note`; emits shareable markdown tied to the current commit, bundle digest, report summary, non-claims, gaps, and checklist stop conditions.
 - Loop 53: local registry import scaffold - complete as `scaffold-registry`; creates a valid unsigned local registry fixture from a local Git worktree with placeholder identity and non-claim guidance.
+- Loop 54: local artifact metadata attach - complete as `attach-local-artifact`; records local file hash, size, media type, URI, availability, and verification state without IPFS add/fetch/pin or signing.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

@@ -409,6 +409,92 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn(f"python scripts/forge_registry.py validate {output}", guidance[0])
             self.assertTrue(any("Review placeholder maintainer identity" in item for item in guidance))
 
+    def test_attach_local_artifact_updates_scaffold_without_live_claims(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            repo = Path(tmpdir) / "artifact-widget"
+            repo.mkdir()
+            subprocess.run(["git", "init", "-b", "main"], cwd=repo, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+            (repo / "README.md").write_text("# Artifact Widget\n", encoding="utf-8")
+            subprocess.run(["git", "add", "README.md"], cwd=repo, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+            subprocess.run(
+                [
+                    "git",
+                    "-c",
+                    "user.name=Fixture Author",
+                    "-c",
+                    "user.email=fixture@example.invalid",
+                    "commit",
+                    "-m",
+                    "initial",
+                ],
+                cwd=repo,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True,
+            )
+            registry_path = Path(tmpdir) / "artifact-widget.registry.json"
+            artifact_path = Path(tmpdir) / "artifact-widget.txt"
+            artifact_bytes = b"artifact bytes\nwith exact hashing\r\n"
+            artifact_path.write_bytes(artifact_bytes)
+
+            self.assertEqual(forge_registry.main(["scaffold-registry", str(repo), str(registry_path)]), 0)
+            args = [
+                "attach-local-artifact",
+                str(registry_path),
+                str(artifact_path),
+                "--version",
+                "0.1.0-local",
+                "--tag",
+                "v0.1.0-local",
+                "--timestamp",
+                "2026-06-29T00:00:00Z",
+            ]
+            self.assertEqual(forge_registry.main(args), 0)
+            self.assertEqual(forge_registry.main(args), 0)
+
+            registry = json.loads(registry_path.read_text(encoding="utf-8"))
+            render_project_page.validate_registry(registry)
+            self.assertEqual(len(registry["releases"]), 1)
+            release = registry["releases"][0]
+            self.assertEqual(release["version"], "0.1.0-local")
+            self.assertEqual(release["tag"], "v0.1.0-local")
+            self.assertEqual(len(release["artifacts"]), 1)
+            artifact = release["artifacts"][0]
+            expected_sha256 = hashlib.sha256(artifact_bytes).hexdigest()
+            self.assertEqual(artifact["name"], "artifact-widget.txt")
+            self.assertEqual(artifact["media_type"], "text/plain")
+            self.assertEqual(artifact["size_bytes"], len(artifact_bytes))
+            self.assertEqual(artifact["sha256"], expected_sha256)
+            self.assertEqual(artifact["hashes"]["sha256"], expected_sha256)
+            self.assertTrue(artifact["uri"].startswith("file://"))
+            self.assertEqual(artifact["signature"], "unsigned-local-artifact-metadata")
+            self.assertEqual(artifact["attestation"], "absent")
+            availability = artifact["availability"]
+            self.assertTrue(availability["local_fixture"])
+            self.assertFalse(availability["pinned"])
+            self.assertFalse(availability["live_ipfs_verified"])
+            self.assertFalse(availability["paid_storage"])
+            self.assertFalse(availability["durability_claim"])
+            self.assertIn("no IPFS add", availability["notes"])
+
+            states = registry["verification_states"]
+            self.assertEqual(sum(1 for state in states if state["scope"] == "registry.local_artifact_metadata"), 1)
+            artifact_state = [state for state in states if state["scope"] == "registry.local_artifact_metadata"][0]
+            self.assertEqual(artifact_state["state"], "local-fixture")
+            self.assertFalse(artifact_state["live_verified"])
+            self.assertFalse(artifact_state["synthetic"])
+            self.assertIn(expected_sha256, artifact_state["evidence"])
+            self.assertEqual(registry["updated_at"], "2026-06-29T00:00:00Z")
+            self.assertEqual(registry["substrates"]["ipfs"]["pinning_status"], "not-pinned")
+            self.assertFalse(registry["substrates"]["ipfs"]["live_ipfs_verified"])
+            self.assertFalse(registry["substrates"]["ipfs"]["durability_claim"])
+            combined = json.dumps(registry).lower()
+            for required_boundary in ["local file metadata only", "no ipfs add", "no ipfs", "not-pinned"]:
+                self.assertIn(required_boundary, combined)
+            for unsupported_claim in ["production ready", "durably stored", "pinned and available", "slsa compliant"]:
+                self.assertNotIn(unsupported_claim, combined)
+
     def test_live_gate_inventory_is_read_only_and_secret_free(self):
         payload = live_gate_inventory.inventory()
         self.assertEqual(payload["schema_version"], "decentralized-forge.live-gate-inventory.v1")

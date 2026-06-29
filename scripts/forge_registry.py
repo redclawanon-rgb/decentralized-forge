@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import mimetypes
 import shutil
 import subprocess
 import sys
@@ -123,6 +124,10 @@ def canonical_evidence_bytes(path: Path) -> bytes:
 
 def sha256_file(path: Path) -> str:
     return hashlib.sha256(canonical_evidence_bytes(path)).hexdigest()
+
+
+def raw_sha256_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def bundle_file_bytes(path: Path) -> bytes:
@@ -389,11 +394,136 @@ def scaffold_registry_guidance(output: Path) -> list[str]:
     rel = relative(output)
     return [
         f"python scripts/forge_registry.py validate {rel}",
+        f"python scripts/forge_registry.py attach-local-artifact {rel} path/to/artifact --version 0.1.0-local --tag v0.1.0-local",
         f"python scripts/forge_registry.py export-summary {rel} output/{output.stem}.summary.json",
         f"python scripts/forge_registry.py render {rel} output/{output.stem}.html",
         "Review placeholder maintainer identity before sharing.",
-        "Add release artifacts, hashes, evidence rows, and protocol mappings only when separately verified.",
+        "Add protocol mappings only when separately verified.",
         "Do not claim signing, durability, broad availability, censorship resistance, security, SLSA compliance, or production readiness from this scaffold.",
+    ]
+
+
+def media_type_for_artifact(path: Path, explicit_media_type: str | None = None) -> str:
+    if explicit_media_type:
+        return explicit_media_type
+    guessed_media_type, _encoding = mimetypes.guess_type(path.name)
+    return guessed_media_type or "application/octet-stream"
+
+
+def artifact_file_uri(path: Path) -> str:
+    resolved = path.resolve()
+    try:
+        return f"file://{resolved.relative_to(ROOT).as_posix()}"
+    except ValueError:
+        return resolved.as_uri()
+
+
+def local_artifact_metadata(path: Path, *, name: str | None = None, media_type: str | None = None) -> dict:
+    if not path.is_file():
+        raise ValueError(f"artifact path is not a file: {path}")
+    digest = raw_sha256_file(path)
+    return {
+        "name": name or path.name,
+        "media_type": media_type_for_artifact(path, media_type),
+        "size_bytes": path.stat().st_size,
+        "sha256": digest,
+        "hashes": {
+            "sha256": digest,
+        },
+        "uri": artifact_file_uri(path),
+        "availability": {
+            "local_fixture": True,
+            "pinned": False,
+            "live_ipfs_verified": False,
+            "paid_storage": False,
+            "durability_claim": False,
+            "notes": "Local file metadata only; no IPFS add, fetch, pin, gateway readback, paid storage, wallet, signing, or durability claim.",
+        },
+        "signature": "unsigned-local-artifact-metadata",
+        "attestation": "absent",
+    }
+
+
+def attach_local_artifact_to_registry(
+    registry_path: Path,
+    artifact_path: Path,
+    *,
+    version: str,
+    tag: str | None = None,
+    name: str | None = None,
+    media_type: str | None = None,
+    timestamp: str | None = None,
+) -> dict:
+    registry = render_project_page.load_registry(registry_path)
+    attached_at = timestamp or datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    release_tag = tag or version
+    artifact = local_artifact_metadata(artifact_path, name=name, media_type=media_type)
+    releases = registry.setdefault("releases", [])
+    release = next(
+        (
+            item
+            for item in releases
+            if isinstance(item, dict) and item.get("version") == version and item.get("tag") == release_tag
+        ),
+        None,
+    )
+    if release is None:
+        release = {"version": version, "tag": release_tag, "artifacts": []}
+        releases.append(release)
+    release_artifacts = [item for item in release.get("artifacts", []) if item.get("name") != artifact["name"]]
+    release_artifacts.append(artifact)
+    release["artifacts"] = release_artifacts
+
+    substrates = registry.setdefault("substrates", {})
+    ipfs = substrates.setdefault("ipfs", {})
+    ipfs["artifact_cids"] = [cid for cid in ipfs.get("artifact_cids", []) if cid]
+    ipfs.setdefault("cid_status", "no-artifact-cid")
+    ipfs["pinning_status"] = "not-pinned"
+    ipfs["live_ipfs_verified"] = False
+    ipfs["paid_storage"] = False
+    ipfs["durability_claim"] = False
+
+    sigstore_slsa = substrates.setdefault("sigstore_slsa", {})
+    sigstore_slsa.setdefault("release_signature_status", "absent")
+    sigstore_slsa.setdefault("provenance_status", "absent")
+    sigstore_slsa["private_keys_used"] = False
+    sigstore_slsa["slsa_level_claimed"] = False
+    sigstore_slsa.setdefault("production_claim", "none")
+
+    state = {
+        "scope": "registry.local_artifact_metadata",
+        "state": "local-fixture",
+        "evidence": f"Attached local artifact metadata for {artifact['name']} at {artifact['uri']} with sha256 {artifact['sha256']}.",
+        "live_verified": False,
+        "synthetic": False,
+        "claim_boundary": "Local file metadata only; no IPFS add, fetch, pin, gateway readback, paid storage, wallet, signing, durable storage, or production readiness claim.",
+        "last_checked_at": attached_at,
+        "notes": "Artifact bytes were hashed locally and referenced with a file URI; availability beyond this local file was not verified.",
+    }
+    states = [
+        item
+        for item in registry.get("verification_states", [])
+        if not (
+            isinstance(item, dict)
+            and item.get("scope") == state["scope"]
+            and artifact["name"] in item.get("evidence", "")
+        )
+    ]
+    states.append(state)
+    registry["verification_states"] = states
+    registry["updated_at"] = attached_at
+    render_project_page.validate_registry(registry)
+    return registry
+
+
+def attach_local_artifact_guidance(registry_path: Path) -> list[str]:
+    rel = relative(registry_path)
+    stem = registry_path.stem
+    return [
+        f"python scripts/forge_registry.py validate {rel}",
+        f"python scripts/forge_registry.py export-summary {rel} output/{stem}.summary.json",
+        f"python scripts/forge_registry.py render {rel} output/{stem}.html",
+        "Treat the attached artifact as local metadata only until IPFS readback, pinning, signing, provenance, and release availability are separately verified.",
     ]
 
 
@@ -1146,6 +1276,26 @@ def command_scaffold_registry(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_attach_local_artifact(args: argparse.Namespace) -> int:
+    registry = attach_local_artifact_to_registry(
+        args.registry,
+        args.artifact,
+        version=args.version,
+        tag=args.tag,
+        name=args.name,
+        media_type=args.media_type,
+        timestamp=args.timestamp,
+    )
+    write_json(args.registry, registry)
+    render_project_page.load_registry(args.registry)
+    print(f"attached local artifact metadata: {relative(args.artifact)} -> {relative(args.registry)}")
+    print("- scope: local file metadata only; no IPFS add/fetch/pin, signing, paid storage, or durability claim")
+    print("- next steps:")
+    for item in attach_local_artifact_guidance(args.registry):
+        print(f"  - {item}")
+    return 0
+
+
 def command_render_app(args: argparse.Namespace) -> int:
     render_args = [str(args.output)]
     for registry in args.registries:
@@ -1420,6 +1570,19 @@ def build_parser() -> argparse.ArgumentParser:
     scaffold_registry.add_argument("--name", help="Override the generated project name")
     scaffold_registry.add_argument("--description", help="Override the generated project description")
     scaffold_registry.set_defaults(func=command_scaffold_registry)
+
+    attach_local_artifact = subparsers.add_parser(
+        "attach-local-artifact",
+        help="Attach local-only file artifact metadata to a registry fixture",
+    )
+    attach_local_artifact.add_argument("registry", type=Path, help="Registry fixture JSON to update in place")
+    attach_local_artifact.add_argument("artifact", type=Path, help="Local artifact file to hash and reference")
+    attach_local_artifact.add_argument("--version", default="0.0.0-local", help="Release version to create or update")
+    attach_local_artifact.add_argument("--tag", help="Release tag; defaults to --version")
+    attach_local_artifact.add_argument("--name", help="Artifact display name; defaults to the file name")
+    attach_local_artifact.add_argument("--media-type", help="Override guessed media type")
+    attach_local_artifact.add_argument("--timestamp", help="Override updated_at and verification timestamp")
+    attach_local_artifact.set_defaults(func=command_attach_local_artifact)
 
     render_app = subparsers.add_parser("render-app", help="Render the static forge workbench app")
     render_app.add_argument("output", type=Path, nargs="?", default=render_forge_app.DEFAULT_OUTPUT)
