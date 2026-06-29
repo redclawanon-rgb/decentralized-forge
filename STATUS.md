@@ -936,11 +936,11 @@ Outputs:
 
 - Added project-scoped dev dependencies `helia@6.1.4` and `@helia/unixfs@7.2.1`.
 - Added `scripts/verify_helia_fixture.mjs` and npm script `verify:helia`.
-- `npm run verify:helia` creates a non-started in-process project-scoped Helia instance, adds `fixtures/local-release-artifact.txt`, reads it back with UnixFS `cat`, and writes `evidence/helia-local-ipfs-add-get-2026-06-28.json`.
+- `npm run verify:helia` creates a non-started offline in-memory project-scoped Helia instance with no libp2p listeners, transports, discovery, routers, or block brokers; adds `fixtures/local-release-artifact.txt`; reads it back with UnixFS `cat`; and writes `evidence/helia-local-ipfs-add-get-2026-06-28.json`.
 - The recorded CID is `bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua`; readback SHA-256 matches `3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0`.
 - `fixtures/live-evidence-index.json`, `output/demo-project.html`, CI, docs, and tests now include the Loop 41 evidence row.
 
-Gate preserved: This is local Helia add/get evidence only. No public gateway was queried, no pinning service was used, no paid storage or wallet was used, no persistent daemon/background service was started, and no durability, global availability, censorship-resistance, security, or production-readiness claim is made.
+Gate preserved: This is local offline Helia add/get evidence only. No public gateway was queried, no pinning service was used, no paid storage or wallet was used, no persistent daemon/background service was started, and no durability, global availability, censorship-resistance, security, or production-readiness claim is made.
 
 ## Verification requirements
 

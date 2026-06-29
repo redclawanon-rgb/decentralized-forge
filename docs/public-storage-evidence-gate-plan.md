@@ -17,7 +17,7 @@ Preflight evidence is in `evidence/storage-tooling-preflight-2026-06-22.md`. Loo
 - Loop 31 found no installed IPFS/Kubo CLI, CAR CLI, IPLD CLI, or Python multiformats/CAR libraries on this host.
 - Node/npm/npx/corepack and uv are available, so a future local-only dependency-based CAR/CID smoke is feasible without root if explicitly chosen.
 - Loop 33 completed the dependency-backed local CAR/CID path with `@ipld/car@5.4.6` and `multiformats@14.0.0` in `package-lock.json`; `npm run verify:car-cid` passed. The generated CAR has one root matching `bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua`, one block, and block bytes matching `fixtures/local-release-artifact.txt`.
-- Loop 41 completed a project-scoped local Helia add/get path with `helia@6.1.4` and `@helia/unixfs@7.2.1`; `npm run verify:helia` passed. The local non-started in-process Helia instance added `fixtures/local-release-artifact.txt` and read back the exact bytes for CID `bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua`.
+- Loop 41 completed a project-scoped local Helia add/get path with `helia@6.1.4` and `@helia/unixfs@7.2.1`; `npm run verify:helia` passed. The local non-started offline in-memory Helia instance, configured with no libp2p listeners, transports, discovery, routers, or block brokers, added `fixtures/local-release-artifact.txt` and read back the exact bytes for CID `bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua`.
 
 ## What Loop 31 did not do
 
