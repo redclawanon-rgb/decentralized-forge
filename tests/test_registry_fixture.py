@@ -16,6 +16,7 @@ import forge_registry
 import live_gate_inventory
 import next_loop_controller
 import preflight_static_artifact
+import render_forge_app
 
 SCHEMA_PATH = ROOT / "schemas" / "project-registry.schema.json"
 LIVE_EVIDENCE_SCHEMA_PATH = ROOT / "schemas" / "live-evidence-index.schema.json"
@@ -41,6 +42,7 @@ FIXTURE_PATHS = [FIXTURE_PATH, PORTABLE_FIXTURE_PATH, RADICLE_FIXTURE_PATH]
 RENDERER = ROOT / "scripts" / "render_project_page.py"
 STATIC_PREFLIGHT = ROOT / "scripts" / "preflight_static_artifact.py"
 OUTPUT_DEMO_HTML = ROOT / "output" / "demo-project.html"
+OUTPUT_FORGE_APP_HTML = ROOT / "output" / "forge-app.html"
 OUTPUT_PORTABLE_HTML = ROOT / "output" / "portable-lab.html"
 OUTPUT_DEMO_SUMMARY = ROOT / "output" / "demo-project.summary.json"
 OUTPUT_PORTABLE_SUMMARY = ROOT / "output" / "portable-lab.summary.json"
@@ -174,6 +176,48 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertNotIn("NIP-34 fixture adapter", html)
         self.assertNotIn("Live evidence index", html)
 
+    def test_static_forge_app_is_current_and_non_publishing(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            generated = Path(tmpdir) / "forge-app.html"
+            self.assertEqual(render_forge_app.main([str(generated)]), 0)
+            self.assertEqual(generated.read_text(encoding="utf-8"), OUTPUT_FORGE_APP_HTML.read_text(encoding="utf-8"))
+
+        html = OUTPUT_FORGE_APP_HTML.read_text(encoding="utf-8")
+        self.assertIn("Decentralized Forge Workbench", html)
+        self.assertIn("Issues & patches", html)
+        self.assertIn("Nostr collaboration draft", html)
+        self.assertIn("unsigned local draft", html)
+        self.assertIn("no relay publish action", html)
+        self.assertIn("loop43-nostr-issue-patch-readback", html)
+        self.assertIn("selected-relay-issue-patch-readback-verified", html)
+
+        data_match = re.search(
+            r'<script id="forge-data" type="application/json">(.*?)</script>',
+            html,
+            re.S,
+        )
+        self.assertIsNotNone(data_match)
+        app_data = json.loads(data_match.group(1))
+        self.assertEqual(app_data["schema_version"], "decentralized-forge.static-app-data.v1")
+        self.assertEqual(len(app_data["projects"]), 2)
+        self.assertEqual(app_data["projects"][0]["registry"]["project"]["id"], "demo-project")
+        self.assertEqual({item["type"] for item in app_data["live_nostr_collaboration"]}, {"issue", "patch"})
+        self.assertEqual(len(app_data["live_nostr_collaboration"]), 2)
+        self.assertEqual(app_data["live_evidence_index"]["loop"], 45)
+        self.assertIn("static app does not publish protocol events", app_data["non_claims"])
+
+        for forbidden_runtime in [
+            "new WebSocket",
+            "fetch(",
+            "SimplePool",
+            "finalizeEvent",
+            "generateSecretKey",
+            "pool.publish",
+        ]:
+            self.assertNotIn(forbidden_runtime, html)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, html.lower())
+
     def test_live_gate_inventory_is_read_only_and_secret_free(self):
         payload = live_gate_inventory.inventory()
         self.assertEqual(payload["schema_version"], "decentralized-forge.live-gate-inventory.v1")
@@ -271,8 +315,10 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("uses: actions/attest@v4", workflow)
         self.assertIn("if: github.event_name == 'push' && github.ref == 'refs/heads/main'", workflow)
         self.assertIn("npm run verify:helia", workflow)
+        self.assertIn("python scripts/forge_registry.py render-app output/forge-app.html", workflow)
         for subject in [
             "output/demo-project.html",
+            "output/forge-app.html",
             "output/portable-lab.html",
             "output/demo-project.summary.json",
             "output/portable-lab.summary.json",

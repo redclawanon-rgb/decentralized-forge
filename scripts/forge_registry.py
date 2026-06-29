@@ -14,6 +14,7 @@ from pathlib import Path
 
 import nip34_adapter
 import preflight_static_artifact
+import render_forge_app
 import render_project_page
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -263,6 +264,13 @@ def command_export_summary(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_render_app(args: argparse.Namespace) -> int:
+    render_args = [str(args.output)]
+    for registry in args.registries:
+        render_args.extend(["--registry", str(registry)])
+    return render_forge_app.main(render_args)
+
+
 def command_validate_evidence_index(args: argparse.Namespace) -> int:
     errors = validate_live_evidence_index(args.index)
     if errors:
@@ -421,6 +429,7 @@ def command_verify_local(args: argparse.Namespace) -> int:
         [sys.executable, "scripts/forge_registry.py", "doctor", "--json"],
         [sys.executable, "scripts/forge_registry.py", "validate", "fixtures/example-project.registry.json", "fixtures/portable-lab.registry.json"],
         [sys.executable, "scripts/forge_registry.py", "render", "fixtures/portable-lab.registry.json", "output/portable-lab.html"],
+        [sys.executable, "scripts/forge_registry.py", "render-app", "output/forge-app.html"],
         [sys.executable, "scripts/forge_registry.py", "export-summary", "fixtures/example-project.registry.json", "output/demo-project.summary.json"],
         [sys.executable, "scripts/forge_registry.py", "export-summary", "fixtures/portable-lab.registry.json", "output/portable-lab.summary.json"],
         [sys.executable, "scripts/live_gate_inventory.py"],
@@ -467,6 +476,18 @@ def build_parser() -> argparse.ArgumentParser:
     export_summary.add_argument("registry", type=Path)
     export_summary.add_argument("output", type=Path)
     export_summary.set_defaults(func=command_export_summary)
+
+    render_app = subparsers.add_parser("render-app", help="Render the static forge workbench app")
+    render_app.add_argument("output", type=Path, nargs="?", default=render_forge_app.DEFAULT_OUTPUT)
+    render_app.add_argument(
+        "--registry",
+        dest="registries",
+        action="append",
+        type=Path,
+        default=[],
+        help="Registry fixture to include; may be repeated",
+    )
+    render_app.set_defaults(func=command_render_app)
 
     evidence_index = subparsers.add_parser("validate-evidence-index", help="Validate live evidence index paths, hashes, and claim boundaries")
     evidence_index.add_argument("index", type=Path, nargs="?", default=DEFAULT_LIVE_EVIDENCE_INDEX)

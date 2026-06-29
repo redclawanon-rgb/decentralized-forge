@@ -616,3 +616,11 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as local trust-contract hardening. Added `schemas/live-evidence-index.schema.json`, evidence-file `evidence_sha256` and `evidence_size_bytes` metadata in `fixtures/live-evidence-index.json`, `validate-evidence-index`, `refresh-evidence-hashes`, and read-only `doctor` commands in `scripts/forge_registry.py`, CI coverage for those commands, and public-facing `docs/threat-model.md` plus `docs/community-quickstart.md`.
 
 **Gate preserved:** No new live protocol/storage/signing action, spending, wallet, production/private personal key, direct outreach, persistent service, registry provenance replacement, SLSA compliance claim, durability claim, broad availability claim, censorship-resistance claim, security guarantee, or production-readiness claim.
+
+## Loop 47: Static forge workbench app
+
+**Goal:** Build the first usable local product surface around the recorded registry, evidence, and collaboration model without adding live protocol side effects.
+
+**Current result:** Complete as a local static app. Added `scripts/render_forge_app.py` and generated `output/forge-app.html`, with `scripts/forge_registry.py render-app` wired into local verification and CI. The app renders project overview metrics, issues/patches, release/artifact evidence, evidence filtering, selected-relay Nostr issue/patch readback, and an unsigned local Nostr issue/patch draft workflow. Tests assert the generated app is current, embeds the expected evidence model, and does not contain relay publishing/signing runtime calls. Headless Chrome verification exercised overview, collaboration filtering, evidence filtering, and issue/patch draft generation.
+
+**Gate preserved:** This is a committed static HTML app over committed fixture/evidence data. It does not fetch, open WebSockets, sign events, publish to relays, import private keys, run a hosted service, spend money, use wallets, replace registry provenance, or claim durability, censorship resistance, broad availability, security, SLSA compliance, or production readiness.

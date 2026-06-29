@@ -23,13 +23,13 @@ This repo starts as a research/spec/prototype workspace. The first milestone is 
 
 ## Current status
 
-This repository is a **local registry/static renderer prototype** with protocol-mapping fixtures and narrow, evidence-backed live checks. It is public for collaboration, but it is not a production forge and does not claim durable storage, broad protocol availability, censorship resistance, security guarantees, or production readiness.
+This repository is a **local registry/static renderer prototype** with a generated static workbench app, protocol-mapping fixtures, and narrow, evidence-backed live checks. It is public for collaboration, but it is not a production forge and does not claim durable storage, broad protocol availability, censorship resistance, security guarantees, or production readiness.
 
-As of Loop 45, the project has local CAR/CID fixture verification, local Helia UnixFS/IPFS add-get evidence for the same fixture bytes, a bounded public gateway/pinning preflight, selected-relay Nostr repository-announcement plus issue/patch readback evidence, one disposable Radicle local/private replay, one disposable public Radicle seed/remote-clone smoke, a current-host Radicle route probe, hosted GitHub keyless artifact attestation evidence, and a separate registry-shaped keyless-attestation import. Those checks are deliberately scoped to the exact evidence files in this repo.
+As of Loop 47, the project has local CAR/CID fixture verification, local Helia UnixFS/IPFS add-get evidence for the same fixture bytes, a bounded public gateway/pinning preflight, selected-relay Nostr repository-announcement plus issue/patch readback evidence, one disposable Radicle local/private replay, one disposable public Radicle seed/remote-clone smoke, a current-host Radicle route probe, hosted GitHub keyless artifact attestation evidence, a separate registry-shaped keyless-attestation import, evidence hash hardening, and a local static workbench app. Those checks are deliberately scoped to the exact evidence files in this repo.
 
 | Area | Current state | Not claimed |
 |---|---|---|
-| Registry/UI | Local JSON schema, fixtures, stdlib renderer, generated demo HTML | Production forge, hosted service, signed authority |
+| Registry/UI | Local JSON schema, fixtures, stdlib renderer, generated demo HTML, generated static workbench app | Production forge, hosted service, signed authority |
 | Nostr NIP-34 | Dry-run repository/issue/patch/state fixtures, local stdlib parser/conformance checks, imported Loop 25 selected-relay repository-announcement readback, and Loop 43 disposable issue/patch selected-relay readback | Durability, global propagation, identity trust, full NIP-34/forge compatibility |
 | Radicle | Source-inspected mapping, disposable local/private CLI replay evidence, one disposable public seed/remote-clone smoke for exact RID `rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa`, and current-host read-only route probes with `rad` unavailable | Persistent seed operation, broad Radicle network availability, durability, identity trust, production readiness |
 | Artifacts | Local SHA-256, CIDv1 raw/base32-compatible metadata, lockfile-backed local CAR/CID readback evidence, project-scoped Helia local add/get readback evidence, and public gateway preflight with zero matching gateway readbacks observed | Public gateway availability, pinning, paid storage, Filecoin/Arweave durability |
@@ -76,9 +76,11 @@ As of Loop 45, the project has local CAR/CID fixture verification, local Helia U
 - `fixtures/radicle-backed-project.registry.json` — synthetic local-only Radicle-backed registry fixture
 - `scripts/nip34_adapter.py` — stdlib parser/export helper that round-trips dry-run NIP-34 repository, issue, patch, repository state, fixture-only status/check data, and local NIP-01 conformance metadata back to registry-shaped concepts without relay publishing
 - `scripts/render_project_page.py` — stdlib renderer for static project pages, including verification-state labels, artifact availability, content-address, CI/provenance, substrate detail sections, optional local NIP-34 fixture adapter import/display, and optional live-evidence index display
+- `scripts/render_forge_app.py` — stdlib generator for `output/forge-app.html`, a local static workbench over registry fixtures, evidence rows, selected-relay Nostr readback, and unsigned local Nostr issue/patch drafts
 - `scripts/preflight_static_artifact.py` — stdlib preflight for generated static artifact freshness, expected local/synthetic boundary sections, optional NIP-34 fixture sections, optional live evidence index, and selected unsupported claim phrases
-- `scripts/forge_registry.py` — reusable local CLI for validation, rendering, summaries, evidence-index hash checks, and read-only doctor output
+- `scripts/forge_registry.py` — reusable local CLI for validation, rendering, workbench app generation, summaries, evidence-index hash checks, and read-only doctor output
 - `output/demo-project.html` — generated demo project page
+- `output/forge-app.html` — generated local static workbench app; it reads embedded committed fixture/evidence data and does not sign, fetch, open WebSockets, or publish protocol events
 - `output/portable-lab.html` — generated second-fixture project page
 - `output/*.summary.json` — deterministic machine-readable registry summaries
 - `tests/test_registry_fixture.py` — stdlib verification tests for the registry fixture and renderer
@@ -100,6 +102,15 @@ Open the generated artifact locally in a browser:
 ```sh
 python3 -m webbrowser output/demo-project.html
 ```
+
+Regenerate and open the local static forge workbench:
+
+```sh
+python3 scripts/forge_registry.py render-app output/forge-app.html
+python3 -m webbrowser output/forge-app.html
+```
+
+The workbench is a static local app over committed fixtures/evidence. Its Nostr draft screen creates unsigned local JSON only; it does not sign events, import private keys, fetch from relays, open WebSockets, or publish.
 
 Run the static artifact preflight before release-oriented edits, screenshots, pushes, or public updates:
 
@@ -143,6 +154,7 @@ python3 scripts/forge_registry.py refresh-evidence-hashes fixtures/live-evidence
 python3 scripts/forge_registry.py doctor --json
 python3 scripts/forge_registry.py validate fixtures/example-project.registry.json fixtures/portable-lab.registry.json
 python3 scripts/forge_registry.py render fixtures/portable-lab.registry.json output/portable-lab.html
+python3 scripts/forge_registry.py render-app output/forge-app.html
 python3 scripts/forge_registry.py export-summary fixtures/example-project.registry.json output/demo-project.summary.json
 python3 scripts/forge_registry.py export-summary fixtures/portable-lab.registry.json output/portable-lab.summary.json
 python3 scripts/live_gate_inventory.py

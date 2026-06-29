@@ -971,6 +971,7 @@ Gate preserved: This is local offline Helia add/get evidence only. No public gat
 - Keep ForgeFed as a later object-shape/federation bridge; do not run a public actor until moderation/security gates exist.
 - Keep IPFS/CIDs as artifact metadata plus exact local CAR/CID and local Helia add/get evidence. Public gateway checks, pinning, paid storage, Filecoin, and Arweave still require specific targets and stronger evidence because they imply availability, account/token, spending, or wallet decisions.
 - Keep Sigstore/in-toto/SLSA as release/build trust models; current provenance is synthetic and no SLSA level should be claimed.
+- Use `output/forge-app.html` as the first local product surface for inspecting projects, evidence, releases, selected-relay Nostr issue/patch readback, and unsigned Nostr collaboration drafts. Keep it static and non-publishing until a separate relay-signing/publish flow is designed and verified.
 
 ### Loops 42-45: Requested live/import loop set
 
@@ -1001,9 +1002,27 @@ Outputs:
 
 Gate preserved: Loop 46 performs local validation, hashing, documentation, and rendering only. It does not run live Nostr/Radicle/IPFS actions, spend money, use wallets, use production/private personal keys, start persistent services, replace registry provenance, or introduce durability, censorship-resistance, broad-availability, security, SLSA, or production-readiness claims.
 
+### Loop 47: Static forge workbench app
+
+Status: **complete as a local static workbench app; no protocol publishing or signing action**.
+
+Outputs:
+
+- `scripts/render_forge_app.py` generates `output/forge-app.html` from committed registry fixtures, the live evidence index, NIP-34 fixture/readback data, Loop 43 issue/patch selected-relay readback evidence, and the registry-shaped keyless-attestation import.
+- `scripts/forge_registry.py render-app output/forge-app.html` is part of `verify-local` and CI.
+- The workbench includes project overview metrics, issues/patches, release/artifact evidence, evidence filtering, and an unsigned local Nostr issue/patch draft generator.
+- `.github/workflows/ci.yml` includes `output/forge-app.html` in generated-artifact verification and keyless attestation subjects.
+
+Verified evidence:
+
+- `python -m unittest discover -s tests` passed, 67 tests.
+- Headless Chrome DevTools verification loaded `output/forge-app.html` and exercised overview, collaboration filtering, evidence filtering, and unsigned issue/patch draft generation.
+
+Gate preserved: Loop 47 is local static UI generation only. It does not open WebSockets, fetch from relays, sign events, publish events, import private keys, spend money, use wallets, start persistent services, replace registry provenance, or introduce durability, censorship-resistance, broad-availability, security, SLSA, or production-readiness claims.
+
 ## Next recommended loop
 
-**Next:** Build the product surface around the recorded trust model: an exportable verification bundle command that packages registry JSON, source evidence files, evidence-index hashes, deterministic summaries, rendered HTML, and a verifier manifest. The still-blocked parallel lane is locating an approved `rad` CLI on this Windows host for broader disposable Radicle clone/sync checks.
+**Next:** Package the product surface into a portable verification bundle command that includes registry JSON, source evidence files, evidence-index hashes, deterministic summaries, rendered HTML, the static workbench app, and a verifier manifest. The still-blocked parallel lane is locating an approved `rad` CLI on this Windows host for broader disposable Radicle clone/sync checks.
 
 Recent completed loops:
 
@@ -1021,6 +1040,8 @@ Recent completed loops:
 - Loop 43: Nostr issue/patch readback - complete as two disposable selected-relay collaboration events in `evidence/nostr-loop43-issue-patch-readback-2026-06-28.json`.
 - Loop 44: broader Radicle check - complete as current-host `rad` CLI blocker plus read-only route probes in `evidence/radicle-loop44-broader-check-2026-06-28.json`.
 - Loop 45: registry-shaped keyless-attestation import - complete as `fixtures/keyless-attestation.registry-verification.json`; project registry provenance remains synthetic.
+- Loop 46: trust hardening and public-tool readiness - complete as evidence hash checks, read-only doctor output, schema validation, threat model, and community quickstart.
+- Loop 47: static forge workbench app - complete as `scripts/render_forge_app.py` plus `output/forge-app.html`; app remains static, local, unsigned, and non-publishing.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

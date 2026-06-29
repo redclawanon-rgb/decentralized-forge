@@ -34,6 +34,7 @@ python scripts/nip34_adapter.py fixtures/nostr-repo-announcement.json fixtures/n
 python scripts/preflight_static_artifact.py
 python scripts/forge_registry.py validate fixtures/example-project.registry.json fixtures/portable-lab.registry.json
 python scripts/forge_registry.py render fixtures/portable-lab.registry.json output/portable-lab.html
+python scripts/forge_registry.py render-app output/forge-app.html
 python scripts/forge_registry.py export-summary fixtures/example-project.registry.json output/demo-project.summary.json
 python scripts/forge_registry.py export-summary fixtures/portable-lab.registry.json output/portable-lab.summary.json
 python scripts/live_gate_inventory.py
@@ -57,7 +58,7 @@ Status: complete.
 
 Status: complete.
 
-- `scripts/forge_registry.py` provides `validate`, `render`, `export-summary`, and `verify-local` commands.
+- `scripts/forge_registry.py` provides `validate`, `render`, `render-app`, `export-summary`, and `verify-local` commands.
 - The CLI uses the same validation paths as the renderer and tests.
 - Deterministic JSON summaries are generated under `output/*.summary.json`.
 
@@ -69,7 +70,15 @@ Status: complete.
 - It renders to `output/portable-lab.html` and exports to `output/portable-lab.summary.json` without code changes.
 - Its evidence and non-claim language remain project-scoped.
 
-### Lane D: Optional Live Evidence
+### Lane D: Local Workbench App
+
+Status: active as a static local app.
+
+- `scripts/render_forge_app.py` generates `output/forge-app.html` from committed registry fixtures, live-evidence index data, selected-relay Nostr readback evidence, and the registry-shaped keyless-attestation import.
+- The app provides project overview, issue/patch inspection, release evidence, evidence filtering, and unsigned local Nostr issue/patch draft generation.
+- It does not sign, publish, fetch, open WebSockets, use private keys, host a service, or claim production forge readiness.
+
+### Lane E: Optional Live Evidence
 
 Status: active under standing approval.
 

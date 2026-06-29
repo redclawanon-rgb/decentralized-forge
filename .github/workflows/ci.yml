@@ -63,6 +63,7 @@ jobs:
           python scripts/forge_registry.py doctor --json
           python scripts/forge_registry.py validate fixtures/example-project.registry.json fixtures/portable-lab.registry.json
           python scripts/forge_registry.py render fixtures/portable-lab.registry.json output/portable-lab.html
+          python scripts/forge_registry.py render-app output/forge-app.html
           python scripts/forge_registry.py export-summary fixtures/example-project.registry.json output/demo-project.summary.json
           python scripts/forge_registry.py export-summary fixtures/portable-lab.registry.json output/portable-lab.summary.json
 
@@ -87,6 +88,7 @@ jobs:
         with:
           subject-path: |
             output/demo-project.html
+            output/forge-app.html
             output/portable-lab.html
             output/demo-project.summary.json
             output/portable-lab.summary.json
