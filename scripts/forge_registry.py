@@ -105,7 +105,8 @@ def registry_summary(registry: dict, source_path: Path) -> dict:
 
 def write_json(path: Path, payload: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(f"{json.dumps(payload, indent=2, sort_keys=True)}\n", encoding="utf-8")
+    with path.open("w", encoding="utf-8", newline="\n") as handle:
+        handle.write(f"{json.dumps(payload, indent=2, sort_keys=True)}\n")
 
 
 def stable_json_bytes(payload: object) -> bytes:
