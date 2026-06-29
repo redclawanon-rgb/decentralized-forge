@@ -103,12 +103,13 @@ def write_json(path: Path, payload: object) -> None:
     path.write_text(f"{json.dumps(payload, indent=2, sort_keys=True)}\n", encoding="utf-8")
 
 
+def canonical_evidence_bytes(path: Path) -> bytes:
+    """Return cross-platform evidence bytes with text line endings normalized."""
+    return path.read_bytes().replace(b"\r\n", b"\n")
+
+
 def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+    return hashlib.sha256(canonical_evidence_bytes(path)).hexdigest()
 
 
 def safe_repo_relative_path(value: str) -> Path:
@@ -195,7 +196,7 @@ def validate_live_evidence_index(index_path: Path = DEFAULT_LIVE_EVIDENCE_INDEX)
                     errors.append(f"{prefix}.evidence_file missing: {evidence_file}")
                 else:
                     actual_sha256 = sha256_file(evidence_path)
-                    actual_size = evidence_path.stat().st_size
+                    actual_size = len(canonical_evidence_bytes(evidence_path))
                     if item.get("evidence_sha256") != actual_sha256:
                         errors.append(f"{prefix}.evidence_sha256 does not match {evidence_file}")
                     if item.get("evidence_size_bytes") != actual_size:
@@ -224,7 +225,7 @@ def refresh_live_evidence_hashes(index_path: Path = DEFAULT_LIVE_EVIDENCE_INDEX)
         if not evidence_path.is_file():
             raise ValueError(f"missing evidence file: {item['evidence_file']}")
         item["evidence_sha256"] = sha256_file(evidence_path)
-        item["evidence_size_bytes"] = evidence_path.stat().st_size
+        item["evidence_size_bytes"] = len(canonical_evidence_bytes(evidence_path))
     return index
 
 

@@ -507,8 +507,8 @@ def render_live_evidence_item(item: dict) -> str:
         + field("Evidence state", item.get("state"))
         + field("Verified at", item.get("verified_at"))
         + field("Evidence file", item.get("evidence_file"), code=False)
-        + field("Evidence SHA-256", item.get("evidence_sha256"))
-        + field("Evidence size bytes", item.get("evidence_size_bytes"))
+        + field("Evidence SHA-256 (canonical LF)", item.get("evidence_sha256"))
+        + field("Evidence size bytes (canonical LF)", item.get("evidence_size_bytes"))
         + field("Summary", item.get("verification_summary"), code=False)
         + f"<dt>Live network action</dt><dd>{yes_no(item.get('live_network_action'))}</dd>"
         + f"<dt>Local CLI verified</dt><dd>{yes_no(item.get('local_cli_verified'))}</dd>"

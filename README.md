@@ -116,7 +116,7 @@ npm run forge:doctor
 npm run verify:evidence-index
 ```
 
-The live evidence index records each source evidence file's SHA-256 and byte size. Refresh those fields only after intentionally updating evidence files:
+The live evidence index records each source evidence file's canonical LF-normalized SHA-256 and byte size, so Windows and Linux checkouts verify the same committed evidence. Refresh those fields only after intentionally updating evidence files:
 
 ```sh
 npm run refresh:evidence-hashes

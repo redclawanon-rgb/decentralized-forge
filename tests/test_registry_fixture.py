@@ -128,8 +128,9 @@ class RegistryFixtureTests(unittest.TestCase):
         for item in self.live_evidence_index["evidence"]:
             evidence_path = ROOT / item["evidence_file"]
             self.assertTrue(evidence_path.is_file())
-            self.assertEqual(item["evidence_sha256"], hashlib.sha256(evidence_path.read_bytes()).hexdigest())
-            self.assertEqual(item["evidence_size_bytes"], evidence_path.stat().st_size)
+            canonical_bytes = forge_registry.canonical_evidence_bytes(evidence_path)
+            self.assertEqual(item["evidence_sha256"], hashlib.sha256(canonical_bytes).hexdigest())
+            self.assertEqual(item["evidence_size_bytes"], len(canonical_bytes))
 
     def test_live_evidence_index_validator_rejects_stale_hashes(self):
         with tempfile.TemporaryDirectory() as tmpdir:

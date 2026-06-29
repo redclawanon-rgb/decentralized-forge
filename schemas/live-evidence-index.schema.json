@@ -110,10 +110,12 @@
             "pattern": "^(evidence|fixtures)/[^\\\\]+$"
           },
           "evidence_sha256": {
+            "description": "SHA-256 of the evidence file after normalizing CRLF line endings to LF.",
             "type": "string",
             "pattern": "^[0-9a-f]{64}$"
           },
           "evidence_size_bytes": {
+            "description": "Byte length of the evidence file after normalizing CRLF line endings to LF.",
             "type": "integer",
             "minimum": 1
           },
