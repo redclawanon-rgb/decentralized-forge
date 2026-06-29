@@ -32,6 +32,10 @@ NEXT_LOOP_WORKFLOW_PATH = ROOT / ".github" / "workflows" / "next-loop.yml"
 CI_WORKFLOW_PATH = ROOT / ".github" / "workflows" / "ci.yml"
 LOCAL_RELEASE_ARTIFACT_PATH = ROOT / "fixtures" / "local-release-artifact.txt"
 HELIA_LOCAL_EVIDENCE_PATH = ROOT / "evidence" / "helia-local-ipfs-add-get-2026-06-28.json"
+PUBLIC_GATEWAY_PREFLIGHT_PATH = ROOT / "evidence" / "public-gateway-pinning-preflight-2026-06-28.json"
+NOSTR_ISSUE_PATCH_READBACK_PATH = ROOT / "evidence" / "nostr-loop43-issue-patch-readback-2026-06-28.json"
+RADICLE_BROADER_CHECK_PATH = ROOT / "evidence" / "radicle-loop44-broader-check-2026-06-28.json"
+KEYLESS_REGISTRY_IMPORT_PATH = ROOT / "fixtures" / "keyless-attestation.registry-verification.json"
 FIXTURE_PATHS = [FIXTURE_PATH, PORTABLE_FIXTURE_PATH, RADICLE_FIXTURE_PATH]
 RENDERER = ROOT / "scripts" / "render_project_page.py"
 STATIC_PREFLIGHT = ROOT / "scripts" / "preflight_static_artifact.py"
@@ -771,6 +775,124 @@ class RegistryFixtureTests(unittest.TestCase):
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, evidence_blob)
 
+    def test_loop42_public_gateway_pinning_preflight_is_bounded(self):
+        evidence = json.loads(PUBLIC_GATEWAY_PREFLIGHT_PATH.read_text(encoding="utf-8"))
+
+        self.assertEqual(evidence["schema_version"], "decentralized-forge.public-gateway-pinning-preflight.v1")
+        self.assertEqual(evidence["loop"], 42)
+        self.assertTrue(evidence["verification_passed"])
+        self.assertTrue(evidence["public_gateway_queried"])
+        self.assertEqual(evidence["cid"], "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua")
+        self.assertEqual(evidence["input_sha256"], hashlib.sha256(LOCAL_RELEASE_ARTIFACT_PATH.read_bytes()).hexdigest())
+        self.assertEqual(len(evidence["gateways"]), 3)
+        self.assertEqual(evidence["successful_gateway_readback_count"], 0)
+        self.assertFalse(evidence["pinning_preflight"]["pinning_provider_selected"])
+        self.assertFalse(evidence["pinning_preflight"]["account_or_token_used"])
+        self.assertFalse(evidence["pinning_preflight"]["pin_request_sent"])
+        self.assertFalse(evidence["paid_infrastructure_used"])
+        self.assertFalse(evidence["wallet_used"])
+        self.assertFalse(evidence["durability_claim"])
+
+        evidence_blob = json.dumps(evidence).lower()
+        for required in [
+            "no pinning provider account or token was used",
+            "no ipfs daemon or persistent service was started",
+            "does not prove durability",
+            "successful_gateway_readback_count",
+        ]:
+            self.assertIn(required, evidence_blob)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "api_token"]:
+            self.assertNotIn(accidental_secret_marker, evidence_blob)
+
+    def test_loop43_nostr_issue_patch_readback_evidence_is_bounded(self):
+        evidence = json.loads(NOSTR_ISSUE_PATCH_READBACK_PATH.read_text(encoding="utf-8"))
+
+        self.assertEqual(evidence["schema_version"], "decentralized-forge.nostr-issue-patch-readback.v1")
+        self.assertEqual(evidence["loop"], 43)
+        self.assertTrue(evidence["verification_passed"])
+        self.assertEqual(evidence["tool"]["package"], "nostr-tools")
+        self.assertEqual(evidence["tool"]["version"], "2.23.8")
+        self.assertEqual(evidence["source_fixture"], "fixtures/nostr-collaboration-events.json")
+        self.assertEqual(evidence["event_count"], 2)
+        self.assertEqual({event["kind"] for event in evidence["events"]}, {1621, 1617})
+        self.assertEqual(set(evidence["accepted_relays"]), {"wss://relay.damus.io", "wss://nos.lol"})
+        self.assertEqual(set(evidence["readback_verified_relays"]), {"wss://relay.damus.io", "wss://nos.lol"})
+        self.assertFalse(evidence["private_keys_recorded"])
+        self.assertFalse(evidence["production_or_personal_key_used"])
+        for event in evidence["events"]:
+            self.assertRegex(event["id"], r"^[0-9a-f]{64}$")
+            self.assertRegex(event["pubkey"], r"^[0-9a-f]{64}$")
+            self.assertTrue(event["local_signature_verified"])
+            self.assertTrue(any(item["ok"] for item in event["publish"]))
+            self.assertTrue(any(item["matched"] and item["verify_readback"] for item in event["readback"]))
+
+        evidence_blob = json.dumps(evidence).lower()
+        for required in [
+            "no secret key material is recorded",
+            "not proof of global propagation",
+            "not proof of full nip-34 or forge protocol compatibility",
+            "not production readiness",
+        ]:
+            self.assertIn(required, evidence_blob)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, evidence_blob)
+
+    def test_loop44_radicle_broader_check_records_current_blocker(self):
+        evidence = json.loads(RADICLE_BROADER_CHECK_PATH.read_text(encoding="utf-8"))
+
+        self.assertEqual(evidence["schema_version"], "decentralized-forge.radicle-broader-check.v1")
+        self.assertEqual(evidence["loop"], 44)
+        self.assertTrue(evidence["verification_passed"])
+        self.assertEqual(evidence["target_prior_disposable_rid"], "rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa")
+        self.assertFalse(evidence["rad_cli"]["available"])
+        self.assertIn("spawnSync rad ENOENT", evidence["rad_cli"]["error"])
+        self.assertEqual(len(evidence["web_route_probes"]), 3)
+        self.assertEqual(len(evidence["direct_node_probes"]), 3)
+        self.assertFalse(evidence["cli_broader_clone_or_sync_executed"])
+        self.assertFalse(evidence["private_keys_used"])
+        self.assertFalse(evidence["paid_infrastructure_used"])
+        self.assertFalse(evidence["persistent_service_started"])
+        self.assertIn("rad CLI is not available", evidence["finding"])
+
+        evidence_blob = json.dumps(evidence).lower()
+        for required in [
+            "no radicle identity was created or reused",
+            "no rad node, seed, publish, sync, clone, connect, or remote command was run",
+            "does not prove broader radicle availability",
+        ]:
+            self.assertIn(required, evidence_blob)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "passphrase"]:
+            self.assertNotIn(accidental_secret_marker, evidence_blob)
+
+    def test_loop45_keyless_attestation_registry_import_is_bounded(self):
+        evidence = json.loads(KEYLESS_REGISTRY_IMPORT_PATH.read_text(encoding="utf-8"))
+
+        self.assertEqual(evidence["schema_version"], "decentralized-forge.registry-verification-import.v1")
+        self.assertEqual(evidence["loop"], 45)
+        self.assertEqual(evidence["source_evidence"], "evidence/github-keyless-attestation-2026-06-28.json")
+        self.assertEqual(evidence["subject_count"], 6)
+        self.assertFalse(evidence["registry_fixture_provenance_replaced"])
+        self.assertFalse(evidence["contains_secret_values"])
+        self.assertFalse(evidence["private_keys_used"])
+        self.assertFalse(evidence["production_readiness_claim"])
+        self.assertEqual(len(evidence["verification_states"]), 1)
+        state = evidence["verification_states"][0]
+        self.assertEqual(state["scope"], "github-actions.keyless_artifact_attestation")
+        self.assertEqual(state["state"], "live-verified")
+        self.assertTrue(state["live_verified"])
+        self.assertFalse(state["synthetic"])
+        self.assertIn("does not replace the registry fixture ci.provenance row", state["claim_boundary"])
+
+        evidence_blob = json.dumps(evidence).lower()
+        for required in [
+            "does not claim slsa compliance",
+            "does not claim production supply-chain security",
+            "does not use production/private personal signing keys",
+        ]:
+            self.assertIn(required, evidence_blob)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, evidence_blob)
+
     def test_loop34_radicle_public_smoke_evidence_is_bounded(self):
         checklist = self.live_replay_checklist
         if checklist["loop"] < 34:
@@ -959,7 +1081,7 @@ class RegistryFixtureTests(unittest.TestCase):
     def test_loop26_live_evidence_index_imports_only_bounded_evidence(self):
         index = self.live_evidence_index
         self.assertEqual(index["schema_version"], "decentralized-forge.live-evidence-index.v1")
-        self.assertEqual(index["loop"], 41)
+        self.assertEqual(index["loop"], 45)
         self.assertFalse(index["claim_policy"]["contains_secret_values"])
         by_id = {item["id"]: item for item in index["evidence"]}
         self.assertEqual(
@@ -970,6 +1092,10 @@ class RegistryFixtureTests(unittest.TestCase):
                 "loop34-radicle-disposable-public-smoke",
                 "loop40-github-keyless-artifact-attestation",
                 "loop41-helia-local-ipfs-add-get",
+                "loop42-public-gateway-pinning-preflight",
+                "loop43-nostr-issue-patch-readback",
+                "loop44-radicle-broader-check",
+                "loop45-keyless-attestation-registry-import",
             },
         )
 
@@ -1028,6 +1154,37 @@ class RegistryFixtureTests(unittest.TestCase):
         )
         self.assertIn("not proof of public gateway availability", helia["non_claims"])
         self.assertIn("not proof of durability", helia["non_claims"])
+
+        gateway = by_id["loop42-public-gateway-pinning-preflight"]
+        self.assertEqual(gateway["protocol"], "ipfs")
+        self.assertEqual(gateway["state"], "public-gateway-no-readback-observed")
+        self.assertTrue(gateway["live_network_action"])
+        self.assertEqual(gateway["public_identifiers"]["successful_gateway_readback_count"], 0)
+        self.assertFalse(gateway["public_identifiers"]["pinning_provider_selected"])
+        self.assertIn("not proof of pinning", gateway["non_claims"])
+
+        nostr_issue_patch = by_id["loop43-nostr-issue-patch-readback"]
+        self.assertEqual(nostr_issue_patch["protocol"], "nostr")
+        self.assertEqual(nostr_issue_patch["state"], "selected-relay-issue-patch-readback-verified")
+        self.assertTrue(nostr_issue_patch["live_network_action"])
+        self.assertTrue(nostr_issue_patch["selected_relay_readback_verified"])
+        self.assertEqual(len(nostr_issue_patch["public_identifiers"]["event_ids"]), 2)
+        self.assertEqual(nostr_issue_patch["public_identifiers"]["kinds"], [1621, 1617])
+        self.assertIn("not proof of relay durability", nostr_issue_patch["non_claims"])
+
+        radicle_broader = by_id["loop44-radicle-broader-check"]
+        self.assertEqual(radicle_broader["protocol"], "radicle")
+        self.assertEqual(radicle_broader["state"], "cli-blocked-readonly-route-probed")
+        self.assertTrue(radicle_broader["live_network_action"])
+        self.assertFalse(radicle_broader["public_identifiers"]["rad_cli_available"])
+        self.assertIn("not a broader Radicle CLI verification", radicle_broader["non_claims"])
+
+        keyless_import = by_id["loop45-keyless-attestation-registry-import"]
+        self.assertEqual(keyless_import["protocol"], "github-actions")
+        self.assertEqual(keyless_import["state"], "registry-shaped-import-recorded")
+        self.assertFalse(keyless_import["live_network_action"])
+        self.assertFalse(keyless_import["public_identifiers"]["registry_fixture_provenance_replaced"])
+        self.assertIn("not a replacement for fixtures/example-project.registry.json ci.provenance", keyless_import["non_claims"])
 
     def test_loop40_github_keyless_attestation_evidence_is_bounded(self):
         index = self.live_evidence_index

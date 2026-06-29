@@ -4,7 +4,7 @@ Loop 7 adds a local-only model for CI check status and release provenance so fut
 
 After Milestone 1 completion, the repository also has GitHub Actions CI at `.github/workflows/ci.yml`. That workflow runs the local verification suite, checks that generated artifacts stay current, and on `main` push uses GitHub OIDC with `actions/attest@v4` to generate keyless provenance attestations for the generated HTML/summary artifacts plus the local CAR/CID fixture artifacts.
 
-The workflow-level attestation is real hosted keyless provenance evidence for the named subject files in GitHub Actions. The registry fixture `ci_checks[]`, fake attestation string, and structured `provenance` object remain synthetic local fixture data until a later loop imports the hosted attestation result back into registry fields with a concrete run URL and verification evidence.
+The workflow-level attestation is real hosted keyless provenance evidence for the named subject files in GitHub Actions. Loop 45 imports that result into `fixtures/keyless-attestation.registry-verification.json` as a registry-shaped row. The registry fixture `ci_checks[]`, fake attestation string, and structured `provenance` object remain synthetic local fixture data.
 
 ## Registry fields
 
@@ -52,9 +52,11 @@ Loop 7 and the local registry fixture do **not** perform or claim any of the fol
 - SLSA level, SLSA compliance, supply-chain security guarantee, or production readiness
 - paid CI minutes, paid storage, wallets, or public infrastructure provisioning
 
-Loop 40 allowed claim after the updated CI workflow passes on `main`: GitHub Actions generated keyless artifact attestations for the named subject files using GitHub OIDC and GitHub's artifact attestation service. This is hosted workflow evidence, not yet imported into the local registry provenance fixture as a replacement for the synthetic fields.
+Loop 40 allowed claim after the updated CI workflow passes on `main`: GitHub Actions generated keyless artifact attestations for the named subject files using GitHub OIDC and GitHub's artifact attestation service. This is hosted workflow evidence.
 
 Concrete Loop 40 evidence is recorded in `evidence/github-keyless-attestation-2026-06-28.json` from GitHub Actions run https://github.com/redclawanon-rgb/decentralized-forge/actions/runs/28339280081.
+
+Loop 45 registry-shaped import evidence is recorded in `fixtures/keyless-attestation.registry-verification.json`. It deliberately stays outside `fixtures/example-project.registry.json` so the local registry fixture provenance object remains synthetic.
 
 Still not allowed claim: the registry fixture itself is signed, the project is production supply-chain secure, consumers have verified the attestations, a custom in-toto policy was enforced, paid/private infrastructure was used, or a production readiness guarantee exists.
 

@@ -1,0 +1,56 @@
+{
+  "schema_version": "decentralized-forge.public-gateway-pinning-preflight.v1",
+  "loop": 42,
+  "created_utc": "2026-06-29T01:48:00Z",
+  "scope": "bounded public IPFS gateway and pinning preflight for the local release artifact fixture",
+  "standing_approval": "User requested looping public gateway/pinning preflight with no durability claim; standing approval covers free project-scoped live IPFS/storage checks.",
+  "input_artifact": "fixtures/local-release-artifact.txt",
+  "cid": "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua",
+  "input_size_bytes": 241,
+  "input_sha256": "3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0",
+  "public_gateway_queried": true,
+  "gateway_timeout_ms": 12000,
+  "gateways": [
+    {
+      "url": "https://ipfs.io/ipfs/bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua",
+      "error": "AbortError: This operation was aborted",
+      "elapsed_ms": 12006,
+      "body_matches_fixture": false
+    },
+    {
+      "url": "https://dweb.link/ipfs/bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua",
+      "error": "AbortError: This operation was aborted",
+      "elapsed_ms": 12013,
+      "body_matches_fixture": false
+    },
+    {
+      "url": "https://w3s.link/ipfs/bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua",
+      "error": "AbortError: This operation was aborted",
+      "elapsed_ms": 12007,
+      "body_matches_fixture": false
+    }
+  ],
+  "successful_gateway_readback_count": 0,
+  "successful_gateway_readbacks": [],
+  "pinning_preflight": {
+    "pinning_provider_selected": false,
+    "account_or_token_used": false,
+    "pin_request_sent": false,
+    "paid_storage_used": false,
+    "finding": "No pinning provider action was taken; pinning remains a later account/token/cost-bound lane."
+  },
+  "verification_passed": true,
+  "contains_secret_values": false,
+  "private_keys_used": false,
+  "paid_infrastructure_used": false,
+  "wallet_used": false,
+  "durability_claim": false,
+  "production_readiness_claim": false,
+  "actions_not_taken": [
+    "no pinning provider account or token was used",
+    "no pin, unpin, provider, Filecoin, Arweave, wallet, paid storage, or spending action was used",
+    "no IPFS daemon or persistent service was started",
+    "no durability, global availability, censorship-resistance, security, or production-readiness claim is made"
+  ],
+  "claim_boundary": "This records only low-volume public gateway observations and a no-action pinning preflight for one CID at one time; it does not prove durability, pinning, persistence, global availability, censorship resistance, security, or production readiness."
+}

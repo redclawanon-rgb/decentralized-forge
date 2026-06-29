@@ -1,0 +1,92 @@
+{
+  "schema_version": "decentralized-forge.radicle-broader-check.v1",
+  "loop": 44,
+  "created_utc": "2026-06-29T01:48:35Z",
+  "scope": "broader disposable Radicle check constrained by current host tooling",
+  "standing_approval": "User requested looping a broader disposable Radicle check; standing approval covers disposable project-scoped Radicle checks but not persistent services or stronger claims.",
+  "target_prior_disposable_rid": "rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa",
+  "rad_cli": {
+    "command": "rad --version",
+    "available": false,
+    "status": null,
+    "error": "Error: spawnSync rad ENOENT",
+    "stdout": "",
+    "stderr": ""
+  },
+  "web_route_probes": [
+    {
+      "url": "https://app.radicle.xyz/nodes/seed.radicle.xyz/rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa",
+      "status": 307,
+      "status_text": "Temporary Redirect",
+      "location": "https://radicle.network/nodes/seed.radicle.xyz/rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa",
+      "content_type": "text/html; charset=UTF-8",
+      "elapsed_ms": 71,
+      "body_prefix": "<html>\r\n<head><title>307 Temporary Redirect</title></head>\r\n<body>\r\n<center><h1>307 Temporary Redirect</h1></center>\r\n<hr><center>cloudflare</center>\r\n</body>\r\n"
+    },
+    {
+      "url": "https://app.radicle.xyz/nodes/iris.radicle.network/rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa",
+      "status": 307,
+      "status_text": "Temporary Redirect",
+      "location": "https://radicle.network/nodes/iris.radicle.network/rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa",
+      "content_type": "text/html; charset=UTF-8",
+      "elapsed_ms": 21,
+      "body_prefix": "<html>\r\n<head><title>307 Temporary Redirect</title></head>\r\n<body>\r\n<center><h1>307 Temporary Redirect</h1></center>\r\n<hr><center>cloudflare</center>\r\n</body>\r\n"
+    },
+    {
+      "url": "https://app.radicle.xyz/nodes/rosa.radicle.network/rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa",
+      "status": 307,
+      "status_text": "Temporary Redirect",
+      "location": "https://radicle.network/nodes/rosa.radicle.network/rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa",
+      "content_type": "text/html; charset=UTF-8",
+      "elapsed_ms": 10,
+      "body_prefix": "<html>\r\n<head><title>307 Temporary Redirect</title></head>\r\n<body>\r\n<center><h1>307 Temporary Redirect</h1></center>\r\n<hr><center>cloudflare</center>\r\n</body>\r\n"
+    }
+  ],
+  "direct_node_probes": [
+    {
+      "url": "https://seed.radicle.xyz/rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa",
+      "status": 404,
+      "status_text": "Not Found",
+      "location": null,
+      "content_type": null,
+      "elapsed_ms": 347,
+      "body_prefix": ""
+    },
+    {
+      "url": "https://iris.radicle.network/rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa",
+      "status": 404,
+      "status_text": "Not Found",
+      "location": null,
+      "content_type": null,
+      "elapsed_ms": 779,
+      "body_prefix": ""
+    },
+    {
+      "url": "https://rosa.radicle.network/rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa",
+      "status": 404,
+      "status_text": "Not Found",
+      "location": null,
+      "content_type": null,
+      "elapsed_ms": 60,
+      "body_prefix": ""
+    }
+  ],
+  "cli_broader_clone_or_sync_executed": false,
+  "live_network_action": true,
+  "verification_passed": true,
+  "finding": "rad CLI is not available on this Windows host, so the broader CLI clone/sync check is blocked here; only read-only public route probes were executed.",
+  "contains_secret_values": false,
+  "private_keys_used": false,
+  "paid_infrastructure_used": false,
+  "persistent_service_started": false,
+  "direct_outreach_used": false,
+  "actions_not_taken": [
+    "no Radicle identity was created or reused",
+    "no RAD_HOME temporary state was created",
+    "no rad node, seed, publish, sync, clone, connect, or remote command was run",
+    "no production/private personal key was used",
+    "no paid infrastructure, wallet, spending, persistent service, or direct outreach was used",
+    "no durability, global replication, broad availability, censorship-resistance, security, identity-trust, or production-readiness claim is made"
+  ],
+  "claim_boundary": "This loop broadens Radicle evidence only as a current-host availability and read-only public-route probe. Because rad CLI is unavailable here, it does not replace the earlier Loop 34 disposable CLI seed/clone smoke and does not prove broader Radicle availability."
+}

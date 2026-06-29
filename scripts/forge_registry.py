@@ -151,6 +151,7 @@ def command_verify_local(args: argparse.Namespace) -> int:
         [sys.executable, "-m", "json.tool", "fixtures/nostr-repo-state-status.json"],
         [sys.executable, "-m", "json.tool", "fixtures/live-adapter-replay-checklist.json"],
         [sys.executable, "-m", "json.tool", "fixtures/live-evidence-index.json"],
+        [sys.executable, "-m", "json.tool", "fixtures/keyless-attestation.registry-verification.json"],
         [
             sys.executable,
             "scripts/nip34_adapter.py",

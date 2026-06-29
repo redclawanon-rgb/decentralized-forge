@@ -972,9 +972,23 @@ Gate preserved: This is local offline Helia add/get evidence only. No public gat
 - Keep IPFS/CIDs as artifact metadata plus exact local CAR/CID and local Helia add/get evidence. Public gateway checks, pinning, paid storage, Filecoin, and Arweave still require specific targets and stronger evidence because they imply availability, account/token, spending, or wallet decisions.
 - Keep Sigstore/in-toto/SLSA as release/build trust models; current provenance is synthetic and no SLSA level should be claimed.
 
+### Loops 42-45: Requested live/import loop set
+
+Status: **complete as bounded evidence; no durability, broad availability, SLSA, security, or production claim**.
+
+Outputs:
+
+- Loop 42 queried three public gateways for CID `bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua`; all timed out and zero matching readbacks were observed. No pinning provider, token, paid storage, wallet, daemon, or persistent service was used.
+- Loop 43 used project-scoped `nostr-tools@2.23.8` and an in-memory disposable key to publish and read back one NIP-34-shaped issue event and one patch event from `wss://relay.damus.io` and `wss://nos.lol`. Secret key material is not recorded.
+- Loop 44 found no `rad` CLI on this Windows host, so broader Radicle CLI clone/sync is blocked here; it recorded only read-only public route probes for prior disposable RID `rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa`.
+- Loop 45 imported hosted keyless attestation evidence into `fixtures/keyless-attestation.registry-verification.json` as a registry-shaped row outside the project-registry fixtures. The `ci.provenance` fixture row remains synthetic.
+- `fixtures/live-evidence-index.json`, renderer output, docs, and tests now include Loops 42-45.
+
+Gate preserved: No spending, paid infrastructure, wallet, production/private personal key, direct outreach, persistent service, pinning action, Radicle CLI action, registry provenance replacement, SLSA compliance claim, durability claim, broad availability claim, censorship-resistance claim, security guarantee, or production-readiness claim was introduced.
+
 ## Next recommended loop
 
-**Next:** Choose the next narrow completion loop: either a public-gateway/pinning preflight with explicit no-durability wording, a Nostr issue/patch readback loop with disposable project-scoped keys, a broader disposable Radicle check, or a registry-shaped keyless-attestation import that still avoids production supply-chain-security claims.
+**Next:** Either install/locate an approved `rad` CLI on this Windows host for the blocked broader disposable Radicle clone/sync loop, or build the next product surface around the now-recorded live evidence rows.
 
 Recent completed loops:
 
@@ -988,6 +1002,10 @@ Recent completed loops:
 - Loop 39: standing live-action approval recorded - complete as controller/status/test updates; no live protocol/storage/signing action executed in this loop.
 - Loop 40: GitHub keyless artifact attestation workflow - complete as hosted keyless attestation evidence in `evidence/github-keyless-attestation-2026-06-28.json`.
 - Loop 41: local Helia/IPFS add-get fixture verification - complete as project-scoped local add/get evidence in `evidence/helia-local-ipfs-add-get-2026-06-28.json`; no public gateway, pinning, paid storage, wallet, persistent daemon, or durability/security/production claim.
+- Loop 42: public gateway/pinning preflight - complete as three public gateway timeouts and no pinning action in `evidence/public-gateway-pinning-preflight-2026-06-28.json`.
+- Loop 43: Nostr issue/patch readback - complete as two disposable selected-relay collaboration events in `evidence/nostr-loop43-issue-patch-readback-2026-06-28.json`.
+- Loop 44: broader Radicle check - complete as current-host `rad` CLI blocker plus read-only route probes in `evidence/radicle-loop44-broader-check-2026-06-28.json`.
+- Loop 45: registry-shaped keyless-attestation import - complete as `fixtures/keyless-attestation.registry-verification.json`; project registry provenance remains synthetic.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

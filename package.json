@@ -8,6 +8,10 @@
     "verify:local": "python scripts/forge_registry.py verify-local",
     "verify:car-cid": "node scripts/verify_car_cid_fixture.mjs",
     "verify:helia": "node scripts/verify_helia_fixture.mjs",
+    "live:gateway-preflight": "node scripts/run_public_gateway_pinning_preflight.mjs",
+    "live:nostr-issue-patch": "node scripts/run_nostr_issue_patch_readback.mjs",
+    "live:radicle-check": "node scripts/run_radicle_broader_check.mjs",
+    "import:keyless-attestation": "python scripts/import_keyless_attestation_registry.py",
     "next:loop": "python scripts/next_loop_controller.py --write-report",
     "next:check": "python scripts/next_loop_controller.py --check"
   },
@@ -20,6 +24,7 @@
     "@helia/unixfs": "7.2.1",
     "@ipld/car": "5.4.6",
     "helia": "6.1.4",
-    "multiformats": "14.0.0"
+    "multiformats": "14.0.0",
+    "nostr-tools": "2.23.8"
   }
 }

@@ -47,6 +47,7 @@ jobs:
           python -m json.tool fixtures/nostr-repo-state-status.json
           python -m json.tool fixtures/live-adapter-replay-checklist.json
           python -m json.tool fixtures/live-evidence-index.json
+          python -m json.tool fixtures/keyless-attestation.registry-verification.json
 
       - name: Validate NIP-34 adapter export
         run: python scripts/nip34_adapter.py fixtures/nostr-repo-announcement.json fixtures/nostr-collaboration-events.json fixtures/nostr-repo-state-status.json

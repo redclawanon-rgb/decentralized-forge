@@ -63,6 +63,10 @@ REQUIRED_PHRASES = [
     "loop23-radicle-local-cli-replay",
     "loop25-nostr-selected-relay-readback",
     "loop34-radicle-disposable-public-smoke",
+    "loop42-public-gateway-pinning-preflight",
+    "loop43-nostr-issue-patch-readback",
+    "loop44-radicle-broader-check",
+    "loop45-keyless-attestation-registry-import",
     "Selected-relay readback verified",
 ]
 

@@ -576,3 +576,35 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as local Helia add/get evidence. Added `helia@6.1.4` and `@helia/unixfs@7.2.1` as lockfile-backed dev dependencies, `scripts/verify_helia_fixture.mjs`, npm script `verify:helia`, and `evidence/helia-local-ipfs-add-get-2026-06-28.json`. The verifier creates a non-started offline in-memory Helia instance with no libp2p listeners, transports, discovery, routers, or block brokers; adds `fixtures/local-release-artifact.txt`; reads the exact bytes back; and records CID `bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua` plus matching SHA-256 `3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0`. The live evidence index, renderer output, CI, docs, and tests now include this row.
 
 **Gate preserved:** This is local in-process Helia evidence only. No public gateway, public pinning service, paid storage, Filecoin, Arweave, wallet, production/private personal key, persistent daemon, background service, direct outreach, durability claim, global availability claim, censorship-resistance claim, security guarantee, or production-readiness claim was introduced.
+
+## Loop 42: Public gateway/pinning preflight
+
+**Goal:** Query a small set of public IPFS gateways for the local release artifact CID and record pinning preflight status without making a durability claim.
+
+**Current result:** Complete as `evidence/public-gateway-pinning-preflight-2026-06-28.json`. Three public gateway GET requests timed out for CID `bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua`; zero matching fixture readbacks were observed. No pinning provider account/token or pin request was used.
+
+**Gate preserved:** No daemon, persistent service, pinning, paid storage, Filecoin, Arweave, wallet, spending, durability, global availability, censorship-resistance, security, or production-readiness claim.
+
+## Loop 43: Nostr issue/patch readback
+
+**Goal:** Publish and read back disposable NIP-34-shaped issue and patch events using project-scoped tooling.
+
+**Current result:** Complete as `evidence/nostr-loop43-issue-patch-readback-2026-06-28.json`. Added lockfile-backed `nostr-tools@2.23.8`; generated one in-memory disposable key; published one issue event and one patch event to `wss://relay.damus.io` and `wss://nos.lol`; read both back from selected relays with signature verification.
+
+**Gate preserved:** No secret key material is recorded. No production/private personal key, paid relay, spending, direct outreach, durability, global propagation, censorship-resistance, identity trust, full NIP-34/forge compatibility, security, or production-readiness claim.
+
+## Loop 44: Broader Radicle check
+
+**Goal:** Attempt the next broader disposable Radicle check under current host constraints.
+
+**Current result:** Complete as current-host blocker/read-only evidence in `evidence/radicle-loop44-broader-check-2026-06-28.json`. No `rad` CLI is available on this Windows host (`spawnSync rad ENOENT`), so broader disposable CLI clone/sync was not executable here. The loop recorded read-only public route probes for the prior disposable RID `rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa`.
+
+**Gate preserved:** No Radicle identity, `RAD_HOME`, node, seed, publish, sync, clone, connect, remote command, production/private personal key, paid infrastructure, persistent service, direct outreach, broad availability, durability, censorship-resistance, security, identity-trust, or production-readiness claim.
+
+## Loop 45: Registry-shaped keyless-attestation import
+
+**Goal:** Import hosted keyless attestation evidence into registry-shaped verification rows without replacing synthetic registry fixture provenance.
+
+**Current result:** Complete as `fixtures/keyless-attestation.registry-verification.json`. The import records one `live-verified` registry-shaped row for `github-actions.keyless_artifact_attestation` outside the project-registry fixtures, tied to GitHub Actions run 28339280081 and six prototype artifact subjects.
+
+**Gate preserved:** `fixtures/example-project.registry.json` keeps `ci.provenance` synthetic. No SLSA compliance, production supply-chain security, consumer policy verification, production/private signing key, or production-readiness claim.

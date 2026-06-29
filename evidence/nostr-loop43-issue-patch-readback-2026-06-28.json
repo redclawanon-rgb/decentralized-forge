@@ -1,0 +1,311 @@
+{
+  "schema_version": "decentralized-forge.nostr-issue-patch-readback.v1",
+  "loop": 43,
+  "created_utc": "2026-06-29T01:48:08Z",
+  "scope": "disposable Nostr NIP-34 issue and patch publish/readback",
+  "standing_approval": "User requested looping Nostr issue/patch readback; standing approval covers low-volume disposable project-scoped Nostr publish/readback.",
+  "tool": {
+    "package": "nostr-tools",
+    "version": "2.23.8",
+    "license": "Unlicense"
+  },
+  "source_fixture": "fixtures/nostr-collaboration-events.json",
+  "selected_relays": [
+    "wss://relay.damus.io",
+    "wss://nos.lol"
+  ],
+  "disposable_pubkey": "1782a49edc37976030d383b2b3fd74c3a5000bc037dc1a9f6c9d910a80f8e02b",
+  "event_count": 2,
+  "event_ids": [
+    "60ec3b293516e56a81e31ea0fa08d61e0d1a64d7e04007abe3f899c172c8cd2c",
+    "868c419fceabff85e9bb9e8588ab10f9ad8cf5643bd7d38cae0ce36fde32c0df"
+  ],
+  "accepted_relays": [
+    "wss://relay.damus.io",
+    "wss://nos.lol"
+  ],
+  "readback_verified_relays": [
+    "wss://nos.lol",
+    "wss://relay.damus.io"
+  ],
+  "events": [
+    {
+      "fixture_name": "demo-project-issue-1",
+      "mapped_registry_path": "issues[0]",
+      "kind": 1621,
+      "id": "60ec3b293516e56a81e31ea0fa08d61e0d1a64d7e04007abe3f899c172c8cd2c",
+      "pubkey": "1782a49edc37976030d383b2b3fd74c3a5000bc037dc1a9f6c9d910a80f8e02b",
+      "local_signature_verified": true,
+      "publish": [
+        {
+          "relay": "wss://relay.damus.io",
+          "ok": true,
+          "reason": "connection failure: connection failed"
+        },
+        {
+          "relay": "wss://nos.lol",
+          "ok": true,
+          "reason": ""
+        }
+      ],
+      "readback": [
+        {
+          "relay": "wss://relay.damus.io",
+          "matched": false,
+          "field_match": false,
+          "verify_readback": false,
+          "event": null
+        },
+        {
+          "relay": "wss://nos.lol",
+          "matched": true,
+          "field_match": true,
+          "verify_readback": true,
+          "event": {
+            "content": "Decentralized Forge prototype/research live NIP-34 collaboration readback.\nFixture source: demo-project-issue-1.\nThis event is disposable evidence only and does not claim production readiness, identity trust, durability, global propagation, censorship resistance, security, or full NIP-34/forge compatibility.\n\nChoose how maintainer authority is represented across Nostr, Radicle, DID, and SSH identities.",
+            "created_at": 1782698000,
+            "id": "60ec3b293516e56a81e31ea0fa08d61e0d1a64d7e04007abe3f899c172c8cd2c",
+            "kind": 1621,
+            "pubkey": "1782a49edc37976030d383b2b3fd74c3a5000bc037dc1a9f6c9d910a80f8e02b",
+            "sig": "39c4d5536e0dd559857c3d3691bc849b1593eb30baae51469987eaf8b39e9361a7ec3ac30dd46fe01c77d6671fa99c291558b9c16023c7b1e2ab23ec90cac51f",
+            "tags": [
+              [
+                "a",
+                "30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project",
+                "",
+                "root"
+              ],
+              [
+                "subject",
+                "Define portable project identity"
+              ],
+              [
+                "t",
+                "decentralized-forge"
+              ],
+              [
+                "t",
+                "identity"
+              ],
+              [
+                "status",
+                "open"
+              ],
+              [
+                "client",
+                "decentralized-forge-fixture"
+              ],
+              [
+                "client",
+                "decentralized-forge-loop43-nostr-tools"
+              ],
+              [
+                "alt",
+                "Decentralized Forge prototype NIP-34 issue/patch readback evidence"
+              ],
+              [
+                "published_at",
+                "1782698000"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "fixture_name": "demo-project-patch-1",
+      "mapped_registry_path": "patches[0]",
+      "kind": 1617,
+      "id": "868c419fceabff85e9bb9e8588ab10f9ad8cf5643bd7d38cae0ce36fde32c0df",
+      "pubkey": "1782a49edc37976030d383b2b3fd74c3a5000bc037dc1a9f6c9d910a80f8e02b",
+      "local_signature_verified": true,
+      "publish": [
+        {
+          "relay": "wss://relay.damus.io",
+          "ok": true,
+          "reason": ""
+        },
+        {
+          "relay": "wss://nos.lol",
+          "ok": true,
+          "reason": ""
+        }
+      ],
+      "readback": [
+        {
+          "relay": "wss://relay.damus.io",
+          "matched": true,
+          "field_match": true,
+          "verify_readback": true,
+          "event": {
+            "content": "Decentralized Forge prototype/research live NIP-34 collaboration readback.\nFixture source: demo-project-patch-1.\nThis event is disposable evidence only and does not claim production readiness, identity trust, durability, global propagation, censorship resistance, security, or full NIP-34/forge compatibility.\n\nFrom 2222222222222222222222222222222222222222 Mon Sep 17 00:00:00 2001\nFrom: Synthetic Contributor <fixture@example.invalid>\nDate: Mon, 22 Jun 2026 00:02:00 +0000\nSubject: [PATCH] Add static registry renderer\n\nPrototype a deterministic stdlib renderer for project registry fixtures.\n\n---\n docs/fixture-renderer-note.txt | 1 +\n 1 file changed, 1 insertion(+)\n create mode 100644 docs/fixture-renderer-note.txt\n\ndiff --git a/docs/fixture-renderer-note.txt b/docs/fixture-renderer-note.txt\nnew file mode 100644\nindex 0000000..1111111\n--- /dev/null\n+++ b/docs/fixture-renderer-note.txt\n@@ -0,0 +1 @@\n+Synthetic patch body for NIP-34 fixture validation only.\n-- \n2.0.0-fixture",
+            "created_at": 1782698001,
+            "id": "868c419fceabff85e9bb9e8588ab10f9ad8cf5643bd7d38cae0ce36fde32c0df",
+            "kind": 1617,
+            "pubkey": "1782a49edc37976030d383b2b3fd74c3a5000bc037dc1a9f6c9d910a80f8e02b",
+            "sig": "da96cbc9c02219d4a37ac057de7e1e2f061ad540b69e845f36211bf9cf7e3d4544ca9240158adab656cf580a7f68b45e0731ba1ba8209f9027b7f464b766e797",
+            "tags": [
+              [
+                "a",
+                "30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project",
+                "",
+                "root"
+              ],
+              [
+                "subject",
+                "Add static registry renderer"
+              ],
+              [
+                "t",
+                "decentralized-forge"
+              ],
+              [
+                "t",
+                "patch"
+              ],
+              [
+                "status",
+                "proposed"
+              ],
+              [
+                "client",
+                "decentralized-forge-fixture"
+              ],
+              [
+                "client",
+                "decentralized-forge-loop43-nostr-tools"
+              ],
+              [
+                "alt",
+                "Decentralized Forge prototype NIP-34 issue/patch readback evidence"
+              ],
+              [
+                "published_at",
+                "1782698001"
+              ]
+            ]
+          }
+        },
+        {
+          "relay": "wss://nos.lol",
+          "matched": true,
+          "field_match": true,
+          "verify_readback": true,
+          "event": {
+            "content": "Decentralized Forge prototype/research live NIP-34 collaboration readback.\nFixture source: demo-project-patch-1.\nThis event is disposable evidence only and does not claim production readiness, identity trust, durability, global propagation, censorship resistance, security, or full NIP-34/forge compatibility.\n\nFrom 2222222222222222222222222222222222222222 Mon Sep 17 00:00:00 2001\nFrom: Synthetic Contributor <fixture@example.invalid>\nDate: Mon, 22 Jun 2026 00:02:00 +0000\nSubject: [PATCH] Add static registry renderer\n\nPrototype a deterministic stdlib renderer for project registry fixtures.\n\n---\n docs/fixture-renderer-note.txt | 1 +\n 1 file changed, 1 insertion(+)\n create mode 100644 docs/fixture-renderer-note.txt\n\ndiff --git a/docs/fixture-renderer-note.txt b/docs/fixture-renderer-note.txt\nnew file mode 100644\nindex 0000000..1111111\n--- /dev/null\n+++ b/docs/fixture-renderer-note.txt\n@@ -0,0 +1 @@\n+Synthetic patch body for NIP-34 fixture validation only.\n-- \n2.0.0-fixture",
+            "created_at": 1782698001,
+            "id": "868c419fceabff85e9bb9e8588ab10f9ad8cf5643bd7d38cae0ce36fde32c0df",
+            "kind": 1617,
+            "pubkey": "1782a49edc37976030d383b2b3fd74c3a5000bc037dc1a9f6c9d910a80f8e02b",
+            "sig": "da96cbc9c02219d4a37ac057de7e1e2f061ad540b69e845f36211bf9cf7e3d4544ca9240158adab656cf580a7f68b45e0731ba1ba8209f9027b7f464b766e797",
+            "tags": [
+              [
+                "a",
+                "30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project",
+                "",
+                "root"
+              ],
+              [
+                "subject",
+                "Add static registry renderer"
+              ],
+              [
+                "t",
+                "decentralized-forge"
+              ],
+              [
+                "t",
+                "patch"
+              ],
+              [
+                "status",
+                "proposed"
+              ],
+              [
+                "client",
+                "decentralized-forge-fixture"
+              ],
+              [
+                "client",
+                "decentralized-forge-loop43-nostr-tools"
+              ],
+              [
+                "alt",
+                "Decentralized Forge prototype NIP-34 issue/patch readback evidence"
+              ],
+              [
+                "published_at",
+                "1782698001"
+              ]
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "extra_accidental_smoke_readback": {
+    "note": "A one-event API smoke was published before switching from Relay to SimplePool readback; it is recorded here to keep live actions auditable.",
+    "event_id": "152e6dcd3d377f36e1e350c512397eba1c6c193b03f9013fbea57c0e64f0b358",
+    "readback": [
+      {
+        "relay": "wss://relay.damus.io",
+        "matched": true,
+        "verify_readback": true,
+        "event": {
+          "content": "Decentralized Forge prototype/research disposable Nostr issue readback smoke. No production readiness claim.",
+          "created_at": 1782697419,
+          "id": "152e6dcd3d377f36e1e350c512397eba1c6c193b03f9013fbea57c0e64f0b358",
+          "kind": 1621,
+          "pubkey": "a20a27556aae044373aa3dc9f0463c84252419fee5de04c9dfe0271f3811427c",
+          "sig": "9b30147bf316adb646d703c7198419696ced640d2aa018aa6412de0022374ec7fbe98bf7b163b095d243b6c99652e29274fb717a1972b52d749d3ee4c77b2864",
+          "tags": [
+            [
+              "t",
+              "decentralized-forge"
+            ],
+            [
+              "client",
+              "decentralized-forge-loop42-smoke"
+            ]
+          ]
+        }
+      },
+      {
+        "relay": "wss://nos.lol",
+        "matched": false,
+        "verify_readback": false,
+        "event": null
+      }
+    ]
+  },
+  "superseded_events": {
+    "note": "An earlier Loop 43 run published two disposable events that still contained dry-run fixture wording. They are superseded by event_ids above and retained here only as an audit trail.",
+    "event_ids": [
+      "541af61ee7cee778f89f2be491a66e1a73e71925d10c8f5df319a09b975dc805",
+      "bb9156282ecfcd4b5ea715d1c435766aaddb2ad2c2ef067ee497e959f9d41f53"
+    ]
+  },
+  "verification_passed": true,
+  "contains_secret_values": false,
+  "private_keys_recorded": false,
+  "production_or_personal_key_used": false,
+  "paid_infrastructure_used": false,
+  "direct_outreach_used": false,
+  "actions_not_taken": [
+    "no secret key material is recorded",
+    "no production/private personal key was used",
+    "no paid relay, paid infrastructure, wallet, or spending action was used",
+    "no direct outreach was used",
+    "no durability, global propagation, censorship-resistance, identity-trust, full NIP-34/forge compatibility, security, or production-readiness claim is made"
+  ],
+  "non_claims": [
+    "not proof of global propagation",
+    "not proof of relay durability",
+    "not proof of censorship resistance",
+    "not proof of identity trust",
+    "not proof of full NIP-34 or forge protocol compatibility",
+    "not a security guarantee",
+    "not production readiness"
+  ],
+  "claim_boundary": "This proves only that two disposable prototype NIP-34-shaped collaboration events were accepted by and read back from at least one selected public relay during this run."
+}
