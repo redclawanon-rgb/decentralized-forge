@@ -132,6 +132,8 @@ Loop 62 added the retained maintainer lane. A project-scoped Radicle identity an
 
 Loop 63 added same-RID update evidence for that retained maintainer lane. The retained state was moved to host-local WSL storage to avoid exposing secret-bearing state to Docker and to keep Radicle node sockets off the Windows-mounted filesystem. Using the same RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy`, the project advanced from commit `dfc10b8f029c5eb886db2025dcc06c6490e28504` to commit `f800bae387f33452fdeb79ecf5c795d25f7246ac`; a fresh explicit direct-seed clone read back the updated commit. Default public-routing readback was not observed in this run, so the supported update claim is direct-seed readback only.
 
+Loop 64 added the retained RID community handoff. `docs/radicle-retained-rid-quickstart.md` and `python scripts/forge_registry.py radicle-retained-quickstart` now provide an evidence-derived maintainer-assisted direct-seed clone recipe for RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` at commit `f800bae387f33452fdeb79ecf5c795d25f7246ac`. This is a read-only usability layer over Loop 63 evidence; it does not prove default public routing, persistent seeding, durable availability, broad replication, identity trust, security, or production readiness.
+
 ## Release Rule
 
 Milestone 1 is complete as an evidence-scoped static prototype after CI passed on `main` for commit `e69fd5b22e8ec27f52a11e582b705e212690a865`, the README points to this file, and `STATUS.md` names the current completion state without contradicting the evidence index.

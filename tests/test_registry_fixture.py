@@ -51,6 +51,7 @@ FIXTURE_PATHS = [FIXTURE_PATH, PORTABLE_FIXTURE_PATH, RADICLE_FIXTURE_PATH]
 RENDERER = ROOT / "scripts" / "render_project_page.py"
 STATIC_PREFLIGHT = ROOT / "scripts" / "preflight_static_artifact.py"
 PORTABLE_BUNDLE_REVIEW_CHECKLIST = ROOT / "docs" / "portable-bundle-review-checklist.md"
+RADICLE_RETAINED_RID_QUICKSTART = ROOT / "docs" / "radicle-retained-rid-quickstart.md"
 OUTPUT_DEMO_HTML = ROOT / "output" / "demo-project.html"
 OUTPUT_VERIFICATION_BUNDLE = ROOT / "output" / "decentralized-forge-verification-bundle.zip"
 OUTPUT_FORGE_APP_HTML = ROOT / "output" / "forge-app.html"
@@ -393,6 +394,10 @@ class RegistryFixtureTests(unittest.TestCase):
                 "python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip",
                 manifest["suggested_verification_commands"],
             )
+            self.assertIn(
+                "python scripts/forge_registry.py radicle-retained-quickstart",
+                manifest["suggested_verification_commands"],
+            )
             payload_paths = {item["path"] for item in manifest["files"]}
             for expected_path in [
                 "fixtures/example-project.registry.json",
@@ -409,6 +414,7 @@ class RegistryFixtureTests(unittest.TestCase):
                 "output/demo-project.summary.json",
                 "output/portable-lab.summary.json",
                 "output/onboarding-sample.registry.summary.json",
+                "docs/radicle-retained-rid-quickstart.md",
                 "docs/portable-bundle-review-checklist.md",
                 "scripts/forge_registry.py",
             ]:
@@ -434,6 +440,7 @@ class RegistryFixtureTests(unittest.TestCase):
             "python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip",
             "python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip --json",
             "python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip",
+            "python scripts/forge_registry.py radicle-retained-quickstart",
             "python scripts/forge_registry.py verify-local --skip-npm-ci",
         ]:
             self.assertIn(required_command, checklist)
@@ -1649,6 +1656,80 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn(required, evidence_blob)
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "api_token"]:
             self.assertNotIn(accidental_secret_marker, evidence_blob)
+
+    def test_radicle_retained_quickstart_is_evidence_bounded(self):
+        evidence = json.loads(RADICLE_RETAINED_UPDATE_CHECK_PATH.read_text(encoding="utf-8"))
+        model = forge_registry.retained_radicle_quickstart_model()
+        rendered = forge_registry.format_retained_radicle_quickstart(model)
+
+        self.assertEqual(model["schema_version"], "decentralized-forge.radicle-retained-quickstart.v1")
+        self.assertEqual(model["source_evidence_id"], "loop63-radicle-retained-update-check")
+        self.assertEqual(model["source_evidence_file"], "evidence/radicle-retained-update-check-2026-06-29.json")
+        self.assertEqual(model["rid"], evidence["target_rid"])
+        self.assertEqual(model["expected_commit"], evidence["current_source_commit"])
+        self.assertEqual(model["direct_seed_readback_commit"], evidence["direct_seed_readback_commit"])
+        self.assertFalse(model["default_public_routing_observed"])
+        self.assertFalse(model["retained_state_committed"])
+        self.assertFalse(model["secret_values_recorded"])
+        self.assertIn("rad node connect <maintainer-peer-id>@<reachable-host>:<port> --timeout 30s", model["commands"])
+        self.assertIn(
+            f"rad clone --timeout 120s --seed <maintainer-peer-id> {evidence['target_rid']} decentralized-forge",
+            model["commands"],
+        )
+        self.assertIn(f"git rev-parse HEAD prints {evidence['current_source_commit']}", model["expected_verification"])
+        for required_nonclaim in [
+            "not a default public-routing claim",
+            "not a persistent public seed service claim",
+            "not a durability guarantee",
+            "not a committed secret or key backup",
+        ]:
+            self.assertIn(required_nonclaim, model["non_claims"])
+            self.assertIn(required_nonclaim, rendered)
+
+        self.assertIn("Retained Radicle direct-seed quickstart", rendered)
+        self.assertIn(evidence["target_rid"], rendered)
+        self.assertIn(evidence["current_source_commit"], rendered)
+        self.assertIn("default public routing observed: `false`", rendered)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output = Path(tmpdir) / "radicle-retained-quickstart.md"
+            exit_code = forge_registry.main(["radicle-retained-quickstart", str(output)])
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(output.read_text(encoding="utf-8"), f"{rendered}\n")
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output = Path(tmpdir) / "radicle-retained-quickstart.json"
+            exit_code = forge_registry.main(["radicle-retained-quickstart", str(output), "--json"])
+            self.assertEqual(exit_code, 0)
+            self.assertEqual(json.loads(output.read_text(encoding="utf-8")), model)
+
+        combined = json.dumps(model).lower() + rendered.lower()
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "api_token"]:
+            self.assertNotIn(accidental_secret_marker, combined)
+
+    def test_radicle_retained_rid_quickstart_doc_matches_loop63(self):
+        evidence = json.loads(RADICLE_RETAINED_UPDATE_CHECK_PATH.read_text(encoding="utf-8"))
+        doc = RADICLE_RETAINED_RID_QUICKSTART.read_text(encoding="utf-8")
+
+        self.assertIn("python scripts/forge_registry.py radicle-retained-quickstart", doc)
+        self.assertIn(evidence["target_rid"], doc)
+        self.assertIn(evidence["current_source_commit"], doc)
+        self.assertIn("<maintainer-peer-id>@<reachable-host>:<port>", doc)
+        self.assertIn("rad node connect <maintainer-peer-id>@<reachable-host>:<port> --timeout 30s", doc)
+        self.assertIn(
+            f"rad clone --timeout 120s --seed <maintainer-peer-id> {evidence['target_rid']} decentralized-forge",
+            doc,
+        )
+        for required_boundary in [
+            "Loop 63 did not observe default public-routing readback",
+            "not a persistent public seed service claim",
+            "not a durability guarantee",
+            "not proof of broad Radicle network availability",
+            "not production readiness",
+        ]:
+            self.assertIn(required_boundary, doc)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "api_token"]:
+            self.assertNotIn(accidental_secret_marker, doc.lower())
 
     def test_loop45_keyless_attestation_registry_import_is_bounded(self):
         evidence = json.loads(KEYLESS_REGISTRY_IMPORT_PATH.read_text(encoding="utf-8"))

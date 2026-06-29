@@ -1,9 +1,9 @@
 {
   "bundle": {
-    "file_count": 77,
+    "file_count": 78,
     "name": "decentralized-forge portable verification bundle",
     "role_counts": {
-      "documentation": 7,
+      "documentation": 8,
       "fixture": 14,
       "generated-output": 8,
       "schema": 2,
@@ -18,6 +18,7 @@
       "python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip",
       "python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip",
       "python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip",
+      "python scripts/forge_registry.py radicle-retained-quickstart",
       "python scripts/forge_registry.py verify-local --skip-npm-ci"
     ]
   },

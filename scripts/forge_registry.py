@@ -253,6 +253,104 @@ def refresh_live_evidence_hashes(index_path: Path = DEFAULT_LIVE_EVIDENCE_INDEX)
     return index
 
 
+def live_evidence_entry(entry_id: str, index_path: Path = DEFAULT_LIVE_EVIDENCE_INDEX) -> dict:
+    index = json.loads(index_path.read_text(encoding="utf-8"))
+    if not isinstance(index, dict) or not isinstance(index.get("evidence"), list):
+        raise ValueError("live evidence index must be an object with evidence[]")
+    for item in index["evidence"]:
+        if isinstance(item, dict) and item.get("id") == entry_id:
+            return item
+    raise ValueError(f"live evidence entry not found: {entry_id}")
+
+
+def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_INDEX) -> dict:
+    entry = live_evidence_entry("loop63-radicle-retained-update-check", index_path)
+    public = entry.get("public_identifiers")
+    if not isinstance(public, dict):
+        raise ValueError("loop63 retained Radicle evidence missing public_identifiers")
+
+    required = [
+        "rid",
+        "current_source_commit",
+        "direct_seed_readback_commit",
+        "direct_seed_readback_matches_source",
+        "default_readback_matches_source",
+        "retained_state_committed",
+        "secret_values_recorded",
+    ]
+    missing = [key for key in required if key not in public]
+    if missing:
+        raise ValueError(f"loop63 retained Radicle evidence missing fields: {', '.join(missing)}")
+    if public["direct_seed_readback_commit"] != public["current_source_commit"]:
+        raise ValueError("loop63 direct-seed readback commit does not match current source commit")
+    if public["direct_seed_readback_matches_source"] is not True:
+        raise ValueError("loop63 direct-seed readback did not match source")
+    if public["retained_state_committed"] is not False or public["secret_values_recorded"] is not False:
+        raise ValueError("loop63 retained Radicle evidence is not secret-free")
+
+    return {
+        "schema_version": "decentralized-forge.radicle-retained-quickstart.v1",
+        "source_evidence_id": entry["id"],
+        "source_evidence_file": entry["evidence_file"],
+        "rid": public["rid"],
+        "expected_commit": public["current_source_commit"],
+        "direct_seed_readback_commit": public["direct_seed_readback_commit"],
+        "default_public_routing_observed": public["default_readback_matches_source"],
+        "retained_state_committed": public["retained_state_committed"],
+        "secret_values_recorded": public["secret_values_recorded"],
+        "seed_peer_hint": "<maintainer-peer-id>@<reachable-host>:<port>",
+        "commands": [
+            "rad auth --alias decentralized-forge-reader --stdin",
+            "rad node start",
+            "rad node connect <maintainer-peer-id>@<reachable-host>:<port> --timeout 30s",
+            f"rad clone --timeout 120s --seed <maintainer-peer-id> {public['rid']} decentralized-forge",
+            "cd decentralized-forge",
+            "git rev-parse HEAD",
+        ],
+        "expected_verification": [
+            f"git rev-parse HEAD prints {public['current_source_commit']}",
+            "A mismatch means the clone did not reproduce the Loop 63 direct-seed readback claim.",
+        ],
+        "non_claims": [
+            "not a default public-routing claim",
+            "not a persistent public seed service claim",
+            "not a durability guarantee",
+            "not proof of broad Radicle network availability",
+            "not proof of censorship resistance",
+            "not proof of identity trust",
+            "not a security guarantee",
+            "not production readiness",
+            "not a committed secret or key backup",
+        ],
+    }
+
+
+def format_retained_radicle_quickstart(model: dict) -> str:
+    lines = [
+        "Retained Radicle direct-seed quickstart",
+        "",
+        f"- source evidence: `{model['source_evidence_file']}`",
+        f"- RID: `{model['rid']}`",
+        f"- expected commit: `{model['expected_commit']}`",
+        f"- default public routing observed: `{str(model['default_public_routing_observed']).lower()}`",
+        f"- seed address needed: `{model['seed_peer_hint']}`",
+        "",
+        "This is a maintainer-assisted direct-seed path. The maintainer must run a reachable Radicle node for this RID and share the peer address for the current session.",
+        "",
+        "Reader commands:",
+        "",
+        "```sh",
+        *model["commands"],
+        "```",
+        "",
+        "Expected verification:",
+    ]
+    lines.extend(f"- {item}" for item in model["expected_verification"])
+    lines.extend(["", "Non-claims:"])
+    lines.extend(f"- {item}" for item in model["non_claims"])
+    return "\n".join(lines)
+
+
 def slugify_project_id(value: str) -> str:
     slug = "".join(ch.lower() if ch.isalnum() else "-" for ch in value).strip("-")
     while "--" in slug:
@@ -641,6 +739,7 @@ def collect_verification_bundle_paths() -> list[Path]:
         "AGENT-LOOPS.md",
         "docs/threat-model.md",
         "docs/community-quickstart.md",
+        "docs/radicle-retained-rid-quickstart.md",
         relative(DEFAULT_BUNDLE_REVIEW_CHECKLIST),
         "package.json",
         "package-lock.json",
@@ -765,6 +864,7 @@ def build_verification_bundle_manifest(paths: list[Path]) -> dict:
             "python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip",
             "python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip",
             "python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip",
+            "python scripts/forge_registry.py radicle-retained-quickstart",
             "python scripts/forge_registry.py verify-local --skip-npm-ci",
         ],
         "non_claims": [
@@ -1525,6 +1625,18 @@ def command_refresh_evidence_hashes(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_radicle_retained_quickstart(args: argparse.Namespace) -> int:
+    model = retained_radicle_quickstart_model(args.index)
+    output = json.dumps(model, indent=2, sort_keys=True) if args.json else format_retained_radicle_quickstart(model)
+    if args.output is None:
+        print(output)
+    else:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(f"{output}\n", encoding="utf-8", newline="\n")
+        print(f"wrote retained Radicle quickstart: {relative(args.output)}")
+    return 0
+
+
 def doctor_report() -> dict:
     tools = {}
     for name in ["git", "node", "npm", "python", "rad", "nak"]:
@@ -1657,6 +1769,7 @@ def command_verify_local(args: argparse.Namespace) -> int:
         [sys.executable, "scripts/preflight_static_artifact.py"],
         [sys.executable, "scripts/forge_registry.py", "validate-evidence-index", "fixtures/live-evidence-index.json"],
         [sys.executable, "scripts/forge_registry.py", "refresh-evidence-hashes", "fixtures/live-evidence-index.json", "--check"],
+        [sys.executable, "scripts/forge_registry.py", "radicle-retained-quickstart"],
         [sys.executable, "scripts/forge_registry.py", "doctor", "--json"],
         [
             sys.executable,
@@ -1832,6 +1945,15 @@ def build_parser() -> argparse.ArgumentParser:
     refresh_hashes.add_argument("index", type=Path, nargs="?", default=DEFAULT_LIVE_EVIDENCE_INDEX)
     refresh_hashes.add_argument("--check", action="store_true", help="Fail if committed hash metadata is stale")
     refresh_hashes.set_defaults(func=command_refresh_evidence_hashes)
+
+    radicle_retained = subparsers.add_parser(
+        "radicle-retained-quickstart",
+        help="Print the evidence-bounded retained Radicle direct-seed clone recipe",
+    )
+    radicle_retained.add_argument("output", type=Path, nargs="?", default=None, help="Optional file to write")
+    radicle_retained.add_argument("--index", type=Path, default=DEFAULT_LIVE_EVIDENCE_INDEX, help="Live evidence index to read")
+    radicle_retained.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+    radicle_retained.set_defaults(func=command_radicle_retained_quickstart)
 
     doctor = subparsers.add_parser("doctor", help="Report local tool and evidence readiness without live protocol actions")
     doctor.add_argument("--json", action="store_true", help="Emit machine-readable JSON")

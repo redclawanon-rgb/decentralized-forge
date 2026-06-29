@@ -1304,9 +1304,20 @@ Verified evidence:
 
 Gate preserved: Loop 63 does not commit or bundle retained Radicle secret state, keep a persistent public seed service running, use production/private personal keys, spend money, contact specific people, or introduce permanent-durability, future-default-routing-availability, censorship-resistance, global-replication, security, SLSA, identity-trust, full-compatibility, or production-readiness claims.
 
+## Loop 64: Retained RID community direct-seed quickstart
+
+Outputs:
+
+- `docs/radicle-retained-rid-quickstart.md` documents the current community clone path for retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy`.
+- `python scripts/forge_registry.py radicle-retained-quickstart` now emits an evidence-derived recipe and optional JSON model from `fixtures/live-evidence-index.json`.
+- The helper checks that Loop 63 direct-seed readback matched commit `f800bae387f33452fdeb79ecf5c795d25f7246ac`, that default public-routing readback was not observed, and that retained secret state was not committed or recorded.
+- `docs/community-quickstart.md`, `docs/portable-bundle-review-checklist.md`, README, tests, and the portable bundle manifest now include the quickstart path.
+
+Gate preserved: Loop 64 is documentation and read-only local CLI output only. It does not start Radicle nodes, connect to peers, clone, publish, sign, use private keys, expose retained secret state, run a persistent seed, or introduce permanent-durability, default-routing-availability, broad-network-availability, censorship-resistance, security, identity-trust, full-compatibility, or production-readiness claims.
+
 ## Next recommended loop
 
-**Next:** Turn the retained direct-seed lane into a documented community clone path: add a small "clone the current Radicle repo" quickstart using RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy`, the retained peer ID `z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr`, and explicit non-claims. The caveat remains that permanent durability still requires persistent seeding or independent mirrors.
+**Next:** Move from maintainer-assisted direct-seed usability to independent availability: either run a second independent retained/follower seed readback for RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy`, or document the minimum persistent-seed service plan without turning it on. The caveat remains that permanent durability still requires persistent seeding or independent mirrors.
 
 Recent completed loops:
 
@@ -1342,6 +1353,7 @@ Recent completed loops:
 - Loop 61: Radicle update continuity check - complete as fresh-peer publication of current commit `00404656bcb17ad1aab241fb0ab0dd60487d9699` to the same RID, while default readback remained on the original delegate commit.
 - Loop 62: retained Radicle maintainer lane - complete as retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` with fresh default and direct-seed readback of commit `dfc10b8f029c5eb886db2025dcc06c6490e28504`.
 - Loop 63: retained Radicle same-RID update - complete as the same RID advanced to commit `f800bae387f33452fdeb79ecf5c795d25f7246ac`, with fresh direct-seed readback matching the updated commit and default public-routing readback not observed.
+- Loop 64: retained RID community direct-seed quickstart - complete as `docs/radicle-retained-rid-quickstart.md` plus `radicle-retained-quickstart`, a read-only evidence-derived recipe for maintainer-assisted direct-seed clones.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

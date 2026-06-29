@@ -78,4 +78,12 @@ Loop 62 adds `evidence/radicle-retained-delegate-check-2026-06-29.json`. A retai
 
 Loop 63 adds `evidence/radicle-retained-update-check-2026-06-29.json`. The same retained RID advanced to commit `f800bae387f33452fdeb79ecf5c795d25f7246ac`, and a fresh explicit direct-seed clone read back that updated commit. Default public-routing readback was attempted but not observed in that run.
 
+The current community clone path for that retained RID is `docs/radicle-retained-rid-quickstart.md` or the read-only helper:
+
+```sh
+python scripts/forge_registry.py radicle-retained-quickstart
+```
+
+That path requires a maintainer-provided reachable seed address in the form `<maintainer-peer-id>@<reachable-host>:<port>` and verifies the clone by checking `git rev-parse HEAD` against `f800bae387f33452fdeb79ecf5c795d25f7246ac`.
+
 Treat those as exact run evidence only. They do not prove permanent durability, future default public-routing availability, broad network replication, identity trust, security, or production readiness.

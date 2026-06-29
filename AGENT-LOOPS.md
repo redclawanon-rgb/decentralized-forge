@@ -752,3 +752,11 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as `scripts/run_radicle_retained_update_check.py` plus `evidence/radicle-retained-update-check-2026-06-29.json` and `.md`. The retained state was copied to host-local WSL storage and the check ran in Ubuntu WSL, not Docker. The same RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` advanced from commit `dfc10b8f029c5eb886db2025dcc06c6490e28504` to commit `f800bae387f33452fdeb79ecf5c795d25f7246ac`; a fresh explicit direct-seed clone read back the updated commit. Default public-routing readback was attempted but not observed.
 
 **Gate preserved:** This is one retained-RID update observation. It does not commit or bundle secret state, keep a persistent public seed service running, use production/private personal keys, spend money, contact specific people, or claim permanent durability, future default public-routing availability, censorship resistance, global replication, identity trust, security, SLSA compliance, full Radicle compatibility, or production readiness.
+
+## Loop 64: Retained RID community direct-seed quickstart
+
+**Goal:** Turn the retained RID update lane into a concrete reader handoff without overstating default routing or durability.
+
+**Current result:** Complete as `docs/radicle-retained-rid-quickstart.md` plus `python scripts/forge_registry.py radicle-retained-quickstart`. The helper reads the committed live evidence index, validates the Loop 63 retained RID fields, and prints a maintainer-assisted direct-seed clone recipe for RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` at expected commit `f800bae387f33452fdeb79ecf5c795d25f7246ac`. `docs/community-quickstart.md`, `docs/portable-bundle-review-checklist.md`, README, tests, and the verification bundle manifest now include the handoff path.
+
+**Gate preserved:** This is read-only documentation and local CLI output. It does not start Radicle nodes, connect to peers, clone, publish, sign, use private keys, expose retained secret state, run a persistent seed, or claim permanent durability, future default public-routing availability, censorship resistance, global replication, identity trust, security, SLSA compliance, full Radicle compatibility, or production readiness.

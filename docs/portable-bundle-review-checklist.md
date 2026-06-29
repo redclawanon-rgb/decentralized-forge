@@ -15,6 +15,7 @@ python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-fo
 python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip
 python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip --json
 python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip
+python scripts/forge_registry.py radicle-retained-quickstart
 python scripts/forge_registry.py verify-local --skip-npm-ci
 ```
 
@@ -35,7 +36,7 @@ Read the `report-bundle` output before sharing the ZIP. Confirm that it shows:
 - protocol and state counts are understandable
 - non-claims are present and unchanged
 - verification gaps are present and not softened
-- suggested commands include `verify-bundle`, `verify-bundle-cleanroom`, and `report-bundle`
+- suggested commands include `verify-bundle`, `verify-bundle-cleanroom`, `report-bundle`, and `radicle-retained-quickstart`
 
 If a reviewer receives an extracted directory instead of the ZIP, they can run:
 
@@ -93,6 +94,7 @@ Verified locally with:
 - python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip
 - python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip
 - python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip
+- python scripts/forge_registry.py radicle-retained-quickstart
 
 Scope: local verification package over committed fixtures, generated outputs, source evidence files, and verifier scripts. This is not a production forge, signed release, durability proof, broad availability proof, censorship-resistance proof, security guarantee, or SLSA compliance claim.
 ```
