@@ -121,8 +121,10 @@ def sha256_file(path: Path) -> str:
     return hashlib.sha256(canonical_evidence_bytes(path)).hexdigest()
 
 
-def sha256_raw_file(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+def bundle_file_bytes(path: Path) -> bytes:
+    if path.suffix.lower() in {".car"}:
+        return path.read_bytes()
+    return path.read_bytes().replace(b"\r\n", b"\n")
 
 
 def safe_repo_relative_path(value: str) -> Path:
@@ -328,13 +330,14 @@ def build_verification_bundle_manifest(paths: list[Path]) -> dict:
     files = []
     for path in paths:
         rel = relative(path)
+        data = bundle_file_bytes(path)
         files.append(
             {
                 "path": rel,
                 "bundle_path": rel,
                 "role": bundle_role(rel),
-                "sha256": sha256_raw_file(path),
-                "size_bytes": path.stat().st_size,
+                "sha256": hashlib.sha256(data).hexdigest(),
+                "size_bytes": len(data),
             }
         )
 
@@ -390,7 +393,7 @@ def write_deterministic_zip(output: Path, paths: list[Path], manifest: dict) -> 
             info = zipfile.ZipInfo(rel, ZIP_FIXED_DATE_TIME)
             info.compress_type = zipfile.ZIP_STORED
             info.external_attr = 0o644 << 16
-            archive.writestr(info, path.read_bytes())
+            archive.writestr(info, bundle_file_bytes(path))
 
         info = zipfile.ZipInfo(DEFAULT_BUNDLE_MANIFEST_PATH, ZIP_FIXED_DATE_TIME)
         info.compress_type = zipfile.ZIP_STORED
