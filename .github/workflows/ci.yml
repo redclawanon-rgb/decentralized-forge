@@ -61,7 +61,7 @@ jobs:
           python scripts/forge_registry.py validate-evidence-index fixtures/live-evidence-index.json
           python scripts/forge_registry.py refresh-evidence-hashes fixtures/live-evidence-index.json --check
           python scripts/forge_registry.py doctor --json
-          python scripts/forge_registry.py validate fixtures/example-project.registry.json fixtures/portable-lab.registry.json
+          python scripts/forge_registry.py validate fixtures/example-project.registry.json fixtures/portable-lab.registry.json fixtures/onboarding-sample.registry.json
           python scripts/forge_registry.py render fixtures/portable-lab.registry.json output/portable-lab.html
           python scripts/forge_registry.py render-app output/forge-app.html
           python scripts/forge_registry.py export-summary fixtures/example-project.registry.json output/demo-project.summary.json
@@ -70,6 +70,7 @@ jobs:
           python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip
           python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip
           python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip --json
+          python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip --json --output output/onboarding-sample.bundle-report.json
           python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip
 
       - name: Inventory live gates without live actions
@@ -95,8 +96,13 @@ jobs:
             output/demo-project.html
             output/forge-app.html
             output/portable-lab.html
+            output/onboarding-sample.registry.html
             output/demo-project.summary.json
             output/portable-lab.summary.json
+            output/onboarding-sample.registry.summary.json
+            output/onboarding-sample.bundle-report.json
             output/decentralized-forge-verification-bundle.zip
             evidence/local-release-artifact-2026-06-22.car
             fixtures/local-release-artifact.txt
+            fixtures/onboarding-sample-artifact.txt
+            fixtures/onboarding-sample.registry.json

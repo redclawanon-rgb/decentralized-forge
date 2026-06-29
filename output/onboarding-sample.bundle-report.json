@@ -1,0 +1,355 @@
+{
+  "bundle": {
+    "file_count": 61,
+    "name": "decentralized-forge portable verification bundle",
+    "role_counts": {
+      "documentation": 7,
+      "fixture": 14,
+      "generated-output": 7,
+      "schema": 2,
+      "source-evidence": 22,
+      "supporting-file": 2,
+      "verifier-tooling": 7
+    },
+    "schema_version": "decentralized-forge.verification-bundle.v1",
+    "scope": "portable local verification package; no live protocol actions, signing, spending, or publishing",
+    "suggested_verification_commands": [
+      "python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip",
+      "python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip",
+      "python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip",
+      "python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip",
+      "python scripts/forge_registry.py verify-local --skip-npm-ci"
+    ]
+  },
+  "evidence": {
+    "entries": [
+      {
+        "evidence_file": "evidence/radicle-local-replay-2026-06-22.md",
+        "id": "loop23-radicle-local-cli-replay",
+        "live_network_action": false,
+        "protocol": "radicle",
+        "scope": "radicle.local_cli_private_replay",
+        "selected_relay_readback_verified": false,
+        "state": "local-cli-verified",
+        "synthetic": false,
+        "verification_summary": "Temporary RAD_HOME plus disposable Git repository completed rad auth, private no-seed rad init, and local rad inspect commands."
+      },
+      {
+        "evidence_file": "evidence/nostr-loop25-publish-readback-2026-06-22.json",
+        "id": "loop25-nostr-selected-relay-readback",
+        "live_network_action": true,
+        "protocol": "nostr",
+        "scope": "nostr.selected_relay_publish_readback",
+        "selected_relay_readback_verified": true,
+        "state": "selected-relay-readback-verified",
+        "synthetic": false,
+        "verification_summary": "Exact prototype/research kind 30617 event was published to and read back from selected relays; local and readback nak verify returned exit code 0."
+      },
+      {
+        "evidence_file": "evidence/radicle-public-network-smoke-2026-06-22.json",
+        "id": "loop34-radicle-disposable-public-smoke",
+        "live_network_action": true,
+        "protocol": "radicle",
+        "scope": "radicle.disposable_public_seed_clone_smoke",
+        "selected_relay_readback_verified": false,
+        "state": "disposable-public-smoke-verified",
+        "synthetic": false,
+        "verification_summary": "One disposable public Radicle repository was initialized, seeded from a temporary localhost node, synced/announced, cloned through a separate temporary node, and read back successfully."
+      },
+      {
+        "evidence_file": "evidence/github-keyless-attestation-2026-06-28.json",
+        "id": "loop40-github-keyless-artifact-attestation",
+        "live_network_action": true,
+        "protocol": "github-actions",
+        "scope": "ci.keyless_artifact_attestation",
+        "selected_relay_readback_verified": false,
+        "state": "hosted-keyless-attestation-generated",
+        "synthetic": false,
+        "verification_summary": "GitHub Actions run 28339280081 generated a keyless hosted attestation with SLSA provenance predicate for six prototype artifacts after CI passed on main."
+      },
+      {
+        "evidence_file": "evidence/helia-local-ipfs-add-get-2026-06-28.json",
+        "id": "loop41-helia-local-ipfs-add-get",
+        "live_network_action": false,
+        "protocol": "ipfs",
+        "scope": "ipfs.helia_local_unixfs_add_get",
+        "selected_relay_readback_verified": false,
+        "state": "local-helia-add-get-verified",
+        "synthetic": false,
+        "verification_summary": "A project-scoped, non-started in-process Helia instance added fixtures/local-release-artifact.txt to local UnixFS/IPFS storage and read back the exact bytes for CID bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua."
+      },
+      {
+        "evidence_file": "evidence/public-gateway-pinning-preflight-2026-06-28.json",
+        "id": "loop42-public-gateway-pinning-preflight",
+        "live_network_action": true,
+        "protocol": "ipfs",
+        "scope": "ipfs.public_gateway_pinning_preflight",
+        "selected_relay_readback_verified": false,
+        "state": "public-gateway-no-readback-observed",
+        "synthetic": false,
+        "verification_summary": "Three public gateways were queried for the local release artifact CID; all timed out and no gateway returned bytes matching the fixture. No pinning provider action was taken."
+      },
+      {
+        "evidence_file": "evidence/nostr-loop43-issue-patch-readback-2026-06-28.json",
+        "id": "loop43-nostr-issue-patch-readback",
+        "live_network_action": true,
+        "protocol": "nostr",
+        "scope": "nostr.selected_relay_issue_patch_readback",
+        "selected_relay_readback_verified": true,
+        "state": "selected-relay-issue-patch-readback-verified",
+        "synthetic": false,
+        "verification_summary": "Two disposable NIP-34-shaped collaboration events, one issue and one patch, were published to and read back from selected relays with local and readback signature verification."
+      },
+      {
+        "evidence_file": "evidence/radicle-loop44-broader-check-2026-06-28.json",
+        "id": "loop44-radicle-broader-check",
+        "live_network_action": true,
+        "protocol": "radicle",
+        "scope": "radicle.broader_current_host_route_probe",
+        "selected_relay_readback_verified": false,
+        "state": "cli-blocked-readonly-route-probed",
+        "synthetic": false,
+        "verification_summary": "The current Windows host has no rad CLI available, so broader disposable CLI clone/sync was blocked; read-only public Radicle web/node route probes were recorded for the prior disposable RID."
+      },
+      {
+        "evidence_file": "fixtures/keyless-attestation.registry-verification.json",
+        "id": "loop45-keyless-attestation-registry-import",
+        "live_network_action": false,
+        "protocol": "github-actions",
+        "scope": "registry.keyless_attestation_import",
+        "selected_relay_readback_verified": false,
+        "state": "registry-shaped-import-recorded",
+        "synthetic": false,
+        "verification_summary": "Hosted GitHub keyless attestation evidence was imported into a registry-shaped verification row outside the project-registry fixtures."
+      }
+    ],
+    "entry_count": 9,
+    "index_path": "fixtures/live-evidence-index.json",
+    "live_network_action_count": 6,
+    "protocol_counts": {
+      "github-actions": 2,
+      "ipfs": 2,
+      "nostr": 2,
+      "radicle": 3
+    },
+    "selected_relay_readback_count": 2,
+    "state_counts": {
+      "cli-blocked-readonly-route-probed": 1,
+      "disposable-public-smoke-verified": 1,
+      "hosted-keyless-attestation-generated": 1,
+      "local-cli-verified": 1,
+      "local-helia-add-get-verified": 1,
+      "public-gateway-no-readback-observed": 1,
+      "registry-shaped-import-recorded": 1,
+      "selected-relay-issue-patch-readback-verified": 1,
+      "selected-relay-readback-verified": 1
+    },
+    "synthetic_count": 0
+  },
+  "non_claims": [
+    "bundle does not publish protocol events",
+    "bundle does not sign events or use private keys",
+    "bundle does not start daemons, spend money, use wallets, or contact paid services",
+    "bundle does not claim durability, censorship resistance, broad availability, security, SLSA compliance, or production readiness"
+  ],
+  "projects": [
+    {
+      "artifact_cids": [
+        "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua"
+      ],
+      "artifact_names": [
+        "local-release-artifact.txt"
+      ],
+      "clone_transports": [
+        "git",
+        "nostr",
+        "radicle"
+      ],
+      "counts": {
+        "artifacts": 1,
+        "ci_checks": 2,
+        "clone_urls": 3,
+        "issues": 1,
+        "maintainers": 2,
+        "patches": 1,
+        "releases": 1,
+        "verification_states": 5
+      },
+      "non_claims": {
+        "censorship_resistance_verified": false,
+        "durable_storage_verified": false,
+        "production_ready": false,
+        "security_guarantee": false
+      },
+      "project": {
+        "default_branch": "main",
+        "id": "demo-project",
+        "name": "Demo Decentralized Forge Project"
+      },
+      "release_versions": [
+        "0.0.1-demo"
+      ],
+      "schema_version": "decentralized-forge.registry-summary.v1",
+      "source": "fixtures/example-project.registry.json",
+      "verification": {
+        "by_state": {
+          "local-fixture": 2,
+          "source-inspected-mapping": 1,
+          "synthetic-fixture": 2
+        },
+        "live_verified": 0,
+        "synthetic": 3,
+        "total": 5
+      }
+    },
+    {
+      "artifact_cids": [],
+      "artifact_names": [
+        "onboarding-sample-artifact.txt"
+      ],
+      "clone_transports": [
+        "git"
+      ],
+      "counts": {
+        "artifacts": 1,
+        "ci_checks": 0,
+        "clone_urls": 1,
+        "issues": 0,
+        "maintainers": 1,
+        "patches": 0,
+        "releases": 1,
+        "verification_states": 2
+      },
+      "non_claims": {
+        "censorship_resistance_verified": false,
+        "durable_storage_verified": false,
+        "production_ready": false,
+        "security_guarantee": false
+      },
+      "project": {
+        "default_branch": "main",
+        "id": "onboarding-sample",
+        "name": "Onboarding Sample"
+      },
+      "release_versions": [
+        "0.1.0-local"
+      ],
+      "schema_version": "decentralized-forge.registry-summary.v1",
+      "source": "fixtures/onboarding-sample.registry.json",
+      "verification": {
+        "by_state": {
+          "local-fixture": 2
+        },
+        "live_verified": 0,
+        "synthetic": 0,
+        "total": 2
+      }
+    },
+    {
+      "artifact_cids": [],
+      "artifact_names": [
+        "portable-lab-placeholder.txt"
+      ],
+      "clone_transports": [
+        "git",
+        "other"
+      ],
+      "counts": {
+        "artifacts": 1,
+        "ci_checks": 0,
+        "clone_urls": 2,
+        "issues": 1,
+        "maintainers": 1,
+        "patches": 1,
+        "releases": 1,
+        "verification_states": 4
+      },
+      "non_claims": {
+        "censorship_resistance_verified": false,
+        "durable_storage_verified": false,
+        "production_ready": false,
+        "security_guarantee": false
+      },
+      "project": {
+        "default_branch": "main",
+        "id": "portable-lab",
+        "name": "Portable Lab Registry Fixture"
+      },
+      "release_versions": [
+        "0.0.1-portable"
+      ],
+      "schema_version": "decentralized-forge.registry-summary.v1",
+      "source": "fixtures/portable-lab.registry.json",
+      "verification": {
+        "by_state": {
+          "live-unverified": 2,
+          "local-fixture": 1,
+          "synthetic-fixture": 1
+        },
+        "live_verified": 0,
+        "synthetic": 1,
+        "total": 4
+      }
+    },
+    {
+      "artifact_cids": [],
+      "artifact_names": [
+        "radicle-spike-source.tar.gz"
+      ],
+      "clone_transports": [
+        "git",
+        "radicle"
+      ],
+      "counts": {
+        "artifacts": 1,
+        "ci_checks": 0,
+        "clone_urls": 2,
+        "issues": 1,
+        "maintainers": 1,
+        "patches": 1,
+        "releases": 1,
+        "verification_states": 4
+      },
+      "non_claims": {
+        "censorship_resistance_verified": false,
+        "durable_storage_verified": false,
+        "production_ready": false,
+        "security_guarantee": false
+      },
+      "project": {
+        "default_branch": "master",
+        "id": "rad:zLoop4RadicleFixture1111111111111111111111111",
+        "name": "Loop 4 Synthetic Radicle-backed Project"
+      },
+      "release_versions": [
+        "0.0.0-radicle-spike"
+      ],
+      "schema_version": "decentralized-forge.registry-summary.v1",
+      "source": "fixtures/radicle-backed-project.registry.json",
+      "verification": {
+        "by_state": {
+          "live-unverified": 1,
+          "local-fixture": 1,
+          "source-inspected-mapping": 1,
+          "synthetic-fixture": 1
+        },
+        "live_verified": 0,
+        "synthetic": 4,
+        "total": 4
+      }
+    }
+  ],
+  "schema_version": "decentralized-forge.bundle-report.v1",
+  "source": "output/decentralized-forge-verification-bundle.zip",
+  "source_type": "zip",
+  "verification": {
+    "errors": [],
+    "valid": true
+  },
+  "verification_gaps": [
+    "Durable storage, pinning, and broad availability remain unverified unless supported by a future evidence row.",
+    "Censorship resistance, identity trust, production readiness, and security guarantees remain outside the bundle claim boundary.",
+    "Live protocol checks are evidence-scoped to the recorded files and do not imply full NIP-34, Radicle, IPFS, or forge compatibility.",
+    "The report is a local import/readback summary only; it does not sign, publish, fetch, pin, start daemons, spend money, or contact paid services."
+  ]
+}

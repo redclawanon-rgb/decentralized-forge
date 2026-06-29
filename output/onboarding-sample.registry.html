@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Onboarding Sample</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 1000px; margin: 2rem auto; line-height: 1.5; padding: 0 1rem; }
+    code { background: #f4f4f4; padding: 0.1rem 0.25rem; }
+    section { border-top: 1px solid #ddd; margin-top: 1.5rem; padding-top: 1rem; }
+    .notice { background: #fff8d6; border: 1px solid #eadb8b; padding: 0.75rem; }
+    .artifact { border: 1px solid #ddd; border-radius: 0.4rem; padding: 1rem; margin: 0.75rem 0; }
+    .metadata { display: grid; grid-template-columns: minmax(10rem, 16rem) 1fr; gap: 0.35rem 0.75rem; }
+    .metadata dt { font-weight: 700; }
+    .metadata dd { margin: 0; overflow-wrap: anywhere; }
+    .flag { border-radius: 999px; padding: 0.05rem 0.5rem; font-weight: 700; }
+    .flag.yes { background: #e4f7e7; color: #126422; }
+    .flag.no { background: #f8e1df; color: #8b1c10; }
+    .flag.unknown { background: #eee; color: #333; }
+    .verification-summary { border: 1px solid #d7e0ef; border-radius: 0.4rem; padding: 0.75rem; margin: 0.75rem 0; background: #f8fbff; }
+    .summary-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; padding: 0; margin: 0.4rem 0 0.8rem; list-style: none; }
+    .summary-chip { border: 1px solid #ddd; border-radius: 999px; padding: 0.15rem 0.6rem; background: #fff; }
+    .summary-chip.state-local-fixture, .verification-state-local-fixture { border-color: #9cc3ff; }
+    .summary-chip.state-source-inspected-mapping, .verification-state-source-inspected-mapping { border-color: #b49cff; }
+    .summary-chip.state-synthetic-fixture, .verification-state-synthetic-fixture { border-color: #f0bd65; }
+    .summary-chip.state-live-unverified, .verification-state-live-unverified { border-color: #d98b7f; }
+    .summary-chip.state-live-verified, .verification-state-live-verified { border-color: #73bf7b; }
+    .verification-state { border-left: 0.25rem solid #ddd; padding-left: 0.75rem; }
+  </style>
+</head>
+<body>
+  <h1>Onboarding Sample</h1>
+  <p>Committed local onboarding sample generated from this repository without live protocol publication.</p>
+  <p class="notice"><strong>Prototype boundary:</strong> this static page renders local registry fixture data. Synthetic CI/provenance, unsigned artifacts, and substrate hints are shown explicitly; the page does not claim production readiness, live pinning, real Sigstore/in-toto verification, Rekor upload, SLSA compliance, or public CI status unless those fields are verified separately.</p>
+  <p><strong>Project ID:</strong> <code>onboarding-sample</code><br>
+     <strong>Default branch:</strong> <code>main</code><br>
+     <strong>Registry updated:</strong> <code>2026-06-29T00:00:00Z</code></p>
+
+  <section><h2>Maintainers</h2><ul>
+  <li><strong>Local Import Maintainer Placeholder</strong> — other: <code>local-import-placeholder</code> (maintainer-placeholder)</li>
+</ul></section>
+  <section><h2>Clone URLs</h2><ul>
+  <li><strong>git</strong>: <code>file://.</code> <em>primary</em></li>
+</ul></section>
+  <section><h2>Issues</h2><p><em>None listed.</em></p></section>
+  <section><h2>Patches / PRs</h2><p><em>None listed.</em></p></section>
+  <section><h2>Releases</h2><ul>
+  <li><h3>0.1.0-local</h3><p>tag <code>v0.1.0-local</code></p><ul>
+  <li><article class="artifact"><h4>onboarding-sample-artifact.txt</h4><dl class="metadata"><dt>Media type</dt><dd><code>text/plain</code></dd><dt>Size bytes</dt><dd><code>261</code></dd><dt>URI</dt><dd><code>file://fixtures/onboarding-sample-artifact.txt</code></dd><dt>SHA-256</dt><dd><code>3d41830af2bae95ed043b6a49175ee183e0a7e39dcefeff8a04a672a9cfb2945</code></dd><dt>CID</dt><dd><em>not listed</em></dd><dt>Signature</dt><dd><code>unsigned-local-artifact-metadata</code></dd></dl><h5>Artifact availability</h5><dl class="metadata"><dt>Local fixture available</dt><dd><span class="flag yes">yes</span></dd><dt>Pinned</dt><dd><span class="flag no">no</span></dd><dt>Live IPFS verified</dt><dd><span class="flag no">no</span></dd><dt>Paid storage</dt><dd><span class="flag no">no</span></dd><dt>Durability claim</dt><dd><span class="flag no">no</span></dd><dt>Availability notes</dt><dd>Local file metadata only; no IPFS add, fetch, pin, gateway readback, paid storage, wallet, signing, or durability claim.</dd></dl><h5>Content addresses</h5><p><em>None listed.</em></p><h5>Provenance / attestation</h5><dl class="metadata"><dt>Attestation fixture</dt><dd><code>absent</code></dd></dl><p><em>None listed.</em></p></article></li>
+</ul></li>
+</ul></section>
+  <section><h2>CI / provenance checks</h2><p><em>None listed.</em></p></section>
+  <section><h2>Verification states</h2><p class="notice"><strong>Verification labels:</strong> these records separate local fixtures, source-inspected mappings, synthetic fixtures, live-unverified scopes, and live-verified evidence. A scope is not live-verified unless its row says so explicitly.</p><div class="verification-summary registry-verification-summary"><h3>Registry verification states summary</h3><dl class="metadata"><dt>Verification row count</dt><dd><code>2</code></dd><dt>Live-verified row count</dt><dd><code>0</code></dd><dt>Live-unverified or local row count</dt><dd><code>2</code></dd><dt>Synthetic row count</dt><dd><code>0</code></dd><dt>Non-synthetic row count</dt><dd><code>2</code></dd></dl><h4>Counts by state</h4><ul class="summary-chips">
+  <li class="summary-chip state-local-fixture"><span class="chip-label">local-fixture</span>: <strong>2</strong></li>
+</ul><h4>Counts by live verification flag</h4><ul class="summary-chips">
+  <li class="summary-chip live-live-verified-false"><span class="chip-label">live_verified=false</span>: <strong>2</strong></li>
+</ul><h4>Counts by synthetic flag</h4><ul class="summary-chips">
+  <li class="summary-chip synthetic-synthetic-false"><span class="chip-label">synthetic=false</span>: <strong>2</strong></li>
+</ul><h4>Claim-boundary summary</h4><ul class="summary-chips">
+  <li class="summary-chip boundary-local-file-metadata-only--no-ipfs-add--fetch--pin--gateway-readback--paid-storage--wallet--signing--durable-storage--or-production-readiness-claim"><span class="chip-label">Local file metadata only; no IPFS add, fetch, pin, gateway readback, paid storage, wallet, signing, durable storage, or production readiness claim.</span>: <strong>1</strong></li>
+  <li class="summary-chip boundary-local-registry-scaffold-only--no-live-protocol-publication--signing--durable-storage--hosted-service--or-production-readiness-claim"><span class="chip-label">Local registry scaffold only; no live protocol publication, signing, durable storage, hosted service, or production readiness claim.</span>: <strong>1</strong></li>
+</ul></div><h3>Registry verification rows grouped by state</h3><div class="verification-state-group verification-state-group-local-fixture"><h4>local-fixture (2)</h4><ul>
+  <li><article class="verification-state verification-state-local-fixture"><dl class="metadata"><dt>Scope</dt><dd><code>registry.local_import_scaffold</code></dd><dt>State</dt><dd><code>local-fixture</code></dd><dt>Live verified</dt><dd><span class="flag no">no</span></dd><dt>Synthetic</dt><dd><span class="flag no">no</span></dd><dt>Evidence</dt><dd>Generated from local Git worktree file://. at commit 33fc4ed4a009111da8e3ae4b1c9468d34265c5e1.</dd><dt>Claim boundary</dt><dd>Local registry scaffold only; no live protocol publication, signing, durable storage, hosted service, or production readiness claim.</dd><dt>Last checked</dt><dd><code>2026-06-29T11:59:56-04:00</code></dd><dt>Notes</dt><dd>Replace placeholder maintainer identity, add artifacts/evidence, and rerun validation before sharing.</dd></dl></article></li>
+  <li><article class="verification-state verification-state-local-fixture"><dl class="metadata"><dt>Scope</dt><dd><code>registry.local_artifact_metadata</code></dd><dt>State</dt><dd><code>local-fixture</code></dd><dt>Live verified</dt><dd><span class="flag no">no</span></dd><dt>Synthetic</dt><dd><span class="flag no">no</span></dd><dt>Evidence</dt><dd>Attached local artifact metadata for onboarding-sample-artifact.txt at file://fixtures/onboarding-sample-artifact.txt with sha256 3d41830af2bae95ed043b6a49175ee183e0a7e39dcefeff8a04a672a9cfb2945.</dd><dt>Claim boundary</dt><dd>Local file metadata only; no IPFS add, fetch, pin, gateway readback, paid storage, wallet, signing, durable storage, or production readiness claim.</dd><dt>Last checked</dt><dd><code>2026-06-29T00:00:00Z</code></dd><dt>Notes</dt><dd>Artifact bytes were hashed locally and referenced with a file URI; availability beyond this local file was not verified.</dd></dl></article></li>
+</ul></div></section>
+  
+  <section><h2>Protocol substrate details</h2><ul>
+  <li><strong>forgefed</strong><dl class="metadata"><dt>status</dt><dd><code>not-configured-local-import</code></dd></dl></li>
+  <li><strong>ipfs</strong><dl class="metadata"><dt>artifact_cids</dt><dd><code>[]</code></dd><dt>cid_status</dt><dd><code>no-artifact-cid</code></dd><dt>durability_claim</dt><dd><span class="flag no">no</span></dd><dt>live_ipfs_verified</dt><dd><span class="flag no">no</span></dd><dt>paid_storage</dt><dd><span class="flag no">no</span></dd><dt>pinning_status</dt><dd><code>not-pinned</code></dd></dl></li>
+  <li><strong>sigstore_slsa</strong><dl class="metadata"><dt>private_keys_used</dt><dd><span class="flag no">no</span></dd><dt>production_claim</dt><dd><code>none</code></dd><dt>provenance_status</dt><dd><code>absent</code></dd><dt>real_cosign_verified</dt><dd><span class="flag no">no</span></dd><dt>real_in_toto_verified</dt><dd><span class="flag no">no</span></dd><dt>real_sigstore_verified</dt><dd><span class="flag no">no</span></dd><dt>rekor_uploaded</dt><dd><span class="flag no">no</span></dd><dt>release_signature_status</dt><dd><code>absent</code></dd><dt>slsa_level_claimed</dt><dd><span class="flag no">no</span></dd></dl></li>
+</ul></section>
+  
+  <section><h2>Signature status</h2><p><code>{&quot;algorithm&quot;: &quot;none&quot;, &quot;status&quot;: &quot;unsigned-fixture&quot;, &quot;value&quot;: &quot;&quot;}</code></p></section>
+</body>
+</html>

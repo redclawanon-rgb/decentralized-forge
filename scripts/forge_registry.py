@@ -264,6 +264,14 @@ def title_from_project_id(value: str) -> str:
     return " ".join(part.capitalize() for part in value.replace("_", "-").split("-") if part) or "Local Import"
 
 
+def local_file_uri(path: Path) -> str:
+    resolved = path.resolve()
+    try:
+        return f"file://{resolved.relative_to(ROOT).as_posix()}"
+    except ValueError:
+        return resolved.as_uri()
+
+
 def git_value_at(cwd: Path, *args: str) -> str | None:
     result = subprocess.run(
         ["git", *args],
@@ -312,7 +320,7 @@ def scaffold_registry_from_repo(
     project_description = description or (
         f"Local-only registry scaffold for {project_name}. Generated from a local Git worktree without live protocol publication."
     )
-    repo_uri = metadata["root"].as_uri()
+    repo_uri = local_file_uri(metadata["root"])
     timestamp = metadata["committed_at"]
     head = metadata["head"]
     branch = metadata["branch"]
@@ -411,11 +419,7 @@ def media_type_for_artifact(path: Path, explicit_media_type: str | None = None) 
 
 
 def artifact_file_uri(path: Path) -> str:
-    resolved = path.resolve()
-    try:
-        return f"file://{resolved.relative_to(ROOT).as_posix()}"
-    except ValueError:
-        return resolved.as_uri()
+    return local_file_uri(path)
 
 
 def local_artifact_metadata(path: Path, *, name: str | None = None, media_type: str | None = None) -> dict:
@@ -686,6 +690,11 @@ def regenerate_portable_outputs() -> None:
     ]:
         registry = render_project_page.load_registry(registry_path)
         write_json(summary_path, registry_summary(registry, registry_path))
+    onboarding_registry = ROOT / "fixtures" / "onboarding-sample.registry.json"
+    if onboarding_registry.is_file():
+        render_project_page.main([str(onboarding_registry), str(ROOT / "output" / "onboarding-sample.registry.html")])
+        registry = render_project_page.load_registry(onboarding_registry)
+        write_json(ROOT / "output" / "onboarding-sample.registry.summary.json", registry_summary(registry, onboarding_registry))
 
 
 def build_verification_bundle_manifest(paths: list[Path]) -> dict:
@@ -1449,10 +1458,13 @@ def command_verify_bundle_cleanroom(args: argparse.Namespace) -> int:
 
 def command_report_bundle(args: argparse.Namespace) -> int:
     report = bundle_report(args.source)
-    if args.json:
-        print(json.dumps(report, indent=2, sort_keys=True))
+    output = json.dumps(report, indent=2, sort_keys=True) if args.json else format_bundle_report(report)
+    if args.output is None:
+        print(output)
     else:
-        print(format_bundle_report(report))
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(f"{output}\n", encoding="utf-8", newline="\n")
+        print(f"wrote bundle report: {relative(args.output)}")
     return 0 if report["verification"]["valid"] else 1
 
 
@@ -1606,6 +1618,7 @@ def command_verify_local(args: argparse.Namespace) -> int:
         [sys.executable, "-m", "json.tool", "fixtures/example-project.registry.json"],
         [sys.executable, "-m", "json.tool", "fixtures/portable-lab.registry.json"],
         [sys.executable, "-m", "json.tool", "fixtures/radicle-backed-project.registry.json"],
+        [sys.executable, "-m", "json.tool", "fixtures/onboarding-sample.registry.json"],
         [sys.executable, "-m", "json.tool", "fixtures/nostr-repo-announcement.json"],
         [sys.executable, "-m", "json.tool", "fixtures/nostr-collaboration-events.json"],
         [sys.executable, "-m", "json.tool", "fixtures/nostr-repo-state-status.json"],
@@ -1623,7 +1636,14 @@ def command_verify_local(args: argparse.Namespace) -> int:
         [sys.executable, "scripts/forge_registry.py", "validate-evidence-index", "fixtures/live-evidence-index.json"],
         [sys.executable, "scripts/forge_registry.py", "refresh-evidence-hashes", "fixtures/live-evidence-index.json", "--check"],
         [sys.executable, "scripts/forge_registry.py", "doctor", "--json"],
-        [sys.executable, "scripts/forge_registry.py", "validate", "fixtures/example-project.registry.json", "fixtures/portable-lab.registry.json"],
+        [
+            sys.executable,
+            "scripts/forge_registry.py",
+            "validate",
+            "fixtures/example-project.registry.json",
+            "fixtures/portable-lab.registry.json",
+            "fixtures/onboarding-sample.registry.json",
+        ],
         [sys.executable, "scripts/forge_registry.py", "render", "fixtures/portable-lab.registry.json", "output/portable-lab.html"],
         [sys.executable, "scripts/forge_registry.py", "render-app", "output/forge-app.html"],
         [sys.executable, "scripts/forge_registry.py", "export-summary", "fixtures/example-project.registry.json", "output/demo-project.summary.json"],
@@ -1632,6 +1652,15 @@ def command_verify_local(args: argparse.Namespace) -> int:
         [sys.executable, "scripts/forge_registry.py", "verify-bundle", "output/decentralized-forge-verification-bundle.zip"],
         [sys.executable, "scripts/forge_registry.py", "verify-bundle-cleanroom", "output/decentralized-forge-verification-bundle.zip"],
         [sys.executable, "scripts/forge_registry.py", "report-bundle", "output/decentralized-forge-verification-bundle.zip", "--json"],
+        [
+            sys.executable,
+            "scripts/forge_registry.py",
+            "report-bundle",
+            "output/decentralized-forge-verification-bundle.zip",
+            "--json",
+            "--output",
+            "output/onboarding-sample.bundle-report.json",
+        ],
         [sys.executable, "scripts/forge_registry.py", "export-bundle-release-note", "output/decentralized-forge-verification-bundle.zip"],
         [sys.executable, "scripts/live_gate_inventory.py"],
         [sys.executable, "-m", "unittest", "discover", "-s", "tests"],
@@ -1750,6 +1779,7 @@ def build_parser() -> argparse.ArgumentParser:
     report_bundle = subparsers.add_parser("report-bundle", help="Summarize a portable bundle ZIP or extracted bundle directory")
     report_bundle.add_argument("source", type=Path, nargs="?", default=DEFAULT_BUNDLE_OUTPUT)
     report_bundle.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+    report_bundle.add_argument("--output", type=Path, help="Write the report to a file instead of stdout")
     report_bundle.set_defaults(func=command_report_bundle)
 
     export_bundle_release_note = subparsers.add_parser(

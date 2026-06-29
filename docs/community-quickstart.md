@@ -61,3 +61,5 @@ The intended public tool flow is:
 4. Export a static report and evidence bundle that others can verify without trusting the original platform.
 
 The current bundle workflow is local and fixture-backed. Local onboarding records Git metadata, file hash, size, media type, and `file://` availability only; it does not add/fetch/pin IPFS content, sign releases, publish protocol events, or prove durable availability. Until live importers are broader and evidence-backed, use the fixtures as examples and keep new evidence rows explicit, bounded, and secret-free.
+
+The committed onboarding sample at `fixtures/onboarding-sample.registry.json` and `output/onboarding-sample.registry.html` shows the full local path without requiring a separate project.

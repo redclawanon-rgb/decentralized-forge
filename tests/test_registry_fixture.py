@@ -25,6 +25,7 @@ LIVE_EVIDENCE_SCHEMA_PATH = ROOT / "schemas" / "live-evidence-index.schema.json"
 FIXTURE_PATH = ROOT / "fixtures" / "example-project.registry.json"
 PORTABLE_FIXTURE_PATH = ROOT / "fixtures" / "portable-lab.registry.json"
 RADICLE_FIXTURE_PATH = ROOT / "fixtures" / "radicle-backed-project.registry.json"
+ONBOARDING_SAMPLE_FIXTURE_PATH = ROOT / "fixtures" / "onboarding-sample.registry.json"
 NOSTR_REPO_FIXTURE_PATH = ROOT / "fixtures" / "nostr-repo-announcement.json"
 NOSTR_COLLAB_FIXTURE_PATH = ROOT / "fixtures" / "nostr-collaboration-events.json"
 NOSTR_STATE_STATUS_FIXTURE_PATH = ROOT / "fixtures" / "nostr-repo-state-status.json"
@@ -35,6 +36,7 @@ NEXT_LOOP_CONTROLLER_PATH = ROOT / "fixtures" / "next-loop-controller.json"
 NEXT_LOOP_WORKFLOW_PATH = ROOT / ".github" / "workflows" / "next-loop.yml"
 CI_WORKFLOW_PATH = ROOT / ".github" / "workflows" / "ci.yml"
 LOCAL_RELEASE_ARTIFACT_PATH = ROOT / "fixtures" / "local-release-artifact.txt"
+ONBOARDING_SAMPLE_ARTIFACT_PATH = ROOT / "fixtures" / "onboarding-sample-artifact.txt"
 HELIA_LOCAL_EVIDENCE_PATH = ROOT / "evidence" / "helia-local-ipfs-add-get-2026-06-28.json"
 PUBLIC_GATEWAY_PREFLIGHT_PATH = ROOT / "evidence" / "public-gateway-pinning-preflight-2026-06-28.json"
 NOSTR_ISSUE_PATCH_READBACK_PATH = ROOT / "evidence" / "nostr-loop43-issue-patch-readback-2026-06-28.json"
@@ -48,8 +50,11 @@ OUTPUT_DEMO_HTML = ROOT / "output" / "demo-project.html"
 OUTPUT_VERIFICATION_BUNDLE = ROOT / "output" / "decentralized-forge-verification-bundle.zip"
 OUTPUT_FORGE_APP_HTML = ROOT / "output" / "forge-app.html"
 OUTPUT_PORTABLE_HTML = ROOT / "output" / "portable-lab.html"
+OUTPUT_ONBOARDING_SAMPLE_HTML = ROOT / "output" / "onboarding-sample.registry.html"
 OUTPUT_DEMO_SUMMARY = ROOT / "output" / "demo-project.summary.json"
 OUTPUT_PORTABLE_SUMMARY = ROOT / "output" / "portable-lab.summary.json"
+OUTPUT_ONBOARDING_SAMPLE_SUMMARY = ROOT / "output" / "onboarding-sample.registry.summary.json"
+OUTPUT_ONBOARDING_SAMPLE_REPORT = ROOT / "output" / "onboarding-sample.bundle-report.json"
 CIDV1_BASE32_RE = re.compile(r"^b[a-z2-7]{20,}$")
 
 
@@ -59,6 +64,7 @@ class RegistryFixtureTests(unittest.TestCase):
         self.fixture = json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
         self.portable_fixture = json.loads(PORTABLE_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.radicle_fixture = json.loads(RADICLE_FIXTURE_PATH.read_text(encoding="utf-8"))
+        self.onboarding_sample_fixture = json.loads(ONBOARDING_SAMPLE_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.nostr_repo_fixture = json.loads(NOSTR_REPO_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.nostr_collab_fixture = json.loads(NOSTR_COLLAB_FIXTURE_PATH.read_text(encoding="utf-8"))
         self.nostr_state_status_fixture = json.loads(NOSTR_STATE_STATUS_FIXTURE_PATH.read_text(encoding="utf-8"))
@@ -162,14 +168,19 @@ class RegistryFixtureTests(unittest.TestCase):
     def test_forge_registry_cli_exports_deterministic_summaries(self):
         demo_summary = forge_registry.registry_summary(self.fixture, FIXTURE_PATH)
         portable_summary = forge_registry.registry_summary(self.portable_fixture, PORTABLE_FIXTURE_PATH)
+        onboarding_summary = forge_registry.registry_summary(self.onboarding_sample_fixture, ONBOARDING_SAMPLE_FIXTURE_PATH)
         self.assertEqual(demo_summary, json.loads(OUTPUT_DEMO_SUMMARY.read_text(encoding="utf-8")))
         self.assertEqual(portable_summary, json.loads(OUTPUT_PORTABLE_SUMMARY.read_text(encoding="utf-8")))
+        self.assertEqual(onboarding_summary, json.loads(OUTPUT_ONBOARDING_SAMPLE_SUMMARY.read_text(encoding="utf-8")))
         self.assertEqual(portable_summary["project"]["id"], "portable-lab")
         self.assertEqual(portable_summary["counts"]["issues"], 1)
         self.assertEqual(portable_summary["counts"]["patches"], 1)
         self.assertEqual(portable_summary["counts"]["artifacts"], 1)
         self.assertEqual(portable_summary["counts"]["verification_states"], 4)
         self.assertFalse(portable_summary["non_claims"]["production_ready"])
+        self.assertEqual(onboarding_summary["project"]["id"], "onboarding-sample")
+        self.assertEqual(onboarding_summary["counts"]["artifacts"], 1)
+        self.assertEqual(onboarding_summary["artifact_names"], ["onboarding-sample-artifact.txt"])
 
     def test_forge_registry_cli_renders_second_fixture_without_demo_adapters(self):
         html = OUTPUT_PORTABLE_HTML.read_text(encoding="utf-8")
@@ -179,6 +190,51 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("Second local registry fixture only", html)
         self.assertNotIn("NIP-34 fixture adapter", html)
         self.assertNotIn("Live evidence index", html)
+
+    def test_committed_onboarding_sample_is_current_and_bounded(self):
+        registry = self.onboarding_sample_fixture
+        render_project_page.validate_registry(registry)
+        self.assertEqual(registry["project"]["id"], "onboarding-sample")
+        self.assertEqual(registry["project"]["name"], "Onboarding Sample")
+        self.assertEqual(registry["clone_urls"][0]["url"], "file://.")
+        self.assertEqual(registry["maintainers"][0]["public_id"], "local-import-placeholder")
+        self.assertEqual(registry["signature"]["status"], "unsigned-fixture")
+        self.assertEqual(len(registry["releases"]), 1)
+        artifact = registry["releases"][0]["artifacts"][0]
+        artifact_bytes = ONBOARDING_SAMPLE_ARTIFACT_PATH.read_bytes()
+        expected_sha256 = hashlib.sha256(artifact_bytes).hexdigest()
+        self.assertEqual(artifact["name"], "onboarding-sample-artifact.txt")
+        self.assertEqual(artifact["uri"], "file://fixtures/onboarding-sample-artifact.txt")
+        self.assertEqual(artifact["sha256"], expected_sha256)
+        self.assertEqual(artifact["hashes"]["sha256"], expected_sha256)
+        self.assertEqual(artifact["size_bytes"], len(artifact_bytes))
+        self.assertTrue(artifact["availability"]["local_fixture"])
+        self.assertFalse(artifact["availability"]["pinned"])
+        self.assertFalse(artifact["availability"]["live_ipfs_verified"])
+        self.assertFalse(artifact["availability"]["paid_storage"])
+        self.assertFalse(artifact["availability"]["durability_claim"])
+        scopes = {state["scope"] for state in registry["verification_states"]}
+        self.assertEqual(scopes, {"registry.local_import_scaffold", "registry.local_artifact_metadata"})
+        scaffold_state = [state for state in registry["verification_states"] if state["scope"] == "registry.local_import_scaffold"][0]
+        commit_match = re.search(r"commit ([0-9a-f]{40})", scaffold_state["evidence"])
+        self.assertIsNotNone(commit_match)
+        self.assert_fixture_head_is_current_or_ancestor(commit_match.group(1))
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            generated = Path(tmpdir) / "onboarding-sample.html"
+            self.assertEqual(render_project_page.main([str(ONBOARDING_SAMPLE_FIXTURE_PATH), str(generated)]), 0)
+            self.assertEqual(generated.read_text(encoding="utf-8"), OUTPUT_ONBOARDING_SAMPLE_HTML.read_text(encoding="utf-8"))
+
+        report = json.loads(OUTPUT_ONBOARDING_SAMPLE_REPORT.read_text(encoding="utf-8"))
+        self.assertEqual(report, forge_registry.bundle_report(OUTPUT_VERIFICATION_BUNDLE))
+        self.assertTrue(report["verification"]["valid"])
+        self.assertIn("onboarding-sample", {project["project"]["id"] for project in report["projects"]})
+
+        combined = json.dumps(registry).lower()
+        for required_boundary in ["local registry scaffold only", "local file metadata only", "no ipfs add", "not-pinned"]:
+            self.assertIn(required_boundary, combined)
+        for unsupported_claim in ["production ready", "durably stored", "pinned and available", "slsa compliant"]:
+            self.assertNotIn(unsupported_claim, combined)
 
     def test_static_forge_app_is_current_and_non_publishing(self):
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -238,7 +294,7 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertEqual(report["evidence"]["entry_count"], len(self.live_evidence_index["evidence"]))
         self.assertEqual(
             {project["project"]["id"] for project in report["projects"]},
-            {"demo-project", "portable-lab", "rad:zLoop4RadicleFixture1111111111111111111111111"},
+            {"demo-project", "portable-lab", "rad:zLoop4RadicleFixture1111111111111111111111111", "onboarding-sample"},
         )
         self.assertIn("bundle does not publish protocol events", report["non_claims"])
         self.assertIn("Durable storage", report["verification_gaps"][0])
@@ -277,13 +333,17 @@ class RegistryFixtureTests(unittest.TestCase):
             for expected_path in [
                 "fixtures/example-project.registry.json",
                 "fixtures/portable-lab.registry.json",
+                "fixtures/onboarding-sample.registry.json",
+                "fixtures/onboarding-sample-artifact.txt",
                 "fixtures/live-evidence-index.json",
                 "evidence/nostr-loop43-issue-patch-readback-2026-06-28.json",
                 "output/demo-project.html",
                 "output/portable-lab.html",
+                "output/onboarding-sample.registry.html",
                 "output/forge-app.html",
                 "output/demo-project.summary.json",
                 "output/portable-lab.summary.json",
+                "output/onboarding-sample.registry.summary.json",
                 "docs/portable-bundle-review-checklist.md",
                 "scripts/forge_registry.py",
             ]:
@@ -338,7 +398,7 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("report-bundle` shows", note)
         self.assertIn("not a production forge", note)
         self.assertIn("not a production forge, signed release, durability proof", note)
-        for project_id in ["demo-project", "portable-lab", "rad:zLoop4RadicleFixture1111111111111111111111111"]:
+        for project_id in ["demo-project", "portable-lab", "rad:zLoop4RadicleFixture1111111111111111111111111", "onboarding-sample"]:
             self.assertIn(project_id, note)
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, note.lower())
@@ -687,16 +747,22 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip", workflow)
         self.assertIn("python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip", workflow)
         self.assertIn("python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip --json", workflow)
+        self.assertIn("python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip --json --output output/onboarding-sample.bundle-report.json", workflow)
         self.assertIn("python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip", workflow)
         for subject in [
             "output/demo-project.html",
             "output/forge-app.html",
             "output/portable-lab.html",
+            "output/onboarding-sample.registry.html",
             "output/demo-project.summary.json",
             "output/portable-lab.summary.json",
+            "output/onboarding-sample.registry.summary.json",
+            "output/onboarding-sample.bundle-report.json",
             "output/decentralized-forge-verification-bundle.zip",
             "evidence/local-release-artifact-2026-06-22.car",
             "fixtures/local-release-artifact.txt",
+            "fixtures/onboarding-sample-artifact.txt",
+            "fixtures/onboarding-sample.registry.json",
         ]:
             self.assertIn(subject, workflow)
 

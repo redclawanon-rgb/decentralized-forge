@@ -1,0 +1,43 @@
+{
+  "artifact_cids": [],
+  "artifact_names": [
+    "onboarding-sample-artifact.txt"
+  ],
+  "clone_transports": [
+    "git"
+  ],
+  "counts": {
+    "artifacts": 1,
+    "ci_checks": 0,
+    "clone_urls": 1,
+    "issues": 0,
+    "maintainers": 1,
+    "patches": 0,
+    "releases": 1,
+    "verification_states": 2
+  },
+  "non_claims": {
+    "censorship_resistance_verified": false,
+    "durable_storage_verified": false,
+    "production_ready": false,
+    "security_guarantee": false
+  },
+  "project": {
+    "default_branch": "main",
+    "id": "onboarding-sample",
+    "name": "Onboarding Sample"
+  },
+  "release_versions": [
+    "0.1.0-local"
+  ],
+  "schema_version": "decentralized-forge.registry-summary.v1",
+  "source": "fixtures/onboarding-sample.registry.json",
+  "verification": {
+    "by_state": {
+      "local-fixture": 2
+    },
+    "live_verified": 0,
+    "synthetic": 0,
+    "total": 2
+  }
+}

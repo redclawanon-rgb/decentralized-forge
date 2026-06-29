@@ -1,0 +1,5 @@
+Decentralized Forge onboarding sample artifact.
+
+This file is intentionally small and local-only. It is used by the committed
+onboarding sample to demonstrate artifact metadata attachment without IPFS
+add/fetch/pin, signing, paid storage, or durability claims.

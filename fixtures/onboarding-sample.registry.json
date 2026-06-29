@@ -1,0 +1,108 @@
+{
+  "clone_urls": [
+    {
+      "primary": true,
+      "transport": "git",
+      "url": "file://."
+    }
+  ],
+  "created_at": "2026-06-29T11:59:56-04:00",
+  "issues": [],
+  "maintainers": [
+    {
+      "id_type": "other",
+      "name": "Local Import Maintainer Placeholder",
+      "public_id": "local-import-placeholder",
+      "role": "maintainer-placeholder"
+    }
+  ],
+  "patches": [],
+  "project": {
+    "default_branch": "main",
+    "description": "Committed local onboarding sample generated from this repository without live protocol publication.",
+    "id": "onboarding-sample",
+    "name": "Onboarding Sample",
+    "web_urls": []
+  },
+  "releases": [
+    {
+      "artifacts": [
+        {
+          "attestation": "absent",
+          "availability": {
+            "durability_claim": false,
+            "live_ipfs_verified": false,
+            "local_fixture": true,
+            "notes": "Local file metadata only; no IPFS add, fetch, pin, gateway readback, paid storage, wallet, signing, or durability claim.",
+            "paid_storage": false,
+            "pinned": false
+          },
+          "hashes": {
+            "sha256": "3d41830af2bae95ed043b6a49175ee183e0a7e39dcefeff8a04a672a9cfb2945"
+          },
+          "media_type": "text/plain",
+          "name": "onboarding-sample-artifact.txt",
+          "sha256": "3d41830af2bae95ed043b6a49175ee183e0a7e39dcefeff8a04a672a9cfb2945",
+          "signature": "unsigned-local-artifact-metadata",
+          "size_bytes": 261,
+          "uri": "file://fixtures/onboarding-sample-artifact.txt"
+        }
+      ],
+      "tag": "v0.1.0-local",
+      "version": "0.1.0-local"
+    }
+  ],
+  "schema_version": "decentralized-forge.project-registry.v1",
+  "signature": {
+    "algorithm": "none",
+    "status": "unsigned-fixture",
+    "value": ""
+  },
+  "substrates": {
+    "forgefed": {
+      "status": "not-configured-local-import"
+    },
+    "ipfs": {
+      "artifact_cids": [],
+      "cid_status": "no-artifact-cid",
+      "durability_claim": false,
+      "live_ipfs_verified": false,
+      "paid_storage": false,
+      "pinning_status": "not-pinned"
+    },
+    "sigstore_slsa": {
+      "private_keys_used": false,
+      "production_claim": "none",
+      "provenance_status": "absent",
+      "real_cosign_verified": false,
+      "real_in_toto_verified": false,
+      "real_sigstore_verified": false,
+      "rekor_uploaded": false,
+      "release_signature_status": "absent",
+      "slsa_level_claimed": false
+    }
+  },
+  "updated_at": "2026-06-29T00:00:00Z",
+  "verification_states": [
+    {
+      "claim_boundary": "Local registry scaffold only; no live protocol publication, signing, durable storage, hosted service, or production readiness claim.",
+      "evidence": "Generated from local Git worktree file://. at commit 33fc4ed4a009111da8e3ae4b1c9468d34265c5e1.",
+      "last_checked_at": "2026-06-29T11:59:56-04:00",
+      "live_verified": false,
+      "notes": "Replace placeholder maintainer identity, add artifacts/evidence, and rerun validation before sharing.",
+      "scope": "registry.local_import_scaffold",
+      "state": "local-fixture",
+      "synthetic": false
+    },
+    {
+      "claim_boundary": "Local file metadata only; no IPFS add, fetch, pin, gateway readback, paid storage, wallet, signing, durable storage, or production readiness claim.",
+      "evidence": "Attached local artifact metadata for onboarding-sample-artifact.txt at file://fixtures/onboarding-sample-artifact.txt with sha256 3d41830af2bae95ed043b6a49175ee183e0a7e39dcefeff8a04a672a9cfb2945.",
+      "last_checked_at": "2026-06-29T00:00:00Z",
+      "live_verified": false,
+      "notes": "Artifact bytes were hashed locally and referenced with a file URI; availability beyond this local file was not verified.",
+      "scope": "registry.local_artifact_metadata",
+      "state": "local-fixture",
+      "synthetic": false
+    }
+  ]
+}

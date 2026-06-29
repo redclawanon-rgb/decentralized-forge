@@ -63,6 +63,8 @@ As of Loop 53, the project has local CAR/CID fixture verification, local Helia U
 - `schemas/project-registry.schema.json` — MVP project registry schema
 - `fixtures/example-project.registry.json` — local-only demo project registry fixture
 - `fixtures/portable-lab.registry.json` — second local-only registry fixture for non-demo CLI/export coverage
+- `fixtures/onboarding-sample.registry.json` — committed output from the local onboarding command, generated from this repository with local-only artifact metadata
+- `fixtures/onboarding-sample-artifact.txt` — local-only artifact used by the onboarding sample
 - `fixtures/live-adapter-replay-checklist.json` — secret-free replay gate/checklist state advanced through Loop 35
 - `fixtures/live-evidence-index.json` — secret-free index of Radicle, Nostr, IPFS/gateway, GitHub keyless attestation, local Helia, and registry-shaped import evidence plus explicit non-claims
 - `schemas/live-evidence-index.schema.json` — live evidence index schema contract
@@ -83,7 +85,9 @@ As of Loop 53, the project has local CAR/CID fixture verification, local Helia U
 - `output/demo-project.html` — generated demo project page
 - `output/forge-app.html` — generated local static workbench app; it reads embedded committed fixture/evidence data and does not sign, fetch, open WebSockets, or publish protocol events
 - `output/portable-lab.html` — generated second-fixture project page
+- `output/onboarding-sample.registry.html` — generated committed onboarding sample page
 - `output/*.summary.json` — deterministic machine-readable registry summaries
+- `output/onboarding-sample.bundle-report.json` — committed JSON bundle report generated after the onboarding sample refresh
 - `output/decentralized-forge-verification-bundle.zip` — deterministic portable bundle containing fixtures, schemas, source evidence, generated outputs, verifier scripts, and `verification-bundle.manifest.json`
 - `tests/test_registry_fixture.py` — stdlib verification tests for the registry fixture and renderer
 
@@ -166,6 +170,7 @@ python3 -m json.tool schemas/live-evidence-index.schema.json
 python3 -m json.tool fixtures/example-project.registry.json
 python3 -m json.tool fixtures/portable-lab.registry.json
 python3 -m json.tool fixtures/radicle-backed-project.registry.json
+python3 -m json.tool fixtures/onboarding-sample.registry.json
 python3 -m json.tool fixtures/nostr-repo-announcement.json
 python3 -m json.tool fixtures/nostr-collaboration-events.json
 python3 -m json.tool fixtures/nostr-repo-state-status.json
@@ -177,7 +182,7 @@ python3 scripts/preflight_static_artifact.py
 python3 scripts/forge_registry.py validate-evidence-index fixtures/live-evidence-index.json
 python3 scripts/forge_registry.py refresh-evidence-hashes fixtures/live-evidence-index.json --check
 python3 scripts/forge_registry.py doctor --json
-python3 scripts/forge_registry.py validate fixtures/example-project.registry.json fixtures/portable-lab.registry.json
+python3 scripts/forge_registry.py validate fixtures/example-project.registry.json fixtures/portable-lab.registry.json fixtures/onboarding-sample.registry.json
 python3 scripts/forge_registry.py render fixtures/portable-lab.registry.json output/portable-lab.html
 python3 scripts/forge_registry.py render-app output/forge-app.html
 python3 scripts/forge_registry.py export-summary fixtures/example-project.registry.json output/demo-project.summary.json
@@ -186,6 +191,7 @@ python3 scripts/forge_registry.py export-bundle output/decentralized-forge-verif
 python3 scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip
 python3 scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip
 python3 scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip --json
+python3 scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip --json --output output/onboarding-sample.bundle-report.json
 python3 scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip
 python3 scripts/live_gate_inventory.py
 python3 -m unittest discover -s tests
