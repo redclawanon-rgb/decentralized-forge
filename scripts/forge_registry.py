@@ -265,18 +265,21 @@ def live_evidence_entry(entry_id: str, index_path: Path = DEFAULT_LIVE_EVIDENCE_
 
 def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_INDEX) -> dict:
     try:
-        entry = live_evidence_entry("loop70-radicle-public-seed-update-propagation", index_path)
+        entry = live_evidence_entry("loop72-radicle-public-seed-update-ef16e2a", index_path)
     except ValueError:
         try:
-            entry = live_evidence_entry("loop67-radicle-vps-follower-public-readback", index_path)
+            entry = live_evidence_entry("loop70-radicle-public-seed-update-propagation", index_path)
         except ValueError:
             try:
-                entry = live_evidence_entry("loop66-radicle-seed-restart-check", index_path)
+                entry = live_evidence_entry("loop67-radicle-vps-follower-public-readback", index_path)
             except ValueError:
                 try:
-                    entry = live_evidence_entry("loop65-radicle-independent-availability-check", index_path)
+                    entry = live_evidence_entry("loop66-radicle-seed-restart-check", index_path)
                 except ValueError:
-                    entry = live_evidence_entry("loop63-radicle-retained-update-check", index_path)
+                    try:
+                        entry = live_evidence_entry("loop65-radicle-independent-availability-check", index_path)
+                    except ValueError:
+                        entry = live_evidence_entry("loop63-radicle-retained-update-check", index_path)
     public = entry.get("public_identifiers")
     if not isinstance(public, dict):
         raise ValueError(f"{entry.get('id', 'retained Radicle evidence')} missing public_identifiers")
@@ -284,8 +287,12 @@ def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_I
     is_public_vps_seed = entry.get("id") in {
         "loop67-radicle-vps-follower-public-readback",
         "loop70-radicle-public-seed-update-propagation",
+        "loop72-radicle-public-seed-update-ef16e2a",
     }
-    is_public_vps_update = entry.get("id") == "loop70-radicle-public-seed-update-propagation"
+    is_public_vps_update = entry.get("id") in {
+        "loop70-radicle-public-seed-update-propagation",
+        "loop72-radicle-public-seed-update-ef16e2a",
+    }
     is_independent_availability = entry.get("id") == "loop65-radicle-independent-availability-check"
     is_seed_restart = entry.get("id") == "loop66-radicle-seed-restart-check"
     required = ["rid", "current_source_commit", "retained_state_committed", "secret_values_recorded"]
@@ -813,6 +820,7 @@ def collect_verification_bundle_paths() -> list[Path]:
         "scripts/nip34_adapter.py",
         "scripts/preflight_static_artifact.py",
         "scripts/check_public_radicle_seed.py",
+        "scripts/install_radicle_health_timer.py",
         "scripts/install_radicle_user_seed_service.py",
         "scripts/radicle_seed_host_control.py",
         "scripts/run_radicle_fresh_readback_check.py",
@@ -1831,6 +1839,7 @@ def command_verify_local(args: argparse.Namespace) -> int:
         [sys.executable, "-m", "py_compile", "scripts/run_radicle_seed_restart_check.py"],
         [sys.executable, "-m", "py_compile", "scripts/run_radicle_update_continuity_check.py"],
         [sys.executable, "-m", "py_compile", "scripts/check_public_radicle_seed.py"],
+        [sys.executable, "-m", "py_compile", "scripts/install_radicle_health_timer.py"],
         [sys.executable, "-m", "py_compile", "scripts/install_radicle_user_seed_service.py"],
         [sys.executable, "-m", "py_compile", "scripts/radicle_seed_host_control.py"],
         [

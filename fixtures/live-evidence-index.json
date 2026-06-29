@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-evidence-index.v1",
-  "loop": 70,
+  "loop": 72,
   "created_at": "2026-06-29",
   "purpose": "Secret-free index of narrow live/local evidence that can be rendered without upgrading unverified protocol claims.",
   "claim_policy": {
@@ -25,7 +25,9 @@
       "A public VPS follower seed served the retained Radicle RID to a fresh reader from a separate Linux machine, and readback matched the expected commit",
       "The public openclaw VPS follower seed runs as an enabled user-level systemd service and served the retained RID after an explicit service restart",
       "A repeatable public Radicle seed health-check script cloned the retained RID from the explicit openclaw seed and verified the expected commit",
-      "The retained RID advanced to commit 64efbada294d4a57c014a27398b92e344c6d68aa and the public openclaw follower seed served that updated commit to a fresh reader"
+      "The retained RID advanced to commit 64efbada294d4a57c014a27398b92e344c6d68aa and the public openclaw follower seed served that updated commit to a fresh reader",
+      "An external ubuntu-work user systemd timer ran the public Radicle seed health check and wrote a passing latest.json for the openclaw seed",
+      "The retained RID advanced to commit ef16e2ad39d3e13bdcc9d454443c5bbb17733c68 and the public openclaw follower seed served that updated commit to a fresh reader"
     ],
     "forbidden_claims": [
       "Radicle durable public seed/network availability verified",
@@ -793,6 +795,104 @@
         "not maintainer key material on the VPS"
       ],
       "notes": "This is the first proof that the public follower seed can serve a later retained-RID commit after manual maintainer-to-follower sync."
+    },
+    {
+      "id": "loop71-radicle-external-health-timer",
+      "protocol": "radicle",
+      "scope": "radicle.external_public_seed_health_timer",
+      "state": "external-health-timer-readback-verified",
+      "verified_at": "2026-06-29",
+      "evidence_file": "evidence/radicle-external-health-timer-2026-06-29.json",
+      "evidence_sha256": "dd1d4556acc7f530700f5504f6424795de09fd064d1def4a26169575211129d5",
+      "evidence_size_bytes": 2377,
+      "verification_summary": "ubuntu-work runs an enabled user-level systemd timer that invokes scripts/check_public_radicle_seed.py against the openclaw public seed; the first forced run wrote a passing latest.json for commit ef16e2ad39d3e13bdcc9d454443c5bbb17733c68.",
+      "live_network_action": true,
+      "local_cli_verified": true,
+      "selected_relay_readback_verified": false,
+      "synthetic": false,
+      "public_identifiers": {
+        "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+        "current_source_commit": "ef16e2ad39d3e13bdcc9d454443c5bbb17733c68",
+        "vps_seed_address": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776",
+        "health_host": "ubuntu-work",
+        "health_timer_name": "decentralized-forge-radicle-healthcheck.timer",
+        "health_service_name": "decentralized-forge-radicle-healthcheck.service",
+        "health_timer_active": true,
+        "health_timer_enabled": true,
+        "health_timer_persistent": true,
+        "latest_json_exists": true,
+        "latest_verification_passed": true,
+        "latest_readback_commit": "ef16e2ad39d3e13bdcc9d454443c5bbb17733c68",
+        "latest_readback_matches_expected": true,
+        "secret_values_recorded": false
+      },
+      "non_claims": [
+        "not proof of automatic repair",
+        "not proof of permanent durability",
+        "not proof of future default public-routing availability",
+        "not proof of censorship resistance",
+        "not a security guarantee",
+        "not proof of global replication",
+        "not proof of identity trust",
+        "not production readiness",
+        "not full Radicle compatibility",
+        "not a committed secret or key backup"
+      ],
+      "notes": "This adds external observability for the public seed but does not prove durability or automatic remediation."
+    },
+    {
+      "id": "loop72-radicle-public-seed-update-ef16e2a",
+      "protocol": "radicle",
+      "scope": "radicle.retained_project_public_seed_update_hardening_commit",
+      "state": "public-vps-follower-update-readback-verified",
+      "verified_at": "2026-06-29",
+      "evidence_file": "evidence/radicle-public-seed-update-ef16e2a-2026-06-29.json",
+      "evidence_sha256": "a6d3e64e5c822069affb9228ec30618575ebeafa8ff3a819d21b6656866a2cf0",
+      "evidence_size_bytes": 3362,
+      "verification_summary": "The retained RID advanced from 64efbada294d4a57c014a27398b92e344c6d68aa to ef16e2ad39d3e13bdcc9d454443c5bbb17733c68; the openclaw follower synced it through a temporary maintainer bridge, then served the updated commit to a fresh ubuntu-work reader after the bridge and maintainer seed were stopped.",
+      "live_network_action": true,
+      "local_cli_verified": true,
+      "selected_relay_readback_verified": false,
+      "synthetic": false,
+      "public_identifiers": {
+        "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+        "prior_verified_commit": "64efbada294d4a57c014a27398b92e344c6d68aa",
+        "current_source_commit": "ef16e2ad39d3e13bdcc9d454443c5bbb17733c68",
+        "same_retained_rid": true,
+        "vps_seed_node_id": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f",
+        "vps_seed_address": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776",
+        "vps_seed_left_running": true,
+        "public_seed_address_reachable": true,
+        "systemd_user_service_enabled": true,
+        "external_health_timer_enabled": true,
+        "temporary_bridge_used": true,
+        "temporary_bridge_stopped_after_sync": true,
+        "maintainer_seed_stopped_after_sync": true,
+        "vps_sync_succeeded": true,
+        "vps_local_clone_readback_commit": "ef16e2ad39d3e13bdcc9d454443c5bbb17733c68",
+        "vps_local_clone_readback_matches_updated_commit": true,
+        "fresh_reader_host": "ubuntu-work",
+        "fresh_reader_readback_commit": "ef16e2ad39d3e13bdcc9d454443c5bbb17733c68",
+        "fresh_reader_readback_matches_expected": true,
+        "fresh_reader_temp_state_removed": true,
+        "retained_state_committed": false,
+        "secret_values_recorded": false,
+        "retained_maintainer_key_material_copied_to_vps": false
+      },
+      "non_claims": [
+        "not proof of automatic future update propagation",
+        "not proof of permanent durability",
+        "not proof of future default public-routing availability",
+        "not proof of censorship resistance",
+        "not a security guarantee",
+        "not proof of global replication",
+        "not proof of identity trust",
+        "not production readiness",
+        "not full Radicle compatibility",
+        "not a committed secret or key backup",
+        "not maintainer key material on the VPS"
+      ],
+      "notes": "This updates the public direct-seed milestone to include the prior hardening commit and records that external health monitoring is now installed."
     }
   ]
 }

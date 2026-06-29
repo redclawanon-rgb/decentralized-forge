@@ -1,17 +1,18 @@
 # First Decentralized Repo Milestone
 
-As of Loop 70, this project has a usable public Radicle direct-seed path for the
+As of Loop 72, this project has a usable public Radicle direct-seed path for the
 retained project RID.
 
 ## What Works
 
 - RID: `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy`
 - Public seed: `z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776`
-- Verified milestone commit: `64efbada294d4a57c014a27398b92e344c6d68aa`
+- Verified milestone commit: `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`
 - Seed host: `openclaw`
 - Seed mode: follower seed, not retained maintainer key material
 - Service mode: enabled user-level `systemd` service with restart policy
 - Health check: `scripts/check_public_radicle_seed.py`
+- External monitor: `decentralized-forge-radicle-healthcheck.timer` on `ubuntu-work`
 
 ## Clone
 
@@ -27,7 +28,7 @@ git rev-parse HEAD
 Expected HEAD:
 
 ```text
-64efbada294d4a57c014a27398b92e344c6d68aa
+ef16e2ad39d3e13bdcc9d454443c5bbb17733c68
 ```
 
 ## Verify With The Health Check
@@ -36,7 +37,7 @@ Expected HEAD:
 python scripts/check_public_radicle_seed.py \
   --seed z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776 \
   --rid rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy \
-  --expected-commit 64efbada294d4a57c014a27398b92e344c6d68aa
+  --expected-commit ef16e2ad39d3e13bdcc9d454443c5bbb17733c68
 ```
 
 ## Evidence
@@ -46,6 +47,9 @@ python scripts/check_public_radicle_seed.py \
 - `evidence/radicle-public-seed-health-check-2026-06-29.json`
 - `evidence/radicle-public-seed-update-propagation-2026-06-29.json`
 - `evidence/radicle-public-seed-update-health-check-2026-06-29.json`
+- `evidence/radicle-external-health-timer-2026-06-29.json`
+- `evidence/radicle-public-seed-update-ef16e2a-2026-06-29.json`
+- `evidence/radicle-public-seed-update-health-check-ef16e2a-2026-06-29.json`
 
 ## Non-Claims
 

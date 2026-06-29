@@ -86,6 +86,8 @@ As of Loop 67, the project has local CAR/CID fixture verification, local Helia U
 - `evidence/radicle-vps-follower-systemd-service-2026-06-29.json` and `.md` — Loop 68 enabled user-level `systemd` service for the public `openclaw` follower seed with post-restart readback
 - `evidence/radicle-public-seed-health-check-2026-06-29.json` and `.md` — Loop 69 repeatable fresh-profile health check for the public Radicle seed
 - `evidence/radicle-public-seed-update-propagation-2026-06-29.json` and `.md` — Loop 70 retained RID update propagation through the public `openclaw` follower seed to commit `64efbada294d4a57c014a27398b92e344c6d68aa`
+- `evidence/radicle-external-health-timer-2026-06-29.json` and `.md` — Loop 71 external `ubuntu-work` user-level `systemd` health timer for the public Radicle seed
+- `evidence/radicle-public-seed-update-ef16e2a-2026-06-29.json` and `.md` — Loop 72 retained RID update propagation through the public `openclaw` follower seed to commit `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`
 - `docs/first-decentralized-repo-milestone.md` — first usable public Radicle direct-seed clone milestone and non-claims
 - `fixtures/keyless-attestation.registry-verification.json` — Loop 45 registry-shaped keyless-attestation import kept outside project-registry fixtures
 - `fixtures/local-release-artifact.txt` — local-only release artifact fixture with stdlib-tested SHA-256/CIDv1 metadata
@@ -104,6 +106,7 @@ As of Loop 67, the project has local CAR/CID fixture verification, local Helia U
 - `scripts/run_radicle_seed_restart_check.py` — host/WSL-oriented retained seed restart/readback rehearsal
 - `scripts/install_radicle_user_seed_service.py` — Linux host helper for installing a user-level `systemd` Radicle follower seed service without printing secrets
 - `scripts/check_public_radicle_seed.py` — fresh-profile public Radicle seed clone/readback health check
+- `scripts/install_radicle_health_timer.py` — Linux host helper for installing a user-level `systemd` timer that runs the public seed health check
 - `scripts/radicle_seed_host_control.py` — Linux host helper for starting/stopping a Radicle seed profile from a local passphrase file without printing secrets
 - `scripts/run_radicle_update_continuity_check.py` — Docker/Linux-oriented same-RID update-continuity check for fresh-peer publication versus default delegate readback
 - `output/demo-project.html` — generated demo project page

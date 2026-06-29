@@ -1,0 +1,43 @@
+{
+  "schema_version": "decentralized-forge.radicle-external-health-timer.v1",
+  "loop": 71,
+  "created_utc": "2026-06-29T22:51:16Z",
+  "scope": "External scheduled public Radicle seed health check from ubuntu-work",
+  "source_evidence": "evidence/radicle-public-seed-update-propagation-2026-06-29.json",
+  "latest_health_check": "evidence/radicle-external-health-timer-latest-ef16e2a-2026-06-29.json",
+  "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+  "expected_commit": "ef16e2ad39d3e13bdcc9d454443c5bbb17733c68",
+  "seed": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776",
+  "health_host": "ubuntu-work",
+  "service": {
+    "manager": "systemd --user",
+    "service_name": "decentralized-forge-radicle-healthcheck.service",
+    "timer_name": "decentralized-forge-radicle-healthcheck.timer",
+    "timer_active": true,
+    "timer_enabled": true,
+    "persistent": true,
+    "on_boot_sec": "2min",
+    "on_unit_active_sec": "15min",
+    "state_latest": "~/.local/state/decentralized-forge/radicle-health/latest.json"
+  },
+  "verification": {
+    "forced_timer_service_run_succeeded": true,
+    "latest_json_exists": true,
+    "latest_verification_passed": true,
+    "latest_readback_commit": "ef16e2ad39d3e13bdcc9d454443c5bbb17733c68",
+    "latest_readback_matches_expected": true,
+    "fresh_reader_temp_state_removed": true
+  },
+  "installed_tooling": [
+    "scripts/install_radicle_health_timer.py",
+    "scripts/check_public_radicle_seed.py"
+  ],
+  "secret_values_recorded": false,
+  "actions_not_taken": [
+    "no secret passphrase or Radicle key material was written to committed evidence",
+    "no retained maintainer key material was copied to the health-check host beyond its pre-existing retained maintainer lane",
+    "no paid infrastructure, wallet, spending, or direct outreach was introduced",
+    "no permanent durability, censorship-resistance, security, global-replication, identity-trust, default-routing, or production-readiness claim is made"
+  ],
+  "claim_boundary": "This records an enabled user-level systemd timer on ubuntu-work that runs the public Radicle seed health check against the openclaw seed and wrote a passing latest.json for commit ef16e2ad39d3e13bdcc9d454443c5bbb17733c68. It is monitoring evidence, not proof of durability, automatic repair, default public routing, security, identity trust, or production readiness."
+}

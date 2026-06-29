@@ -5,7 +5,9 @@ This plan defines the minimum path from the current retained-RID evidence to a u
 ## Current Evidence
 
 - Retained RID: `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy`
-- Current verified commit: `64efbada294d4a57c014a27398b92e344c6d68aa`
+- Current verified commit: `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`
+- Loop 72 evidence: `evidence/radicle-public-seed-update-ef16e2a-2026-06-29.json`
+- Loop 71 evidence: `evidence/radicle-external-health-timer-2026-06-29.json`
 - Loop 70 evidence: `evidence/radicle-public-seed-update-propagation-2026-06-29.json`
 - Loop 69 evidence: `evidence/radicle-public-seed-health-check-2026-06-29.json`
 - Loop 68 evidence: `evidence/radicle-vps-follower-systemd-service-2026-06-29.json`
@@ -20,6 +22,8 @@ This plan defines the minimum path from the current retained-RID evidence to a u
 - Loop 68 installed the `openclaw` follower seed as an enabled user-level `systemd` service with restart policy and verified a fresh public readback after explicit service restart.
 - Loop 69 added `scripts/check_public_radicle_seed.py` and used it for a fresh-profile public seed health check.
 - Loop 70 advanced the same retained RID to `64efbada294d4a57c014a27398b92e344c6d68aa`, synced the `openclaw` follower through a temporary maintainer bridge, stopped the bridge and maintainer seed, and verified a fresh public readback from the VPS follower seed.
+- Loop 71 installed an external `ubuntu-work` health timer that runs the public seed health check and wrote a passing latest JSON.
+- Loop 72 advanced the same retained RID to `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`, synced the `openclaw` follower, stopped the bridge and maintainer seed, and verified a fresh public readback from the VPS follower seed.
 
 This proves an independent follower-seed handoff, a local seed restart/readback rehearsal, a restart-safe public follower service, a repeatable health check, and one manual update propagation through the VPS follower. It does not prove durability, broad public routing, automatic future update propagation, or default public-routing availability.
 
@@ -72,7 +76,7 @@ rad node start
 rad node connect z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776 --timeout 30s
 rad clone --timeout 120s --seed z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy decentralized-forge
 cd decentralized-forge
-test "$(git rev-parse HEAD)" = "64efbada294d4a57c014a27398b92e344c6d68aa"
+test "$(git rev-parse HEAD)" = "ef16e2ad39d3e13bdcc9d454443c5bbb17733c68"
 ```
 
 Record health-check evidence only if command output is secret-free.

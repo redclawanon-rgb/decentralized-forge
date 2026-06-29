@@ -808,3 +808,19 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as `evidence/radicle-public-seed-update-propagation-2026-06-29.json` and `.md`. The retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` advanced from `610fc3da9757d0cb123aa5976db552b991b766d4` to `64efbada294d4a57c014a27398b92e344c6d68aa`. The `openclaw` follower synced the update through a temporary bridge to the retained maintainer seed, then the bridge and maintainer seed were stopped. A fresh reader on `ubuntu-work` connected to the public VPS seed and cloned the updated commit.
 
 **Gate preserved:** This proves one manual update propagation through the public follower seed. It does not prove automatic future propagation, permanent durability, security, identity trust, global replication, default public routing, or production readiness.
+
+## Loop 71: External public seed health timer
+
+**Goal:** Make public seed health visible from outside the VPS without manual checks.
+
+**Current result:** Complete as `scripts/install_radicle_health_timer.py`, `evidence/radicle-external-health-timer-2026-06-29.json`, and `.md`. `ubuntu-work` runs `decentralized-forge-radicle-healthcheck.timer` as an enabled user-level `systemd` timer that invokes `scripts/check_public_radicle_seed.py` against the `openclaw` seed every 15 minutes after boot. The first forced run wrote `~/.local/state/decentralized-forge/radicle-health/latest.json` and verified commit `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`.
+
+**Gate preserved:** This is external monitoring evidence. It does not prove automatic repair, permanent durability, security, identity trust, global replication, default public routing, or production readiness.
+
+## Loop 72: Public seed update to hardening commit
+
+**Goal:** Move the public Radicle seed forward to include the prior public-seed hardening commit.
+
+**Current result:** Complete as `evidence/radicle-public-seed-update-ef16e2a-2026-06-29.json` and `.md`. The retained RID advanced from `64efbada294d4a57c014a27398b92e344c6d68aa` to `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`; `openclaw` synced through a temporary maintainer bridge; the bridge and maintainer seed were stopped; and a fresh reader on `ubuntu-work` cloned the updated commit from the public VPS seed.
+
+**Gate preserved:** This proves one manual update propagation to the hardening commit. It does not prove automatic future propagation, permanent durability, security, identity trust, global replication, default public routing, or production readiness.
