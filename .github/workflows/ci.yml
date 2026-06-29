@@ -70,6 +70,9 @@ jobs:
       - name: Verify local CAR/CID fixture
         run: npm run verify:car-cid
 
+      - name: Verify local Helia add/get fixture
+        run: npm run verify:helia
+
       - name: Verify worktree stays clean
         run: git diff --exit-code
 

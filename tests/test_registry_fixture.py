@@ -31,6 +31,7 @@ NEXT_LOOP_CONTROLLER_PATH = ROOT / "fixtures" / "next-loop-controller.json"
 NEXT_LOOP_WORKFLOW_PATH = ROOT / ".github" / "workflows" / "next-loop.yml"
 CI_WORKFLOW_PATH = ROOT / ".github" / "workflows" / "ci.yml"
 LOCAL_RELEASE_ARTIFACT_PATH = ROOT / "fixtures" / "local-release-artifact.txt"
+HELIA_LOCAL_EVIDENCE_PATH = ROOT / "evidence" / "helia-local-ipfs-add-get-2026-06-28.json"
 FIXTURE_PATHS = [FIXTURE_PATH, PORTABLE_FIXTURE_PATH, RADICLE_FIXTURE_PATH]
 RENDERER = ROOT / "scripts" / "render_project_page.py"
 STATIC_PREFLIGHT = ROOT / "scripts" / "preflight_static_artifact.py"
@@ -230,6 +231,7 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("artifact-metadata: write", workflow)
         self.assertIn("uses: actions/attest@v4", workflow)
         self.assertIn("if: github.event_name == 'push' && github.ref == 'refs/heads/main'", workflow)
+        self.assertIn("npm run verify:helia", workflow)
         for subject in [
             "output/demo-project.html",
             "output/portable-lab.html",
@@ -722,6 +724,53 @@ class RegistryFixtureTests(unittest.TestCase):
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, evidence_blob)
 
+    def test_loop41_helia_local_ipfs_add_get_evidence_is_bounded(self):
+        evidence = json.loads(HELIA_LOCAL_EVIDENCE_PATH.read_text(encoding="utf-8"))
+
+        self.assertEqual(evidence["schema_version"], "decentralized-forge.helia-local-ipfs-add-get.v1")
+        self.assertEqual(evidence["loop"], 41)
+        self.assertEqual(evidence["scope"], "local Helia/IPFS UnixFS add-get verification only")
+        self.assertTrue(evidence["verification_passed"])
+        self.assertEqual(evidence["input_artifact"], "fixtures/local-release-artifact.txt")
+        self.assertEqual(evidence["input_size_bytes"], LOCAL_RELEASE_ARTIFACT_PATH.stat().st_size)
+        self.assertEqual(evidence["input_sha256"], hashlib.sha256(LOCAL_RELEASE_ARTIFACT_PATH.read_bytes()).hexdigest())
+        self.assertEqual(evidence["local_unixfs_cid"], evidence["loop_33_raw_cid"])
+        self.assertEqual(evidence["local_unixfs_cid"], "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua")
+        self.assertEqual(evidence["readback_size_bytes"], evidence["input_size_bytes"])
+        self.assertTrue(evidence["readback_bytes_match_input"])
+        self.assertTrue(evidence["readback_sha256_matches_input"])
+        self.assertEqual(evidence["dependencies"]["helia"], "6.1.4")
+        self.assertEqual(evidence["dependencies"]["@helia/unixfs"], "7.2.1")
+        self.assertEqual(evidence["lockfile"], "package-lock.json")
+        self.assertFalse(evidence["contains_secret_values"])
+        self.assertFalse(evidence["private_keys_used"])
+        self.assertFalse(evidence["paid_infrastructure_used"])
+        self.assertFalse(evidence["public_gateway_queried"])
+        self.assertFalse(evidence["pinned"])
+        self.assertFalse(evidence["helia_started"])
+        self.assertFalse(evidence["persistent_daemon_started"])
+        self.assertFalse(evidence["durability_claim"])
+        self.assertFalse(evidence["production_readiness_claim"])
+
+        evidence_blob = json.dumps(evidence).lower()
+        for action_not_taken in [
+            "no public gateway was queried",
+            "no public pinning service was used",
+            "no paid storage, filecoin, arweave, wallet, or spending action was used",
+            "no persistent ipfs/kubo daemon",
+        ]:
+            self.assertIn(action_not_taken, evidence_blob)
+        for required_non_claim in [
+            "no durability",
+            "global availability",
+            "censorship-resistance",
+            "security",
+            "production-readiness",
+        ]:
+            self.assertIn(required_non_claim, evidence_blob)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, evidence_blob)
+
     def test_loop34_radicle_public_smoke_evidence_is_bounded(self):
         checklist = self.live_replay_checklist
         if checklist["loop"] < 34:
@@ -910,7 +959,7 @@ class RegistryFixtureTests(unittest.TestCase):
     def test_loop26_live_evidence_index_imports_only_bounded_evidence(self):
         index = self.live_evidence_index
         self.assertEqual(index["schema_version"], "decentralized-forge.live-evidence-index.v1")
-        self.assertEqual(index["loop"], 40)
+        self.assertEqual(index["loop"], 41)
         self.assertFalse(index["claim_policy"]["contains_secret_values"])
         by_id = {item["id"]: item for item in index["evidence"]}
         self.assertEqual(
@@ -920,6 +969,7 @@ class RegistryFixtureTests(unittest.TestCase):
                 "loop25-nostr-selected-relay-readback",
                 "loop34-radicle-disposable-public-smoke",
                 "loop40-github-keyless-artifact-attestation",
+                "loop41-helia-local-ipfs-add-get",
             },
         )
 
@@ -966,6 +1016,18 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertEqual(attestation["public_identifiers"]["subject_count"], 6)
         self.assertIn("not a SLSA compliance claim", attestation["non_claims"])
         self.assertIn("not a registry fixture provenance import", attestation["non_claims"])
+
+        helia = by_id["loop41-helia-local-ipfs-add-get"]
+        self.assertEqual(helia["protocol"], "ipfs")
+        self.assertEqual(helia["state"], "local-helia-add-get-verified")
+        self.assertFalse(helia["live_network_action"])
+        self.assertFalse(helia["synthetic"])
+        self.assertEqual(
+            helia["public_identifiers"]["cid"],
+            "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua",
+        )
+        self.assertIn("not proof of public gateway availability", helia["non_claims"])
+        self.assertIn("not proof of durability", helia["non_claims"])
 
     def test_loop40_github_keyless_attestation_evidence_is_bounded(self):
         index = self.live_evidence_index

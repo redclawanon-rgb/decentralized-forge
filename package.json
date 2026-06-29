@@ -7,6 +7,7 @@
   "scripts": {
     "verify:local": "python scripts/forge_registry.py verify-local",
     "verify:car-cid": "node scripts/verify_car_cid_fixture.mjs",
+    "verify:helia": "node scripts/verify_helia_fixture.mjs",
     "next:loop": "python scripts/next_loop_controller.py --write-report",
     "next:check": "python scripts/next_loop_controller.py --check"
   },
@@ -16,7 +17,9 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@helia/unixfs": "7.2.1",
     "@ipld/car": "5.4.6",
+    "helia": "6.1.4",
     "multiformats": "14.0.0"
   }
 }

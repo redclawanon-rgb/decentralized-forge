@@ -928,6 +928,20 @@ Outputs:
 
 Gate preserved: This uses GitHub OIDC/keyless hosted attestations and no production/private personal signing key. It does not claim local registry provenance fields are imported, SLSA-compliant, production-ready, or consumer-verified.
 
+### Loop 41: Local Helia/IPFS add-get fixture verification
+
+Status: **complete as local in-process Helia add/get evidence; no public storage or durability claim**.
+
+Outputs:
+
+- Added project-scoped dev dependencies `helia@6.1.4` and `@helia/unixfs@7.2.1`.
+- Added `scripts/verify_helia_fixture.mjs` and npm script `verify:helia`.
+- `npm run verify:helia` creates a non-started in-process project-scoped Helia instance, adds `fixtures/local-release-artifact.txt`, reads it back with UnixFS `cat`, and writes `evidence/helia-local-ipfs-add-get-2026-06-28.json`.
+- The recorded CID is `bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua`; readback SHA-256 matches `3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0`.
+- `fixtures/live-evidence-index.json`, `output/demo-project.html`, CI, docs, and tests now include the Loop 41 evidence row.
+
+Gate preserved: This is local Helia add/get evidence only. No public gateway was queried, no pinning service was used, no paid storage or wallet was used, no persistent daemon/background service was started, and no durability, global availability, censorship-resistance, security, or production-readiness claim is made.
+
 ## Verification requirements
 
 - Each protocol claim should include source URL and retrieval date where possible.
@@ -955,12 +969,12 @@ Gate preserved: This uses GitHub OIDC/keyless hosted attestations and no product
 - Use the completed safe live-gated replay plan/checklist as the prerequisite gate for Radicle/Nostr live verification. As of Loop 35, `rad` and `nak` are installed user-locally, a disposable project Nostr key exists outside the repo, a Radicle temporary-`RAD_HOME` disposable private replay succeeded locally, Nostr selected-relay publish/readback has been executed for one prototype event, and one disposable public Radicle seed/clone/readback smoke succeeded for exact RID `rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa`.
 - Treat Radicle as verified only for (a) the narrow disposable private local replay path and (b) the exact Loop 34 disposable public seed/clone/readback smoke; do not claim durable availability, censorship resistance, security, global replication, identity trust, production readiness, full Radicle compatibility, or broad Radicle network availability.
 - Keep ForgeFed as a later object-shape/federation bridge; do not run a public actor until moderation/security gates exist.
-- Keep IPFS/CIDs as artifact metadata until live add/fetch/pin verification is explicitly performed; defer Filecoin/Arweave because they imply spending/wallet decisions.
+- Keep IPFS/CIDs as artifact metadata plus exact local CAR/CID and local Helia add/get evidence. Public gateway checks, pinning, paid storage, Filecoin, and Arweave still require specific targets and stronger evidence because they imply availability, account/token, spending, or wallet decisions.
 - Keep Sigstore/in-toto/SLSA as release/build trust models; current provenance is synthetic and no SLSA level should be claimed.
 
 ## Next recommended loop
 
-**Next:** Continue with live IPFS evidence for the local CAR/CID fixture, then optionally import the hosted keyless attestation into registry-shaped verification rows without claiming production supply-chain security.
+**Next:** Choose the next narrow completion loop: either a public-gateway/pinning preflight with explicit no-durability wording, a Nostr issue/patch readback loop with disposable project-scoped keys, a broader disposable Radicle check, or a registry-shaped keyless-attestation import that still avoids production supply-chain-security claims.
 
 Recent completed loops:
 
@@ -973,6 +987,7 @@ Recent completed loops:
 - Loop 38: approval-bounded next-loop controller - complete as config, script, docs, tests, npm scripts, and manual GitHub Actions workflow; no background daemon or live action.
 - Loop 39: standing live-action approval recorded - complete as controller/status/test updates; no live protocol/storage/signing action executed in this loop.
 - Loop 40: GitHub keyless artifact attestation workflow - complete as hosted keyless attestation evidence in `evidence/github-keyless-attestation-2026-06-28.json`.
+- Loop 41: local Helia/IPFS add-get fixture verification - complete as project-scoped local add/get evidence in `evidence/helia-local-ipfs-add-get-2026-06-28.json`; no public gateway, pinning, paid storage, wallet, persistent daemon, or durability/security/production claim.
 
 The prior loop set is defined in `docs/next-evidence-and-interoperability-loops.md` and `AGENT-LOOPS.md`:
 

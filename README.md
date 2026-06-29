@@ -25,17 +25,17 @@ This repo starts as a research/spec/prototype workspace. The first milestone is 
 
 This repository is a **local registry/static renderer prototype** with protocol-mapping fixtures and narrow, evidence-backed live checks. It is public for collaboration, but it is not a production forge and does not claim durable storage, broad protocol availability, censorship resistance, security guarantees, or production readiness.
 
-As of Loop 35, the project has local CAR/CID fixture verification, one selected-relay Nostr repository-announcement readback import, one disposable Radicle local/private replay, and one disposable public Radicle seed/remote-clone smoke. Those checks are deliberately scoped to the exact evidence files in this repo.
+As of Loop 41, the project has local CAR/CID fixture verification, local Helia UnixFS/IPFS add-get evidence for the same fixture bytes, one selected-relay Nostr repository-announcement readback import, one disposable Radicle local/private replay, one disposable public Radicle seed/remote-clone smoke, and hosted GitHub keyless artifact attestation evidence. Those checks are deliberately scoped to the exact evidence files in this repo.
 
 | Area | Current state | Not claimed |
 |---|---|---|
 | Registry/UI | Local JSON schema, fixtures, stdlib renderer, generated demo HTML | Production forge, hosted service, signed authority |
 | Nostr NIP-34 | Dry-run repository/issue/patch/state fixtures, local stdlib parser/conformance checks, and one imported Loop 25 selected-relay repository-announcement readback event using a disposable project key | Durability, global propagation, identity trust, issue/patch readback, full NIP-34/forge compatibility |
 | Radicle | Source-inspected mapping, disposable local/private CLI replay evidence, and one disposable public seed/remote-clone smoke for exact RID `rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa` | Persistent seed operation, broad Radicle network availability, durability, identity trust, production readiness |
-| Artifacts | Local SHA-256, CIDv1 raw/base32-compatible metadata, and lockfile-backed local CAR/CID readback evidence | IPFS daemon add/fetch, public gateway availability, pinning, Filecoin/Arweave durability |
+| Artifacts | Local SHA-256, CIDv1 raw/base32-compatible metadata, lockfile-backed local CAR/CID readback evidence, and project-scoped Helia local add/get readback evidence | Public gateway availability, pinning, paid storage, Filecoin/Arweave durability |
 | CI/provenance | GitHub Actions runs the local verification suite and generated keyless artifact attestation evidence in Loop 40; registry provenance fields remain synthetic local fixtures until imported | Registry-level Sigstore/in-toto verification, SLSA compliance, supply-chain security guarantee |
 | Verification labels | Top-level and NIP-34 adapter `verification_states[]` records identify local fixtures, source-inspected mappings, synthetic fixtures, live-unverified scopes, and narrow live-verified evidence, with rendered counts and claim-boundary summaries | Implicit trust, unsupported scope expansion, censorship-proof/durability/security guarantees |
-| Live replay gates | Safe replay checklist advanced through Loop 35; further live storage, broader Radicle checks, public updates, or stronger claims require a new explicit target/approval | Unbounded live testing, paid services, production/private personal keys |
+| Live replay gates | Safe replay checklist advanced through Loop 35; standing approval covers free, disposable/project-scoped, low-volume, evidence-labeled live follow-up, including the Loop 41 local Helia add/get check | Unbounded live testing, paid services, production/private personal keys, stronger unsupported claims |
 | Public collaboration | GitHub issues/discussions for temporary coordination | Decentralized issue/patch federation running in production |
 
 ## Docs
@@ -61,8 +61,9 @@ As of Loop 35, the project has local CAR/CID fixture verification, one selected-
 - `fixtures/example-project.registry.json` — local-only demo project registry fixture
 - `fixtures/portable-lab.registry.json` — second local-only registry fixture for non-demo CLI/export coverage
 - `fixtures/live-adapter-replay-checklist.json` — secret-free replay gate/checklist state advanced through Loop 35
-- `fixtures/live-evidence-index.json` — secret-free index of Radicle local CLI replay evidence, Nostr selected-relay readback evidence, and explicit non-claims
+- `fixtures/live-evidence-index.json` — secret-free index of Radicle local CLI replay evidence, Nostr selected-relay readback evidence, GitHub keyless attestation evidence, local Helia add/get evidence, and explicit non-claims
 - `evidence/github-keyless-attestation-2026-06-28.json` — Loop 40 hosted keyless artifact attestation evidence from GitHub Actions
+- `evidence/helia-local-ipfs-add-get-2026-06-28.json` — Loop 41 project-scoped local Helia UnixFS/IPFS add-get evidence for the release artifact fixture
 - `fixtures/local-release-artifact.txt` — local-only release artifact fixture with stdlib-tested SHA-256/CIDv1 metadata
 - `fixtures/nostr-repo-state-status.json` — local-only `kind: 30618` repository state fixture generated from the recorded local Git HEAD at fixture creation time plus fixture-only synthetic status/check projections
 - `fixtures/radicle-backed-project.registry.json` — synthetic local-only Radicle-backed registry fixture
@@ -121,6 +122,7 @@ python3 scripts/forge_registry.py export-summary fixtures/portable-lab.registry.
 python3 scripts/live_gate_inventory.py
 python3 -m unittest discover -s tests
 npm run verify:car-cid
+npm run verify:helia
 ```
 
 To continue safe housekeeping without re-deciding the same next step each time:
@@ -131,6 +133,6 @@ npm run next:loop
 
 This writes `docs/autonomy/next-loop-report.md` after running the safe verifier. The matching manual GitHub Actions workflow is `next-loop-controller`; it runs the same controller in check mode and does not commit, push, publish, sign, spend, or perform live protocol actions.
 
-The prototype is evidence-scoped: it does not run a public federation actor, spend money, use production/private personal keys, or claim production readiness. Top-level `verification_states[]` records make each scope's evidence and claim boundary explicit. CI/provenance fields and renderer sections remain synthetic/local display data unless separately verified. The NIP-34 adapter parses local dry-run fixtures and separately imports the already-recorded selected-relay readback event; it does not publish new relay events during rendering or tests. Release artifact metadata includes local hashes, CID-compatible identifiers, and a local CAR/CID readback fixture, but it is not pinned, uploaded, fetched from IPFS, wallet-backed, paid-storage-backed, or durable-storage verified.
+The prototype is evidence-scoped: it does not run a public federation actor, spend money, use production/private personal keys, or claim production readiness. Top-level `verification_states[]` records make each scope's evidence and claim boundary explicit. CI/provenance fields and renderer sections remain synthetic/local display data unless separately verified. The NIP-34 adapter parses local dry-run fixtures and separately imports the already-recorded selected-relay readback event; it does not publish new relay events during rendering or tests. Release artifact metadata includes local hashes, CID-compatible identifiers, a local CAR/CID readback fixture, and a local Helia add/get readback fixture, but it is not pinned, uploaded to paid storage, fetched from a public gateway, wallet-backed, paid-storage-backed, or durable-storage verified.
 
-The renderer summarizes both registry-level and adapter-level verification rows: total row counts, live-verified false/true counts, synthetic false/true counts, state chips, grouped rows by state, and claim-boundary summaries. It also displays a concise conformance summary without dumping full serialized event payloads by default. Further live storage, broader/repeated Radicle public-network testing, public updates about Loop 33/34 results, or stronger durability/censorship/security/production claims require a new explicit approval/target.
+The renderer summarizes both registry-level and adapter-level verification rows: total row counts, live-verified false/true counts, synthetic false/true counts, state chips, grouped rows by state, and claim-boundary summaries. It also displays a concise conformance summary without dumping full serialized event payloads by default. Further public gateway checks, pinning, paid storage, broader/repeated Radicle public-network testing, or stronger durability/censorship/security/production claims require separate evidence and approval.

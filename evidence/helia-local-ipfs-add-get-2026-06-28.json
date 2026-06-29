@@ -1,0 +1,42 @@
+{
+  "schema_version": "decentralized-forge.helia-local-ipfs-add-get.v1",
+  "loop": 41,
+  "created_utc": "2026-06-29T01:15:05Z",
+  "scope": "local Helia/IPFS UnixFS add-get verification only",
+  "standing_approval": "User chat approval on 2026-06-28 covers free, project-scoped, low-volume, secret-free live IPFS/storage actions while still forbidding paid storage, wallets, production/private personal keys, persistent services, and stronger claims.",
+  "input_artifact": "fixtures/local-release-artifact.txt",
+  "input_size_bytes": 241,
+  "input_sha256": "3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0",
+  "local_unixfs_cid": "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua",
+  "local_unixfs_cid_note": "Helia UnixFS addBytes CID observed for the fixture bytes; this run compares it against the raw CID/CAR fixture recorded in Loop 33.",
+  "loop_33_raw_cid": "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua",
+  "readback_size_bytes": 241,
+  "readback_sha256": "3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0",
+  "readback_bytes_match_input": true,
+  "readback_sha256_matches_input": true,
+  "verification_passed": true,
+  "dependencies": {
+    "helia": "6.1.4",
+    "@helia/unixfs": "7.2.1"
+  },
+  "lockfile": "package-lock.json",
+  "contains_secret_values": false,
+  "private_keys_used": false,
+  "paid_infrastructure_used": false,
+  "public_gateway_queried": false,
+  "pinned": false,
+  "helia_started": false,
+  "persistent_daemon_started": false,
+  "durability_claim": false,
+  "production_readiness_claim": false,
+  "error": null,
+  "actions_not_taken": [
+    "no public gateway was queried",
+    "no public pinning service was used",
+    "no paid storage, Filecoin, Arweave, wallet, or spending action was used",
+    "no production/private personal key was used",
+    "no persistent IPFS/Kubo daemon, cron job, or always-on service was started",
+    "no durability, global availability, censorship-resistance, security, or production-readiness claim is made"
+  ],
+  "claim_boundary": "This verifies only that a project-scoped, non-started Helia instance can add the local fixture bytes to local UnixFS/IPFS storage and read the exact bytes back during one local execution."
+}

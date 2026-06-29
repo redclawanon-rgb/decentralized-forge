@@ -169,6 +169,7 @@ def command_verify_local(args: argparse.Namespace) -> int:
     if not args.skip_npm_ci:
         commands.append([npm_command("npm"), "ci"])
     commands.append([npm_command("npm"), "run", "verify:car-cid"])
+    commands.append([npm_command("npm"), "run", "verify:helia"])
 
     for command in commands:
         exit_code = run_command(command)

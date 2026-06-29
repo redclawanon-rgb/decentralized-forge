@@ -40,6 +40,7 @@ python scripts/live_gate_inventory.py
 python -m unittest discover -s tests
 npm ci
 npm run verify:car-cid
+npm run verify:helia
 ```
 
 ## Completion Lanes
@@ -82,6 +83,8 @@ Approved as of 2026-06-28 when free/disposable/project-scoped, low-volume, secre
 Still forbidden without separate explicit approval: spending money, paid pinning/storage, wallets, production/private personal keys, direct person outreach, persistent public seed operation, or stronger durability/censorship/security/production claims.
 
 Loop 40 added GitHub Actions keyless artifact attestation generation for committed/generated prototype artifacts and recorded the passed run in `evidence/github-keyless-attestation-2026-06-28.json`. This is hosted provenance evidence; it does not by itself upgrade local registry fixture provenance fields to SLSA compliance or production supply-chain trust.
+
+Loop 41 added project-scoped local Helia UnixFS/IPFS add-get readback evidence for `fixtures/local-release-artifact.txt` in `evidence/helia-local-ipfs-add-get-2026-06-28.json`. This verifies one local add/get execution only; it does not claim public gateway availability, pinning, durability, censorship resistance, security, or production readiness.
 
 ## Release Rule
 

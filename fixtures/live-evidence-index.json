@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-evidence-index.v1",
-  "loop": 40,
+  "loop": 41,
   "created_at": "2026-06-28",
   "purpose": "Secret-free index of narrow live/local evidence that can be rendered without upgrading unverified protocol claims.",
   "claim_policy": {
@@ -9,7 +9,8 @@
       "Radicle local CLI verified for one disposable private temporary-RAD_HOME init/inspect replay",
       "Nostr selected-relay acceptance/readback verified for one exact prototype event on two relays",
       "Radicle disposable public seed/remote-clone smoke verified for exact RID rad:z2WtozFrCRhygh9CGzyUN57CN7Nwa",
-      "GitHub Actions generated keyless hosted artifact attestations for six prototype artifacts on main"
+      "GitHub Actions generated keyless hosted artifact attestations for six prototype artifacts on main",
+      "Helia local UnixFS/IPFS add-get verified for the local release artifact fixture bytes"
     ],
     "forbidden_claims": [
       "Radicle durable public seed/network availability verified",
@@ -141,6 +142,35 @@
         "not production readiness"
       ],
       "notes": "Uses GitHub OIDC/keyless attestation; no production/private personal signing key is recorded or used."
+    },
+    {
+      "id": "loop41-helia-local-ipfs-add-get",
+      "protocol": "ipfs",
+      "scope": "ipfs.helia_local_unixfs_add_get",
+      "state": "local-helia-add-get-verified",
+      "verified_at": "2026-06-28",
+      "evidence_file": "evidence/helia-local-ipfs-add-get-2026-06-28.json",
+      "verification_summary": "A project-scoped, non-started in-process Helia instance added fixtures/local-release-artifact.txt to local UnixFS/IPFS storage and read back the exact bytes for CID bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua.",
+      "live_network_action": false,
+      "local_cli_verified": false,
+      "selected_relay_readback_verified": false,
+      "synthetic": false,
+      "public_identifiers": {
+        "cid": "bafkreibzglri2w3atm6k4jjbrsral2qsntj46ncgfdoeys436ckmkbtiua",
+        "input_sha256": "3932e28d5b609b3cae25218ca205ea126cd3cf344628dc4c4b9bf094c50668a0",
+        "implementation": "helia@6.1.4 with @helia/unixfs@7.2.1",
+        "storage_scope": "local non-started in-process Helia instance"
+      },
+      "non_claims": [
+        "not proof of public gateway availability",
+        "not proof of pinning",
+        "not proof of durability",
+        "not proof of global availability",
+        "not proof of censorship resistance",
+        "not a security guarantee",
+        "not production readiness"
+      ],
+      "notes": "Uses only project-scoped npm dev dependencies and local fixture bytes. No paid storage, wallet, public gateway query, persistent daemon, or production/private personal key was used."
     }
   ]
 }
