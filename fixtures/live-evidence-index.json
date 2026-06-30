@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-evidence-index.v1",
-  "loop": 89,
+  "loop": 96,
   "created_at": "2026-06-30",
   "purpose": "Secret-free index of narrow live/local evidence that can be rendered without upgrading unverified protocol claims.",
   "claim_policy": {
@@ -32,7 +32,8 @@
       "The ubuntu-work follower seed is reachable through a second public openclaw relay address, and a fresh ubuntu-work reader connected to z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877, cloned the retained RID, and verified commit ef16e2ad39d3e13bdcc9d454443c5bbb17733c68",
       "The retained RID advanced to commit d596024dac0d90605d4f103d567e5851771be5a8, stale follower caches were refreshed without copying maintainer key material, and both public direct-seed addresses served that commit to fresh readers",
       "A fresh Docker/Linux reader ran verify-first-public-clone against the primary public seed, cloned retained RID rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy, and verified HEAD d596024dac0d90605d4f103d567e5851771be5a8",
-      "A fresh Docker/Linux reader ran verify-first-public-clone against the second public seed, cloned retained RID rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy, and verified HEAD d596024dac0d90605d4f103d567e5851771be5a8"
+      "A fresh Docker/Linux reader ran verify-first-public-clone against the second public seed, cloned retained RID rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy, and verified HEAD d596024dac0d90605d4f103d567e5851771be5a8",
+      "A fresh sample Git project completed start-project, then received a disposable public Radicle RID and separate temporary-profile clone/readback matched its commit"
     ],
     "forbidden_claims": [
       "Radicle durable public seed/network availability verified",
@@ -1277,6 +1278,48 @@
         "not a committed secret or key backup"
       ],
       "notes": "This upgrades the plan-mode outside-reader rehearsal into actual outside-reader evidence for the second public direct-seed address. The second address remains relay-backed through openclaw to ubuntu-work, so it is not an independent-provider availability proof."
+    },
+    {
+      "id": "loop96-start-project-radicle-genesis-sample",
+      "protocol": "radicle",
+      "scope": "radicle.started_project_genesis.sample_local_seed_clone",
+      "state": "started-project-radicle-genesis-verified",
+      "verified_at": "2026-06-30",
+      "evidence_file": "evidence/radicle-start-project-genesis-2026-06-30.json",
+      "evidence_sha256": "8f6c9983cb51d80b91aad84aafa7c66e206f5a27703f9d7809530d36cef8e4cf",
+      "evidence_size_bytes": 21409,
+      "verification_summary": "A fresh sample Git project completed the start-project alpha path, then a disposable public Radicle RID was created and cloned/read back from a separate temporary Radicle profile with the clone commit matching the project commit.",
+      "live_network_action": true,
+      "local_cli_verified": true,
+      "selected_relay_readback_verified": false,
+      "synthetic": false,
+      "public_identifiers": {
+        "rid": "rad:z3pDfyAoThNEx8Laqnjg6sHLUVzhX",
+        "project_id": "started-forge-sample",
+        "project_git_commit": "b6d3a2aab4a879c8be88d38958f04f37c02c4a24",
+        "clone_commit": "b6d3a2aab4a879c8be88d38958f04f37c02c4a24",
+        "seed_node_id": "z6Mkr8aAJd7CK1PNtRZrcUhJfMKfydZ1P7EEuT3wdjDrKAv2",
+        "fresh_reader_environment": "Docker/Linux container with project-scoped temporary Radicle reader state",
+        "start_project_completed": true,
+        "bundle_valid": true,
+        "clone_succeeded": true,
+        "readback_matches_project": true,
+        "temp_state_removed": true,
+        "secret_values_recorded": false
+      },
+      "non_claims": [
+        "not a default public-routing claim",
+        "not a durability guarantee",
+        "not proof of automatic future update propagation",
+        "not proof of broad Radicle network availability",
+        "not proof of censorship resistance",
+        "not proof of identity trust",
+        "not a security guarantee",
+        "not production readiness",
+        "not full Radicle or forge compatibility",
+        "not a committed secret or key backup"
+      ],
+      "notes": "This is a bounded sample path proof: local start-project outputs were generated, then Radicle genesis and clone readback were executed separately with disposable temporary state. No persistent seed service or maintainer key material was kept."
     }
   ]
 }

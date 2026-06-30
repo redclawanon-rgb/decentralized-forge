@@ -1,0 +1,380 @@
+{
+  "schema_version": "decentralized-forge.started-project-radicle-genesis.v1",
+  "loop": 96,
+  "created_utc": "2026-06-30T10:36:17Z",
+  "scope": "Fresh sample project start-project plus disposable Radicle genesis/readback gate",
+  "permission": "User approved continuing toward a public-ready product; actions stayed disposable, project-scoped, and evidence-labeled.",
+  "temp_state_root_shape": "/tmp/df-started-project-radicle-genesis-* (removed after evidence capture)",
+  "sample_project_shape": "/tmp/df-started-project-radicle-genesis-*/started-forge-sample (removed)",
+  "rad_home_shape": "/tmp/df-started-project-radicle-genesis-*/seed-rad-home (removed)",
+  "clone_rad_home_shape": "/tmp/df-started-project-radicle-genesis-*/clone-rad-home (removed)",
+  "start_project": {
+    "project_id": "started-forge-sample",
+    "project_name": "Started Forge Sample",
+    "default_branch": "main",
+    "artifact_name": "README.md",
+    "artifact_sha256": "3dea5bf9406913f6c03c597b231fe39a62234536fe17d69723bab7e9d01a8570",
+    "receipt_schema": "decentralized-forge.start-project-receipt.v1",
+    "receipt_radicle_next_gate_status": "not-started-by-start-project",
+    "registry_path_shape": "/tmp/df-started-project-radicle-genesis-*/forge-output/started-forge-sample.registry.json",
+    "workbench_path_shape": "/tmp/df-started-project-radicle-genesis-*/forge-output/started-forge-sample.forge-app.html",
+    "receipt_path_shape": "/tmp/df-started-project-radicle-genesis-*/forge-output/started-forge-sample.start-project.json",
+    "bundle_path_shape": "/tmp/df-started-project-radicle-genesis-*/forge-output/started-forge-sample.verification-bundle.zip",
+    "start_project_completed": true,
+    "bundle_valid": true
+  },
+  "radicle": {
+    "rid": "rad:z3pDfyAoThNEx8Laqnjg6sHLUVzhX",
+    "visibility": "public",
+    "seed_node_id": "z6Mkr8aAJd7CK1PNtRZrcUhJfMKfydZ1P7EEuT3wdjDrKAv2",
+    "project_git_commit": "b6d3a2aab4a879c8be88d38958f04f37c02c4a24",
+    "clone_commit": "b6d3a2aab4a879c8be88d38958f04f37c02c4a24",
+    "node_started": true,
+    "publish_succeeded": true,
+    "seed_succeeded": true,
+    "sync_succeeded": true,
+    "clone_node_started": true,
+    "clone_node_connected_to_seed": true,
+    "remote_clone_succeeded": true,
+    "readback_commit_matches_project": true
+  },
+  "start_project_radicle_gate_executed_separately": true,
+  "verification_passed": true,
+  "commands": [
+    {
+      "cmd": [
+        "git",
+        "init",
+        "-b",
+        "main"
+      ],
+      "cwd": "/tmp/df-started-project-radicle-genesis-x04w_s8e/started-forge-sample",
+      "returncode": 0,
+      "stdout": "Initialized empty Git repository in /tmp/df-started-project-radicle-genesis-x04w_s8e/started-forge-sample/.git/\n",
+      "stderr": "",
+      "duration_seconds": 0.017
+    },
+    {
+      "cmd": [
+        "git",
+        "add",
+        "README.md",
+        "src/hello.txt"
+      ],
+      "cwd": "/tmp/df-started-project-radicle-genesis-x04w_s8e/started-forge-sample",
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 0.005
+    },
+    {
+      "cmd": [
+        "git",
+        "-c",
+        "user.name=Started Project Fixture",
+        "-c",
+        "user.email=started-project@example.invalid",
+        "commit",
+        "-m",
+        "Initial started forge sample"
+      ],
+      "cwd": "/tmp/df-started-project-radicle-genesis-x04w_s8e/started-forge-sample",
+      "returncode": 0,
+      "stdout": "[main (root-commit) b6d3a2a] Initial started forge sample\n 2 files changed, 4 insertions(+)\n create mode 100644 README.md\n create mode 100644 src/hello.txt\n",
+      "stderr": "",
+      "duration_seconds": 0.016
+    },
+    {
+      "cmd": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/tmp/df-started-project-radicle-genesis-x04w_s8e/started-forge-sample",
+      "returncode": 0,
+      "stdout": "b6d3a2aab4a879c8be88d38958f04f37c02c4a24\n",
+      "stderr": "",
+      "duration_seconds": 0.002
+    },
+    {
+      "cmd": [
+        "rad",
+        "--version"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "rad 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)\n",
+      "stderr": "",
+      "duration_seconds": 0.029
+    },
+    {
+      "cmd": [
+        "radicle-node",
+        "--version"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "radicle-node 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)\n",
+      "stderr": "",
+      "duration_seconds": 0.013
+    },
+    {
+      "cmd": [
+        "rad",
+        "auth",
+        "--alias",
+        "started-project-genesis",
+        "--stdin"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\nInitializing your Radicle \ud83d\udc7e identity\n\n\u2713 Creating your Ed25519 keypair...\n\u2713 Your Radicle DID is did:key:z6Mkr8aAJd7CK1PNtRZrcUhJfMKfydZ1P7EEuT3wdjDrKAv2. This identifies your device. Run `rad self` to show it at all times.\n\u2713 You're all set.\n\n\u2717 Hint: install ssh-agent to have it fill in your passphrase for you when signing.\n\nTo create a Radicle repository, run `rad init` from a Git repository with at least one commit.\nTo clone a repository, run `rad clone <rid>`. For example, `rad clone rad:z3gqcJUoA1n9HaHKufZs5FCSGazv5` clones the Radicle 'heartwood' repository.\nTo get a list of all commands, run `rad`.\n",
+      "stderr": "",
+      "duration_seconds": 0.525
+    },
+    {
+      "cmd": [
+        "rad",
+        "init",
+        "--name",
+        "started-forge-sample",
+        "--description",
+        "Disposable started-project Radicle genesis sample; evidence-scoped with no durability, security, or production claims.",
+        "--default-branch",
+        "main",
+        "--public",
+        "--no-confirm",
+        "--no-seed",
+        "/tmp/df-started-project-radicle-genesis-x04w_s8e/started-forge-sample"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\nInitializing public Radicle \ud83d\udc7e repository in /tmp/df-started-project-radicle-genesis-x04w_s8e/started-forge-sample..\n\n\u2713 Repository started-forge-sample created.\n\nYour Repository ID (RID) is rad:z3pDfyAoThNEx8Laqnjg6sHLUVzhX.\nYou can show it any time by running `rad .` from /tmp/df-started-project-radicle-genesis-x04w_s8e/started-forge-sample.\n\nYour repository will be announced to the network when you start your node.\nYou can start your node with `rad node start`.\nTo push changes, run `git push`.\n",
+      "stderr": "",
+      "duration_seconds": 0.296
+    },
+    {
+      "cmd": [
+        "rad",
+        "inspect",
+        "--rid",
+        "/tmp/df-started-project-radicle-genesis-x04w_s8e/started-forge-sample"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "rad:z3pDfyAoThNEx8Laqnjg6sHLUVzhX\n",
+      "stderr": "",
+      "duration_seconds": 0.031
+    },
+    {
+      "cmd": [
+        "rad",
+        "inspect",
+        "--identity",
+        "/tmp/df-started-project-radicle-genesis-x04w_s8e/started-forge-sample"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "{\n  \"payload\": {\n    \"xyz.radicle.project\": {\n      \"defaultBranch\": \"main\",\n      \"description\": \"Disposable started-project Radicle genesis sample; evidence-scoped with no durability, security, or production claims.\",\n      \"name\": \"started-forge-sample\"\n    }\n  },\n  \"delegates\": [\n    \"did:key:z6Mkr8aAJd7CK1PNtRZrcUhJfMKfydZ1P7EEuT3wdjDrKAv2\"\n  ],\n  \"threshold\": 1\n}\n",
+      "stderr": "",
+      "duration_seconds": 0.043
+    },
+    {
+      "cmd": [
+        "rad",
+        "inspect",
+        "--refs",
+        "/tmp/df-started-project-radicle-genesis-x04w_s8e/started-forge-sample"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "z6Mkr8aAJd7CK1PNtRZrcUhJfMKfydZ1P7EEuT3wdjDrKAv2\n\u2514\u2500\u2500 refs\n \u00a0\u00a0 \u251c\u2500\u2500 cobs\n \u00a0\u00a0 \u2502\u00a0\u00a0 \u2514\u2500\u2500 xyz.radicle.id\n \u00a0\u00a0 \u2502\u00a0\u00a0  \u00a0\u00a0 \u2514\u2500\u2500 141a101308acdeb7854b935f9b3f7f25120d6d12\n \u00a0\u00a0 \u251c\u2500\u2500 heads\n \u00a0\u00a0 \u2502\u00a0\u00a0 \u2514\u2500\u2500 main\n \u00a0\u00a0 \u2514\u2500\u2500 rad\n \u00a0\u00a0  \u00a0\u00a0 \u251c\u2500\u2500 id\n \u00a0\u00a0  \u00a0\u00a0 \u251c\u2500\u2500 root\n \u00a0\u00a0  \u00a0\u00a0 \u2514\u2500\u2500 sigrefs\n",
+      "stderr": "",
+      "duration_seconds": 0.064
+    },
+    {
+      "cmd": [
+        "rad",
+        "inspect",
+        "--visibility",
+        "/tmp/df-started-project-radicle-genesis-x04w_s8e/started-forge-sample"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "public\n",
+      "stderr": "",
+      "duration_seconds": 0.056
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "start",
+        "--",
+        "--listen",
+        "127.0.0.1:45089"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\u2713 Node started (45)\nTo stay in sync with the network, leave the node running in the background.\nTo learn more, run `rad node --help`.\n",
+      "stderr": "",
+      "duration_seconds": 0.417
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "status"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\u2713 Node is running with Node ID z6Mkr8aAJd7CK1PNtRZrcUhJfMKfydZ1P7EEuT3wdjDrKAv2 and listening for inbound connections on 127.0.0.1:45089.\n\n\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 Node ID                                            Address                     ?   \u292d   Since            \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 z6MkpxmRPmYwGaTLQAKvLEyW6aG8dnmSwHCdG8zr1TGAwk3v                               \u2022   \u2197                    \u2502\n\u2502 z6MkehmTj7pAVnd7Y5kew5y3K6RkczMDQ3i59DbmDJ9YM5Rp                               \u2022   \u2197                    \u2502\n\u2502 z6MkrLMMsiPWUcNPHcRajuMi9mDfYckSoJyPwwnknocNYPm7   iris.radicle.network:8776   \u2713   \u2197   10.879 second(s) \u2502\n\u2502 z6MkuvmuRwL2XVB3zDFZQpiY2fxnr6rp4Q1L61uZ1RDTk9Nf                               \u2022   \u2197                    \u2502\n\u2502 z6MkuyYxVQL4aRVpAKPbG4tc15FJ9E1ryZSSHjFyqsBBuxAn                               \u2022   \u2197                    \u2502\n\u2502 z6Mkng4jqnKZfbZu3Dfm3VT1cb4GU7uLDjwdrAUKS4SMDVbA                               \u2022   \u2197                    \u2502\n\u2502 z6Mkmqogy2qEM2ummccUthFEaaHvyYmYBYh3dbe9W4ebScxo   rosa.radicle.network:8776   \u2713   \u2197   11.879 second(s) \u2502\n\u2502 z6MkrUDca8va5fKBjtRscbvqxkfeX4ZCdx5kWZLS4Fk68z6N                               \u2022   \u2197                    \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\n\u2717 Hint: \n   ? \u2026 Status:\n       \u2713 \u2026 connected    \u2717 \u2026 disconnected\n       ! \u2026 attempted    \u2022 \u2026 initial\n   \u292d \u2026 Link Direction:\n       \u2198 \u2026 inbound      \u2197 \u2026 outbound\n\n2026-06-30T10:35:31.343Z INFO  service  Received command QueryState(..)\n2026-06-30T10:35:31.383Z INFO  service  Connected to z6Mkmqogy2qEM2ummccUthFEaaHvyYmYBYh3dbe9W4ebScxo (rosa.radicle.network:8776) (Outbound)\n2026-06-30T10:35:32.769Z INFO  service  Connected to z6MkrLMMsiPWUcNPHcRajuMi9mDfYckSoJyPwwnknocNYPm7 (iris.radicle.network:8776) (Outbound)\n2026-06-30T10:35:33.799Z INFO  service  Received command ListenAddrs\n2026-06-30T10:35:36.903Z INFO  service  Received command QueryState(..)\n2026-06-30T10:35:42.877Z INFO  service  Received command QueryState(..)\n2026-06-30T10:35:42.877Z WARN  wire     Failed to establish connection to [2a02:168:6621:a4cb:5a9c:fcff:fe85:77b]:8776: Network unreachable (os error 101)\n2026-06-30T10:35:42.877Z INFO  service  Disconnected from z6MkpxmRPmYwGaTLQAKvLEyW6aG8dnmSwHCdG8zr1TGAwk3v (Network unreachable (os error 101))\n2026-06-30T10:35:42.880Z WARN  wire     Failed to establish connection to [200:9095:c019:2576:cd21:f947:134c:c8d1]:8776: Network unreachable (os error 101)\n2026-06-30T10:35:42.881Z INFO  service  Disconnected from z6MkehmTj7pAVnd7Y5kew5y3K6RkczMDQ3i59DbmDJ9YM5Rp (Network unreachable (os error 101))\n",
+      "stderr": "",
+      "duration_seconds": 9.473
+    },
+    {
+      "cmd": [
+        "rad",
+        "publish",
+        "rad:z3pDfyAoThNEx8Laqnjg6sHLUVzhX"
+      ],
+      "cwd": null,
+      "returncode": 1,
+      "stdout": "\u2717 Error: repository is already public\n\u2717 Hint: to announce the repository to the network, run `rad sync --inventory`\n",
+      "stderr": "",
+      "duration_seconds": 0.253
+    },
+    {
+      "cmd": [
+        "rad",
+        "seed",
+        "rad:z3pDfyAoThNEx8Laqnjg6sHLUVzhX",
+        "--no-fetch"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\u2713 Inventory updated with rad:z3pDfyAoThNEx8Laqnjg6sHLUVzhX\n\u2713 Seeding policy updated for rad:z3pDfyAoThNEx8Laqnjg6sHLUVzhX with scope 'followed'\n",
+      "stderr": "",
+      "duration_seconds": 6.474
+    },
+    {
+      "cmd": [
+        "rad",
+        "sync",
+        "--announce",
+        "rad:z3pDfyAoThNEx8Laqnjg6sHLUVzhX"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\u2713 Synced with 2 seed(s)\n",
+      "stderr": "",
+      "duration_seconds": 6.213
+    },
+    {
+      "cmd": [
+        "rad",
+        "auth",
+        "--alias",
+        "started-project-reader",
+        "--stdin"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\nInitializing your Radicle \ud83d\udc7e identity\n\n\u2713 Creating your Ed25519 keypair...\n\u2713 Your Radicle DID is did:key:z6MkiQaqbmamsNtXMNEoAshwwvMhraKMy99MB3HqDadUCbQc. This identifies your device. Run `rad self` to show it at all times.\n\u2713 You're all set.\n\n\u2717 Hint: install ssh-agent to have it fill in your passphrase for you when signing.\n\nTo create a Radicle repository, run `rad init` from a Git repository with at least one commit.\nTo clone a repository, run `rad clone <rid>`. For example, `rad clone rad:z3gqcJUoA1n9HaHKufZs5FCSGazv5` clones the Radicle 'heartwood' repository.\nTo get a list of all commands, run `rad`.\n",
+      "stderr": "",
+      "duration_seconds": 0.508
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "start",
+        "--",
+        "--listen",
+        "127.0.0.1:46243"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\u2713 Node started (100)\nTo stay in sync with the network, leave the node running in the background.\nTo learn more, run `rad node --help`.\n",
+      "stderr": "",
+      "duration_seconds": 0.422
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "connect",
+        "z6Mkr8aAJd7CK1PNtRZrcUhJfMKfydZ1P7EEuT3wdjDrKAv2@127.0.0.1:45089"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\u2713 Connecting to z6Mkr8a\u2026jDrKAv2@127.0.0.1:45089...\n",
+      "stderr": "",
+      "duration_seconds": 0.291
+    },
+    {
+      "cmd": [
+        "rad",
+        "clone",
+        "--timeout",
+        "30s",
+        "--seed",
+        "z6Mkr8aAJd7CK1PNtRZrcUhJfMKfydZ1P7EEuT3wdjDrKAv2",
+        "rad:z3pDfyAoThNEx8Laqnjg6sHLUVzhX",
+        "/tmp/df-started-project-radicle-genesis-x04w_s8e/clone-parent/started-forge-sample-clone"
+      ],
+      "cwd": "/tmp/df-started-project-radicle-genesis-x04w_s8e/clone-parent",
+      "returncode": 0,
+      "stdout": "\u2713 Seeding policy updated for rad:z3pDfyAoThNEx8Laqnjg6sHLUVzhX with scope 'followed'\nFetching rad:z3pDfyAoThNEx8Laqnjg6sHLUVzhX from the network, found 2 potential seed(s).\n\u2713 Target met: 1 preferred seed(s).\n\u2713 Creating checkout in .//tmp/df-started-project-radicle-genesis-x04w_s8e/clone-parent/started-forge-sample-clone..\n\u2713 Remote started-project-genesis@z6Mkr8aAJd7CK1PNtRZrcUhJfMKfydZ1P7EEuT3wdjDrKAv2 added\n\u2713 Remote-tracking branch started-project-genesis@z6Mkr8aAJd7CK1PNtRZrcUhJfMKfydZ1P7EEuT3wdjDrKAv2/main created for z6Mkr8aAJd7CK1PNtRZrcUhJfMKfydZ1P7EEuT3wdjDrKAv2\n\u2713 Repository successfully cloned under /tmp/df-started-project-radicle-genesis-x04w_s8e/clone-parent/started-forge-sample-clone/\n\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 started-forge-sample                                                                                                   \u2502\n\u2502 Disposable started-project Radicle genesis sample; evidence-scoped with no durability, security, or production claims. \u2502\n\u2502 0 issues \u00b7 0 patches                                                                                                   \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\nRun `cd .//tmp/df-started-project-radicle-genesis-x04w_s8e/clone-parent/started-forge-sample-clone` to go to the repository directory.\n",
+      "stderr": "",
+      "duration_seconds": 16.458
+    },
+    {
+      "cmd": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "/tmp/df-started-project-radicle-genesis-x04w_s8e/clone-parent/started-forge-sample-clone",
+      "returncode": 0,
+      "stdout": "b6d3a2aab4a879c8be88d38958f04f37c02c4a24\n",
+      "stderr": "",
+      "duration_seconds": 0.002
+    }
+  ],
+  "node_stop": [
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "stop"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\u2713 Node stopped\n",
+      "stderr": "",
+      "duration_seconds": 1.145
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "stop"
+      ],
+      "cwd": null,
+      "returncode": 0,
+      "stdout": "\u2713 Node stopped\n",
+      "stderr": "",
+      "duration_seconds": 1.199
+    }
+  ],
+  "actions_not_taken": [
+    "no production/private personal keys were used",
+    "no persistent Radicle home, project repository, or seed state was kept",
+    "no paid infrastructure, wallet, spending, or direct outreach was used",
+    "no durable storage, pinning, or broad availability claim is made",
+    "no censorship resistance, security, identity-trust, SLSA, or production readiness claim is made",
+    "no full Radicle or forge compatibility claim is made beyond this exact bounded sample path"
+  ],
+  "claim_boundary": "This proves only that one fresh sample Git project completed the local start-project path and then received a disposable public Radicle RID that a separate temporary Radicle profile cloned/read back during this run."
+}

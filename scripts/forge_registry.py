@@ -1160,6 +1160,7 @@ def collect_verification_bundle_paths() -> list[Path]:
         "scripts/run_radicle_fresh_readback_check.py",
         "scripts/run_radicle_independent_availability_check.py",
         "scripts/run_radicle_project_repo_smoke.py",
+        "scripts/run_started_project_radicle_genesis.py",
         "scripts/run_radicle_retained_delegate_check.py",
         "scripts/run_radicle_retained_update_check.py",
         "scripts/run_radicle_seed_restart_check.py",

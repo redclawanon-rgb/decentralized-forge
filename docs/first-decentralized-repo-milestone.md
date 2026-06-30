@@ -21,6 +21,7 @@ addresses.
 - Second seed host: `ubuntu-work`
 - Second seed mode: enabled user-level `systemd` follower seed with separate Radicle state
 - Second seed reachability: verified from `openclaw` over Tailnet in Loop 73 and through public `openclaw` relay port `8877` from `ubuntu-work` in Loop 74
+- Started-project sample gate: `scripts/run_started_project_radicle_genesis.py` verified one fresh sample Git project completed `start-project`, received disposable public RID `rad:z3pDfyAoThNEx8Laqnjg6sHLUVzhX`, and cloned/read back commit `b6d3a2aab4a879c8be88d38958f04f37c02c4a24` from a separate temporary Radicle profile.
 
 ## Current Seed Status
 
@@ -92,10 +93,11 @@ python scripts/forge_registry.py verify-first-public-clone --seed second --json
 - `evidence/radicle-public-seed-second-health-d596024-2026-06-30.json`
 - `evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json`
 - `evidence/radicle-first-public-clone-second-d596024-2026-06-30.json`
+- `evidence/radicle-start-project-genesis-2026-06-30.json`
 
 ## Non-Claims
 
-This milestone does not prove permanent durability, is not proof of automatic future update propagation, and does not prove default public routing, global replication, censorship resistance, security, identity trust, full Radicle compatibility, SLSA compliance, or production readiness. Loop 75 verifies that both public direct-seed addresses
+This milestone does not prove permanent durability, is not proof of automatic future update propagation, and does not prove default public routing, global replication, censorship resistance, security, identity trust, full Radicle compatibility, full forge compatibility, SLSA compliance, or production readiness. The started-project sample gate is disposable and does not keep a public seed running. Loop 75 verifies that both public direct-seed addresses
 serve the current retained-RID commit. Loop 79 verifies that the release-candidate public clone command works from fresh Docker/Linux reader profiles against both public seed addresses. Loop 74 adds a second public direct-seed address, but the
 second seed still uses `openclaw` as public ingress to reach the `ubuntu-work`
 seed over Tailnet, so it is not proof of independent provider or network availability.

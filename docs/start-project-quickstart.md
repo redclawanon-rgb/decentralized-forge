@@ -33,6 +33,14 @@ The receipt JSON records the generated paths, copy/paste verification commands, 
 
 `start-project` starts the project on the local forge surface. It does not create a Radicle RID, publish protocol events, start public seeds, sign releases, pin storage, spend money, use wallets, or contact services. The next decentralized step is a Linux/Radicle genesis gate that creates and records a project RID as bounded live evidence.
 
+The bounded sample gate is:
+
+```sh
+python scripts/run_started_project_radicle_genesis.py
+```
+
+The current sample evidence is `evidence/radicle-start-project-genesis-2026-06-30.json`. It proves one fresh sample project completed `start-project`, received a disposable public Radicle RID, and was cloned/read back from a separate temporary Radicle profile. It is not a persistent seed, durability, routing, or production-readiness proof.
+
 ## Verify
 
 ```sh
@@ -45,5 +53,5 @@ python scripts/forge_registry.py report-bundle output/decentralized-forge-verifi
 ## Non-Claims
 
 - This is not a hosted production forge.
-- This is not a Radicle publication proof until the Radicle genesis gate runs.
+- This is not a Radicle publication proof for your project until the Radicle genesis gate runs for that project.
 - This is not durable storage, pinning, broad availability, censorship resistance, security, SLSA compliance, or production readiness.

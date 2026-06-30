@@ -69,6 +69,7 @@ RADICLE_FIRST_PUBLIC_CLONE_PRIMARY_D596024_PATH = ROOT / "evidence" / "radicle-f
 RADICLE_FIRST_PUBLIC_CLONE_SECOND_D596024_PATH = ROOT / "evidence" / "radicle-first-public-clone-second-d596024-2026-06-30.json"
 RADICLE_OUTSIDE_READER_UBUNTU_WORK_PRIMARY_E0F7144_PATH = ROOT / "evidence" / "radicle-first-public-clone-outside-reader-ubuntu-work-primary-e0f7144-2026-06-30.json"
 RADICLE_OUTSIDE_READER_UBUNTU_WORK_SECOND_E0F7144_PATH = ROOT / "evidence" / "radicle-first-public-clone-outside-reader-ubuntu-work-second-e0f7144-2026-06-30.json"
+RADICLE_START_PROJECT_GENESIS_PATH = ROOT / "evidence" / "radicle-start-project-genesis-2026-06-30.json"
 RADICLE_LOOP75_OPENCLAW_REFRESH_PATH = ROOT / "evidence" / "radicle-loop75-openclaw-storage-refresh-2026-06-30.json"
 RADICLE_LOOP75_UBUNTU_WORK_REFRESH_PATH = ROOT / "evidence" / "radicle-loop75-ubuntu-work-rad-home-refresh-2026-06-30.json"
 KEYLESS_REGISTRY_IMPORT_PATH = ROOT / "fixtures" / "keyless-attestation.registry-verification.json"
@@ -492,6 +493,7 @@ class RegistryFixtureTests(unittest.TestCase):
                 "scripts/install_tcp_relay_user_service.py",
                 "scripts/run_radicle_independent_availability_check.py",
                 "scripts/run_radicle_seed_restart_check.py",
+                "scripts/run_started_project_radicle_genesis.py",
             ]:
                 self.assertIn(expected_path, payload_paths)
 
@@ -1154,6 +1156,48 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn(required, doc)
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, doc.lower())
+
+    def test_started_project_radicle_genesis_evidence_is_bounded(self):
+        evidence = json.loads(RADICLE_START_PROJECT_GENESIS_PATH.read_text(encoding="utf-8"))
+
+        self.assertEqual(evidence["schema_version"], "decentralized-forge.started-project-radicle-genesis.v1")
+        self.assertEqual(evidence["loop"], 96)
+        self.assertTrue(evidence["verification_passed"])
+        self.assertTrue(evidence["start_project"]["start_project_completed"])
+        self.assertTrue(evidence["start_project"]["bundle_valid"])
+        self.assertEqual(evidence["start_project"]["project_id"], "started-forge-sample")
+        self.assertEqual(evidence["start_project"]["receipt_schema"], "decentralized-forge.start-project-receipt.v1")
+        self.assertEqual(evidence["start_project"]["receipt_radicle_next_gate_status"], "not-started-by-start-project")
+        self.assertTrue(evidence["start_project_radicle_gate_executed_separately"])
+
+        radicle = evidence["radicle"]
+        self.assertRegex(radicle["rid"], r"^rad:z[0-9A-Za-z]+$")
+        self.assertEqual(radicle["visibility"], "public")
+        self.assertRegex(radicle["seed_node_id"], r"^z6[0-9A-Za-z]+$")
+        self.assertEqual(radicle["project_git_commit"], radicle["clone_commit"])
+        self.assertTrue(radicle["node_started"])
+        self.assertTrue(radicle["publish_succeeded"])
+        self.assertTrue(radicle["seed_succeeded"])
+        self.assertTrue(radicle["sync_succeeded"])
+        self.assertTrue(radicle["clone_node_started"])
+        self.assertTrue(radicle["clone_node_connected_to_seed"])
+        self.assertTrue(radicle["remote_clone_succeeded"])
+        self.assertTrue(radicle["readback_commit_matches_project"])
+
+        evidence_blob = json.dumps(evidence).lower()
+        for required in [
+            "fresh sample git project",
+            "local start-project path",
+            "separate temporary radicle profile",
+            "no persistent radicle home",
+            "no durable storage",
+            "no full radicle or forge compatibility claim",
+        ]:
+            self.assertIn(required, evidence_blob)
+        for unsupported_claim in ["production ready", "durably stored", "pinned and available", "slsa compliant"]:
+            self.assertNotIn(unsupported_claim, evidence_blob)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "api_token"]:
+            self.assertNotIn(accidental_secret_marker, evidence_blob)
 
     def test_ci_workflow_generates_keyless_attestations_for_release_artifacts(self):
         workflow = CI_WORKFLOW_PATH.read_text(encoding="utf-8")
@@ -2701,7 +2745,7 @@ class RegistryFixtureTests(unittest.TestCase):
             ),
         ]
 
-        self.assertEqual(self.live_evidence_index["loop"], 89)
+        self.assertEqual(self.live_evidence_index["loop"], 96)
         for seed_id, path, evidence_id, seed_address in cases:
             with self.subTest(seed=seed_id):
                 evidence = json.loads(path.read_text(encoding="utf-8"))
@@ -3086,7 +3130,7 @@ class RegistryFixtureTests(unittest.TestCase):
     def test_loop26_live_evidence_index_imports_only_bounded_evidence(self):
         index = self.live_evidence_index
         self.assertEqual(index["schema_version"], "decentralized-forge.live-evidence-index.v1")
-        self.assertEqual(index["loop"], 89)
+        self.assertEqual(index["loop"], 96)
         self.assertFalse(index["claim_policy"]["contains_secret_values"])
         by_id = {item["id"]: item for item in index["evidence"]}
         self.assertEqual(
@@ -3121,6 +3165,7 @@ class RegistryFixtureTests(unittest.TestCase):
                 "loop79-radicle-first-public-clone-second-d596024",
                 "loop89-radicle-outside-reader-ubuntu-work-primary-e0f7144",
                 "loop89-radicle-outside-reader-ubuntu-work-second-e0f7144",
+                "loop96-start-project-radicle-genesis-sample",
             },
         )
 
