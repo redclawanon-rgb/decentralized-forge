@@ -17,6 +17,8 @@ python scripts/forge_registry.py report-bundle output/decentralized-forge-verifi
 python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip
 python scripts/forge_registry.py radicle-retained-quickstart
 python scripts/forge_registry.py verify-first-public-clone --plan-only
+python scripts/forge_registry.py public-seed-status output/public-seed-status.json
+python scripts/run_first_public_clone_rehearsal.py
 python scripts/forge_registry.py verify-local --skip-npm-ci
 ```
 
@@ -38,6 +40,7 @@ Read the `report-bundle` output before sharing the ZIP. Confirm that it shows:
 - non-claims are present and unchanged
 - verification gaps are present and not softened
 - suggested commands include `verify-bundle`, `verify-bundle-cleanroom`, `report-bundle`, `radicle-retained-quickstart`, and `verify-first-public-clone --plan-only`
+- public seed status is present and keeps its uptime, durability, automatic repair, security, and production-readiness non-claims
 
 If a reviewer receives an extracted directory instead of the ZIP, they can run:
 
@@ -67,6 +70,7 @@ If publishing a release-like update, attach or reference:
 - the GitHub Actions run URL, if the commit was pushed
 - the `report-bundle` text output or a JSON report generated with `--json`
 - the release note generated with `export-bundle-release-note`
+- `output/public-seed-status.json`
 - the command list used to verify the bundle
 
 Do not describe the bundle as a production release, signed release, durable storage proof, or censorship-resistant mirror.
@@ -97,6 +101,8 @@ Verified locally with:
 - python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip
 - python scripts/forge_registry.py radicle-retained-quickstart
 - python scripts/forge_registry.py verify-first-public-clone --plan-only
+- python scripts/forge_registry.py public-seed-status output/public-seed-status.json
+- python scripts/run_first_public_clone_rehearsal.py
 
 Scope: local verification package over committed fixtures, generated outputs, source evidence files, and verifier scripts. This is not a production forge, signed release, durability proof, broad availability proof, censorship-resistance proof, security guarantee, or SLSA compliance claim.
 ```

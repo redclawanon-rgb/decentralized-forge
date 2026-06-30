@@ -29,6 +29,35 @@ As of Loop 79, the project has a first public clone release-candidate path for r
 
 The rest of the project remains evidence-scoped: it also has local CAR/CID fixture verification, local Helia UnixFS/IPFS add-get evidence, selected-relay Nostr repository-announcement plus issue/patch readback evidence, a retained Radicle maintainer lane, follower-seed service evidence, hosted GitHub keyless artifact attestation evidence, a static workbench app, a deterministic portable verification bundle, a clean-room bundle consumer check, bundle reporting/release-note export, and local registry import scaffolding. Those checks are deliberately scoped to the exact evidence files in this repo.
 
+## Alpha Quick Start
+
+Clone the repo, install dependencies, and run the local gate:
+
+```sh
+git clone https://github.com/redclawanon-rgb/decentralized-forge.git
+cd decentralized-forge
+npm ci
+python scripts/forge_registry.py verify-local --skip-npm-ci
+```
+
+Inspect the first decentralized repo path:
+
+```sh
+python scripts/forge_registry.py radicle-retained-quickstart
+python scripts/forge_registry.py verify-first-public-clone --plan-only
+python scripts/forge_registry.py public-seed-status output/public-seed-status.json
+```
+
+Render the usable local product surface and bundle:
+
+```sh
+python scripts/forge_registry.py render-app output/forge-app-with-onboarding-sample.html --registry fixtures/example-project.registry.json --registry fixtures/portable-lab.registry.json --registry fixtures/onboarding-sample.registry.json
+python scripts/forge_registry.py export-bundle output/decentralized-forge-verification-bundle.zip
+python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip
+```
+
+For an outside-reader clone rehearsal, use `docs/first-public-clone-outside-reader-rehearsal.md` or run `python scripts/run_first_public_clone_rehearsal.py` in plan mode first. For decentralized collaboration alpha, inspect the selected-relay Nostr issue/patch evidence in `evidence/nostr-loop43-issue-patch-readback-2026-06-28.json` and the static workbench draft flow in `output/forge-app.html`; the draft flow is unsigned local JSON and does not publish.
+
 | Area | Current state | Not claimed |
 |---|---|---|
 | Registry/UI | Local JSON schema, fixtures, stdlib renderer, generated demo HTML, generated static workbench app, deterministic verification bundle | Production forge, hosted service, signed authority |
@@ -59,6 +88,7 @@ The rest of the project remains evidence-scoped: it also has local CAR/CID fixtu
 - `docs/community-quickstart.md` — current community verification workflow and portable bundle review path
 - `docs/radicle-persistent-seed-plan.md` — Loop 66-informed minimum service plan for a future persistent retained-RID seed
 - `docs/radicle-retained-rid-quickstart.md` — retained Radicle RID direct-seed clone recipe derived from the strongest retained-RID evidence
+- `docs/first-public-clone-outside-reader-rehearsal.md` — copy/paste outside-reader plan for verifying the current public Radicle direct-seed clone path without maintainer state
 - `docs/portable-bundle-review-checklist.md` — maintainer checklist for reviewing and describing the portable verification bundle without overclaiming
 - `docs/product-finish-plan.md` — autonomous Loops 83-88 plan for moving from first public clone RC to v0.1.0-alpha usability
 - `docs/live-adapter-replay-plan.md` — Loop 20 safe live-gated Radicle/Nostr replay prerequisites, evidence checklist, rollback, and non-claim gates
@@ -115,6 +145,7 @@ The rest of the project remains evidence-scoped: it also has local CAR/CID fixtu
 - `scripts/run_radicle_seed_restart_check.py` — host/WSL-oriented retained seed restart/readback rehearsal
 - `scripts/install_radicle_user_seed_service.py` — Linux host helper for installing a user-level `systemd` Radicle follower seed service without printing secrets
 - `scripts/check_public_radicle_seed.py` — fresh-profile public Radicle seed clone/readback health check
+- `scripts/run_first_public_clone_rehearsal.py` — plan-first outside-reader wrapper for the current public Radicle direct-seed clone verifier
 - `scripts/bootstrap_radicle_follower_seed.py` — Linux host helper for bootstrapping a follower seed from an explicit source seed without maintainer key material
 - `scripts/install_radicle_health_timer.py` — Linux host helper for installing a user-level `systemd` timer that runs the public seed health check
 - `scripts/install_tcp_relay_user_service.py` — Linux host helper for installing a user-level `systemd` TCP relay with `socat`; public relay use requires explicit approval because it opens a VPS network port
@@ -127,6 +158,7 @@ The rest of the project remains evidence-scoped: it also has local CAR/CID fixtu
 - `output/onboarding-sample.registry.html` — generated committed onboarding sample page
 - `output/*.summary.json` — deterministic machine-readable registry summaries
 - `output/onboarding-sample.bundle-report.json` — committed JSON bundle report generated after the onboarding sample refresh
+- `output/public-seed-status.json` — machine-readable summary of the committed public direct-seed readback evidence for the current retained RID
 - `output/decentralized-forge-verification-bundle.zip` — deterministic portable bundle containing fixtures, schemas, source evidence, generated outputs, verifier scripts, and `verification-bundle.manifest.json`
 - `tests/test_registry_fixture.py` — stdlib verification tests for the registry fixture and renderer
 
@@ -184,6 +216,7 @@ python3 scripts/forge_registry.py verify-bundle output/decentralized-forge-verif
 python3 scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip
 python3 scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip
 python3 scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip
+python3 scripts/forge_registry.py public-seed-status output/public-seed-status.json
 ```
 
 The bundle is deterministic and includes a manifest with payload sizes, SHA-256 hashes, evidence-index bindings, suggested verification commands, explicit non-claims, and the portable bundle review checklist. The clean-room verifier extracts the bundle to a temporary directory, copies the bundle into that extracted tree, and runs bundled checks from there rather than from the original checkout. The report command reads either the ZIP or an extracted bundle directory and summarizes project identity, evidence rows, non-claims, verification gaps, and suggested commands. The release-note export combines the bundle report, exact current commit SHA, bundle digest, checklist stop conditions, and non-claims into markdown for handoff. It is not a release-signing, durability, availability, security, or production-readiness proof.
@@ -209,6 +242,7 @@ Verify the first public Radicle clone path without copying maintainer state:
 python3 scripts/forge_registry.py verify-first-public-clone --plan-only
 python3 scripts/forge_registry.py verify-first-public-clone --json
 python3 scripts/forge_registry.py verify-first-public-clone --seed second --json
+python3 scripts/run_first_public_clone_rehearsal.py
 ```
 
 The default live command starts a disposable reader profile, connects to the documented primary public seed, clones the retained RID, and checks `git rev-parse HEAD` against `d596024dac0d90605d4f103d567e5851771be5a8`. It does not publish, sign, copy maintainer key material, or claim durability/default routing/production readiness.

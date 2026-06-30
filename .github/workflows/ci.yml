@@ -67,6 +67,7 @@ jobs:
           python scripts/forge_registry.py render-app output/forge-app-with-onboarding-sample.html --registry fixtures/example-project.registry.json --registry fixtures/portable-lab.registry.json --registry fixtures/onboarding-sample.registry.json
           python scripts/forge_registry.py export-summary fixtures/example-project.registry.json output/demo-project.summary.json
           python scripts/forge_registry.py export-summary fixtures/portable-lab.registry.json output/portable-lab.summary.json
+          python scripts/forge_registry.py public-seed-status output/public-seed-status.json
           python scripts/forge_registry.py export-bundle output/decentralized-forge-verification-bundle.zip
           python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip
           python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip
@@ -103,6 +104,7 @@ jobs:
             output/portable-lab.summary.json
             output/onboarding-sample.registry.summary.json
             output/onboarding-sample.bundle-report.json
+            output/public-seed-status.json
             output/decentralized-forge-verification-bundle.zip
             evidence/local-release-artifact-2026-06-22.car
             fixtures/local-release-artifact.txt

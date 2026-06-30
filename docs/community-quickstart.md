@@ -2,6 +2,19 @@
 
 This project is currently a verification-oriented prototype. The safest way to use it today is to clone the repository, run the local checks, and inspect the rendered report plus the evidence files.
 
+## Alpha Fast Path
+
+The highest-value path today is the first public Radicle clone release candidate:
+
+```sh
+python scripts/forge_registry.py radicle-retained-quickstart
+python scripts/forge_registry.py verify-first-public-clone --plan-only
+python scripts/forge_registry.py public-seed-status output/public-seed-status.json
+python scripts/run_first_public_clone_rehearsal.py
+```
+
+`radicle-retained-quickstart` prints the current retained RID, public seed addresses, expected commit, and exact reader commands. `public-seed-status` writes a machine-readable summary of the committed public seed readback evidence. `run_first_public_clone_rehearsal.py` defaults to plan mode so an outside reader can review the exact commands before running live Radicle checks.
+
 ## Verify This Repository
 
 ```sh
@@ -105,3 +118,13 @@ python scripts/forge_registry.py verify-first-public-clone --seed second --json
 Loop 79 records the corresponding proof in `evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json` and `evidence/radicle-first-public-clone-second-d596024-2026-06-30.json`.
 
 Treat those as exact run evidence only. They do not prove permanent durability, automatic future update propagation, future default public-routing availability, broad network replication, identity trust, security, or production readiness.
+
+## Collaboration Alpha Path
+
+The current decentralized collaboration alpha is evidence-backed but not production hosted. The selected-relay Nostr issue/patch proof is recorded in `evidence/nostr-loop43-issue-patch-readback-2026-06-28.json`, and the generated static workbench exposes the corresponding committed evidence and unsigned local issue/patch draft flow:
+
+```sh
+python scripts/forge_registry.py render-app output/forge-app.html
+```
+
+Open `output/forge-app.html` and use the Nostr draft view to create local JSON drafts. The draft view does not sign, fetch, open WebSockets, or publish. A live selected-relay recheck remains an explicit bounded action through `npm run live:nostr-issue-patch`; use it only for disposable project-scoped evidence and keep the resulting evidence row secret-free.

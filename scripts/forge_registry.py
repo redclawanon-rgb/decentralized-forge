@@ -31,6 +31,7 @@ DEFAULT_LIVE_EVIDENCE_SCHEMA = ROOT / "schemas" / "live-evidence-index.schema.js
 DEFAULT_BUNDLE_OUTPUT = ROOT / "output" / "decentralized-forge-verification-bundle.zip"
 DEFAULT_BUNDLE_MANIFEST_PATH = "verification-bundle.manifest.json"
 DEFAULT_BUNDLE_REVIEW_CHECKLIST = ROOT / "docs" / "portable-bundle-review-checklist.md"
+DEFAULT_PUBLIC_SEED_STATUS_OUTPUT = ROOT / "output" / "public-seed-status.json"
 ZIP_FIXED_DATE_TIME = (2026, 1, 1, 0, 0, 0)
 
 SECRET_MARKERS = ("nsec1", "-----begin", "private key:", "seed phrase:", "api_token")
@@ -529,6 +530,81 @@ def format_first_public_clone_result(result: dict) -> str:
     return "\n".join(lines)
 
 
+def public_seed_status_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_INDEX) -> dict:
+    quickstart = retained_radicle_quickstart_model(index_path)
+    index = json.loads(index_path.read_text(encoding="utf-8"))
+    by_id = {item.get("id"): item for item in index.get("evidence", []) if isinstance(item, dict)}
+    clone_entries = {
+        "primary": by_id.get("loop79-radicle-first-public-clone-primary-d596024", {}),
+        "second": by_id.get("loop79-radicle-first-public-clone-second-d596024", {}),
+    }
+
+    seeds = []
+    for seed in quickstart["public_seeds"]:
+        entry = clone_entries.get(seed["id"], {})
+        public = entry.get("public_identifiers", {}) if isinstance(entry, dict) else {}
+        seeds.append(
+            {
+                "id": seed["id"],
+                "role": seed["role"],
+                "address": seed["address"],
+                "node_id": seed["node_id"],
+                "latest_evidence_id": entry.get("id"),
+                "latest_evidence_file": entry.get("evidence_file"),
+                "latest_state": entry.get("state"),
+                "verified_at": entry.get("verified_at"),
+                "verification_passed": public.get("readback_matches_expected") is True,
+                "connected_to_seed": public.get("connected_to_seed") is True,
+                "clone_succeeded": public.get("clone_succeeded") is True,
+                "readback_commit": public.get("readback_commit"),
+                "readback_matches_expected": public.get("readback_matches_expected") is True,
+                "fresh_reader_environment": public.get("fresh_reader_environment"),
+            }
+        )
+
+    return {
+        "schema_version": "decentralized-forge.public-seed-status.v1",
+        "source_index": relative(index_path),
+        "source_index_loop": index.get("loop"),
+        "source_evidence_id": quickstart["source_evidence_id"],
+        "source_evidence_file": quickstart["source_evidence_file"],
+        "rid": quickstart["rid"],
+        "expected_commit": quickstart["expected_commit"],
+        "status": "passing" if seeds and all(seed["readback_matches_expected"] for seed in seeds) else "attention-needed",
+        "seed_count": len(seeds),
+        "seeds": seeds,
+        "recommended_commands": [
+            "python scripts/forge_registry.py verify-first-public-clone --plan-only",
+            "python scripts/forge_registry.py verify-first-public-clone --json",
+            "python scripts/forge_registry.py verify-first-public-clone --seed second --json",
+            "python scripts/forge_registry.py public-seed-status output/public-seed-status.json",
+            "python scripts/run_first_public_clone_rehearsal.py",
+        ],
+        "non_claims": [
+            "not an uptime or SLA claim",
+            "not proof of automatic repair",
+            "not proof of automatic future update propagation",
+            "not a default public-routing claim",
+            "not a durability guarantee",
+            "not proof of independent provider or network availability",
+            "not a security guarantee",
+            "not production readiness",
+        ],
+    }
+
+
+def command_public_seed_status(args: argparse.Namespace) -> int:
+    status = public_seed_status_model(args.index)
+    output = json.dumps(status, indent=2, sort_keys=True)
+    if args.output:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(f"{output}\n", encoding="utf-8", newline="\n")
+        print(f"wrote public seed status: {relative(args.output)}")
+    else:
+        print(output)
+    return 0 if status["status"] == "passing" else 1
+
+
 def slugify_project_id(value: str) -> str:
     slug = "".join(ch.lower() if ch.isalnum() else "-" for ch in value).strip("-")
     while "--" in slug:
@@ -918,6 +994,7 @@ def collect_verification_bundle_paths() -> list[Path]:
         "docs/threat-model.md",
         "docs/community-quickstart.md",
         "docs/first-decentralized-repo-milestone.md",
+        "docs/first-public-clone-outside-reader-rehearsal.md",
         "docs/first-public-clone-rc-plan.md",
         "docs/live-completion-gates.md",
         "docs/product-finish-plan.md",
@@ -933,6 +1010,7 @@ def collect_verification_bundle_paths() -> list[Path]:
         "scripts/preflight_static_artifact.py",
         "scripts/bootstrap_radicle_follower_seed.py",
         "scripts/check_public_radicle_seed.py",
+        "scripts/run_first_public_clone_rehearsal.py",
         "scripts/refresh_radicle_follower_seed.py",
         "scripts/install_radicle_health_timer.py",
         "scripts/install_tcp_relay_user_service.py",
@@ -948,6 +1026,7 @@ def collect_verification_bundle_paths() -> list[Path]:
         "scripts/verify_car_cid_fixture.mjs",
         "scripts/verify_helia_fixture.mjs",
         "output/forge-app.html",
+        relative(DEFAULT_PUBLIC_SEED_STATUS_OUTPUT),
     ]:
         path = ROOT / relative_path
         if path.is_file():
@@ -1003,6 +1082,7 @@ def regenerate_portable_outputs() -> None:
         render_project_page.main([str(onboarding_registry), str(ROOT / "output" / "onboarding-sample.registry.html")])
         registry = render_project_page.load_registry(onboarding_registry)
         write_json(ROOT / "output" / "onboarding-sample.registry.summary.json", registry_summary(registry, onboarding_registry))
+    write_json(DEFAULT_PUBLIC_SEED_STATUS_OUTPUT, public_seed_status_model())
 
 
 def build_verification_bundle_manifest(paths: list[Path]) -> dict:
@@ -1058,6 +1138,7 @@ def build_verification_bundle_manifest(paths: list[Path]) -> dict:
             "python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip",
             "python scripts/forge_registry.py radicle-retained-quickstart",
             "python scripts/forge_registry.py verify-first-public-clone --plan-only",
+            "python scripts/forge_registry.py public-seed-status output/public-seed-status.json",
             "python scripts/forge_registry.py verify-local --skip-npm-ci",
         ],
         "non_claims": [
@@ -1149,6 +1230,7 @@ def verify_verification_bundle(bundle_path: Path) -> list[str]:
                 "output/forge-app.html",
                 "output/demo-project.summary.json",
                 "output/portable-lab.summary.json",
+                "output/public-seed-status.json",
             ]:
                 if required not in seen_paths:
                     errors.append(f"required payload missing from manifest: {required}")
@@ -1439,6 +1521,14 @@ def bundle_report(source: Path) -> dict:
             }
         )
 
+    public_seed_status = None
+    public_seed_status_path = relative(DEFAULT_PUBLIC_SEED_STATUS_OUTPUT)
+    if public_seed_status_path in {item.get("path") for item in files if isinstance(item, dict)}:
+        try:
+            public_seed_status = read_bundle_source_json(source, public_seed_status_path)
+        except (OSError, json.JSONDecodeError, UnicodeDecodeError):
+            public_seed_status = None
+
     verification_gaps = [
         "Durable storage, pinning, and broad availability remain unverified unless supported by a future evidence row.",
         "Censorship resistance, identity trust, production readiness, and security guarantees remain outside the bundle claim boundary.",
@@ -1483,6 +1573,32 @@ def bundle_report(source: Path) -> dict:
             "claim_boundary": (
                 "Fresh reader public direct-seed clone evidence only; not a durability, default-routing, "
                 "independent-provider, security, identity-trust, or production-readiness claim."
+            ),
+        },
+        "public_seed_status": {
+            "path": public_seed_status_path,
+            "available": isinstance(public_seed_status, dict),
+            "status": public_seed_status.get("status") if isinstance(public_seed_status, dict) else None,
+            "rid": public_seed_status.get("rid") if isinstance(public_seed_status, dict) else None,
+            "expected_commit": public_seed_status.get("expected_commit") if isinstance(public_seed_status, dict) else None,
+            "seed_count": public_seed_status.get("seed_count") if isinstance(public_seed_status, dict) else 0,
+            "seeds": [
+                {
+                    "id": seed.get("id"),
+                    "address": seed.get("address"),
+                    "latest_state": seed.get("latest_state"),
+                    "readback_commit": seed.get("readback_commit"),
+                    "readback_matches_expected": seed.get("readback_matches_expected"),
+                    "latest_evidence_file": seed.get("latest_evidence_file"),
+                }
+                for seed in public_seed_status.get("seeds", [])
+                if isinstance(seed, dict)
+            ]
+            if isinstance(public_seed_status, dict)
+            else [],
+            "claim_boundary": (
+                "Machine-readable status over committed public direct-seed readback evidence only; "
+                "not uptime, durability, automatic repair, security, or production readiness."
             ),
         },
         "non_claims": manifest.get("non_claims", []),
@@ -1537,6 +1653,21 @@ def format_bundle_report(report: dict) -> str:
                 f"({entry['state']}; {entry['evidence_file']})"
             )
         lines.append(f"- boundary: {public_clone['claim_boundary']}")
+
+    public_seed = report.get("public_seed_status", {})
+    if public_seed.get("available"):
+        lines.append("")
+        lines.append("Public seed status")
+        lines.append(f"- status: {public_seed['status']}")
+        lines.append(f"- path: {public_seed['path']}")
+        lines.append(f"- rid: {public_seed['rid']}")
+        lines.append(f"- expected_commit: {public_seed['expected_commit']}")
+        for seed in public_seed["seeds"]:
+            lines.append(
+                f"- {seed['id']}: {seed['address']} -> {seed['readback_commit']} "
+                f"(matches_expected={str(seed['readback_matches_expected']).lower()}; {seed['latest_evidence_file']})"
+            )
+        lines.append(f"- boundary: {public_seed['claim_boundary']}")
 
     lines.append("")
     lines.append("Non-claims")
@@ -1634,6 +1765,22 @@ def format_bundle_release_note(bundle_path: Path = DEFAULT_BUNDLE_OUTPUT, checkl
         lines.append(f"- boundary: {public_clone['claim_boundary']}")
     else:
         lines.append("- no first public clone RC evidence found in the bundle report")
+
+    public_seed = report.get("public_seed_status", {})
+    lines.extend(["", "## Public Seed Status", ""])
+    if public_seed.get("available"):
+        lines.append(f"- status: `{public_seed['status']}`")
+        lines.append(f"- status_artifact: `{public_seed['path']}`")
+        lines.append(f"- rid: `{public_seed['rid']}`")
+        lines.append(f"- expected_commit: `{public_seed['expected_commit']}`")
+        for seed in public_seed["seeds"]:
+            lines.append(
+                f"- `{seed['id']}`: `{seed['address']}` -> `{seed['readback_commit']}` "
+                f"via `{seed['latest_evidence_file']}`"
+            )
+        lines.append(f"- boundary: {public_seed['claim_boundary']}")
+    else:
+        lines.append("- no public seed status artifact found in the bundle report")
 
     lines.extend(["", "## Projects", ""])
 
@@ -2068,6 +2215,7 @@ def command_verify_local(args: argparse.Namespace) -> int:
         [sys.executable, "-m", "py_compile", "scripts/install_tcp_relay_user_service.py"],
         [sys.executable, "-m", "py_compile", "scripts/install_radicle_user_seed_service.py"],
         [sys.executable, "-m", "py_compile", "scripts/radicle_seed_host_control.py"],
+        [sys.executable, "-m", "py_compile", "scripts/run_first_public_clone_rehearsal.py"],
         [
             sys.executable,
             "scripts/nip34_adapter.py",
@@ -2080,6 +2228,7 @@ def command_verify_local(args: argparse.Namespace) -> int:
         [sys.executable, "scripts/forge_registry.py", "refresh-evidence-hashes", "fixtures/live-evidence-index.json", "--check"],
         [sys.executable, "scripts/forge_registry.py", "radicle-retained-quickstart"],
         [sys.executable, "scripts/forge_registry.py", "verify-first-public-clone", "--plan-only", "--json"],
+        [sys.executable, "scripts/forge_registry.py", "public-seed-status", "output/public-seed-status.json"],
         [sys.executable, "scripts/forge_registry.py", "doctor", "--json"],
         [
             sys.executable,
@@ -2279,6 +2428,14 @@ def build_parser() -> argparse.ArgumentParser:
     first_public_clone.add_argument("--connect-timeout", default="30s")
     first_public_clone.add_argument("--clone-timeout", default="180s")
     first_public_clone.set_defaults(func=command_verify_first_public_clone)
+
+    public_seed_status = subparsers.add_parser(
+        "public-seed-status",
+        help="Emit current public seed status from committed first-public-clone evidence",
+    )
+    public_seed_status.add_argument("output", type=Path, nargs="?", default=None, help="Optional JSON file to write")
+    public_seed_status.add_argument("--index", type=Path, default=DEFAULT_LIVE_EVIDENCE_INDEX, help="Live evidence index to read")
+    public_seed_status.set_defaults(func=command_public_seed_status)
 
     doctor = subparsers.add_parser("doctor", help="Report local tool and evidence readiness without live protocol actions")
     doctor.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
