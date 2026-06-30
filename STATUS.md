@@ -2,11 +2,13 @@
 
 ## Current milestone
 
-Current completion state: **Milestone 1 complete as an evidence-scoped static prototype, with a first public Radicle direct-seed clone release candidate now verified from fresh Docker/Linux reader profiles**. This does not claim production readiness, durable storage, censorship resistance, broad protocol availability, security guarantees, real signing, Sigstore/in-toto verification, Rekor upload, or SLSA compliance.
+Current completion state: **Milestone 1 complete as an evidence-scoped static prototype, with a first public Radicle direct-seed clone release candidate now verified from fresh Docker/Linux reader profiles and a separate `ubuntu-work` outside-reader host**. This does not claim production readiness, durable storage, censorship resistance, broad protocol availability, security guarantees, real signing, Sigstore/in-toto verification, Rekor upload, or SLSA compliance.
 
-Current public clone RC: retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` at commit `d596024dac0d90605d4f103d567e5851771be5a8`, verified through `python scripts/forge_registry.py verify-first-public-clone` against primary seed `z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776` and second seed `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877`. Evidence: `evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json` and `evidence/radicle-first-public-clone-second-d596024-2026-06-30.json`.
+Current public clone RC: retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` at commit `d596024dac0d90605d4f103d567e5851771be5a8`, verified through `python scripts/forge_registry.py verify-first-public-clone` against primary seed `z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776` and second seed `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877`. Latest evidence: `evidence/radicle-first-public-clone-outside-reader-ubuntu-work-primary-e0f7144-2026-06-30.json` and `evidence/radicle-first-public-clone-outside-reader-ubuntu-work-second-e0f7144-2026-06-30.json`.
 
-Current autonomous finish plan: `docs/product-finish-plan.md`, wired into `fixtures/next-loop-controller.json` as `product-finish-alpha` for Loops 83-88. The next loop set targets alpha release handoff, outside-reader clone rehearsal, first-screen product surface, public seed status artifact, decentralized collaboration alpha path, and alpha freeze/CI gate.
+Current alpha candidate commit: `e0f71448005b5ba8ed4a4e7ee55fa05b721ae23f`, with GitHub Actions green at `https://github.com/redclawanon-rgb/decentralized-forge/actions/runs/28434085840`.
+
+Current post-alpha loop: Loop 89 converted the outside-reader rehearsal fallback into actual separate-host public clone evidence. The highest-value remaining gates are release decision/tagging, independent-provider seed availability, broader decentralized collaboration beyond selected-relay Nostr proof, signed release/provenance hardening, and durable storage/pinning with separate approval where required.
 
 Milestone 1 — Local registry/static forge prototype and protocol mapping.
 

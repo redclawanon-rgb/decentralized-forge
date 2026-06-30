@@ -1,0 +1,177 @@
+{
+  "checker": {
+    "auth_succeeded": true,
+    "claim_boundary": "Fresh local Radicle profile connected to one explicit seed, cloned one RID, and compared git HEAD to the expected commit. This is not a durability, default public-routing, security, identity-trust, or production-readiness claim.",
+    "clone_succeeded": true,
+    "commands": [
+      {
+        "cmd": [
+          "rad",
+          "--version"
+        ],
+        "cwd": null,
+        "duration_seconds": 0.004,
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "rad 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)\n"
+      },
+      {
+        "cmd": [
+          "radicle-node",
+          "--version"
+        ],
+        "cwd": null,
+        "duration_seconds": 0.001,
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "radicle-node 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)\n"
+      },
+      {
+        "cmd": [
+          "rad",
+          "auth",
+          "--alias",
+          "df-public-seed-reader",
+          "--stdin"
+        ],
+        "cwd": null,
+        "duration_seconds": 0.246,
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "\nInitializing your Radicle \ud83d\udc7e identity\n\n\u2713 Creating your Ed25519 keypair...\n\u2713 Your Radicle DID is did:key:z6MknX1jy8FGwQS297j7shcNRdumD591CLu85fSRK879WZ3Y. This identifies your device. Run `rad self` to show it at all times.\n\u2713 You're all set.\n\n\u2717 Hint: install ssh-agent to have it fill in your passphrase for you when signing.\n\nTo create a Radicle repository, run `rad init` from a Git repository with at least one commit.\nTo clone a repository, run `rad clone <rid>`. For example, `rad clone rad:z3gqcJUoA1n9HaHKufZs5FCSGazv5` clones the Radicle 'heartwood' repository.\nTo get a list of all commands, run `rad`.\n"
+      },
+      {
+        "cmd": [
+          "rad",
+          "node",
+          "start",
+          "--",
+          "--listen",
+          "127.0.0.1:33957"
+        ],
+        "cwd": null,
+        "duration_seconds": 0.487,
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "\u2713 Node started (2779147)\nTo stay in sync with the network, leave the node running in the background.\nTo learn more, run `rad node --help`.\n"
+      },
+      {
+        "cmd": [
+          "rad",
+          "node",
+          "connect",
+          "z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877",
+          "--timeout",
+          "30s"
+        ],
+        "cwd": null,
+        "duration_seconds": 16.223,
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "\u2713 Connecting to z6MksRd\u2026hyfSm6A@187.77.19.162:8877...\n"
+      },
+      {
+        "cmd": [
+          "rad",
+          "clone",
+          "--timeout",
+          "180s",
+          "--seed",
+          "z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A",
+          "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+          "/tmp/df-public-radicle-seed-check-_v21if1t/clone-parent/decentralized-forge"
+        ],
+        "cwd": "/tmp/df-public-radicle-seed-check-_v21if1t/clone-parent",
+        "duration_seconds": 6.872,
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "\u2713 Seeding policy updated for rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy with scope 'followed'\nFetching rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy from the network, found 4 potential seed(s).\n\u2713 Target met: 1 preferred seed(s).\n\u2713 Creating checkout in .//tmp/df-public-radicle-seed-check-_v21if1t/clone-parent/decentralized-forge..\n\u2713 Remote df-retained-maintainer@z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr added\n\u2713 Remote-tracking branch df-retained-maintainer@z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr/main created for z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr\n\u2713 Repository successfully cloned under /tmp/df-public-radicle-seed-check-_v21if1t/clone-parent/decentralized-forge/\n\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 decentralized-forge                                                                                                    \u2502\n\u2502 Decentralized Forge retained-maintainer Radicle repository; evidence-scoped, no durability/security/production claims. \u2502\n\u2502 0 issues \u00b7 0 patches                                                                                                   \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\nRun `cd .//tmp/df-public-radicle-seed-check-_v21if1t/clone-parent/decentralized-forge` to go to the repository directory.\n"
+      },
+      {
+        "cmd": [
+          "git",
+          "rev-parse",
+          "HEAD"
+        ],
+        "cwd": "/tmp/df-public-radicle-seed-check-_v21if1t/clone-parent/decentralized-forge",
+        "duration_seconds": 0.003,
+        "returncode": 0,
+        "stderr": "",
+        "stdout": "d596024dac0d90605d4f103d567e5851771be5a8\n"
+      }
+    ],
+    "connected_to_seed": true,
+    "created_utc": "2026-06-30T09:45:48Z",
+    "expected_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+    "host": "atladmin-PowerEdge-R530",
+    "node_started": true,
+    "node_stop": {
+      "cmd": [
+        "rad",
+        "node",
+        "stop"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": "\u2713 Node stopped\n"
+    },
+    "readback_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+    "readback_matches_expected": true,
+    "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+    "schema_version": "decentralized-forge.public-radicle-seed-health-check.v1",
+    "secret_values_recorded": false,
+    "seed": "z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877",
+    "seed_node_id": "z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A",
+    "temp_state": "removed",
+    "verification_passed": true
+  },
+  "checker_exit_code": 0,
+  "checker_stderr": "",
+  "checker_stdout": "{\n  \"auth_succeeded\": true,\n  \"claim_boundary\": \"Fresh local Radicle profile connected to one explicit seed, cloned one RID, and compared git HEAD to the expected commit. This is not a durability, default public-routing, security, identity-trust, or production-readiness claim.\",\n  \"clone_succeeded\": true,\n  \"commands\": [\n    {\n      \"cmd\": [\n        \"rad\",\n        \"--version\"\n      ],\n      \"cwd\": null,\n      \"duration_seconds\": 0.004,\n      \"returncode\": 0,\n      \"stderr\": \"\",\n      \"stdout\": \"rad 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)\\n\"\n    },\n    {\n      \"cmd\": [\n        \"radicle-node\",\n        \"--version\"\n      ],\n      \"cwd\": null,\n      \"duration_seconds\": 0.001,\n      \"returncode\": 0,\n      \"stderr\": \"\",\n      \"stdout\": \"radicle-node 1.9.1 (5bd3569e120a6172d9df68e1d1d0eed15e8104b1)\\n\"\n    },\n    {\n      \"cmd\": [\n        \"rad\",\n        \"auth\",\n        \"--alias\",\n        \"df-public-seed-reader\",\n        \"--stdin\"\n      ],\n      \"cwd\": null,\n      \"duration_seconds\": 0.246,\n      \"returncode\": 0,\n      \"stderr\": \"\",\n      \"stdout\": \"\\nInitializing your Radicle \\ud83d\\udc7e identity\\n\\n\\u2713 Creating your Ed25519 keypair...\\n\\u2713 Your Radicle DID is did:key:z6MknX1jy8FGwQS297j7shcNRdumD591CLu85fSRK879WZ3Y. This identifies your device. Run `rad self` to show it at all times.\\n\\u2713 You're all set.\\n\\n\\u2717 Hint: install ssh-agent to have it fill in your passphrase for you when signing.\\n\\nTo create a Radicle repository, run `rad init` from a Git repository with at least one commit.\\nTo clone a repository, run `rad clone <rid>`. For example, `rad clone rad:z3gqcJUoA1n9HaHKufZs5FCSGazv5` clones the Radicle 'heartwood' repository.\\nTo get a list of all commands, run `rad`.\\n\"\n    },\n    {\n      \"cmd\": [\n        \"rad\",\n        \"node\",\n        \"start\",\n        \"--\",\n        \"--listen\",\n        \"127.0.0.1:33957\"\n      ],\n      \"cwd\": null,\n      \"duration_seconds\": 0.487,\n      \"returncode\": 0,\n      \"stderr\": \"\",\n      \"stdout\": \"\\u2713 Node started (2779147)\\nTo stay in sync with the network, leave the node running in the background.\\nTo learn more, run `rad node --help`.\\n\"\n    },\n    {\n      \"cmd\": [\n        \"rad\",\n        \"node\",\n        \"connect\",\n        \"z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877\",\n        \"--timeout\",\n        \"30s\"\n      ],\n      \"cwd\": null,\n      \"duration_seconds\": 16.223,\n      \"returncode\": 0,\n      \"stderr\": \"\",\n      \"stdout\": \"\\u2713 Connecting to z6MksRd\\u2026hyfSm6A@187.77.19.162:8877...\\n\"\n    },\n    {\n      \"cmd\": [\n        \"rad\",\n        \"clone\",\n        \"--timeout\",\n        \"180s\",\n        \"--seed\",\n        \"z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A\",\n        \"rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy\",\n        \"/tmp/df-public-radicle-seed-check-_v21if1t/clone-parent/decentralized-forge\"\n      ],\n      \"cwd\": \"/tmp/df-public-radicle-seed-check-_v21if1t/clone-parent\",\n      \"duration_seconds\": 6.872,\n      \"returncode\": 0,\n      \"stderr\": \"\",\n      \"stdout\": \"\\u2713 Seeding policy updated for rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy with scope 'followed'\\nFetching rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy from the network, found 4 potential seed(s).\\n\\u2713 Target met: 1 preferred seed(s).\\n\\u2713 Creating checkout in .//tmp/df-public-radicle-seed-check-_v21if1t/clone-parent/decentralized-forge..\\n\\u2713 Remote df-retained-maintainer@z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr added\\n\\u2713 Remote-tracking branch df-retained-maintainer@z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr/main created for z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr\\n\\u2713 Repository successfully cloned under /tmp/df-public-radicle-seed-check-_v21if1t/clone-parent/decentralized-forge/\\n\\u256d\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u256e\\n\\u2502 decentralized-forge                                                                                                    \\u2502\\n\\u2502 Decentralized Forge retained-maintainer Radicle repository; evidence-scoped, no durability/security/production claims. \\u2502\\n\\u2502 0 issues \\u00b7 0 patches                                                                                                   \\u2502\\n\\u2570\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u2500\\u256f\\nRun `cd .//tmp/df-public-radicle-seed-check-_v21if1t/clone-parent/decentralized-forge` to go to the repository directory.\\n\"\n    },\n    {\n      \"cmd\": [\n        \"git\",\n        \"rev-parse\",\n        \"HEAD\"\n      ],\n      \"cwd\": \"/tmp/df-public-radicle-seed-check-_v21if1t/clone-parent/decentralized-forge\",\n      \"duration_seconds\": 0.003,\n      \"returncode\": 0,\n      \"stderr\": \"\",\n      \"stdout\": \"d596024dac0d90605d4f103d567e5851771be5a8\\n\"\n    }\n  ],\n  \"connected_to_seed\": true,\n  \"created_utc\": \"2026-06-30T09:45:48Z\",\n  \"expected_commit\": \"d596024dac0d90605d4f103d567e5851771be5a8\",\n  \"host\": \"atladmin-PowerEdge-R530\",\n  \"node_started\": true,\n  \"node_stop\": {\n    \"cmd\": [\n      \"rad\",\n      \"node\",\n      \"stop\"\n    ],\n    \"returncode\": 0,\n    \"stderr\": \"\",\n    \"stdout\": \"\\u2713 Node stopped\\n\"\n  },\n  \"readback_commit\": \"d596024dac0d90605d4f103d567e5851771be5a8\",\n  \"readback_matches_expected\": true,\n  \"rid\": \"rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy\",\n  \"schema_version\": \"decentralized-forge.public-radicle-seed-health-check.v1\",\n  \"secret_values_recorded\": false,\n  \"seed\": \"z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877\",\n  \"seed_node_id\": \"z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A\",\n  \"temp_state\": \"removed\",\n  \"verification_passed\": true\n}\n",
+  "command": [
+    "/usr/bin/python3",
+    "scripts/check_public_radicle_seed.py",
+    "--seed",
+    "z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877",
+    "--rid",
+    "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+    "--expected-commit",
+    "d596024dac0d90605d4f103d567e5851771be5a8",
+    "--output",
+    "/tmp/df-first-public-clone-0fnanoe5/check.json",
+    "--connect-timeout",
+    "30s",
+    "--clone-timeout",
+    "180s",
+    "--bin-dir",
+    "/tmp/df-radicle-bin-e0f7144"
+  ],
+  "created_utc": "2026-06-30T09:45:48Z",
+  "expected_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+  "expected_verification": "git rev-parse HEAD prints d596024dac0d90605d4f103d567e5851771be5a8",
+  "live_actions_executed": true,
+  "mode": "live",
+  "non_claims": [
+    "not a default public-routing claim",
+    "not a durability guarantee",
+    "not proof of automatic future update propagation",
+    "not proof of broad Radicle network availability",
+    "not proof of censorship resistance",
+    "not proof of identity trust",
+    "not a security guarantee",
+    "not production readiness"
+  ],
+  "readback_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+  "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+  "schema_version": "decentralized-forge.first-public-clone-verifier.v1",
+  "secret_values_recorded": false,
+  "seed": {
+    "address": "z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877",
+    "id": "second",
+    "node_id": "z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A",
+    "role": "second public follower seed via openclaw relay to ubuntu-work"
+  },
+  "source_evidence_file": "evidence/radicle-public-seed-update-d596024-2026-06-30.json",
+  "source_evidence_id": "loop75-radicle-public-seed-update-d596024",
+  "verification_passed": true
+}

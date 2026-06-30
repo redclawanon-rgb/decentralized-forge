@@ -32,8 +32,9 @@ production readiness.
 - Fresh public clone evidence:
   - `evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json`
   - `evidence/radicle-first-public-clone-second-d596024-2026-06-30.json`
-- Portable bundle SHA-256 from the first public clone RC:
-  `9c740f82324da14de34c01d236ea01d63550525b6ddcc0adcbd6908a54f9b3c5`
+- Portable bundle SHA-256 is recorded in the release-facing public update
+  draft after bundle regeneration. Do not make this bundled plan self-referential
+  by embedding the bundle's own digest here.
 
 ## Definition Of Done
 

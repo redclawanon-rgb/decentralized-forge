@@ -3,7 +3,9 @@
 Draft date: 2026-06-30
 
 `decentralized-forge` now has a first public Radicle direct-seed clone release
-candidate.
+candidate. After the initial Docker/Linux reader proof, Loop 89 repeated the
+same public clone verifier from a separate `ubuntu-work` Linux host and fresh
+checkout at commit `e0f71448005b5ba8ed4a4e7ee55fa05b721ae23f`.
 
 ## What To Verify
 
@@ -41,16 +43,20 @@ This draft is release-candidate handoff text for reviewers and outside readers. 
 - `evidence/radicle-public-seed-update-d596024-2026-06-30.json`
 - `evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json`
 - `evidence/radicle-first-public-clone-second-d596024-2026-06-30.json`
+- `evidence/radicle-first-public-clone-outside-reader-ubuntu-work-primary-e0f7144-2026-06-30.json`
+- `evidence/radicle-first-public-clone-outside-reader-ubuntu-work-second-e0f7144-2026-06-30.json`
 
 The fresh public clone evidence was produced from Docker/Linux reader profiles
 using disposable Radicle state. Both public seed addresses cloned the retained
 RID and read back `d596024dac0d90605d4f103d567e5851771be5a8`.
+Loop 89 then repeated the verifier from the separate `ubuntu-work` Linux host,
+again using disposable reader state and no maintainer key material.
 
 ## Portable Bundle
 
 - Bundle: `output/decentralized-forge-verification-bundle.zip`
-- Bundle SHA-256: `a55eb12b3d5b1fbe738d8f4db7a781ed9d223e52e4ec6287044f0caaed22aa8d`
-- Bundle size: `2174564` bytes
+- Bundle SHA-256: `f1c4e6da5bd8b752220661292b114993033f7a42c5b61b1bb9794550be90e1ba`
+- Bundle size: `2243187` bytes
 - Local source commit before this RC draft commit: `eacf9844ddbf34d173a3ce38640c81e755e30dce`
 - Release commit: use the pushed commit that contains this draft, the Loop 79 evidence, and the regenerated bundle.
 - Public seed status: `output/public-seed-status.json`

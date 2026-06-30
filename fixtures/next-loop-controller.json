@@ -3,99 +3,95 @@
   "mode": "approval-bounded",
   "max_iterations_per_run": 6,
   "active_goal": {
-    "id": "product-finish-alpha",
-    "title": "Finish v0.1.0-alpha usable product path",
-    "plan": "docs/product-finish-plan.md",
-    "target_claim": "A new technical user can clone decentralized-forge from a published Radicle direct-seed address, verify HEAD, inspect the portable bundle, see seed status, and exercise one decentralized collaboration path while understanding the non-claims.",
-    "success_gate": "Public clone handoff, outside-reader rehearsal or exact blocker script, first-screen quickstart, seed status artifact, collaboration alpha path, regenerated bundle, and CI are green without unsupported claims."
+    "id": "post-alpha-public-ready-hardening",
+    "title": "Harden the v0.1.0-alpha candidate toward public-ready release decisions",
+    "plan": "docs/post-alpha-hardening-plan.md",
+    "target_claim": "A new technical user can rely on committed outside-reader public clone evidence, latest seed status, exact release-candidate bundle metadata, and bounded collaboration/provenance/storage gates without unsupported claims.",
+    "success_gate": "Outside-reader evidence is imported, status/report/release text prefer latest evidence, release decision package is ready without creating a tag, and CI is green without unsupported durability, security, censorship-resistance, SLSA, or production-readiness claims."
   },
   "autonomous_loop_sequence": [
     {
-      "loop": 83,
-      "id": "alpha-release-handoff",
-      "goal": "Convert the current first-public-clone RC into a release-facing handoff.",
-      "primary_outputs": [
-        "docs/public-update-drafts/2026-06-30-first-public-clone-rc.md",
-        "docs/product-finish-plan.md",
-        "output/decentralized-forge-verification-bundle.zip"
-      ],
-      "verification": [
-        "python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip",
-        "focused public update and release-note tests"
-      ]
-    },
-    {
-      "loop": 84,
-      "id": "outside-reader-clone-rehearsal",
-      "goal": "Prove or package an outside-reader public clone check.",
+      "loop": 89,
+      "id": "outside-reader-evidence-import",
+      "goal": "Import actual separate-host outside-reader public clone evidence.",
       "primary_outputs": [
         "evidence/",
         "fixtures/live-evidence-index.json",
-        "scripts/"
+        "output/public-seed-status.json"
       ],
       "verification": [
-        "fresh outside-reader clone HEAD equals expected retained-RID commit, or blocker script/template is recorded",
+        "python scripts/forge_registry.py validate-evidence-index fixtures/live-evidence-index.json",
+        "focused outside-reader evidence tests"
+      ]
+    },
+    {
+      "loop": 90,
+      "id": "latest-seed-status-surface",
+      "goal": "Make status/report/release-note output prefer the latest passing outside-reader evidence per seed.",
+      "primary_outputs": [
+        "output/public-seed-status.json",
+        "output/onboarding-sample.bundle-report.json",
+        "scripts/forge_registry.py"
+      ],
+      "verification": [
+        "public seed status names Loop 89 evidence rows",
+        "bundle report includes latest public seed status"
+      ]
+    },
+    {
+      "loop": 91,
+      "id": "release-decision-package",
+      "goal": "Prepare exact release decision materials without creating a tag or GitHub Release.",
+      "primary_outputs": [
+        "docs/public-update-drafts/",
+        "docs/portable-bundle-review-checklist.md",
+        "STATUS.md"
+      ],
+      "verification": [
+        "release draft includes candidate commit, bundle digest, CI URL, outside-reader evidence, and non-claims",
+        "no tag or GitHub Release is created"
+      ]
+    },
+    {
+      "loop": 92,
+      "id": "collaboration-live-refresh-gate",
+      "goal": "Refresh or explicitly gate the selected-relay Nostr issue/patch collaboration path.",
+      "primary_outputs": [
+        "evidence/",
+        "fixtures/live-evidence-index.json",
+        "docs/community-quickstart.md"
+      ],
+      "verification": [
+        "selected-relay issue/patch evidence remains secret-free and bounded, or exact live replay blocker is documented",
         "python scripts/forge_registry.py validate-evidence-index fixtures/live-evidence-index.json"
       ]
     },
     {
-      "loop": 85,
-      "id": "first-screen-product-surface",
-      "goal": "Make the public clone and verification path obvious before historical detail.",
+      "loop": 93,
+      "id": "signing-provenance-hardening-gate",
+      "goal": "Clarify release signing/provenance hardening without production/private keys or unsupported SLSA claims.",
       "primary_outputs": [
-        "README.md",
-        "docs/community-quickstart.md",
-        "tests/test_registry_fixture.py"
+        "docs/ci-provenance-model.md",
+        "docs/public-update-drafts/",
+        "fixtures/keyless-attestation.registry-verification.json"
       ],
       "verification": [
-        "docs tests assert clone/verify/bundle/non-claim order",
+        "no production/private personal keys",
+        "no SLSA/security claim unless separately proven"
+      ]
+    },
+    {
+      "loop": 94,
+      "id": "durable-storage-gate-plan",
+      "goal": "Prepare durable storage and pinning decision gates without spending or paid services.",
+      "primary_outputs": [
+        "docs/live-completion-gates.md",
+        "docs/artifact-metadata.md",
+        "fixtures/live-adapter-replay-checklist.json"
+      ],
+      "verification": [
+        "free local/gateway checks only unless separate approval records cost, key, wallet, and durability boundaries",
         "python scripts/forge_registry.py verify-local --skip-npm-ci"
-      ]
-    },
-    {
-      "loop": 86,
-      "id": "public-seed-status-artifact",
-      "goal": "Generate an inspectable public seed status artifact from committed evidence.",
-      "primary_outputs": [
-        "output/public-seed-status.json",
-        "scripts/forge_registry.py",
-        "output/decentralized-forge-verification-bundle.zip"
-      ],
-      "verification": [
-        "public seed status JSON validates",
-        "bundle report includes the status artifact",
-        "claim-boundary tests"
-      ]
-    },
-    {
-      "loop": 87,
-      "id": "decentralized-collaboration-alpha-path",
-      "goal": "Add the first usable issue/patch collaboration path beyond clone.",
-      "primary_outputs": [
-        "evidence/",
-        "fixtures/live-evidence-index.json",
-        "scripts/",
-        "docs/community-quickstart.md"
-      ],
-      "verification": [
-        "selected-relay issue/patch readback verifies, or draft/export fallback validates",
-        "evidence remains secret-free and bounded"
-      ]
-    },
-    {
-      "loop": 88,
-      "id": "alpha-freeze-and-ci-gate",
-      "goal": "Produce the final v0.1.0-alpha candidate package and verify CI.",
-      "primary_outputs": [
-        "STATUS.md",
-        "output/decentralized-forge-verification-bundle.zip",
-        "docs/public-update-drafts/"
-      ],
-      "verification": [
-        "python scripts/forge_registry.py verify-local --skip-npm-ci",
-        "python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip",
-        "python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip",
-        "GitHub Actions green on main"
       ]
     }
   ],

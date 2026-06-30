@@ -533,11 +533,26 @@ def format_first_public_clone_result(result: dict) -> str:
 def public_seed_status_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_INDEX) -> dict:
     quickstart = retained_radicle_quickstart_model(index_path)
     index = json.loads(index_path.read_text(encoding="utf-8"))
-    by_id = {item.get("id"): item for item in index.get("evidence", []) if isinstance(item, dict)}
-    clone_entries = {
-        "primary": by_id.get("loop79-radicle-first-public-clone-primary-d596024", {}),
-        "second": by_id.get("loop79-radicle-first-public-clone-second-d596024", {}),
-    }
+    clone_entries = {}
+    for item in index.get("evidence", []):
+        if not isinstance(item, dict) or item.get("protocol") != "radicle":
+            continue
+        public = item.get("public_identifiers", {})
+        if not isinstance(public, dict):
+            continue
+        seed_id = public.get("seed_id")
+        if seed_id not in {"primary", "second"}:
+            continue
+        if public.get("rid") != quickstart["rid"] or public.get("current_source_commit") != quickstart["expected_commit"]:
+            continue
+        if public.get("readback_matches_expected") is not True:
+            continue
+        scope = str(item.get("scope", ""))
+        if "first_public_clone" not in scope:
+            continue
+        previous = clone_entries.get(seed_id)
+        if previous is None or str(item.get("id", "")) > str(previous.get("id", "")):
+            clone_entries[seed_id] = item
 
     seeds = []
     for seed in quickstart["public_seeds"]:
@@ -997,6 +1012,7 @@ def collect_verification_bundle_paths() -> list[Path]:
         "docs/first-public-clone-outside-reader-rehearsal.md",
         "docs/first-public-clone-rc-plan.md",
         "docs/live-completion-gates.md",
+        "docs/post-alpha-hardening-plan.md",
         "docs/product-finish-plan.md",
         "docs/radicle-persistent-seed-plan.md",
         "docs/radicle-retained-rid-quickstart.md",
