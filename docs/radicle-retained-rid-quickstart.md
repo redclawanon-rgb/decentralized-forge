@@ -16,7 +16,7 @@ ef16e2ad39d3e13bdcc9d454443c5bbb17733c68
 
 The strongest matching evidence is `evidence/radicle-public-seed-update-ef16e2a-2026-06-29.json`: the retained RID advanced to the updated commit, the `openclaw` VPS follower seed synced it, the temporary maintainer bridge was stopped, and a fresh reader on `ubuntu-work` cloned the updated commit from the public seed.
 
-Loop 73 added a second persistent follower seed on `ubuntu-work` with its own Radicle state and node ID `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A`. A fresh reader on `openclaw` cloned the same retained RID and commit from `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@100.83.206.66:8877` over Tailnet. This is not a second public internet seed yet; public relay port `8877` on the VPS still requires explicit approval and a separate public readback check.
+Loop 73 added a second persistent follower seed on `ubuntu-work` with its own Radicle state and node ID `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A`. Loop 74 verified public readback through `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877`, which relays from `openclaw` public ingress to the `ubuntu-work` seed over Tailnet.
 
 ## Generate The Current Recipe
 
@@ -54,8 +54,15 @@ cd decentralized-forge
 git rev-parse HEAD
 ```
 
+Fallback public seed:
+
+```sh
+rad node connect z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877 --timeout 30s
+rad clone --timeout 120s --seed z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy decentralized-forge
+```
+
 ## Claim Boundary
 
-This quickstart is a narrow reproduction path for the retained RID evidence. It is not a default public-routing claim, not a durability guarantee, not proof of automatic future update propagation, not proof of broad Radicle network availability, not proof of censorship resistance, not proof of identity trust, not a security guarantee, not production readiness, not a committed secret or key backup, and not maintainer key material on the VPS.
+This quickstart is a narrow reproduction path for the retained RID evidence. It is not a default public-routing claim, not a durability guarantee, not proof of automatic future update propagation, not proof of broad Radicle network availability, not proof of independent provider availability for the second seed, not proof of censorship resistance, not proof of identity trust, not a security guarantee, not production readiness, not a committed secret or key backup, and not maintainer key material on the VPS or `ubuntu-work`.
 
 The persistent-seed plan is `docs/radicle-persistent-seed-plan.md`.

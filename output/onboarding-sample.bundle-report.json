@@ -1,13 +1,13 @@
 {
   "bundle": {
-    "file_count": 109,
+    "file_count": 110,
     "name": "decentralized-forge portable verification bundle",
     "role_counts": {
       "documentation": 10,
       "fixture": 14,
       "generated-output": 8,
       "schema": 2,
-      "source-evidence": 53,
+      "source-evidence": 54,
       "supporting-file": 2,
       "verifier-tooling": 20
     },
@@ -276,16 +276,27 @@
         "state": "second-follower-tailnet-readback-verified",
         "synthetic": false,
         "verification_summary": "ubuntu-work runs a second persistent follower seed with separate Radicle state and node identity; a fresh reader on openclaw connected over Tailnet to z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@100.83.206.66:8877, cloned the retained RID, and verified commit ef16e2ad39d3e13bdcc9d454443c5bbb17733c68."
+      },
+      {
+        "evidence_file": "evidence/radicle-second-public-seed-health-2026-06-29.json",
+        "id": "loop74-radicle-second-public-seed-readback",
+        "live_network_action": true,
+        "protocol": "radicle",
+        "scope": "radicle.second_public_follower_seed_readback",
+        "selected_relay_readback_verified": false,
+        "state": "second-public-follower-seed-readback-verified",
+        "synthetic": false,
+        "verification_summary": "After explicit approval and firewall/provider ingress opening, openclaw relays public TCP 8877 to the ubuntu-work follower seed over Tailnet; a fresh ubuntu-work reader connected to z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877, cloned the retained RID, and verified commit ef16e2ad39d3e13bdcc9d454443c5bbb17733c68."
       }
     ],
-    "entry_count": 23,
+    "entry_count": 24,
     "index_path": "fixtures/live-evidence-index.json",
-    "live_network_action_count": 20,
+    "live_network_action_count": 21,
     "protocol_counts": {
       "github-actions": 2,
       "ipfs": 2,
       "nostr": 2,
-      "radicle": 17
+      "radicle": 18
     },
     "selected_relay_readback_count": 2,
     "state_counts": {
@@ -309,6 +320,7 @@
       "retained-rid-follower-seed-readback-verified": 1,
       "retained-rid-seed-restart-readback-verified": 1,
       "second-follower-tailnet-readback-verified": 1,
+      "second-public-follower-seed-readback-verified": 1,
       "selected-relay-issue-patch-readback-verified": 1,
       "selected-relay-readback-verified": 1
     },

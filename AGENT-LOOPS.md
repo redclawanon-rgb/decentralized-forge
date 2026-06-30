@@ -832,3 +832,11 @@ No additional cron jobs. No public Radicle seed/publish/sync/node/remote clone w
 **Current result:** Complete as `scripts/bootstrap_radicle_follower_seed.py`, `evidence/radicle-ubuntu-work-follower-bootstrap-2026-06-29.json`, and `evidence/radicle-second-seed-tailnet-health-2026-06-29.json`. `ubuntu-work` bootstrapped a separate follower identity `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A`, installed it as an enabled user-level `systemd` service on `100.83.206.66:8877`, and `openclaw` cloned/read back the retained RID over Tailnet at commit `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`.
 
 **Gate preserved:** This proves a second persistent follower seed with separate state reachable over Tailnet. It does not prove a second public internet seed, durability, security, identity trust, default public routing, or production readiness. Opening an `openclaw` public relay on port `8877` requires explicit approval because it changes the VPS public network surface.
+
+## Loop 74: Second public seed readback
+
+**Goal:** Promote the staged `ubuntu-work` follower seed into a second public direct-seed address after explicit approval.
+
+**Current result:** Complete as `evidence/radicle-second-public-seed-health-2026-06-29.json`. `openclaw` runs `decentralized-forge-radicle-mirror-public-relay.service`, listening on public TCP `8877` and relaying to `ubuntu-work` Tailnet `100.83.206.66:8877`. Public TCP `187.77.19.162:8877` was reachable from Windows and `ubuntu-work`; a fresh `ubuntu-work` reader connected to `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877`, cloned retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy`, and verified HEAD `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`.
+
+**Gate preserved:** This proves a second public direct-seed address for the retained RID. It does not prove permanent durability, default public routing, automatic future propagation, independent provider/network availability, security, identity trust, or production readiness.

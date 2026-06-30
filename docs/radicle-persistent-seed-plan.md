@@ -8,6 +8,7 @@ This plan defines the minimum path from the current retained-RID evidence to a u
 - Current verified commit: `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`
 - Loop 73 evidence: `evidence/radicle-second-seed-tailnet-health-2026-06-29.json`
 - Loop 73 bootstrap evidence: `evidence/radicle-ubuntu-work-follower-bootstrap-2026-06-29.json`
+- Loop 74 evidence: `evidence/radicle-second-public-seed-health-2026-06-29.json`
 - Loop 72 evidence: `evidence/radicle-public-seed-update-ef16e2a-2026-06-29.json`
 - Loop 71 evidence: `evidence/radicle-external-health-timer-2026-06-29.json`
 - Loop 70 evidence: `evidence/radicle-public-seed-update-propagation-2026-06-29.json`
@@ -27,8 +28,9 @@ This plan defines the minimum path from the current retained-RID evidence to a u
 - Loop 71 installed an external `ubuntu-work` health timer that runs the public seed health check and wrote a passing latest JSON.
 - Loop 72 advanced the same retained RID to `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`, synced the `openclaw` follower, stopped the bridge and maintainer seed, and verified a fresh public readback from the VPS follower seed.
 - Loop 73 bootstrapped a second follower seed on `ubuntu-work` with node ID `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A`, installed it as an enabled user-level `systemd` service, bound it to Tailnet address `100.83.206.66:8877`, and verified a fresh readback from `openclaw` over Tailnet.
+- Loop 74 opened the approved `openclaw` public relay on TCP `8877`, verified public TCP reachability from Windows and `ubuntu-work`, and verified a fresh Radicle clone/readback through `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877`.
 
-This proves an independent follower-seed handoff, a local seed restart/readback rehearsal, a restart-safe public follower service, a repeatable health check, one manual update propagation through the VPS follower, and a second persistent follower seed with separate state reachable over Tailnet. It does not prove durability, broad public routing, automatic future update propagation, default public-routing availability, or a second public internet seed.
+This proves an independent follower-seed handoff, a local seed restart/readback rehearsal, a restart-safe public follower service, a repeatable health check, one manual update propagation through the VPS follower, a second persistent follower seed with separate state, and a second public direct-seed address. It does not prove durability, broad public routing, automatic future update propagation, default public-routing availability, or independent provider/network availability for the second seed because public ingress still uses `openclaw`.
 
 ## Usable Product Claim To Target
 
