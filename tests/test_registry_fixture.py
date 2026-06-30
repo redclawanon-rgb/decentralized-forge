@@ -1,6 +1,8 @@
 import json
 import base64
+import contextlib
 import hashlib
+import io
 import re
 import subprocess
 import sys
@@ -20,6 +22,7 @@ import preflight_static_artifact
 import render_forge_app
 import render_project_page
 import run_first_public_clone_rehearsal
+import run_started_project_radicle_genesis
 
 SCHEMA_PATH = ROOT / "schemas" / "project-registry.schema.json"
 README_PATH = ROOT / "README.md"
@@ -942,8 +945,14 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertEqual(receipt["project"]["id"], "started-widget")
             self.assertEqual(receipt["outputs"]["registry"], str(registry_path))
             self.assertEqual(receipt["outputs"]["workbench"], str(workbench_path))
+            self.assertEqual(receipt["outputs"]["radicle_genesis_json"], "output/started-widget.radicle-genesis.json")
+            self.assertEqual(receipt["outputs"]["radicle_genesis_markdown"], "output/started-widget.radicle-genesis.md")
             self.assertIn("python scripts/forge_registry.py validate", receipt["next_commands"][0])
             self.assertEqual(receipt["radicle_next_gate"]["status"], "not-started-by-start-project")
+            self.assertIn("scripts/run_started_project_radicle_genesis.py", receipt["radicle_next_gate"]["command"])
+            self.assertIn("--repository", receipt["radicle_next_gate"]["command"])
+            self.assertIn("--project-id started-widget", receipt["radicle_next_gate"]["command"])
+            self.assertIn("output/started-widget.radicle-genesis.json", receipt["radicle_next_gate"]["command"])
             self.assertIn("start-project does not create a Radicle RID", receipt["radicle_next_gate"]["non_claims"])
 
             summary = json.loads(summary_path.read_text(encoding="utf-8"))
@@ -961,7 +970,7 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertTrue(report["verification"]["valid"])
 
             combined = json.dumps({"registry": registry, "receipt": receipt, "report": report}).lower()
-            for required_boundary in ["local registry scaffold", "not-started-by-start-project", "does not create a radicle rid", "not-pinned"]:
+            for required_boundary in ["local registry scaffold", "not-started-by-start-project", "does not create a radicle rid", "radicle-genesis", "not-pinned"]:
                 self.assertIn(required_boundary, combined)
             for unsupported_claim in ["production ready", "durably stored", "pinned and available", "slsa compliant"]:
                 self.assertNotIn(unsupported_claim, combined)
@@ -1156,6 +1165,13 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn(required, doc)
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, doc.lower())
+
+    def test_project_specific_radicle_genesis_requires_explicit_evidence_paths(self):
+        stderr = io.StringIO()
+        with contextlib.redirect_stderr(stderr):
+            exit_code = run_started_project_radicle_genesis.main(["--repository", "some-project"])
+        self.assertEqual(exit_code, 2)
+        self.assertIn("need --output and --markdown", stderr.getvalue())
 
     def test_started_project_radicle_genesis_evidence_is_bounded(self):
         evidence = json.loads(RADICLE_START_PROJECT_GENESIS_PATH.read_text(encoding="utf-8"))

@@ -991,20 +991,78 @@ def default_start_artifact(repo_path: Path, artifact_path: Path | None) -> Path:
     raise ValueError("start-project needs --artifact when the repository has no README.md")
 
 
+def radicle_genesis_output_paths(project_id: str) -> tuple[Path, Path]:
+    slug = slugify_project_id(project_id)
+    return (
+        ROOT / "output" / f"{slug}.radicle-genesis.json",
+        ROOT / "output" / f"{slug}.radicle-genesis.md",
+    )
+
+
+def radicle_genesis_command_parts(
+    repo_path: Path,
+    *,
+    project_id: str,
+    project_name: str,
+    artifact_path: Path | None = None,
+    evidence_output: Path | None = None,
+    markdown_output: Path | None = None,
+) -> list[str]:
+    evidence, markdown = radicle_genesis_output_paths(project_id)
+    evidence = evidence_output or evidence
+    markdown = markdown_output or markdown
+    command = [
+        "python",
+        "scripts/run_started_project_radicle_genesis.py",
+        "--repository",
+        relative(repo_path),
+        "--project-id",
+        project_id,
+        "--project-name",
+        project_name,
+        "--output",
+        relative(evidence),
+        "--markdown",
+        relative(markdown),
+    ]
+    if artifact_path is not None:
+        command.extend(["--artifact", relative(artifact_path)])
+    return command
+
+
+def format_command(parts: list[str]) -> str:
+    return " ".join(json.dumps(part) if any(ch.isspace() for ch in part) else part for part in parts)
+
+
 def start_project_receipt(
     result: dict,
     *,
+    repo_path: Path,
     app_output: Path,
     artifact_path: Path,
+    radicle_evidence_output: Path | None = None,
+    radicle_markdown_output: Path | None = None,
 ) -> dict:
     registry = result["registry"]
     paths = result["paths"]
     project_id = registry["project"]["id"]
+    project_name = registry["project"]["name"]
+    radicle_command_parts = radicle_genesis_command_parts(
+        repo_path,
+        project_id=project_id,
+        project_name=project_name,
+        artifact_path=artifact_path,
+        evidence_output=radicle_evidence_output,
+        markdown_output=radicle_markdown_output,
+    )
+    radicle_evidence, radicle_markdown = radicle_genesis_output_paths(project_id)
+    radicle_evidence = radicle_evidence_output or radicle_evidence
+    radicle_markdown = radicle_markdown_output or radicle_markdown
     return {
         "schema_version": "decentralized-forge.start-project-receipt.v1",
         "project": {
             "id": project_id,
-            "name": registry["project"]["name"],
+            "name": project_name,
             "default_branch": registry["project"]["default_branch"],
         },
         "outputs": {
@@ -1015,17 +1073,23 @@ def start_project_receipt(
             "bundle": relative(paths["bundle"]),
             "report_json": relative(paths["report_json"]) if paths["report_json"] is not None else None,
             "artifact": relative(artifact_path),
+            "radicle_genesis_json": relative(radicle_evidence),
+            "radicle_genesis_markdown": relative(radicle_markdown),
         },
         "next_commands": [
             f"python scripts/forge_registry.py validate {relative(paths['registry'])}",
             f"python scripts/forge_registry.py render {relative(paths['registry'])} {relative(paths['html'])}",
             f"python scripts/forge_registry.py render-app {relative(app_output)} --registry fixtures/example-project.registry.json --registry fixtures/portable-lab.registry.json --registry fixtures/onboarding-sample.registry.json --registry {relative(paths['registry'])}",
+            format_command(radicle_command_parts),
             "python scripts/forge_registry.py export-bundle output/decentralized-forge-verification-bundle.zip",
             "python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip",
         ],
         "radicle_next_gate": {
             "status": "not-started-by-start-project",
             "summary": "Create a project Radicle RID only after a Linux host with Radicle CLI is selected and the run is recorded as bounded live evidence.",
+            "command": format_command(radicle_command_parts),
+            "evidence_json": relative(radicle_evidence),
+            "evidence_markdown": relative(radicle_markdown),
             "non_claims": [
                 "start-project does not create a Radicle RID",
                 "start-project does not publish protocol events",
@@ -1057,6 +1121,8 @@ def start_project(
     artifact_name: str | None = None,
     media_type: str | None = None,
     timestamp: str | None = None,
+    radicle_evidence_output: Path | None = None,
+    radicle_markdown_output: Path | None = None,
 ) -> dict:
     artifact = default_start_artifact(repo_path, artifact_path)
     result = onboard_local_project(
@@ -1092,7 +1158,14 @@ def start_project(
     if render_exit:
         raise ValueError(f"workbench render failed for started project: {registry_path}")
 
-    receipt = start_project_receipt(result, app_output=workbench_path, artifact_path=artifact)
+    receipt = start_project_receipt(
+        result,
+        repo_path=repo_path,
+        app_output=workbench_path,
+        artifact_path=artifact,
+        radicle_evidence_output=radicle_evidence_output,
+        radicle_markdown_output=radicle_markdown_output,
+    )
     receipt_path = receipt_output or ROOT / "output" / f"{stem}.start-project.json"
     write_json(receipt_path, receipt)
     return {
@@ -2093,6 +2166,8 @@ def command_start_project(args: argparse.Namespace) -> int:
         artifact_name=args.artifact_name,
         media_type=args.media_type,
         timestamp=args.timestamp,
+        radicle_evidence_output=args.radicle_evidence,
+        radicle_markdown_output=args.radicle_markdown,
     )
     registry = result["registry"]
     paths = result["paths"]
@@ -2111,6 +2186,21 @@ def command_start_project(args: argparse.Namespace) -> int:
         print(f"  - {item}")
     print("- radicle next gate:")
     print(f"  - {result['receipt']['radicle_next_gate']['summary']}")
+    print(f"  - {result['receipt']['radicle_next_gate']['command']}")
+    if args.run_radicle_genesis:
+        run_command = radicle_genesis_command_parts(
+            args.repository,
+            project_id=registry["project"]["id"],
+            project_name=registry["project"]["name"],
+            artifact_path=result["artifact"],
+            evidence_output=args.radicle_evidence,
+            markdown_output=args.radicle_markdown,
+        )
+        completed = subprocess.run(run_command, cwd=ROOT, check=False)
+        if completed.returncode != 0:
+            print(f"- radicle genesis failed: exit {completed.returncode}")
+            return completed.returncode
+        print("- radicle genesis: completed")
     print("- non-claims:")
     for item in result["receipt"]["radicle_next_gate"]["non_claims"]:
         print(f"  - {item}")
@@ -2561,6 +2651,9 @@ def build_parser() -> argparse.ArgumentParser:
     start_project_parser.add_argument("--artifact-name", help="Artifact display name; defaults to the file name")
     start_project_parser.add_argument("--media-type", help="Override guessed media type")
     start_project_parser.add_argument("--timestamp", help="Override artifact verification timestamp")
+    start_project_parser.add_argument("--radicle-evidence", type=Path, help="Radicle genesis evidence JSON path for the emitted or executed next gate")
+    start_project_parser.add_argument("--radicle-markdown", type=Path, help="Radicle genesis Markdown evidence path for the emitted or executed next gate")
+    start_project_parser.add_argument("--run-radicle-genesis", action="store_true", help="Run the emitted bounded Radicle genesis gate after start-project")
     start_project_parser.set_defaults(func=command_start_project)
 
     render_app = subparsers.add_parser("render-app", help="Render the static forge workbench app")

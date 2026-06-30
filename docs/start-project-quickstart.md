@@ -25,9 +25,11 @@ The command writes:
 - `output/<project-id>.registry.html`
 - `output/<project-id>.registry.forge-app.html`
 - `output/<project-id>.registry.start-project.json`
+- `output/<project-id>.radicle-genesis.json` as the planned next-gate evidence path
+- `output/<project-id>.radicle-genesis.md` as the planned next-gate summary path
 - refreshed `output/decentralized-forge-verification-bundle.zip`
 
-The receipt JSON records the generated paths, copy/paste verification commands, and the next Radicle gate.
+The receipt JSON records the generated paths, copy/paste verification commands, and a project-specific Radicle genesis command.
 
 ## Current Boundary
 
@@ -40,6 +42,18 @@ python scripts/run_started_project_radicle_genesis.py
 ```
 
 The current sample evidence is `evidence/radicle-start-project-genesis-2026-06-30.json`. It proves one fresh sample project completed `start-project`, received a disposable public Radicle RID, and was cloned/read back from a separate temporary Radicle profile. It is not a persistent seed, durability, routing, or production-readiness proof.
+
+For your project, run the command recorded in `output/<project-id>.registry.start-project.json` under `radicle_next_gate.command`. It has this shape:
+
+```sh
+python scripts/run_started_project_radicle_genesis.py --repository ../my-project --project-id my-project --project-name "My Project" --output output/my-project.radicle-genesis.json --markdown output/my-project.radicle-genesis.md
+```
+
+The project-specific gate works from a temporary clone of your Git repository, then creates a disposable public Radicle RID and verifies a separate temporary-profile clone/readback for the committed project state. To run that gate immediately after `start-project`, add:
+
+```sh
+python scripts/forge_registry.py start-project ../my-project --project-id my-project --project-name "My Project" --run-radicle-genesis
+```
 
 ## Verify
 
