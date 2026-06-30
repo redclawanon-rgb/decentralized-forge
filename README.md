@@ -60,6 +60,7 @@ The rest of the project remains evidence-scoped: it also has local CAR/CID fixtu
 - `docs/radicle-persistent-seed-plan.md` — Loop 66-informed minimum service plan for a future persistent retained-RID seed
 - `docs/radicle-retained-rid-quickstart.md` — retained Radicle RID direct-seed clone recipe derived from the strongest retained-RID evidence
 - `docs/portable-bundle-review-checklist.md` — maintainer checklist for reviewing and describing the portable verification bundle without overclaiming
+- `docs/product-finish-plan.md` — autonomous Loops 83-88 plan for moving from first public clone RC to v0.1.0-alpha usability
 - `docs/live-adapter-replay-plan.md` — Loop 20 safe live-gated Radicle/Nostr replay prerequisites, evidence checklist, rollback, and non-claim gates
 - `docs/live-completion-gates.md` — optional post-Milestone-1 live IPFS, Nostr, Radicle, and signing gates
 - `docs/autonomy/README.md` — approval-bounded next-loop controller usage and automation limits

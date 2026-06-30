@@ -1,9 +1,9 @@
 {
   "bundle": {
-    "file_count": 124,
+    "file_count": 125,
     "name": "decentralized-forge portable verification bundle",
     "role_counts": {
-      "documentation": 12,
+      "documentation": 13,
       "fixture": 14,
       "generated-output": 8,
       "schema": 2,

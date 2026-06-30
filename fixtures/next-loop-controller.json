@@ -3,95 +3,99 @@
   "mode": "approval-bounded",
   "max_iterations_per_run": 6,
   "active_goal": {
-    "id": "first-public-clone-rc",
-    "title": "First public Radicle clone release candidate",
-    "plan": "docs/first-public-clone-rc-plan.md",
-    "target_claim": "A user can clone decentralized-forge from a published Radicle direct-seed address and verify that HEAD equals the expected retained-RID commit.",
-    "success_gate": "README/quickstart/verifier/evidence/bundle are current, at least one fresh Linux public clone verifies the expected commit, and CI is green."
+    "id": "product-finish-alpha",
+    "title": "Finish v0.1.0-alpha usable product path",
+    "plan": "docs/product-finish-plan.md",
+    "target_claim": "A new technical user can clone decentralized-forge from a published Radicle direct-seed address, verify HEAD, inspect the portable bundle, see seed status, and exercise one decentralized collaboration path while understanding the non-claims.",
+    "success_gate": "Public clone handoff, outside-reader rehearsal or exact blocker script, first-screen quickstart, seed status artifact, collaboration alpha path, regenerated bundle, and CI are green without unsupported claims."
   },
   "autonomous_loop_sequence": [
     {
-      "loop": 77,
-      "id": "public-clone-surface-audit",
-      "goal": "Make the public clone docs current and obvious.",
+      "loop": 83,
+      "id": "alpha-release-handoff",
+      "goal": "Convert the current first-public-clone RC into a release-facing handoff.",
       "primary_outputs": [
-        "README.md",
-        "docs/community-quickstart.md",
-        "docs/first-decentralized-repo-milestone.md",
-        "docs/radicle-retained-rid-quickstart.md"
+        "docs/public-update-drafts/2026-06-30-first-public-clone-rc.md",
+        "docs/product-finish-plan.md",
+        "output/decentralized-forge-verification-bundle.zip"
       ],
       "verification": [
-        "python scripts/forge_registry.py radicle-retained-quickstart",
-        "python scripts/forge_registry.py verify-local --skip-npm-ci"
+        "python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip",
+        "focused public update and release-note tests"
       ]
     },
     {
-      "loop": 78,
-      "id": "first-public-clone-verifier",
-      "goal": "Add one user-facing verifier command for the current public direct-seed path.",
-      "primary_outputs": [
-        "scripts/check_public_radicle_seed.py",
-        "scripts/forge_registry.py",
-        "tests/test_registry_fixture.py"
-      ],
-      "verification": [
-        "focused verifier tests",
-        "python scripts/forge_registry.py verify-local --skip-npm-ci"
-      ]
-    },
-    {
-      "loop": 79,
-      "id": "fresh-linux-public-clone-proof",
-      "goal": "Run the verifier from fresh Linux reader state and record evidence.",
+      "loop": 84,
+      "id": "outside-reader-clone-rehearsal",
+      "goal": "Prove or package an outside-reader public clone check.",
       "primary_outputs": [
         "evidence/",
-        "fixtures/live-evidence-index.json"
+        "fixtures/live-evidence-index.json",
+        "scripts/"
       ],
       "verification": [
-        "fresh public clone HEAD equals expected retained-RID commit",
+        "fresh outside-reader clone HEAD equals expected retained-RID commit, or blocker script/template is recorded",
         "python scripts/forge_registry.py validate-evidence-index fixtures/live-evidence-index.json"
       ]
     },
     {
-      "loop": 80,
-      "id": "product-surface-rc-polish",
-      "goal": "Expose current Radicle seed status in the product surface and bundle report.",
+      "loop": 85,
+      "id": "first-screen-product-surface",
+      "goal": "Make the public clone and verification path obvious before historical detail.",
       "primary_outputs": [
         "README.md",
-        "COMPLETION-CRITERIA.md",
-        "output/forge-app.html",
-        "output/decentralized-forge-verification-bundle.zip"
+        "docs/community-quickstart.md",
+        "tests/test_registry_fixture.py"
       ],
       "verification": [
-        "renderer/static artifact tests",
+        "docs tests assert clone/verify/bundle/non-claim order",
         "python scripts/forge_registry.py verify-local --skip-npm-ci"
       ]
     },
     {
-      "loop": 81,
-      "id": "release-candidate-package",
-      "goal": "Produce a shareable v0.1.0-alpha release-candidate package from committed artifacts.",
+      "loop": 86,
+      "id": "public-seed-status-artifact",
+      "goal": "Generate an inspectable public seed status artifact from committed evidence.",
       "primary_outputs": [
+        "output/public-seed-status.json",
+        "scripts/forge_registry.py",
+        "output/decentralized-forge-verification-bundle.zip"
+      ],
+      "verification": [
+        "public seed status JSON validates",
+        "bundle report includes the status artifact",
+        "claim-boundary tests"
+      ]
+    },
+    {
+      "loop": 87,
+      "id": "decentralized-collaboration-alpha-path",
+      "goal": "Add the first usable issue/patch collaboration path beyond clone.",
+      "primary_outputs": [
+        "evidence/",
+        "fixtures/live-evidence-index.json",
+        "scripts/",
+        "docs/community-quickstart.md"
+      ],
+      "verification": [
+        "selected-relay issue/patch readback verifies, or draft/export fallback validates",
+        "evidence remains secret-free and bounded"
+      ]
+    },
+    {
+      "loop": 88,
+      "id": "alpha-freeze-and-ci-gate",
+      "goal": "Produce the final v0.1.0-alpha candidate package and verify CI.",
+      "primary_outputs": [
+        "STATUS.md",
         "output/decentralized-forge-verification-bundle.zip",
         "docs/public-update-drafts/"
       ],
       "verification": [
+        "python scripts/forge_registry.py verify-local --skip-npm-ci",
         "python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip",
         "python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip",
         "GitHub Actions green on main"
-      ]
-    },
-    {
-      "loop": 82,
-      "id": "availability-hardening-backlog",
-      "goal": "Document the post-RC hardening gates without blocking first usability.",
-      "primary_outputs": [
-        "docs/first-public-clone-rc-plan.md",
-        "docs/radicle-persistent-seed-plan.md"
-      ],
-      "verification": [
-        "documentation tests",
-        "claim-boundary tests"
       ]
     }
   ],
@@ -145,6 +149,10 @@
     {
       "id": "stronger_claims",
       "requires": "Evidence-specific approval and proof before durability, censorship-resistance, security, SLSA, broad availability, or production-readiness claims."
+    },
+    {
+      "id": "release_tag_or_github_release",
+      "requires": "Separate explicit approval before creating a Git tag, GitHub Release, or public announcement outside committed draft docs."
     }
   ],
   "report_path": "docs/autonomy/next-loop-report.md"

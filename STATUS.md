@@ -6,6 +6,8 @@ Current completion state: **Milestone 1 complete as an evidence-scoped static pr
 
 Current public clone RC: retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` at commit `d596024dac0d90605d4f103d567e5851771be5a8`, verified through `python scripts/forge_registry.py verify-first-public-clone` against primary seed `z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776` and second seed `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877`. Evidence: `evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json` and `evidence/radicle-first-public-clone-second-d596024-2026-06-30.json`.
 
+Current autonomous finish plan: `docs/product-finish-plan.md`, wired into `fixtures/next-loop-controller.json` as `product-finish-alpha` for Loops 83-88. The next loop set targets alpha release handoff, outside-reader clone rehearsal, first-screen product surface, public seed status artifact, decentralized collaboration alpha path, and alpha freeze/CI gate.
+
 Milestone 1 — Local registry/static forge prototype and protocol mapping.
 
 ## Current loop state

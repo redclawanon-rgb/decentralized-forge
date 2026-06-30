@@ -78,6 +78,7 @@ RADICLE_RETAINED_RID_QUICKSTART = ROOT / "docs" / "radicle-retained-rid-quicksta
 FIRST_DECENTRALIZED_REPO_MILESTONE = ROOT / "docs" / "first-decentralized-repo-milestone.md"
 RADICLE_FOLLOWER_REFRESH_SCRIPT = ROOT / "scripts" / "refresh_radicle_follower_seed.py"
 FIRST_PUBLIC_CLONE_RC_PLAN = ROOT / "docs" / "first-public-clone-rc-plan.md"
+PRODUCT_FINISH_PLAN = ROOT / "docs" / "product-finish-plan.md"
 OUTPUT_DEMO_HTML = ROOT / "output" / "demo-project.html"
 OUTPUT_VERIFICATION_BUNDLE = ROOT / "output" / "decentralized-forge-verification-bundle.zip"
 OUTPUT_FORGE_APP_HTML = ROOT / "output" / "forge-app.html"
@@ -457,6 +458,7 @@ class RegistryFixtureTests(unittest.TestCase):
                 "docs/radicle-retained-rid-quickstart.md",
                 "docs/first-public-clone-rc-plan.md",
                 "docs/live-completion-gates.md",
+                "docs/product-finish-plan.md",
                 "docs/portable-bundle-review-checklist.md",
                 "scripts/bootstrap_radicle_follower_seed.py",
                 "scripts/refresh_radicle_follower_seed.py",
@@ -858,20 +860,20 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertEqual(controller["max_iterations_per_run"], 6)
         self.assertIn("run_local_verification_suite", controller["approved_safe_actions"])
         self.assertEqual(controller["standing_live_approval"]["approved_by"], "user_chat_2026-06-28")
-        self.assertEqual(controller["active_goal"]["id"], "first-public-clone-rc")
-        self.assertEqual(controller["active_goal"]["plan"], "docs/first-public-clone-rc-plan.md")
-        self.assertIn("published Radicle direct-seed address", controller["active_goal"]["target_claim"])
+        self.assertEqual(controller["active_goal"]["id"], "product-finish-alpha")
+        self.assertEqual(controller["active_goal"]["plan"], "docs/product-finish-plan.md")
+        self.assertIn("exercise one decentralized collaboration path", controller["active_goal"]["target_claim"])
 
         loop_ids = [loop["id"] for loop in controller["autonomous_loop_sequence"]]
         self.assertEqual(
             loop_ids,
             [
-                "public-clone-surface-audit",
-                "first-public-clone-verifier",
-                "fresh-linux-public-clone-proof",
-                "product-surface-rc-polish",
-                "release-candidate-package",
-                "availability-hardening-backlog",
+                "alpha-release-handoff",
+                "outside-reader-clone-rehearsal",
+                "first-screen-product-surface",
+                "public-seed-status-artifact",
+                "decentralized-collaboration-alpha-path",
+                "alpha-freeze-and-ci-gate",
             ],
         )
 
@@ -894,6 +896,7 @@ class RegistryFixtureTests(unittest.TestCase):
             "direct_outreach",
             "persistent_public_seed_or_background_service",
             "stronger_claims",
+            "release_tag_or_github_release",
         ]:
             self.assertIn(required_gate, blocked)
         combined = json.dumps(controller).lower()
@@ -920,9 +923,9 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("Next Loop Controller Report", result.stdout)
         self.assertIn("Active Goal", result.stdout)
         self.assertIn("Autonomous Loop Sequence", result.stdout)
-        self.assertIn("first-public-clone-rc", result.stdout)
-        self.assertIn("public-clone-surface-audit", result.stdout)
-        self.assertIn("fresh-linux-public-clone-proof", result.stdout)
+        self.assertIn("product-finish-alpha", result.stdout)
+        self.assertIn("outside-reader-clone-rehearsal", result.stdout)
+        self.assertIn("decentralized-collaboration-alpha-path", result.stdout)
         self.assertIn("Approved live action scope", result.stdout)
         self.assertIn("Still blocked without separate approval", result.stdout)
         self.assertIn("Live IPFS, Radicle, Nostr, and signing actions are approved", result.stdout)
@@ -954,6 +957,28 @@ class RegistryFixtureTests(unittest.TestCase):
             "Stop and ask before spending",
             "production/private personal keys",
             "censorship resistance",
+            "production readiness",
+        ]:
+            self.assertIn(required, plan)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, plan.lower())
+
+    def test_product_finish_plan_defines_autonomous_alpha_path(self):
+        plan = PRODUCT_FINISH_PLAN.read_text(encoding="utf-8")
+        for required in [
+            "v0.1.0-alpha",
+            "Definition Of Done",
+            "Loop 83: Alpha Release Handoff",
+            "Loop 84: Outside Reader Clone Rehearsal",
+            "Loop 85: First-Screen Product Surface",
+            "Loop 86: Public Seed Status Artifact",
+            "Loop 87: Decentralized Collaboration Alpha Path",
+            "Loop 88: Alpha Freeze And CI Gate",
+            "third-party or outside-reader clone rehearsal",
+            "selected-relay Nostr issue/patch",
+            "output/public-seed-status.json",
+            "release tags/GitHub Releases/public announcements",
+            "production/private personal keys",
             "production readiness",
         ]:
             self.assertIn(required, plan)

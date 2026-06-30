@@ -27,17 +27,17 @@ python scripts/next_loop_controller.py --check --skip-npm-ci
 
 The controller config is `fixtures/next-loop-controller.json`. The local report path is `docs/autonomy/next-loop-report.md`.
 
-## First Public Clone RC
+## Product Finish Alpha
 
-The active autonomous goal is `first-public-clone-rc`, backed by `docs/first-public-clone-rc-plan.md`.
+The active autonomous goal is `product-finish-alpha`, backed by `docs/product-finish-plan.md`.
 
-The controller may continue through Loops 77-82 without another "continue" prompt when each loop stays inside the recorded approval boundaries and passes its verification gates:
+The controller may continue through Loops 83-88 without another "continue" prompt when each loop stays inside the recorded approval boundaries and passes its verification gates:
 
-- Loop 77: public clone surface audit.
-- Loop 78: first public clone verifier command.
-- Loop 79: fresh Linux public clone proof.
-- Loop 80: product surface RC polish.
-- Loop 81: release candidate package.
-- Loop 82: availability hardening backlog.
+- Loop 83: alpha release handoff.
+- Loop 84: outside-reader clone rehearsal.
+- Loop 85: first-screen product surface.
+- Loop 86: public seed status artifact.
+- Loop 87: decentralized collaboration alpha path.
+- Loop 88: alpha freeze and CI gate.
 
-It still stops before spending, wallets, paid infrastructure, production/private personal key use, direct outreach, new persistent public services, or stronger durability/censorship/security/SLSA/production-readiness claims unless separate approval is recorded.
+It still stops before spending, wallets, paid infrastructure, production/private personal key use, direct outreach, new persistent public services, release tags/GitHub Releases/public announcements, or stronger durability/censorship/security/SLSA/production-readiness claims unless separate approval is recorded.
