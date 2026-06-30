@@ -83,6 +83,7 @@ RADICLE_FOLLOWER_REFRESH_SCRIPT = ROOT / "scripts" / "refresh_radicle_follower_s
 FIRST_PUBLIC_CLONE_RC_PLAN = ROOT / "docs" / "first-public-clone-rc-plan.md"
 PRODUCT_FINISH_PLAN = ROOT / "docs" / "product-finish-plan.md"
 POST_ALPHA_HARDENING_PLAN = ROOT / "docs" / "post-alpha-hardening-plan.md"
+START_PROJECT_QUICKSTART = ROOT / "docs" / "start-project-quickstart.md"
 FIRST_PUBLIC_CLONE_OUTSIDE_READER_REHEARSAL = ROOT / "docs" / "first-public-clone-outside-reader-rehearsal.md"
 PUBLIC_UPDATE_FIRST_CLONE_RC = ROOT / "docs" / "public-update-drafts" / "2026-06-30-first-public-clone-rc.md"
 COMMUNITY_QUICKSTART = ROOT / "docs" / "community-quickstart.md"
@@ -482,6 +483,7 @@ class RegistryFixtureTests(unittest.TestCase):
                 "docs/live-completion-gates.md",
                 "docs/post-alpha-hardening-plan.md",
                 "docs/product-finish-plan.md",
+                "docs/start-project-quickstart.md",
                 "docs/portable-bundle-review-checklist.md",
                 "scripts/bootstrap_radicle_follower_seed.py",
                 "scripts/run_first_public_clone_rehearsal.py",
@@ -859,6 +861,111 @@ class RegistryFixtureTests(unittest.TestCase):
             for unsupported_claim in ["production ready", "durably stored", "pinned and available", "slsa compliant"]:
                 self.assertNotIn(unsupported_claim, combined)
 
+    def test_start_project_creates_user_facing_project_surface(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            repo = Path(tmpdir) / "started-widget"
+            repo.mkdir()
+            subprocess.run(["git", "init", "-b", "main"], cwd=repo, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+            readme = repo / "README.md"
+            readme.write_text("# Started Widget\n\nA tiny project for start-project.\n", encoding="utf-8")
+            subprocess.run(["git", "add", "README.md"], cwd=repo, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+            subprocess.run(
+                [
+                    "git",
+                    "-c",
+                    "user.name=Fixture Author",
+                    "-c",
+                    "user.email=fixture@example.invalid",
+                    "commit",
+                    "-m",
+                    "initial",
+                ],
+                cwd=repo,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True,
+            )
+            registry_path = Path(tmpdir) / "started-widget.registry.json"
+            summary_path = Path(tmpdir) / "started-widget.summary.json"
+            html_path = Path(tmpdir) / "started-widget.html"
+            workbench_path = Path(tmpdir) / "started-widget.forge-app.html"
+            receipt_path = Path(tmpdir) / "started-widget.start-project.json"
+            bundle_path = Path(tmpdir) / "verification-bundle.zip"
+            report_path = Path(tmpdir) / "bundle-report.json"
+
+            exit_code = forge_registry.main([
+                "start-project",
+                str(repo),
+                "--registry",
+                str(registry_path),
+                "--summary",
+                str(summary_path),
+                "--html",
+                str(html_path),
+                "--workbench",
+                str(workbench_path),
+                "--receipt",
+                str(receipt_path),
+                "--bundle",
+                str(bundle_path),
+                "--report-json",
+                str(report_path),
+                "--project-id",
+                "started-widget",
+                "--project-name",
+                "Started Widget",
+                "--version",
+                "0.1.0-local",
+                "--tag",
+                "v0.1.0-local",
+                "--timestamp",
+                "2026-06-30T00:00:00Z",
+            ])
+            self.assertEqual(exit_code, 0)
+
+            registry = json.loads(registry_path.read_text(encoding="utf-8"))
+            render_project_page.validate_registry(registry)
+            artifact = registry["releases"][0]["artifacts"][0]
+            expected_sha256 = hashlib.sha256(readme.read_bytes()).hexdigest()
+            self.assertEqual(registry["project"]["id"], "started-widget")
+            self.assertEqual(registry["project"]["name"], "Started Widget")
+            self.assertEqual(artifact["name"], "README.md")
+            self.assertEqual(artifact["sha256"], expected_sha256)
+            self.assertEqual(artifact["media_type"], "text/markdown")
+            self.assertFalse(registry["substrates"]["ipfs"]["durability_claim"])
+
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+            self.assertEqual(receipt["schema_version"], "decentralized-forge.start-project-receipt.v1")
+            self.assertEqual(receipt["project"]["id"], "started-widget")
+            self.assertEqual(receipt["outputs"]["registry"], str(registry_path))
+            self.assertEqual(receipt["outputs"]["workbench"], str(workbench_path))
+            self.assertIn("python scripts/forge_registry.py validate", receipt["next_commands"][0])
+            self.assertEqual(receipt["radicle_next_gate"]["status"], "not-started-by-start-project")
+            self.assertIn("start-project does not create a Radicle RID", receipt["radicle_next_gate"]["non_claims"])
+
+            summary = json.loads(summary_path.read_text(encoding="utf-8"))
+            self.assertEqual(summary["project"]["id"], "started-widget")
+            self.assertEqual(summary["counts"]["artifacts"], 1)
+            self.assertIn("Started Widget", html_path.read_text(encoding="utf-8"))
+            workbench = workbench_path.read_text(encoding="utf-8")
+            self.assertIn("Started Widget", workbench)
+            embedded = re.search(r'<script id="forge-data" type="application/json">(.*?)</script>', workbench, re.S)
+            self.assertIsNotNone(embedded)
+            workbench_data = json.loads(embedded.group(1))
+            self.assertIn(str(registry_path), workbench_data["generated_from"]["registries"])
+            self.assertEqual(forge_registry.verify_verification_bundle(bundle_path), [])
+            report = json.loads(report_path.read_text(encoding="utf-8"))
+            self.assertTrue(report["verification"]["valid"])
+
+            combined = json.dumps({"registry": registry, "receipt": receipt, "report": report}).lower()
+            for required_boundary in ["local registry scaffold", "not-started-by-start-project", "does not create a radicle rid", "not-pinned"]:
+                self.assertIn(required_boundary, combined)
+            for unsupported_claim in ["production ready", "durably stored", "pinned and available", "slsa compliant"]:
+                self.assertNotIn(unsupported_claim, combined)
+            for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "api_token"]:
+                self.assertNotIn(accidental_secret_marker, combined)
+
     def test_live_gate_inventory_is_read_only_and_secret_free(self):
         payload = live_gate_inventory.inventory()
         self.assertEqual(payload["schema_version"], "decentralized-forge.live-gate-inventory.v1")
@@ -1031,6 +1138,22 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn(required, plan)
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, plan.lower())
+
+    def test_start_project_quickstart_defines_user_project_creation_path(self):
+        doc = START_PROJECT_QUICKSTART.read_text(encoding="utf-8")
+        for required in [
+            "python scripts/forge_registry.py start-project ../my-project",
+            "fixtures/<project-id>.registry.json",
+            "output/<project-id>.registry.forge-app.html",
+            "output/<project-id>.registry.start-project.json",
+            "does not create a Radicle RID",
+            "next decentralized step is a Linux/Radicle genesis gate",
+            "not durable storage",
+            "production readiness",
+        ]:
+            self.assertIn(required, doc)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, doc.lower())
 
     def test_ci_workflow_generates_keyless_attestations_for_release_artifacts(self):
         workflow = CI_WORKFLOW_PATH.read_text(encoding="utf-8")
@@ -2694,6 +2817,7 @@ class RegistryFixtureTests(unittest.TestCase):
             "verify-first-public-clone --plan-only",
             "public-seed-status output/public-seed-status.json",
             "run_first_public_clone_rehearsal.py",
+            "start-project ../my-project",
             "Collaboration Alpha Path",
             "evidence/nostr-loop43-issue-patch-readback-2026-06-28.json",
             "unsigned local JSON",

@@ -56,6 +56,12 @@ python scripts/forge_registry.py export-bundle output/decentralized-forge-verifi
 python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip
 ```
 
+Start another local Git project on the forge surface:
+
+```sh
+python scripts/forge_registry.py start-project ../my-project --project-id my-project --project-name "My Project"
+```
+
 For an outside-reader clone rehearsal, use `docs/first-public-clone-outside-reader-rehearsal.md` or run `python scripts/run_first_public_clone_rehearsal.py` in plan mode first. For decentralized collaboration alpha, inspect the selected-relay Nostr issue/patch evidence in `evidence/nostr-loop43-issue-patch-readback-2026-06-28.json` and the static workbench draft flow in `output/forge-app.html`; the draft flow is unsigned local JSON and does not publish.
 
 | Area | Current state | Not claimed |

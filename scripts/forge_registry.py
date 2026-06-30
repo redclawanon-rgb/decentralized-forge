@@ -781,6 +781,8 @@ def scaffold_registry_guidance(output: Path) -> list[str]:
 def media_type_for_artifact(path: Path, explicit_media_type: str | None = None) -> str:
     if explicit_media_type:
         return explicit_media_type
+    if path.suffix.lower() in {".md", ".markdown"}:
+        return "text/markdown"
     guessed_media_type, _encoding = mimetypes.guess_type(path.name)
     return guessed_media_type or "application/octet-stream"
 
@@ -980,6 +982,128 @@ def onboard_local_project(
     }
 
 
+def default_start_artifact(repo_path: Path, artifact_path: Path | None) -> Path:
+    if artifact_path is not None:
+        return artifact_path
+    readme = repo_path / "README.md"
+    if readme.is_file():
+        return readme
+    raise ValueError("start-project needs --artifact when the repository has no README.md")
+
+
+def start_project_receipt(
+    result: dict,
+    *,
+    app_output: Path,
+    artifact_path: Path,
+) -> dict:
+    registry = result["registry"]
+    paths = result["paths"]
+    project_id = registry["project"]["id"]
+    return {
+        "schema_version": "decentralized-forge.start-project-receipt.v1",
+        "project": {
+            "id": project_id,
+            "name": registry["project"]["name"],
+            "default_branch": registry["project"]["default_branch"],
+        },
+        "outputs": {
+            "registry": relative(paths["registry"]),
+            "summary": relative(paths["summary"]),
+            "html": relative(paths["html"]),
+            "workbench": relative(app_output),
+            "bundle": relative(paths["bundle"]),
+            "report_json": relative(paths["report_json"]) if paths["report_json"] is not None else None,
+            "artifact": relative(artifact_path),
+        },
+        "next_commands": [
+            f"python scripts/forge_registry.py validate {relative(paths['registry'])}",
+            f"python scripts/forge_registry.py render {relative(paths['registry'])} {relative(paths['html'])}",
+            f"python scripts/forge_registry.py render-app {relative(app_output)} --registry fixtures/example-project.registry.json --registry fixtures/portable-lab.registry.json --registry fixtures/onboarding-sample.registry.json --registry {relative(paths['registry'])}",
+            "python scripts/forge_registry.py export-bundle output/decentralized-forge-verification-bundle.zip",
+            "python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip",
+        ],
+        "radicle_next_gate": {
+            "status": "not-started-by-start-project",
+            "summary": "Create a project Radicle RID only after a Linux host with Radicle CLI is selected and the run is recorded as bounded live evidence.",
+            "non_claims": [
+                "start-project does not create a Radicle RID",
+                "start-project does not publish protocol events",
+                "start-project does not start public seeds or background services",
+                "start-project does not use private keys, wallets, paid services, or direct outreach",
+                "start-project does not claim durability, censorship resistance, broad availability, security, SLSA compliance, or production readiness",
+            ],
+        },
+        "non_claims": result["non_claims"],
+    }
+
+
+def start_project(
+    repo_path: Path,
+    artifact_path: Path | None,
+    *,
+    registry_output: Path | None = None,
+    summary_output: Path | None = None,
+    html_output: Path | None = None,
+    app_output: Path | None = None,
+    receipt_output: Path | None = None,
+    bundle_output: Path = DEFAULT_BUNDLE_OUTPUT,
+    report_json_output: Path | None = None,
+    project_id: str | None = None,
+    project_name: str | None = None,
+    description: str | None = None,
+    version: str = "0.1.0-local",
+    tag: str | None = None,
+    artifact_name: str | None = None,
+    media_type: str | None = None,
+    timestamp: str | None = None,
+) -> dict:
+    artifact = default_start_artifact(repo_path, artifact_path)
+    result = onboard_local_project(
+        repo_path,
+        artifact,
+        registry_output=registry_output,
+        summary_output=summary_output,
+        html_output=html_output,
+        bundle_output=bundle_output,
+        report_json_output=report_json_output,
+        project_id=project_id,
+        project_name=project_name,
+        description=description,
+        version=version,
+        tag=tag,
+        artifact_name=artifact_name,
+        media_type=media_type,
+        timestamp=timestamp,
+    )
+    registry_path = result["paths"]["registry"]
+    stem = registry_path.stem
+    workbench_path = app_output or ROOT / "output" / f"{stem}.forge-app.html"
+    render_args = [str(workbench_path)]
+    for registry in [
+        ROOT / "fixtures" / "example-project.registry.json",
+        ROOT / "fixtures" / "portable-lab.registry.json",
+        ROOT / "fixtures" / "onboarding-sample.registry.json",
+        registry_path,
+    ]:
+        if registry.is_file():
+            render_args.extend(["--registry", str(registry)])
+    render_exit = render_forge_app.main(render_args)
+    if render_exit:
+        raise ValueError(f"workbench render failed for started project: {registry_path}")
+
+    receipt = start_project_receipt(result, app_output=workbench_path, artifact_path=artifact)
+    receipt_path = receipt_output or ROOT / "output" / f"{stem}.start-project.json"
+    write_json(receipt_path, receipt)
+    return {
+        **result,
+        "artifact": artifact,
+        "app_output": workbench_path,
+        "receipt": receipt,
+        "receipt_output": receipt_path,
+    }
+
+
 def bundle_role(path: str) -> str:
     if path.startswith("schemas/"):
         return "schema"
@@ -998,7 +1122,7 @@ def bundle_role(path: str) -> str:
 
 def collect_verification_bundle_paths() -> list[Path]:
     paths: set[Path] = set()
-    for pattern in ["schemas/*.json", "fixtures/*.json", "fixtures/*.txt", "evidence/*", "output/*.html", "output/*.summary.json"]:
+    for pattern in ["schemas/*.json", "fixtures/*.json", "fixtures/*.txt", "evidence/*", "output/*.html", "output/*.summary.json", "output/*.start-project.json"]:
         paths.update(path for path in ROOT.glob(pattern) if path.is_file())
 
     for relative_path in [
@@ -1016,6 +1140,7 @@ def collect_verification_bundle_paths() -> list[Path]:
         "docs/product-finish-plan.md",
         "docs/radicle-persistent-seed-plan.md",
         "docs/radicle-retained-rid-quickstart.md",
+        "docs/start-project-quickstart.md",
         relative(DEFAULT_BUNDLE_REVIEW_CHECKLIST),
         "package.json",
         "package-lock.json",
@@ -1948,6 +2073,49 @@ def command_onboard_local_project(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_start_project(args: argparse.Namespace) -> int:
+    result = start_project(
+        args.repository,
+        args.artifact,
+        registry_output=args.registry,
+        summary_output=args.summary,
+        html_output=args.html,
+        app_output=args.workbench,
+        receipt_output=args.receipt,
+        bundle_output=args.bundle,
+        report_json_output=args.report_json,
+        project_id=args.project_id,
+        project_name=args.project_name,
+        description=args.description,
+        version=args.version,
+        tag=args.tag,
+        artifact_name=args.artifact_name,
+        media_type=args.media_type,
+        timestamp=args.timestamp,
+    )
+    registry = result["registry"]
+    paths = result["paths"]
+    report = result["bundle_report"]
+    print(f"started project: {registry['project']['id']}")
+    print("- scope: local project registry, local artifact metadata, rendered project page, workbench entry, and verification bundle")
+    print(f"- registry: {relative(paths['registry'])}")
+    print(f"- summary: {relative(paths['summary'])}")
+    print(f"- html: {relative(paths['html'])}")
+    print(f"- workbench: {relative(result['app_output'])}")
+    print(f"- receipt: {relative(result['receipt_output'])}")
+    print(f"- bundle: {relative(paths['bundle'])}")
+    print(f"- bundle_valid: {str(report['verification']['valid']).lower()}")
+    print("- next commands:")
+    for item in result["receipt"]["next_commands"]:
+        print(f"  - {item}")
+    print("- radicle next gate:")
+    print(f"  - {result['receipt']['radicle_next_gate']['summary']}")
+    print("- non-claims:")
+    for item in result["receipt"]["radicle_next_gate"]["non_claims"]:
+        print(f"  - {item}")
+    return 0
+
+
 def command_render_app(args: argparse.Namespace) -> int:
     render_args = [str(args.output)]
     for registry in args.registries:
@@ -2370,6 +2538,29 @@ def build_parser() -> argparse.ArgumentParser:
     onboard.add_argument("--media-type", help="Override guessed media type")
     onboard.add_argument("--timestamp", help="Override artifact verification timestamp")
     onboard.set_defaults(func=command_onboard_local_project)
+
+    start_project_parser = subparsers.add_parser(
+        "start-project",
+        help="Start a project on the local forge surface with registry, artifact metadata, page, workbench, receipt, and bundle",
+    )
+    start_project_parser.add_argument("repository", type=Path, help="Local Git worktree to start on the forge")
+    start_project_parser.add_argument("--artifact", type=Path, help="Local artifact file to hash and reference; defaults to repository README.md")
+    start_project_parser.add_argument("--registry", type=Path, help="Registry fixture JSON to write; defaults to fixtures/<project-id>.registry.json")
+    start_project_parser.add_argument("--summary", type=Path, help="Summary JSON to write; defaults to output/<registry-stem>.summary.json")
+    start_project_parser.add_argument("--html", type=Path, help="Rendered HTML to write; defaults to output/<registry-stem>.html")
+    start_project_parser.add_argument("--workbench", type=Path, help="Workbench HTML to write; defaults to output/<registry-stem>.forge-app.html")
+    start_project_parser.add_argument("--receipt", type=Path, help="Start-project receipt JSON to write; defaults to output/<registry-stem>.start-project.json")
+    start_project_parser.add_argument("--bundle", type=Path, default=DEFAULT_BUNDLE_OUTPUT, help="Verification bundle to refresh")
+    start_project_parser.add_argument("--report-json", type=Path, help="Optional bundle report JSON to write after refresh")
+    start_project_parser.add_argument("--project-id", help="Override the generated project id")
+    start_project_parser.add_argument("--project-name", help="Override the generated project name")
+    start_project_parser.add_argument("--description", help="Override the generated project description")
+    start_project_parser.add_argument("--version", default="0.1.0-local", help="Release version to create or update")
+    start_project_parser.add_argument("--tag", help="Release tag; defaults to --version")
+    start_project_parser.add_argument("--artifact-name", help="Artifact display name; defaults to the file name")
+    start_project_parser.add_argument("--media-type", help="Override guessed media type")
+    start_project_parser.add_argument("--timestamp", help="Override artifact verification timestamp")
+    start_project_parser.set_defaults(func=command_start_project)
 
     render_app = subparsers.add_parser("render-app", help="Render the static forge workbench app")
     render_app.add_argument("output", type=Path, nargs="?", default=render_forge_app.DEFAULT_OUTPUT)

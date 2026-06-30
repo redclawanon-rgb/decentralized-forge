@@ -55,8 +55,8 @@ again using disposable reader state and no maintainer key material.
 ## Portable Bundle
 
 - Bundle: `output/decentralized-forge-verification-bundle.zip`
-- Bundle SHA-256: `f1c4e6da5bd8b752220661292b114993033f7a42c5b61b1bb9794550be90e1ba`
-- Bundle size: `2243187` bytes
+- Bundle SHA-256: `07ce69f26721c823948497dca602bca250ba604e0be668fd8fdf77c14723659b`
+- Bundle size: `2255226` bytes
 - Local source commit before this RC draft commit: `eacf9844ddbf34d173a3ce38640c81e755e30dce`
 - Release commit: use the pushed commit that contains this draft, the Loop 79 evidence, and the regenerated bundle.
 - Public seed status: `output/public-seed-status.json`
