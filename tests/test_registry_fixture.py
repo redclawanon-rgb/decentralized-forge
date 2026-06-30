@@ -1074,6 +1074,14 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertEqual(receipt["outputs"]["radicle_genesis_json"], "output/started-widget.radicle-genesis.json")
             self.assertEqual(receipt["outputs"]["radicle_genesis_markdown"], "output/started-widget.radicle-genesis.md")
             self.assertIn("python scripts/forge_registry.py validate", receipt["next_commands"][0])
+            receipt_commands = "\n".join(receipt["next_commands"])
+            self.assertIn("add-issue", receipt_commands)
+            self.assertIn("add-patch", receipt_commands)
+            self.assertIn("export-nostr-draft", receipt_commands)
+            self.assertIn("run_nostr_issue_patch_readback.mjs --plan-only", receipt_commands)
+            self.assertEqual(receipt["collaboration_next_gate"]["status"], "local-records-needed")
+            self.assertIn("output/started-widget.nostr-draft-readback-plan.json", receipt["collaboration_next_gate"]["plan_replay_command"])
+            self.assertIn("evidence/started-widget.nostr-draft-collaboration-readback.json", receipt["collaboration_next_gate"]["live_replay_command"])
             self.assertEqual(receipt["radicle_next_gate"]["status"], "not-started-by-start-project")
             self.assertIn("scripts/run_started_project_radicle_genesis.py", receipt["radicle_next_gate"]["command"])
             self.assertIn("--repository", receipt["radicle_next_gate"]["command"])
@@ -1218,6 +1226,11 @@ class RegistryFixtureTests(unittest.TestCase):
             workbench_after_collaboration = workbench_path.read_text(encoding="utf-8")
             self.assertIn("Document first contributor task", workbench_after_collaboration)
             self.assertIn("Add first patch proposal", workbench_after_collaboration)
+            self.assertIn("Draft export command", workbench_after_collaboration)
+            self.assertIn("replay plan available", workbench_after_collaboration)
+            self.assertIn("run_nostr_issue_patch_readback.mjs --plan-only", workbench_after_collaboration)
+            self.assertIn("output/started-widget.issue.issue-local-1.nostr-draft.json", workbench_after_collaboration)
+            self.assertIn("output/started-widget.patch.patch-local-1.nostr-draft.json", workbench_after_collaboration)
             self.assertEqual(forge_registry.verify_verification_bundle(bundle_path), [])
 
             combined = json.dumps({"registry": collaborated, "workbench": workbench_after_collaboration}).lower()
@@ -1273,6 +1286,38 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn("project-specific draft must be signed with a disposable", draft_combined)
             for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "api_token"]:
                 self.assertNotIn(accidental_secret_marker, draft_combined)
+
+            replay_plan_path = Path(tmpdir) / "started-widget.nostr-draft-readback-plan.json"
+            result = subprocess.run(
+                [
+                    "node",
+                    str(NOSTR_ISSUE_PATCH_SCRIPT),
+                    "--plan-only",
+                    "--draft",
+                    str(issue_draft_path),
+                    "--draft",
+                    str(patch_draft_path),
+                    "--output",
+                    str(replay_plan_path),
+                    "--created-at",
+                    "1782778800",
+                ],
+                cwd=ROOT,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            replay_plan = json.loads(replay_plan_path.read_text(encoding="utf-8"))
+            self.assertEqual(replay_plan["source_mode"], "drafts")
+            self.assertEqual(replay_plan["event_count"], 2)
+            self.assertEqual(
+                {item["mapped_registry_path"] for item in replay_plan["events"]},
+                {"issues.issue-local-1", "patches.patch-local-1"},
+            )
+            self.assertTrue(replay_plan["verification_passed"])
+            self.assertIn("no Nostr event was signed", json.dumps(replay_plan))
 
     def test_live_gate_inventory_is_read_only_and_secret_free(self):
         payload = live_gate_inventory.inventory()

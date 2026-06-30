@@ -999,6 +999,135 @@ def default_nostr_draft_paths(registry: dict, *, kind: str, record_id: str) -> t
     return ROOT / "output" / f"{stem}.json", ROOT / "output" / f"{stem}.md"
 
 
+def default_nostr_replay_paths(registry: dict) -> tuple[Path, Path]:
+    project_id = slugify_project_id(registry["project"]["id"])
+    return (
+        ROOT / "output" / f"{project_id}.nostr-draft-readback-plan.json",
+        ROOT / "evidence" / f"{project_id}.nostr-draft-collaboration-readback.json",
+    )
+
+
+def nostr_draft_export_command(registry_path: Path, registry: dict, *, kind: str, record_id: str) -> str:
+    output_path, markdown_path = default_nostr_draft_paths(registry, kind=kind, record_id=record_id)
+    return format_command(
+        [
+            "python",
+            "scripts/forge_registry.py",
+            "export-nostr-draft",
+            relative(registry_path),
+            kind,
+            record_id,
+            "--output",
+            relative(output_path),
+            "--markdown",
+            relative(markdown_path),
+        ]
+    )
+
+
+def nostr_replay_command(registry: dict, *, issue_id: str, patch_id: str, plan_only: bool) -> str:
+    issue_draft, _issue_markdown = default_nostr_draft_paths(registry, kind="issue", record_id=issue_id)
+    patch_draft, _patch_markdown = default_nostr_draft_paths(registry, kind="patch", record_id=patch_id)
+    plan_path, evidence_path = default_nostr_replay_paths(registry)
+    parts = [
+        "node",
+        "scripts/run_nostr_issue_patch_readback.mjs",
+    ]
+    if plan_only:
+        parts.append("--plan-only")
+    parts.extend(
+        [
+            "--draft",
+            relative(issue_draft),
+            "--draft",
+            relative(patch_draft),
+            "--output",
+            relative(plan_path if plan_only else evidence_path),
+        ]
+    )
+    return format_command(parts)
+
+
+def collaboration_next_gate(
+    registry_path: Path,
+    registry: dict,
+    *,
+    issue_id: str | None = None,
+    patch_id: str | None = None,
+) -> dict:
+    issues = [item for item in registry.get("issues", []) if isinstance(item, dict)]
+    patches = [item for item in registry.get("patches", []) if isinstance(item, dict)]
+    resolved_issue_id = issue_id or (issues[0]["id"] if issues else next_collaboration_id("issue", issues))
+    resolved_patch_id = patch_id or (patches[0]["id"] if patches else next_collaboration_id("patch", patches))
+    plan_path, evidence_path = default_nostr_replay_paths(registry)
+    return {
+        "status": "local-records-ready" if issues and patches else "local-records-needed",
+        "issue_id": resolved_issue_id,
+        "patch_id": resolved_patch_id,
+        "add_issue_command": format_command(
+            [
+                "python",
+                "scripts/forge_registry.py",
+                "add-issue",
+                relative(registry_path),
+                "--id",
+                resolved_issue_id,
+                "--title",
+                "Document first contributor task",
+                "--summary",
+                "Track the first project task.",
+            ]
+        ),
+        "add_patch_command": format_command(
+            [
+                "python",
+                "scripts/forge_registry.py",
+                "add-patch",
+                relative(registry_path),
+                "--id",
+                resolved_patch_id,
+                "--title",
+                "Add first patch proposal",
+                "--summary",
+                "Describe the first proposed change.",
+            ]
+        ),
+        "export_issue_draft_command": nostr_draft_export_command(
+            registry_path,
+            registry,
+            kind="issue",
+            record_id=resolved_issue_id,
+        ),
+        "export_patch_draft_command": nostr_draft_export_command(
+            registry_path,
+            registry,
+            kind="patch",
+            record_id=resolved_patch_id,
+        ),
+        "plan_replay_command": nostr_replay_command(
+            registry,
+            issue_id=resolved_issue_id,
+            patch_id=resolved_patch_id,
+            plan_only=True,
+        ),
+        "live_replay_command": nostr_replay_command(
+            registry,
+            issue_id=resolved_issue_id,
+            patch_id=resolved_patch_id,
+            plan_only=False,
+        ),
+        "plan_output": relative(plan_path),
+        "live_evidence_output": relative(evidence_path),
+        "non_claims": [
+            "add-issue and add-patch create local registry records only",
+            "export-nostr-draft creates unsigned draft payloads only",
+            "plan replay does not sign, publish, fetch, or read back from relays",
+            "live replay uses disposable generated key material and selected-relay readback only",
+            "not durability, global propagation, identity trust, security, full NIP-34/forge compatibility, or production readiness",
+        ],
+    }
+
+
 def export_nostr_collaboration_draft(
     registry_path: Path,
     *,
@@ -1385,6 +1514,7 @@ def start_project_receipt(
     radicle_evidence, radicle_markdown = radicle_genesis_output_paths(project_id)
     radicle_evidence = radicle_evidence_output or radicle_evidence
     radicle_markdown = radicle_markdown_output or radicle_markdown
+    collaboration_gate = collaboration_next_gate(paths["registry"], registry)
     return {
         "schema_version": "decentralized-forge.start-project-receipt.v1",
         "project": {
@@ -1407,10 +1537,17 @@ def start_project_receipt(
             f"python scripts/forge_registry.py validate {relative(paths['registry'])}",
             f"python scripts/forge_registry.py render {relative(paths['registry'])} {relative(paths['html'])}",
             f"python scripts/forge_registry.py render-app {relative(app_output)} --registry fixtures/example-project.registry.json --registry fixtures/portable-lab.registry.json --registry fixtures/onboarding-sample.registry.json --registry {relative(paths['registry'])}",
+            collaboration_gate["add_issue_command"],
+            collaboration_gate["add_patch_command"],
+            collaboration_gate["export_issue_draft_command"],
+            collaboration_gate["export_patch_draft_command"],
+            collaboration_gate["plan_replay_command"],
+            collaboration_gate["live_replay_command"],
             format_command(radicle_command_parts),
             "python scripts/forge_registry.py export-bundle output/decentralized-forge-verification-bundle.zip",
             "python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip",
         ],
+        "collaboration_next_gate": collaboration_gate,
         "radicle_next_gate": {
             "status": "not-started-by-start-project",
             "summary": "Create a project Radicle RID only after a Linux host with Radicle CLI is selected and the run is recorded as bounded live evidence.",
@@ -2510,8 +2647,19 @@ def command_add_collaboration_record(args: argparse.Namespace) -> int:
     write_json(args.registry, registry)
     collection_name = "issues" if args.kind == "issue" else "patches"
     record = registry[collection_name][-1]
+    if args.kind == "issue":
+        collaboration_gate = collaboration_next_gate(args.registry, registry, issue_id=record["id"])
+    else:
+        collaboration_gate = collaboration_next_gate(args.registry, registry, patch_id=record["id"])
     print(f"recorded local {args.kind}: {record['id']} -> {relative(args.registry)}")
     print("- scope: local registry collaboration record only; no publish, signing, relay delivery, or production claim")
+    print("- collaboration next gate:")
+    print(f"  - {collaboration_gate[f'export_{args.kind}_draft_command']}")
+    if collaboration_gate["status"] != "local-records-ready":
+        counterpart = "patch" if args.kind == "issue" else "issue"
+        print(f"  - add the first {counterpart} record before running the issue+patch replay plan")
+    print(f"  - {collaboration_gate['plan_replay_command']}")
+    print(f"  - {collaboration_gate['live_replay_command']}")
     if args.no_refresh:
         print("- refresh skipped")
         print(f"  - python scripts/forge_registry.py render {relative(args.registry)} output/{args.registry.stem}.html")
@@ -2533,7 +2681,7 @@ def command_add_collaboration_record(args: argparse.Namespace) -> int:
     if refreshed["report_json"] is not None:
         print(f"- report_json: {relative(refreshed['report_json'])}")
     print(f"- bundle_valid: {str(refreshed['bundle_report']['verification']['valid']).lower()}")
-    print("- next gate: use the workbench Nostr draft or selected-relay replay when live decentralized collaboration evidence is required")
+    print("- next gate: export Nostr drafts, review the replay plan, then run bounded selected-relay replay only when live decentralized collaboration evidence is required")
     return 0
 
 

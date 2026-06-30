@@ -102,12 +102,13 @@ def build_app_data(args: argparse.Namespace) -> dict:
     keyless_import = read_json(args.keyless_import)
 
     projects = []
-    for source, registry in zip(registry_sources, registries):
+    for source, source_path, registry in zip(registry_sources, args.registries, registries):
         projects.append(
             {
                 "source": source,
                 "summary": forge_registry.registry_summary(registry, ROOT / source),
                 "registry": registry,
+                "collaboration_next_gate": forge_registry.collaboration_next_gate(source_path, registry),
             }
         )
 
@@ -391,14 +392,57 @@ function metric(label, value) {{
   return `<div class="metric span-3"><strong>${{escapeHtml(value)}}</strong><span class="muted">${{escapeHtml(label)}}</span></div>`;
 }}
 
+function slug(value) {{
+  const slugged = String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').replace(/-+/g, '-');
+  return slugged || 'local-import';
+}}
+
+function draftPath(item) {{
+  return `output/${{slug(registry().project.id)}}.${{item.type}}.${{slug(item.id)}}.nostr-draft.json`;
+}}
+
+function draftMarkdownPath(item) {{
+  return draftPath(item).replace(/\\.json$/, '.md');
+}}
+
+function draftExportCommand(item) {{
+  return `python scripts/forge_registry.py export-nostr-draft ${{commandArg(project().source)}} ${{item.type}} ${{commandArg(item.id)}} --output ${{commandArg(draftPath(item))}} --markdown ${{commandArg(draftMarkdownPath(item))}}`;
+}}
+
+function firstLocalRecord(type) {{
+  const rows = type === 'issue' ? (registry().issues || []) : (registry().patches || []);
+  return rows[0] ? {{...rows[0], type}} : null;
+}}
+
+function collaborationReplayCommands() {{
+  const gate = project().collaboration_next_gate || {{}};
+  if (gate.status === 'local-records-ready' && gate.plan_replay_command && gate.live_replay_command) {{
+    return {{
+      plan: gate.plan_replay_command,
+      live: gate.live_replay_command
+    }};
+  }}
+  const issue = firstLocalRecord('issue');
+  const patch = firstLocalRecord('patch');
+  if (!issue || !patch) return null;
+  const planOutput = `output/${{slug(registry().project.id)}}.nostr-draft-readback-plan.json`;
+  const evidenceOutput = `evidence/${{slug(registry().project.id)}}.nostr-draft-collaboration-readback.json`;
+  const draftArgs = `--draft ${{commandArg(draftPath(issue))}} --draft ${{commandArg(draftPath(patch))}}`;
+  return {{
+    plan: `node scripts/run_nostr_issue_patch_readback.mjs --plan-only ${{draftArgs}} --output ${{commandArg(planOutput)}}`,
+    live: `node scripts/run_nostr_issue_patch_readback.mjs ${{draftArgs}} --output ${{commandArg(evidenceOutput)}}`
+  }};
+}}
+
 function collaborationRows() {{
-  const localIssues = (registry().issues || []).map((item) => ({{...item, type: 'issue', evidence: 'local registry fixture'}}));
-  const localPatches = (registry().patches || []).map((item) => ({{...item, type: 'patch', evidence: 'local registry fixture'}}));
+  const localIssues = (registry().issues || []).map((item) => ({{...item, type: 'issue', evidence: 'local registry fixture', export_command: draftExportCommand({{...item, type: 'issue'}})}}));
+  const localPatches = (registry().patches || []).map((item) => ({{...item, type: 'patch', evidence: 'local registry fixture', export_command: draftExportCommand({{...item, type: 'patch'}})}}));
   const live = app.live_nostr_collaboration.map((item) => ({{...item, evidence: 'selected-relay readback'}}));
   return [...live, ...localIssues, ...localPatches].filter((item) => state.collabFilter === 'all' || item.type === state.collabFilter);
 }}
 
 function renderCollaboration() {{
+  const replay = collaborationReplayCommands();
   $('view-collaboration').innerHTML = `
     <div class="toolbar">
       <select id="collabFilter" aria-label="Collaboration filter">
@@ -407,7 +451,16 @@ function renderCollaboration() {{
         <option value="patch">Patches</option>
       </select>
       ${{badge('selected-relay readback is narrow evidence', 'warn')}}
+      ${{badge(replay ? 'replay plan available' : 'add issue and patch for replay plan', replay ? 'good' : 'warn')}}
     </div>
+    ${{replay ? `
+      <section class="panel">
+        <h2>Nostr replay gate</h2>
+        <div class="grid">
+          <label class="field span-6">Plan command<textarea class="output command-output" readonly>${{escapeHtml(replay.plan)}}</textarea></label>
+          <label class="field span-6">Live command<textarea class="output command-output" readonly>${{escapeHtml(replay.live)}}</textarea></label>
+        </div>
+      </section>` : ''}}
     <div id="collabList"></div>`;
   $('collabFilter').value = state.collabFilter;
   $('collabFilter').onchange = (event) => {{ state.collabFilter = event.target.value; renderCollaboration(); }};
@@ -418,8 +471,10 @@ function renderCollaboration() {{
       ${{badge(item.type, item.type === 'issue' ? 'blue' : 'rose')}}
       ${{badge(item.status || 'readback', 'good')}}
       ${{badge(item.evidence, item.evidence.includes('readback') ? 'good' : 'warn')}}
+      ${{item.export_command ? badge('draft ready', 'good') : ''}}
       ${{item.readback_relays ? item.readback_relays.map((relay) => badge(relay, 'blue')).join('') : ''}}
       ${{meta([['ID', item.id], ['Mapped path', item.mapped_registry_path], ['Boundary', item.claim_boundary || 'local fixture only']])}}
+      ${{item.export_command ? `<label class="field">Draft export command<textarea class="output command-output" readonly>${{escapeHtml(item.export_command)}}</textarea></label>` : ''}}
     </article>`).join('');
 }}
 
