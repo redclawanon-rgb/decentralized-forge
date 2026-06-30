@@ -1,0 +1,63 @@
+{
+  "schema_version": "decentralized-forge.loop75-follower-sync.v2",
+  "host": "openclaw",
+  "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+  "expected_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+  "source_seed": "z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr@100.83.206.66:8799",
+  "source_seed_node_id": "z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr",
+  "sync_fetch_succeeded": true,
+  "seed_policy_succeeded": true,
+  "signed_refs_feature_level": "root",
+  "replicas": 1,
+  "secret_values_recorded": false,
+  "commands": [
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "connect",
+        "z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr@100.83.206.66:8799",
+        "--timeout",
+        "30s"
+      ],
+      "returncode": 0,
+      "stdout": "\u2713 Connecting to z6Mks7m\u2026UbrPufr@100.83.206.66:8799...\n",
+      "stderr": "",
+      "duration_seconds": 0.127
+    },
+    {
+      "cmd": [
+        "rad",
+        "sync",
+        "--fetch",
+        "--seed",
+        "z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr",
+        "--replicas",
+        "1",
+        "--timeout",
+        "120s",
+        "--signed-refs-feature-level",
+        "root",
+        "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy"
+      ],
+      "returncode": 0,
+      "stdout": "Fetching rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy from the network, found 4 potential seed(s).\n\u2713 Target met: 1 seed(s)\n\ud83c\udf31 Fetched from z6MkrLMMsiPWUcNPHcRajuMi9mDfYckSoJyPwwnknocNYPm7\n",
+      "stderr": "",
+      "duration_seconds": 0.613
+    },
+    {
+      "cmd": [
+        "rad",
+        "seed",
+        "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+        "--scope",
+        "all",
+        "--no-fetch"
+      ],
+      "returncode": 0,
+      "stdout": "\u2713 Inventory updated with rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy\n\u2713 Seeding policy exists for rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy with scope 'all'\n",
+      "stderr": "",
+      "duration_seconds": 0.012
+    }
+  ]
+}

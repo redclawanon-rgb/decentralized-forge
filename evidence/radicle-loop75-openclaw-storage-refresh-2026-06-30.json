@@ -1,0 +1,148 @@
+{
+  "schema_version": "decentralized-forge.loop75-follower-storage-refresh.v1",
+  "host": "openclaw",
+  "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+  "expected_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+  "source_seed": "z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr@100.83.206.66:8799",
+  "backup_path": "/home/openclaw/df-rad-follower/backups/loop75-z3Q8ePG6Qs4PQi1SWf9BEzDayENcy-20260630T010108Z",
+  "storage_moved_to_backup": true,
+  "clone_succeeded": true,
+  "readback_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+  "readback_matches_expected": true,
+  "seed_policy_refreshed": true,
+  "service_active_after_refresh": true,
+  "secret_values_recorded": false,
+  "commands": [
+    {
+      "cmd": [
+        "systemctl",
+        "--user",
+        "stop",
+        "decentralized-forge-radicle-seed.service"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 0.077
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "stop"
+      ],
+      "returncode": 0,
+      "stdout": "\u2717 Stopping node... error: node is not running\n",
+      "stderr": "",
+      "duration_seconds": 0.13
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "start",
+        "--",
+        "--listen",
+        "0.0.0.0:8776"
+      ],
+      "returncode": 0,
+      "stdout": "\u2713 Node started (808195)\nTo stay in sync with the network, leave the node running in the background.\nTo learn more, run `rad node --help`.\n",
+      "stderr": "",
+      "duration_seconds": 0.733
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "connect",
+        "z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr@100.83.206.66:8799",
+        "--timeout",
+        "30s"
+      ],
+      "returncode": 0,
+      "stdout": "\u2713 Connecting to z6Mks7m\u2026UbrPufr@100.83.206.66:8799...\n",
+      "stderr": "",
+      "duration_seconds": 0.129
+    },
+    {
+      "cmd": [
+        "rad",
+        "clone",
+        "--timeout",
+        "180s",
+        "--seed",
+        "z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr",
+        "--signed-refs-feature-level",
+        "root",
+        "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+        "/home/openclaw/df-rad-follower/readback/decentralized-forge"
+      ],
+      "returncode": 0,
+      "stdout": "Fetching rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy from the network, found 5 potential seed(s).\n\u2713 Target met: 1 preferred seed(s).\n\u2713 Creating checkout in .//home/openclaw/df-rad-follower/readback/decentralized-forge..\n\u2713 Remote df-retained-maintainer@z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr added\n\u2713 Remote-tracking branch df-retained-maintainer@z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr/main created for z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr\n\u2713 Repository successfully cloned under /home/openclaw/df-rad-follower/readback/decentralized-forge/\n\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 decentralized-forge                                                                                                    \u2502\n\u2502 Decentralized Forge retained-maintainer Radicle repository; evidence-scoped, no durability/security/production claims. \u2502\n\u2502 0 issues \u00b7 0 patches                                                                                                   \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\nRun `cd .//home/openclaw/df-rad-follower/readback/decentralized-forge` to go to the repository directory.\n",
+      "stderr": "",
+      "duration_seconds": 1.48
+    },
+    {
+      "cmd": [
+        "git",
+        "-C",
+        "/home/openclaw/df-rad-follower/readback/decentralized-forge",
+        "rev-parse",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "stdout": "d596024dac0d90605d4f103d567e5851771be5a8\n",
+      "stderr": "",
+      "duration_seconds": 0.004
+    },
+    {
+      "cmd": [
+        "rad",
+        "seed",
+        "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+        "--scope",
+        "all",
+        "--no-fetch"
+      ],
+      "returncode": 0,
+      "stdout": "\u2713 Inventory updated with rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy\n\u2713 Seeding policy exists for rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy with scope 'all'\n",
+      "stderr": "",
+      "duration_seconds": 0.019
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "stop"
+      ],
+      "returncode": 0,
+      "stdout": "\u2713 Node stopped\n",
+      "stderr": "",
+      "duration_seconds": 1.094
+    },
+    {
+      "cmd": [
+        "systemctl",
+        "--user",
+        "start",
+        "decentralized-forge-radicle-seed.service"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 0.083
+    },
+    {
+      "cmd": [
+        "systemctl",
+        "--user",
+        "is-active",
+        "decentralized-forge-radicle-seed.service"
+      ],
+      "returncode": 0,
+      "stdout": "active\n",
+      "stderr": "",
+      "duration_seconds": 0.012
+    }
+  ]
+}

@@ -265,21 +265,24 @@ def live_evidence_entry(entry_id: str, index_path: Path = DEFAULT_LIVE_EVIDENCE_
 
 def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_INDEX) -> dict:
     try:
-        entry = live_evidence_entry("loop72-radicle-public-seed-update-ef16e2a", index_path)
+        entry = live_evidence_entry("loop75-radicle-public-seed-update-d596024", index_path)
     except ValueError:
         try:
-            entry = live_evidence_entry("loop70-radicle-public-seed-update-propagation", index_path)
+            entry = live_evidence_entry("loop72-radicle-public-seed-update-ef16e2a", index_path)
         except ValueError:
             try:
-                entry = live_evidence_entry("loop67-radicle-vps-follower-public-readback", index_path)
+                entry = live_evidence_entry("loop70-radicle-public-seed-update-propagation", index_path)
             except ValueError:
                 try:
-                    entry = live_evidence_entry("loop66-radicle-seed-restart-check", index_path)
+                    entry = live_evidence_entry("loop67-radicle-vps-follower-public-readback", index_path)
                 except ValueError:
                     try:
-                        entry = live_evidence_entry("loop65-radicle-independent-availability-check", index_path)
+                        entry = live_evidence_entry("loop66-radicle-seed-restart-check", index_path)
                     except ValueError:
-                        entry = live_evidence_entry("loop63-radicle-retained-update-check", index_path)
+                        try:
+                            entry = live_evidence_entry("loop65-radicle-independent-availability-check", index_path)
+                        except ValueError:
+                            entry = live_evidence_entry("loop63-radicle-retained-update-check", index_path)
     public = entry.get("public_identifiers")
     if not isinstance(public, dict):
         raise ValueError(f"{entry.get('id', 'retained Radicle evidence')} missing public_identifiers")
@@ -288,11 +291,14 @@ def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_I
         "loop67-radicle-vps-follower-public-readback",
         "loop70-radicle-public-seed-update-propagation",
         "loop72-radicle-public-seed-update-ef16e2a",
+        "loop75-radicle-public-seed-update-d596024",
     }
     is_public_vps_update = entry.get("id") in {
         "loop70-radicle-public-seed-update-propagation",
         "loop72-radicle-public-seed-update-ef16e2a",
+        "loop75-radicle-public-seed-update-d596024",
     }
+    is_two_public_seed_update = entry.get("id") == "loop75-radicle-public-seed-update-d596024"
     is_independent_availability = entry.get("id") == "loop65-radicle-independent-availability-check"
     is_seed_restart = entry.get("id") == "loop66-radicle-seed-restart-check"
     required = ["rid", "current_source_commit", "retained_state_committed", "secret_values_recorded"]
@@ -331,7 +337,9 @@ def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_I
         raise ValueError("loop65 follower seed did not succeed")
     if public["retained_state_committed"] is not False or public["secret_values_recorded"] is not False:
         raise ValueError(f"{entry['id']} retained Radicle evidence is not secret-free")
-    if is_public_vps_update:
+    if is_two_public_seed_update:
+        availability_mode = "two public follower-seed update readback"
+    elif is_public_vps_update:
         availability_mode = "public VPS follower-seed update readback"
     elif is_public_vps_seed:
         availability_mode = "public VPS follower-seed readback"

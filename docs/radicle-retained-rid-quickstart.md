@@ -8,15 +8,15 @@ The verified retained RID is:
 rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy
 ```
 
-Loop 72 verified that this RID advanced to commit:
+Loop 75 verified that this RID advanced to commit:
 
 ```text
-ef16e2ad39d3e13bdcc9d454443c5bbb17733c68
+d596024dac0d90605d4f103d567e5851771be5a8
 ```
 
-The strongest matching evidence is `evidence/radicle-public-seed-update-ef16e2a-2026-06-29.json`: the retained RID advanced to the updated commit, the `openclaw` VPS follower seed synced it, the temporary maintainer bridge was stopped, and a fresh reader on `ubuntu-work` cloned the updated commit from the public seed.
+The strongest matching evidence is `evidence/radicle-public-seed-update-d596024-2026-06-30.json`: the retained RID advanced to the updated commit, stale follower caches were refreshed with host-local backups, the temporary retained maintainer seed was stopped, and a fresh reader on `ubuntu-work` cloned the updated commit from both public seed addresses.
 
-Loop 73 added a second persistent follower seed on `ubuntu-work` with its own Radicle state and node ID `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A`. Loop 74 verified public readback through `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877`, which relays from `openclaw` public ingress to the `ubuntu-work` seed over Tailnet.
+Loop 73 added a second persistent follower seed on `ubuntu-work` with its own Radicle state and node ID `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A`. Loop 74 verified public readback through `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877`, which relays from `openclaw` public ingress to the `ubuntu-work` seed over Tailnet. Loop 75 verified that both public seed addresses now serve the current commit.
 
 ## Generate The Current Recipe
 
@@ -36,12 +36,12 @@ The command reads `fixtures/live-evidence-index.json`, checks the strongest reta
 
 ## Maintainer-Assisted Direct-Seed Clone
 
-Loop 72 proved a public direct-seed update readback through the `openclaw` VPS follower seed. Default public-routing availability is still not claimed, so the supported community path is direct seed:
+Loop 75 proved public direct-seed update readback through both public follower seed addresses. Default public-routing availability is still not claimed, so the supported community path is direct seed:
 
 1. Use the current public seed address: `z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776`.
 2. Connect to that peer from a fresh Radicle profile.
 3. The reader uses Radicle 1.9.1 or compatible tooling to connect to that peer and clone the retained RID.
-4. The reader checks that `git rev-parse HEAD` prints `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`.
+4. The reader checks that `git rev-parse HEAD` prints `d596024dac0d90605d4f103d567e5851771be5a8`.
 
 Template commands:
 

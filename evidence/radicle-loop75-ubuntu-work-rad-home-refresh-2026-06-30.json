@@ -1,0 +1,172 @@
+{
+  "schema_version": "decentralized-forge.loop75-follower-rad-home-refresh.v1",
+  "host": "ubuntu-work",
+  "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+  "expected_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+  "source_seed": "z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr@100.83.206.66:8799",
+  "keys_preserved": true,
+  "config_preserved": true,
+  "expected_node_id": "z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A",
+  "node_id_preserved": true,
+  "clone_succeeded": true,
+  "readback_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+  "readback_matches_expected": true,
+  "seed_policy_succeeded": true,
+  "service_active_after_refresh": true,
+  "secret_values_recorded": false,
+  "commands": [
+    {
+      "cmd": [
+        "systemctl",
+        "--user",
+        "stop",
+        "decentralized-forge-radicle-mirror-seed.service"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 0.011
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "stop"
+      ],
+      "returncode": 0,
+      "stdout": "\u2717 Stopping node... error: node is not running\n",
+      "stderr": "",
+      "duration_seconds": 0.127
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "start",
+        "--",
+        "--listen",
+        "100.83.206.66:8877"
+      ],
+      "returncode": 0,
+      "stdout": "\u2713 Node started (2117688)\nTo stay in sync with the network, leave the node running in the background.\nTo learn more, run `rad node --help`.\n",
+      "stderr": "",
+      "duration_seconds": 0.488
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "status"
+      ],
+      "returncode": 0,
+      "stdout": "\u2713 Node is running with Node ID z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A and listening for inbound connections on 100.83.206.66:8877.\n\n\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 Node ID                                            Address                     ?   \u292d   Since           \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 z6MkpJKsJA7TNG1q7rR3RujiGPUZwgjvdVEBWtUjnSNWfyTR   64.227.21.124:8776          !   \u2197                   \u2502\n\u2502 z6Mkmqogy2qEM2ummccUthFEaaHvyYmYBYh3dbe9W4ebScxo   rosa.radicle.network:8776   \u2713   \u2197   9.586 second(s) \u2502\n\u2502 z6Mkuo44bkXzzYZsiR8x5PftuNaybCCxL7magvUTh76VBCLa   seed.fosskar.eu:8776        !   \u2197                   \u2502\n\u2502 z6MkrLMMsiPWUcNPHcRajuMi9mDfYckSoJyPwwnknocNYPm7   iris.radicle.network:8776   \u2713   \u2197   2.586 second(s) \u2502\n\u2502 z6MkhRWB9ToS78KXHRHNwBWrHKqjaLcvQw7uMXTdAk77sAtK   100.64.29.36:8776           !   \u2197                   \u2502\n\u2502 z6MkuYCDQJAKr9GTiEiowt2usbTXm1dPCaHwmS6sAKosXdAB   100.100.0.32:8810           !   \u2197                   \u2502\n\u2502 z6MkuRM41FyaPcbosztmj2YNUeLrcp41EKcjoWH1dJapH6ff   100.100.0.32:8810           !   \u2197                   \u2502\n\u2502 z6MkudpieYBBewS3F1rRY3dmQBbvU9CfShCFMPW5dXT876Bi   100.100.0.32:8813           !   \u2197                   \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\n\u2717 Hint: \n   ? \u2026 Status:\n       \u2713 \u2026 connected    \u2717 \u2026 disconnected\n       ! \u2026 attempted    \u2022 \u2026 initial\n   \u292d \u2026 Link Direction:\n       \u2198 \u2026 inbound      \u2197 \u2026 outbound\n\n2026-06-29T21:04:12.451-04:00 INFO  node     Binding control socket /home/atladmin/df-rad-follower-mirror/rad-home/node/control.sock..\n2026-06-29T21:04:12.451-04:00 INFO  node     Running node z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A in /home/atladmin/df-rad-follower-mirror/rad-home..\n2026-06-29T21:04:12.466-04:00 INFO  node     Listening on 100.83.206.66:8877..\n2026-06-29T21:04:12.466-04:00 INFO  service  Received command QueryState(..)\n2026-06-29T21:04:12.498-04:00 INFO  service  Connected to z6Mkmqogy2qEM2ummccUthFEaaHvyYmYBYh3dbe9W4ebScxo (rosa.radicle.network:8776) (Outbound)\n2026-06-29T21:04:19.946-04:00 INFO  service  Received command ListenAddrs\n2026-06-29T21:04:20.056-04:00 INFO  service  Connected to z6MkrLMMsiPWUcNPHcRajuMi9mDfYckSoJyPwwnknocNYPm7 (iris.radicle.network:8776) (Outbound)\n2026-06-29T21:04:20.494-04:00 INFO  service  Received command QueryState(..)\n2026-06-29T21:04:21.586-04:00 INFO  service  Received command QueryState(..)\n2026-06-29T21:04:21.586-04:00 INFO  service  Connected to z6MkpJKsJA7TNG1q7rR3RujiGPUZwgjvdVEBWtUjnSNWfyTR (64.227.21.124:8776) (Outbound)\n",
+      "stderr": "",
+      "duration_seconds": 3.999
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "connect",
+        "z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr@100.83.206.66:8799",
+        "--timeout",
+        "30s"
+      ],
+      "returncode": 0,
+      "stdout": "\u2713 Connecting to z6Mks7m\u2026UbrPufr@100.83.206.66:8799...\n",
+      "stderr": "",
+      "duration_seconds": 0.126
+    },
+    {
+      "cmd": [
+        "rad",
+        "clone",
+        "--timeout",
+        "180s",
+        "--seed",
+        "z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr",
+        "--signed-refs-feature-level",
+        "root",
+        "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+        "/home/atladmin/df-rad-follower-mirror/readback/decentralized-forge"
+      ],
+      "returncode": 0,
+      "stdout": "\u2713 Seeding policy updated for rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy with scope 'followed'\nFetching rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy from the network, found 3 potential seed(s).\n\u2713 Target met: 1 preferred seed(s).\n\u2713 Creating checkout in .//home/atladmin/df-rad-follower-mirror/readback/decentralized-forge..\n\u2713 Remote df-retained-maintainer@z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr added\n\u2713 Remote-tracking branch df-retained-maintainer@z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr/main created for z6Mks7mGbDJLRCfJDs9PLCmc6W7ZSkMw68ErcJAkrUbrPufr\n\u2713 Repository successfully cloned under /home/atladmin/df-rad-follower-mirror/readback/decentralized-forge/\n\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 decentralized-forge                                                                                                    \u2502\n\u2502 Decentralized Forge retained-maintainer Radicle repository; evidence-scoped, no durability/security/production claims. \u2502\n\u2502 0 issues \u00b7 0 patches                                                                                                   \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\nRun `cd .//home/atladmin/df-rad-follower-mirror/readback/decentralized-forge` to go to the repository directory.\n",
+      "stderr": "",
+      "duration_seconds": 15.023
+    },
+    {
+      "cmd": [
+        "git",
+        "-C",
+        "/home/atladmin/df-rad-follower-mirror/readback/decentralized-forge",
+        "rev-parse",
+        "HEAD"
+      ],
+      "returncode": 0,
+      "stdout": "d596024dac0d90605d4f103d567e5851771be5a8\n",
+      "stderr": "",
+      "duration_seconds": 0.004
+    },
+    {
+      "cmd": [
+        "rad",
+        "seed",
+        "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+        "--scope",
+        "all",
+        "--no-fetch"
+      ],
+      "returncode": 0,
+      "stdout": "\u2713 Inventory updated with rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy\n\u2713 Seeding policy updated for rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy with scope 'all'\n",
+      "stderr": "",
+      "duration_seconds": 0.019
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "stop"
+      ],
+      "returncode": 0,
+      "stdout": "\u2713 Node stopped\n",
+      "stderr": "",
+      "duration_seconds": 1.088
+    },
+    {
+      "cmd": [
+        "systemctl",
+        "--user",
+        "start",
+        "decentralized-forge-radicle-mirror-seed.service"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": "",
+      "duration_seconds": 0.042
+    },
+    {
+      "cmd": [
+        "systemctl",
+        "--user",
+        "is-active",
+        "decentralized-forge-radicle-mirror-seed.service"
+      ],
+      "returncode": 0,
+      "stdout": "active\n",
+      "stderr": "",
+      "duration_seconds": 0.012
+    },
+    {
+      "cmd": [
+        "rad",
+        "node",
+        "status"
+      ],
+      "returncode": 0,
+      "stdout": "\u2713 Node is running with Node ID z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A and listening for inbound connections on 100.83.206.66:8877.\n\n\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256e\n\u2502 Node ID                                            Address                      ?   \u292d   Since \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 z6MkuyYxVQL4aRVpAKPbG4tc15FJ9E1ryZSSHjFyqsBBuxAn   100.97.158.51:8776           !   \u2197         \u2502\n\u2502 z6MkpBpSGPRth537T7iEE41emnCsUTdckdueXxfYEudMuLLN   repoducible.org:8776         !   \u2197         \u2502\n\u2502 z6MknxF8zYPo8fX4GNvEGqJTghSGHoq1GvJSiFgXCcGCc9za   seed.this-is-fine.io:8776    !   \u2197         \u2502\n\u2502 z6MkrUDca8va5fKBjtRscbvqxkfeX4ZCdx5kWZLS4Fk68z6N   100.98.36.92:8776            !   \u2197         \u2502\n\u2502 z6Mko5W1qXbQwHFDnoZdABfoUES5JgeL9xde4T7fnZoomvng   garden.bastidehub.xyz:8776   !   \u2197         \u2502\n\u2502 z6Mknt3TPebLzohYiH8iX3rVF7zhGdGdYPrx5JUXKXgcwZYu   44.33.3.132:8776             !   \u2197         \u2502\n\u2502 z6MkrLMMsiPWUcNPHcRajuMi9mDfYckSoJyPwwnknocNYPm7   iris.radicle.network:8776    !   \u2197         \u2502\n\u2502 z6MkwfrBy9mKTfcVELcV4wc6zfN379FPMnAqsxnwt4j2TdQ2   radicle.jarg.io:8776         !   \u2197         \u2502\n\u2502 z6MkqS3RDPn2EM8PxmSY2mnitgnuK4sFTKVCzgaUa3va3cYQ   100.121.182.111:8776         !   \u2197         \u2502\n\u2502 z6Mkmqogy2qEM2ummccUthFEaaHvyYmYBYh3dbe9W4ebScxo   rosa.radicle.network:8776    !   \u2197         \u2502\n\u2502 z6MkfugLbqzUWvL6H1f5rG7j4YJEh25rUCZJtNVJQ18Rkbvx   seed.faukah.com:3867         !   \u2197         \u2502\n\u2502 z6Mkp4KXiEmjgZV8XfYdjTQDSrYTsAmA79cPwVRtx99CoSYU   206.81.13.37:8776            !   \u2197         \u2502\n\u2502 z6MkoauCKNuRtWoiaUW1aNkeMECGiq6FfWmSKLj691Wxqf7y   rad.pni.frl:8776             !   \u2197         \u2502\n\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u256f\n\u2717 Hint: \n   ? \u2026 Status:\n       \u2713 \u2026 connected    \u2717 \u2026 disconnected\n       ! \u2026 attempted    \u2022 \u2026 initial\n   \u292d \u2026 Link Direction:\n       \u2198 \u2026 inbound      \u2197 \u2026 outbound\n",
+      "stderr": "",
+      "duration_seconds": 1.224
+    }
+  ]
+}

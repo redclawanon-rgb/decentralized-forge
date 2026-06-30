@@ -5,7 +5,10 @@ This plan defines the minimum path from the current retained-RID evidence to a u
 ## Current Evidence
 
 - Retained RID: `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy`
-- Current verified commit: `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`
+- Current verified commit: `d596024dac0d90605d4f103d567e5851771be5a8`
+- Loop 75 evidence: `evidence/radicle-public-seed-update-d596024-2026-06-30.json`
+- Loop 75 primary public health evidence: `evidence/radicle-public-seed-primary-health-d596024-2026-06-30.json`
+- Loop 75 second public health evidence: `evidence/radicle-public-seed-second-health-d596024-2026-06-30.json`
 - Loop 73 evidence: `evidence/radicle-second-seed-tailnet-health-2026-06-29.json`
 - Loop 73 bootstrap evidence: `evidence/radicle-ubuntu-work-follower-bootstrap-2026-06-29.json`
 - Loop 74 evidence: `evidence/radicle-second-public-seed-health-2026-06-29.json`
@@ -29,8 +32,9 @@ This plan defines the minimum path from the current retained-RID evidence to a u
 - Loop 72 advanced the same retained RID to `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`, synced the `openclaw` follower, stopped the bridge and maintainer seed, and verified a fresh public readback from the VPS follower seed.
 - Loop 73 bootstrapped a second follower seed on `ubuntu-work` with node ID `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A`, installed it as an enabled user-level `systemd` service, bound it to Tailnet address `100.83.206.66:8877`, and verified a fresh readback from `openclaw` over Tailnet.
 - Loop 74 opened the approved `openclaw` public relay on TCP `8877`, verified public TCP reachability from Windows and `ubuntu-work`, and verified a fresh Radicle clone/readback through `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877`.
+- Loop 75 advanced the same retained RID to `d596024dac0d90605d4f103d567e5851771be5a8`, refreshed stale follower cache state with host-local backups, preserved the second seed node ID, stopped the temporary retained maintainer seed, and verified fresh public clone/readbacks from both public seed addresses.
 
-This proves an independent follower-seed handoff, a local seed restart/readback rehearsal, a restart-safe public follower service, a repeatable health check, one manual update propagation through the VPS follower, a second persistent follower seed with separate state, and a second public direct-seed address. It does not prove durability, broad public routing, automatic future update propagation, default public-routing availability, or independent provider/network availability for the second seed because public ingress still uses `openclaw`.
+This proves an independent follower-seed handoff, a local seed restart/readback rehearsal, a restart-safe public follower service, a repeatable health check, manual update propagation through two public follower addresses, a second persistent follower seed with separate state, and a second public direct-seed address. It does not prove durability, broad public routing, automatic future update propagation, default public-routing availability, or independent provider/network availability for the second seed because public ingress still uses `openclaw`.
 
 ## Usable Product Claim To Target
 
@@ -81,7 +85,7 @@ rad node start
 rad node connect z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776 --timeout 30s
 rad clone --timeout 120s --seed z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy decentralized-forge
 cd decentralized-forge
-test "$(git rev-parse HEAD)" = "ef16e2ad39d3e13bdcc9d454443c5bbb17733c68"
+test "$(git rev-parse HEAD)" = "d596024dac0d90605d4f103d567e5851771be5a8"
 ```
 
 Record health-check evidence only if command output is secret-free.

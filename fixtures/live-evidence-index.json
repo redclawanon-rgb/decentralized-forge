@@ -1,6 +1,6 @@
 {
   "schema_version": "decentralized-forge.live-evidence-index.v1",
-  "loop": 74,
+  "loop": 75,
   "created_at": "2026-06-29",
   "purpose": "Secret-free index of narrow live/local evidence that can be rendered without upgrading unverified protocol claims.",
   "claim_policy": {
@@ -29,7 +29,8 @@
       "An external ubuntu-work user systemd timer ran the public Radicle seed health check and wrote a passing latest.json for the openclaw seed",
       "The retained RID advanced to commit ef16e2ad39d3e13bdcc9d454443c5bbb17733c68 and the public openclaw follower seed served that updated commit to a fresh reader",
       "A second persistent follower seed on ubuntu-work served the retained RID to a fresh reader on openclaw over Tailnet, with readback matching commit ef16e2ad39d3e13bdcc9d454443c5bbb17733c68",
-      "The ubuntu-work follower seed is reachable through a second public openclaw relay address, and a fresh ubuntu-work reader connected to z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877, cloned the retained RID, and verified commit ef16e2ad39d3e13bdcc9d454443c5bbb17733c68"
+      "The ubuntu-work follower seed is reachable through a second public openclaw relay address, and a fresh ubuntu-work reader connected to z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877, cloned the retained RID, and verified commit ef16e2ad39d3e13bdcc9d454443c5bbb17733c68",
+      "The retained RID advanced to commit d596024dac0d90605d4f103d567e5851771be5a8, stale follower caches were refreshed without copying maintainer key material, and both public direct-seed addresses served that commit to fresh readers"
     ],
     "forbidden_claims": [
       "Radicle durable public seed/network availability verified",
@@ -1005,6 +1006,67 @@
         "not maintainer key material on ubuntu-work"
       ],
       "notes": "This upgrades Loop 73's staged second follower seed into a second public direct-seed address. The second seed process and state live on ubuntu-work; public ingress is relayed through openclaw, so this is stronger than one seed process but not proof of independent provider/network availability."
+    },
+    {
+      "id": "loop75-radicle-public-seed-update-d596024",
+      "protocol": "radicle",
+      "scope": "radicle.retained_project_two_public_seed_update_current_head",
+      "state": "two-public-follower-seed-update-readback-verified",
+      "verified_at": "2026-06-30",
+      "evidence_file": "evidence/radicle-public-seed-update-d596024-2026-06-30.json",
+      "evidence_sha256": "493eb768b5e5fab826073dbbf98de1b99d81337c35481d2ef406e70f9d2c36d8",
+      "evidence_size_bytes": 4588,
+      "verification_summary": "The retained RID advanced from ef16e2ad39d3e13bdcc9d454443c5bbb17733c68 to d596024dac0d90605d4f103d567e5851771be5a8; stale follower caches were refreshed with host-local backups, the temporary maintainer seed was stopped, and fresh readers cloned the updated commit from both public seed addresses.",
+      "live_network_action": true,
+      "local_cli_verified": true,
+      "selected_relay_readback_verified": false,
+      "synthetic": false,
+      "public_identifiers": {
+        "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+        "prior_verified_commit": "ef16e2ad39d3e13bdcc9d454443c5bbb17733c68",
+        "current_source_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+        "same_retained_rid": true,
+        "primary_public_seed_node_id": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f",
+        "primary_public_seed_address": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776",
+        "second_public_seed_node_id": "z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A",
+        "second_public_seed_address": "z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877",
+        "vps_seed_node_id": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f",
+        "vps_seed_address": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776",
+        "public_seed_address_reachable": true,
+        "primary_public_readback_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+        "primary_public_readback_matches_expected": true,
+        "second_public_readback_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+        "second_public_readback_matches_expected": true,
+        "fresh_reader_host": "ubuntu-work",
+        "fresh_reader_readback_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+        "fresh_reader_readback_matches_expected": true,
+        "fresh_reader_temp_state_removed": true,
+        "openclaw_storage_refresh_succeeded": true,
+        "ubuntu_work_rad_home_refresh_succeeded": true,
+        "ubuntu_work_second_seed_node_id_preserved": true,
+        "follower_cache_refresh_backups_created": true,
+        "persistent_seed_service_left_running": true,
+        "vps_seed_left_running": true,
+        "retained_state_committed": false,
+        "secret_values_recorded": false,
+        "retained_maintainer_key_material_copied_to_public_followers": false,
+        "temporary_maintainer_seed_stopped_after_sync": true
+      },
+      "non_claims": [
+        "not proof of automatic future update propagation",
+        "not proof of permanent durability",
+        "not proof of future default public-routing availability",
+        "not proof of censorship resistance",
+        "not a security guarantee",
+        "not proof of global replication",
+        "not proof of identity trust",
+        "not production readiness",
+        "not full Radicle compatibility",
+        "not a committed secret or key backup",
+        "not maintainer key material on the VPS",
+        "not maintainer key material on ubuntu-work"
+      ],
+      "notes": "This is the strongest current first decentralized repo evidence: both documented public direct-seed addresses served the current Git HEAD after manual retained-RID update and follower cache refresh. It remains a bounded live readback, not a durability or automatic propagation claim."
     }
   ]
 }
