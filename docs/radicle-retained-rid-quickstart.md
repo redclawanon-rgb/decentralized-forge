@@ -14,7 +14,12 @@ Loop 75 verified that this RID advanced to commit:
 d596024dac0d90605d4f103d567e5851771be5a8
 ```
 
-The strongest matching evidence is `evidence/radicle-public-seed-update-d596024-2026-06-30.json`: the retained RID advanced to the updated commit, stale follower caches were refreshed with host-local backups, the temporary retained maintainer seed was stopped, and a fresh reader on `ubuntu-work` cloned the updated commit from both public seed addresses.
+The strongest seed-update evidence is `evidence/radicle-public-seed-update-d596024-2026-06-30.json`: the retained RID advanced to the updated commit, stale follower caches were refreshed with host-local backups, the temporary retained maintainer seed was stopped, and a fresh reader on `ubuntu-work` cloned the updated commit from both public seed addresses.
+
+Loop 79 adds release-candidate public clone evidence from fresh Docker/Linux reader profiles:
+
+- `evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json`
+- `evidence/radicle-first-public-clone-second-d596024-2026-06-30.json`
 
 Loop 73 added a second persistent follower seed on `ubuntu-work` with its own Radicle state and node ID `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A`. Loop 74 verified public readback through `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877`, which relays from `openclaw` public ingress to the `ubuntu-work` seed over Tailnet. Loop 75 verified that both public seed addresses now serve the current commit.
 
@@ -33,6 +38,31 @@ python scripts/forge_registry.py radicle-retained-quickstart --json
 ```
 
 The command reads `fixtures/live-evidence-index.json`, checks the strongest retained-RID readback fields, and prints the exact retained RID, expected commit, commands, and non-claims. It does not start a Radicle node, connect to peers, clone, publish, sign, or use private keys.
+
+## Verify The Public Clone Path
+
+Plan mode shows the exact live verification command without starting a reader:
+
+```sh
+python scripts/forge_registry.py verify-first-public-clone --plan-only
+python scripts/forge_registry.py verify-first-public-clone --plan-only --seed second
+```
+
+Live mode starts disposable reader state, connects to one explicit public seed,
+clones the retained RID, and checks that `git rev-parse HEAD` prints
+`d596024dac0d90605d4f103d567e5851771be5a8`:
+
+```sh
+python scripts/forge_registry.py verify-first-public-clone --json
+python scripts/forge_registry.py verify-first-public-clone --seed second --json
+```
+
+To save a secret-free evidence file:
+
+```sh
+python scripts/forge_registry.py verify-first-public-clone --json \
+  --output evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json
+```
 
 ## Maintainer-Assisted Direct-Seed Clone
 

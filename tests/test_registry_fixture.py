@@ -21,6 +21,7 @@ import render_forge_app
 import render_project_page
 
 SCHEMA_PATH = ROOT / "schemas" / "project-registry.schema.json"
+README_PATH = ROOT / "README.md"
 LIVE_EVIDENCE_SCHEMA_PATH = ROOT / "schemas" / "live-evidence-index.schema.json"
 FIXTURE_PATH = ROOT / "fixtures" / "example-project.registry.json"
 PORTABLE_FIXTURE_PATH = ROOT / "fixtures" / "portable-lab.registry.json"
@@ -63,6 +64,8 @@ RADICLE_SECOND_PUBLIC_SEED_HEALTH_PATH = ROOT / "evidence" / "radicle-second-pub
 RADICLE_PUBLIC_SEED_UPDATE_D596024_PATH = ROOT / "evidence" / "radicle-public-seed-update-d596024-2026-06-30.json"
 RADICLE_PUBLIC_SEED_PRIMARY_HEALTH_D596024_PATH = ROOT / "evidence" / "radicle-public-seed-primary-health-d596024-2026-06-30.json"
 RADICLE_PUBLIC_SEED_SECOND_HEALTH_D596024_PATH = ROOT / "evidence" / "radicle-public-seed-second-health-d596024-2026-06-30.json"
+RADICLE_FIRST_PUBLIC_CLONE_PRIMARY_D596024_PATH = ROOT / "evidence" / "radicle-first-public-clone-primary-d596024-2026-06-30.json"
+RADICLE_FIRST_PUBLIC_CLONE_SECOND_D596024_PATH = ROOT / "evidence" / "radicle-first-public-clone-second-d596024-2026-06-30.json"
 RADICLE_LOOP75_OPENCLAW_REFRESH_PATH = ROOT / "evidence" / "radicle-loop75-openclaw-storage-refresh-2026-06-30.json"
 RADICLE_LOOP75_UBUNTU_WORK_REFRESH_PATH = ROOT / "evidence" / "radicle-loop75-ubuntu-work-rad-home-refresh-2026-06-30.json"
 KEYLESS_REGISTRY_IMPORT_PATH = ROOT / "fixtures" / "keyless-attestation.registry-verification.json"
@@ -72,6 +75,7 @@ STATIC_PREFLIGHT = ROOT / "scripts" / "preflight_static_artifact.py"
 PORTABLE_BUNDLE_REVIEW_CHECKLIST = ROOT / "docs" / "portable-bundle-review-checklist.md"
 RADICLE_PERSISTENT_SEED_PLAN = ROOT / "docs" / "radicle-persistent-seed-plan.md"
 RADICLE_RETAINED_RID_QUICKSTART = ROOT / "docs" / "radicle-retained-rid-quickstart.md"
+FIRST_DECENTRALIZED_REPO_MILESTONE = ROOT / "docs" / "first-decentralized-repo-milestone.md"
 RADICLE_FOLLOWER_REFRESH_SCRIPT = ROOT / "scripts" / "refresh_radicle_follower_seed.py"
 FIRST_PUBLIC_CLONE_RC_PLAN = ROOT / "docs" / "first-public-clone-rc-plan.md"
 OUTPUT_DEMO_HTML = ROOT / "output" / "demo-project.html"
@@ -299,7 +303,7 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertEqual(app_data["projects"][0]["registry"]["project"]["id"], "demo-project")
         self.assertEqual({item["type"] for item in app_data["live_nostr_collaboration"]}, {"issue", "patch"})
         self.assertEqual(len(app_data["live_nostr_collaboration"]), 2)
-        self.assertEqual(app_data["live_evidence_index"]["loop"], 75)
+        self.assertEqual(app_data["live_evidence_index"]["loop"], self.live_evidence_index["loop"])
         self.assertIn("static app does not publish protocol events", app_data["non_claims"])
 
         for forbidden_runtime in [
@@ -385,10 +389,17 @@ class RegistryFixtureTests(unittest.TestCase):
         )
         self.assertIn("bundle does not publish protocol events", report["non_claims"])
         self.assertIn("Durable storage", report["verification_gaps"][0])
+        self.assertEqual(report["first_public_clone"]["entry_count"], 2)
+        self.assertEqual(report["first_public_clone"]["rid"], "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy")
+        self.assertEqual(report["first_public_clone"]["expected_commit"], "d596024dac0d90605d4f103d567e5851771be5a8")
+        self.assertEqual({entry["seed_id"] for entry in report["first_public_clone"]["entries"]}, {"primary", "second"})
         text_report = forge_registry.format_bundle_report(report)
         self.assertIn("Decentralized Forge bundle report", text_report)
         self.assertIn("demo-project: Demo Decentralized Forge Project", text_report)
         self.assertIn("selected_relay_readback", text_report)
+        self.assertIn("First public clone RC", text_report)
+        self.assertIn("evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json", text_report)
+        self.assertIn("evidence/radicle-first-public-clone-second-d596024-2026-06-30.json", text_report)
         with tempfile.TemporaryDirectory() as tmpdir:
             extracted = Path(tmpdir) / "bundle"
             extracted.mkdir()
@@ -420,6 +431,10 @@ class RegistryFixtureTests(unittest.TestCase):
                 "python scripts/forge_registry.py radicle-retained-quickstart",
                 manifest["suggested_verification_commands"],
             )
+            self.assertIn(
+                "python scripts/forge_registry.py verify-first-public-clone --plan-only",
+                manifest["suggested_verification_commands"],
+            )
             payload_paths = {item["path"] for item in manifest["files"]}
             for expected_path in [
                 "fixtures/example-project.registry.json",
@@ -428,6 +443,8 @@ class RegistryFixtureTests(unittest.TestCase):
                 "fixtures/onboarding-sample-artifact.txt",
                 "fixtures/live-evidence-index.json",
                 "evidence/nostr-loop43-issue-patch-readback-2026-06-28.json",
+                "evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json",
+                "evidence/radicle-first-public-clone-second-d596024-2026-06-30.json",
                 "output/demo-project.html",
                 "output/portable-lab.html",
                 "output/onboarding-sample.registry.html",
@@ -439,6 +456,7 @@ class RegistryFixtureTests(unittest.TestCase):
                 "docs/radicle-persistent-seed-plan.md",
                 "docs/radicle-retained-rid-quickstart.md",
                 "docs/first-public-clone-rc-plan.md",
+                "docs/live-completion-gates.md",
                 "docs/portable-bundle-review-checklist.md",
                 "scripts/bootstrap_radicle_follower_seed.py",
                 "scripts/refresh_radicle_follower_seed.py",
@@ -531,6 +549,7 @@ class RegistryFixtureTests(unittest.TestCase):
             "python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip --json",
             "python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip",
             "python scripts/forge_registry.py radicle-retained-quickstart",
+            "python scripts/forge_registry.py verify-first-public-clone --plan-only",
             "python scripts/forge_registry.py verify-local --skip-npm-ci",
         ]:
             self.assertIn(required_command, checklist)
@@ -556,6 +575,9 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip", note)
         self.assertIn("python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip", note)
         self.assertIn("python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip --json", note)
+        self.assertIn("First Public Clone RC", note)
+        self.assertIn("evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json", note)
+        self.assertIn("evidence/radicle-first-public-clone-second-d596024-2026-06-30.json", note)
         self.assertIn("Stop Conditions", note)
         self.assertIn("report-bundle` shows", note)
         self.assertIn("not a production forge", note)
@@ -2228,6 +2250,13 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertFalse(model["default_public_routing_observed"])
         self.assertFalse(model["retained_state_committed"])
         self.assertFalse(model["secret_values_recorded"])
+        self.assertEqual(
+            {seed["id"]: seed["address"] for seed in model["public_seeds"]},
+            {
+                "primary": evidence["public_readbacks"]["primary_public_seed_address"],
+                "second": evidence["public_readbacks"]["second_public_seed_address"],
+            },
+        )
         self.assertIn(f"rad node connect {evidence['public_readbacks']['primary_public_seed_address']} --timeout 30s", model["commands"])
         self.assertIn(
             f"rad clone --timeout 120s --seed {evidence['public_readbacks']['primary_public_seed_node_id']} {evidence['rid']} decentralized-forge",
@@ -2270,6 +2299,112 @@ class RegistryFixtureTests(unittest.TestCase):
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "api_token"]:
             self.assertNotIn(accidental_secret_marker, combined)
 
+    def test_first_public_clone_verifier_plan_uses_latest_retained_seed_evidence(self):
+        evidence = json.loads(RADICLE_PUBLIC_SEED_UPDATE_D596024_PATH.read_text(encoding="utf-8"))
+
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(ROOT / "scripts" / "forge_registry.py"),
+                "verify-first-public-clone",
+                "--plan-only",
+                "--json",
+            ],
+            cwd=ROOT,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        plan = json.loads(result.stdout)
+        self.assertEqual(plan["schema_version"], "decentralized-forge.first-public-clone-verifier.v1")
+        self.assertEqual(plan["mode"], "plan")
+        self.assertFalse(plan["live_actions_executed"])
+        self.assertFalse(plan["secret_values_recorded"])
+        self.assertEqual(plan["source_evidence_id"], "loop75-radicle-public-seed-update-d596024")
+        self.assertEqual(plan["rid"], evidence["rid"])
+        self.assertEqual(plan["expected_commit"], evidence["updated_commit"])
+        self.assertEqual(plan["seed"]["id"], "primary")
+        self.assertEqual(plan["seed"]["address"], evidence["public_readbacks"]["primary_public_seed_address"])
+        self.assertIn("scripts/check_public_radicle_seed.py", plan["command"])
+        self.assertIn(evidence["public_readbacks"]["primary_public_seed_address"], plan["command"])
+        self.assertIn(evidence["rid"], plan["command"])
+        self.assertIn(evidence["updated_commit"], plan["command"])
+
+        second = subprocess.run(
+            [
+                sys.executable,
+                str(ROOT / "scripts" / "forge_registry.py"),
+                "verify-first-public-clone",
+                "--plan-only",
+                "--json",
+                "--seed",
+                "second",
+            ],
+            cwd=ROOT,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+        self.assertEqual(second.returncode, 0, second.stderr)
+        second_plan = json.loads(second.stdout)
+        self.assertEqual(second_plan["seed"]["id"], "second")
+        self.assertEqual(second_plan["seed"]["address"], evidence["public_readbacks"]["second_public_seed_address"])
+
+        combined = result.stdout.lower() + second.stdout.lower()
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "api_token"]:
+            self.assertNotIn(accidental_secret_marker, combined)
+
+    def test_loop79_first_public_clone_live_evidence_is_bounded(self):
+        source = json.loads(RADICLE_PUBLIC_SEED_UPDATE_D596024_PATH.read_text(encoding="utf-8"))
+        cases = [
+            (
+                "primary",
+                RADICLE_FIRST_PUBLIC_CLONE_PRIMARY_D596024_PATH,
+                source["public_readbacks"]["primary_public_seed_address"],
+            ),
+            (
+                "second",
+                RADICLE_FIRST_PUBLIC_CLONE_SECOND_D596024_PATH,
+                source["public_readbacks"]["second_public_seed_address"],
+            ),
+        ]
+
+        for seed_id, path, seed_address in cases:
+            with self.subTest(seed=seed_id):
+                evidence = json.loads(path.read_text(encoding="utf-8"))
+                checker = evidence["checker"]
+
+                self.assertEqual(evidence["schema_version"], "decentralized-forge.first-public-clone-verifier.v1")
+                self.assertEqual(evidence["mode"], "live")
+                self.assertTrue(evidence["live_actions_executed"])
+                self.assertTrue(evidence["verification_passed"])
+                self.assertFalse(evidence["secret_values_recorded"])
+                self.assertEqual(evidence["source_evidence_id"], "loop75-radicle-public-seed-update-d596024")
+                self.assertEqual(evidence["rid"], source["rid"])
+                self.assertEqual(evidence["expected_commit"], source["updated_commit"])
+                self.assertEqual(evidence["seed"]["id"], seed_id)
+                self.assertEqual(evidence["seed"]["address"], seed_address)
+                self.assertEqual(evidence["readback_commit"], source["updated_commit"])
+                self.assertEqual(checker["schema_version"], "decentralized-forge.public-radicle-seed-health-check.v1")
+                self.assertTrue(checker["auth_succeeded"])
+                self.assertTrue(checker["node_started"])
+                self.assertTrue(checker["connected_to_seed"])
+                self.assertTrue(checker["clone_succeeded"])
+                self.assertEqual(checker["readback_commit"], source["updated_commit"])
+                self.assertTrue(checker["readback_matches_expected"])
+                self.assertTrue(checker["verification_passed"])
+                self.assertEqual(checker["temp_state"], "removed")
+                self.assertFalse(checker["secret_values_recorded"])
+                self.assertIn("scripts/check_public_radicle_seed.py", evidence["command"])
+                self.assertIn("not proof of automatic future update propagation", evidence["non_claims"])
+
+                blob = json.dumps(evidence).lower()
+                for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "api_token"]:
+                    self.assertNotIn(accidental_secret_marker, blob)
+
     def test_radicle_retained_rid_quickstart_doc_matches_latest_availability(self):
         evidence = json.loads(RADICLE_PUBLIC_SEED_UPDATE_D596024_PATH.read_text(encoding="utf-8"))
         doc = RADICLE_RETAINED_RID_QUICKSTART.read_text(encoding="utf-8")
@@ -2287,6 +2422,9 @@ class RegistryFixtureTests(unittest.TestCase):
         )
         for required_boundary in [
             "Loop 75 proved public direct-seed update readback",
+            "verify-first-public-clone",
+            "evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json",
+            "evidence/radicle-first-public-clone-second-d596024-2026-06-30.json",
             "not a durability guarantee",
             "not proof of automatic future update propagation",
             "not proof of broad Radicle network availability",
@@ -2297,6 +2435,39 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn(required_boundary, doc)
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "api_token"]:
             self.assertNotIn(accidental_secret_marker, doc.lower())
+
+    def test_first_public_clone_surface_docs_match_loop75_evidence(self):
+        evidence = json.loads(RADICLE_PUBLIC_SEED_UPDATE_D596024_PATH.read_text(encoding="utf-8"))
+        readme = README_PATH.read_text(encoding="utf-8")
+        milestone = FIRST_DECENTRALIZED_REPO_MILESTONE.read_text(encoding="utf-8")
+        combined = readme + "\n" + milestone
+
+        for required in [
+            "As of Loop 79",
+            evidence["rid"],
+            evidence["updated_commit"],
+            evidence["public_readbacks"]["primary_public_seed_address"],
+            evidence["public_readbacks"]["second_public_seed_address"],
+            "evidence/radicle-public-seed-update-d596024-2026-06-30.json",
+            "evidence/radicle-public-seed-primary-health-d596024-2026-06-30.json",
+            "evidence/radicle-public-seed-second-health-d596024-2026-06-30.json",
+            "evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json",
+            "evidence/radicle-first-public-clone-second-d596024-2026-06-30.json",
+            "verify-first-public-clone",
+            "python scripts/forge_registry.py radicle-retained-quickstart",
+            "not proof of automatic future update propagation",
+            "not proof of independent provider or network availability",
+        ]:
+            self.assertIn(required, combined)
+        for stale_front_door in [
+            "As of Loop 67",
+            "As of Loop 75, the project has a first usable public Radicle direct-seed clone path",
+            "As of Loop 74, this project has usable public Radicle direct-seed paths",
+            "Verified milestone commit: `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`",
+        ]:
+            self.assertNotIn(stale_front_door, combined)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "api_token"]:
+            self.assertNotIn(accidental_secret_marker, combined.lower())
 
     def test_radicle_persistent_seed_plan_is_bounded(self):
         evidence = json.loads(RADICLE_PUBLIC_SEED_UPDATE_D596024_PATH.read_text(encoding="utf-8"))
@@ -2546,7 +2717,7 @@ class RegistryFixtureTests(unittest.TestCase):
     def test_loop26_live_evidence_index_imports_only_bounded_evidence(self):
         index = self.live_evidence_index
         self.assertEqual(index["schema_version"], "decentralized-forge.live-evidence-index.v1")
-        self.assertEqual(index["loop"], 75)
+        self.assertEqual(index["loop"], 79)
         self.assertFalse(index["claim_policy"]["contains_secret_values"])
         by_id = {item["id"]: item for item in index["evidence"]}
         self.assertEqual(
@@ -2577,6 +2748,8 @@ class RegistryFixtureTests(unittest.TestCase):
                 "loop73-radicle-second-follower-tailnet-readback",
                 "loop74-radicle-second-public-seed-readback",
                 "loop75-radicle-public-seed-update-d596024",
+                "loop79-radicle-first-public-clone-primary-d596024",
+                "loop79-radicle-first-public-clone-second-d596024",
             },
         )
 
@@ -3085,6 +3258,55 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("not proof of automatic future update propagation", radicle_current_update["non_claims"])
         self.assertIn("not maintainer key material on the VPS", radicle_current_update["non_claims"])
         self.assertIn("not maintainer key material on ubuntu-work", radicle_current_update["non_claims"])
+
+        first_public_clone_primary = by_id["loop79-radicle-first-public-clone-primary-d596024"]
+        first_public_clone_second = by_id["loop79-radicle-first-public-clone-second-d596024"]
+        for clone_entry, seed_id, seed_address in [
+            (
+                first_public_clone_primary,
+                "primary",
+                radicle_current_update["public_identifiers"]["primary_public_seed_address"],
+            ),
+            (
+                first_public_clone_second,
+                "second",
+                radicle_current_update["public_identifiers"]["second_public_seed_address"],
+            ),
+        ]:
+            with self.subTest(seed=seed_id):
+                self.assertEqual(clone_entry["protocol"], "radicle")
+                self.assertTrue(clone_entry["live_network_action"])
+                self.assertTrue(clone_entry["local_cli_verified"])
+                self.assertFalse(clone_entry["synthetic"])
+                self.assertEqual(clone_entry["public_identifiers"]["rid"], radicle_current_update["public_identifiers"]["rid"])
+                self.assertEqual(
+                    clone_entry["public_identifiers"]["current_source_commit"],
+                    radicle_current_update["public_identifiers"]["current_source_commit"],
+                )
+                self.assertEqual(clone_entry["public_identifiers"]["seed_id"], seed_id)
+                self.assertEqual(clone_entry["public_identifiers"]["seed_address"], seed_address)
+                self.assertEqual(
+                    clone_entry["public_identifiers"]["source_evidence_id"],
+                    "loop75-radicle-public-seed-update-d596024",
+                )
+                self.assertTrue(clone_entry["public_identifiers"]["live_actions_executed"])
+                self.assertTrue(clone_entry["public_identifiers"]["connected_to_seed"])
+                self.assertTrue(clone_entry["public_identifiers"]["clone_succeeded"])
+                self.assertEqual(
+                    clone_entry["public_identifiers"]["readback_commit"],
+                    radicle_current_update["public_identifiers"]["current_source_commit"],
+                )
+                self.assertTrue(clone_entry["public_identifiers"]["readback_matches_expected"])
+                self.assertTrue(clone_entry["public_identifiers"]["temp_state_removed"])
+                self.assertFalse(clone_entry["public_identifiers"]["retained_state_committed"])
+                self.assertFalse(clone_entry["public_identifiers"]["secret_values_recorded"])
+                self.assertFalse(clone_entry["public_identifiers"]["maintainer_seed_required"])
+                self.assertIn("not proof of automatic future update propagation", clone_entry["non_claims"])
+                self.assertIn("not production readiness", clone_entry["non_claims"])
+        self.assertIn(
+            "not proof of independent provider or network availability",
+            first_public_clone_second["non_claims"],
+        )
 
     def test_loop40_github_keyless_attestation_evidence_is_bounded(self):
         index = self.live_evidence_index

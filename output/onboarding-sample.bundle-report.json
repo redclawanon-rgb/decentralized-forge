@@ -1,13 +1,13 @@
 {
   "bundle": {
-    "file_count": 121,
+    "file_count": 124,
     "name": "decentralized-forge portable verification bundle",
     "role_counts": {
-      "documentation": 11,
+      "documentation": 12,
       "fixture": 14,
       "generated-output": 8,
       "schema": 2,
-      "source-evidence": 63,
+      "source-evidence": 65,
       "supporting-file": 2,
       "verifier-tooling": 21
     },
@@ -19,6 +19,7 @@
       "python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip",
       "python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip",
       "python scripts/forge_registry.py radicle-retained-quickstart",
+      "python scripts/forge_registry.py verify-first-public-clone --plan-only",
       "python scripts/forge_registry.py verify-local --skip-npm-ci"
     ]
   },
@@ -298,22 +299,45 @@
         "state": "two-public-follower-seed-update-readback-verified",
         "synthetic": false,
         "verification_summary": "The retained RID advanced from ef16e2ad39d3e13bdcc9d454443c5bbb17733c68 to d596024dac0d90605d4f103d567e5851771be5a8; stale follower caches were refreshed with host-local backups, the temporary maintainer seed was stopped, and fresh readers cloned the updated commit from both public seed addresses."
+      },
+      {
+        "evidence_file": "evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json",
+        "id": "loop79-radicle-first-public-clone-primary-d596024",
+        "live_network_action": true,
+        "protocol": "radicle",
+        "scope": "radicle.first_public_clone_rc.primary_public_seed",
+        "selected_relay_readback_verified": false,
+        "state": "first-public-clone-verified",
+        "synthetic": false,
+        "verification_summary": "The verify-first-public-clone CLI ran in a fresh Docker/Linux reader environment against the primary public seed, connected to the explicit seed address, cloned the retained RID, and verified that git HEAD matched d596024dac0d90605d4f103d567e5851771be5a8."
+      },
+      {
+        "evidence_file": "evidence/radicle-first-public-clone-second-d596024-2026-06-30.json",
+        "id": "loop79-radicle-first-public-clone-second-d596024",
+        "live_network_action": true,
+        "protocol": "radicle",
+        "scope": "radicle.first_public_clone_rc.second_public_seed",
+        "selected_relay_readback_verified": false,
+        "state": "second-public-clone-verified",
+        "synthetic": false,
+        "verification_summary": "The verify-first-public-clone CLI ran in a fresh Docker/Linux reader environment against the second public seed address, connected to the explicit seed address, cloned the retained RID, and verified that git HEAD matched d596024dac0d90605d4f103d567e5851771be5a8."
       }
     ],
-    "entry_count": 25,
+    "entry_count": 27,
     "index_path": "fixtures/live-evidence-index.json",
-    "live_network_action_count": 22,
+    "live_network_action_count": 24,
     "protocol_counts": {
       "github-actions": 2,
       "ipfs": 2,
       "nostr": 2,
-      "radicle": 19
+      "radicle": 21
     },
     "selected_relay_readback_count": 2,
     "state_counts": {
       "cli-blocked-readonly-route-probed": 1,
       "disposable-public-smoke-verified": 1,
       "external-health-timer-readback-verified": 1,
+      "first-public-clone-verified": 1,
       "fresh-network-readback-observed": 1,
       "fresh-peer-update-default-readback-original-delegate": 1,
       "hosted-keyless-attestation-generated": 1,
@@ -331,12 +355,47 @@
       "retained-rid-follower-seed-readback-verified": 1,
       "retained-rid-seed-restart-readback-verified": 1,
       "second-follower-tailnet-readback-verified": 1,
+      "second-public-clone-verified": 1,
       "second-public-follower-seed-readback-verified": 1,
       "selected-relay-issue-patch-readback-verified": 1,
       "selected-relay-readback-verified": 1,
       "two-public-follower-seed-update-readback-verified": 1
     },
     "synthetic_count": 0
+  },
+  "first_public_clone": {
+    "claim_boundary": "Fresh reader public direct-seed clone evidence only; not a durability, default-routing, independent-provider, security, identity-trust, or production-readiness claim.",
+    "entries": [
+      {
+        "evidence_file": "evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json",
+        "expected_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+        "fresh_reader_environment": "Docker/Linux container with project-scoped temporary Radicle state",
+        "id": "loop79-radicle-first-public-clone-primary-d596024",
+        "readback_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+        "readback_matches_expected": true,
+        "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+        "seed_address": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776",
+        "seed_id": "primary",
+        "state": "first-public-clone-verified",
+        "verifier_command": "python scripts/forge_registry.py verify-first-public-clone --seed primary --json"
+      },
+      {
+        "evidence_file": "evidence/radicle-first-public-clone-second-d596024-2026-06-30.json",
+        "expected_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+        "fresh_reader_environment": "Docker/Linux container with project-scoped temporary Radicle state",
+        "id": "loop79-radicle-first-public-clone-second-d596024",
+        "readback_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+        "readback_matches_expected": true,
+        "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+        "seed_address": "z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877",
+        "seed_id": "second",
+        "state": "second-public-clone-verified",
+        "verifier_command": "python scripts/forge_registry.py verify-first-public-clone --seed second --json"
+      }
+    ],
+    "entry_count": 2,
+    "expected_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+    "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy"
   },
   "non_claims": [
     "bundle does not publish protocol events",

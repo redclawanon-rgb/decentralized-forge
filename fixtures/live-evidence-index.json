@@ -1,7 +1,7 @@
 {
   "schema_version": "decentralized-forge.live-evidence-index.v1",
-  "loop": 75,
-  "created_at": "2026-06-29",
+  "loop": 79,
+  "created_at": "2026-06-30",
   "purpose": "Secret-free index of narrow live/local evidence that can be rendered without upgrading unverified protocol claims.",
   "claim_policy": {
     "contains_secret_values": false,
@@ -30,7 +30,9 @@
       "The retained RID advanced to commit ef16e2ad39d3e13bdcc9d454443c5bbb17733c68 and the public openclaw follower seed served that updated commit to a fresh reader",
       "A second persistent follower seed on ubuntu-work served the retained RID to a fresh reader on openclaw over Tailnet, with readback matching commit ef16e2ad39d3e13bdcc9d454443c5bbb17733c68",
       "The ubuntu-work follower seed is reachable through a second public openclaw relay address, and a fresh ubuntu-work reader connected to z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877, cloned the retained RID, and verified commit ef16e2ad39d3e13bdcc9d454443c5bbb17733c68",
-      "The retained RID advanced to commit d596024dac0d90605d4f103d567e5851771be5a8, stale follower caches were refreshed without copying maintainer key material, and both public direct-seed addresses served that commit to fresh readers"
+      "The retained RID advanced to commit d596024dac0d90605d4f103d567e5851771be5a8, stale follower caches were refreshed without copying maintainer key material, and both public direct-seed addresses served that commit to fresh readers",
+      "A fresh Docker/Linux reader ran verify-first-public-clone against the primary public seed, cloned retained RID rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy, and verified HEAD d596024dac0d90605d4f103d567e5851771be5a8",
+      "A fresh Docker/Linux reader ran verify-first-public-clone against the second public seed, cloned retained RID rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy, and verified HEAD d596024dac0d90605d4f103d567e5851771be5a8"
     ],
     "forbidden_claims": [
       "Radicle durable public seed/network availability verified",
@@ -1067,6 +1069,107 @@
         "not maintainer key material on ubuntu-work"
       ],
       "notes": "This is the strongest current first decentralized repo evidence: both documented public direct-seed addresses served the current Git HEAD after manual retained-RID update and follower cache refresh. It remains a bounded live readback, not a durability or automatic propagation claim."
+    },
+    {
+      "id": "loop79-radicle-first-public-clone-primary-d596024",
+      "protocol": "radicle",
+      "scope": "radicle.first_public_clone_rc.primary_public_seed",
+      "state": "first-public-clone-verified",
+      "verified_at": "2026-06-30",
+      "evidence_file": "evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json",
+      "evidence_sha256": "083b5ddb8a8ec63e06f5595b655aaee4c83fdf8adb3230725dacda41ec5571ea",
+      "evidence_size_bytes": 16392,
+      "verification_summary": "The verify-first-public-clone CLI ran in a fresh Docker/Linux reader environment against the primary public seed, connected to the explicit seed address, cloned the retained RID, and verified that git HEAD matched d596024dac0d90605d4f103d567e5851771be5a8.",
+      "live_network_action": true,
+      "local_cli_verified": true,
+      "selected_relay_readback_verified": false,
+      "synthetic": false,
+      "public_identifiers": {
+        "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+        "current_source_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+        "seed_id": "primary",
+        "seed_node_id": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f",
+        "seed_address": "z6Mkk7qWfxE18R4jt5ruXmv1a7zydT9r1sY5LXx21PWySA4f@187.77.19.162:8776",
+        "source_evidence_id": "loop75-radicle-public-seed-update-d596024",
+        "source_evidence_file": "evidence/radicle-public-seed-update-d596024-2026-06-30.json",
+        "verifier_command": "python scripts/forge_registry.py verify-first-public-clone --seed primary --json",
+        "verifier_schema": "decentralized-forge.first-public-clone-verifier.v1",
+        "checker_schema": "decentralized-forge.public-radicle-seed-health-check.v1",
+        "fresh_reader_environment": "Docker/Linux container with project-scoped temporary Radicle state",
+        "live_actions_executed": true,
+        "connected_to_seed": true,
+        "clone_succeeded": true,
+        "readback_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+        "readback_matches_expected": true,
+        "temp_state_removed": true,
+        "retained_state_committed": false,
+        "secret_values_recorded": false,
+        "maintainer_seed_required": false
+      },
+      "non_claims": [
+        "not a default public-routing claim",
+        "not a durability guarantee",
+        "not proof of automatic future update propagation",
+        "not proof of broad Radicle network availability",
+        "not proof of censorship resistance",
+        "not proof of identity trust",
+        "not a security guarantee",
+        "not production readiness",
+        "not maintainer key material on the public seed",
+        "not a committed secret or key backup"
+      ],
+      "notes": "This is the first RC-grade public clone verifier proof for the primary public direct-seed path. It uses only a disposable reader profile and the documented public seed address."
+    },
+    {
+      "id": "loop79-radicle-first-public-clone-second-d596024",
+      "protocol": "radicle",
+      "scope": "radicle.first_public_clone_rc.second_public_seed",
+      "state": "second-public-clone-verified",
+      "verified_at": "2026-06-30",
+      "evidence_file": "evidence/radicle-first-public-clone-second-d596024-2026-06-30.json",
+      "evidence_sha256": "4a5cb580ceb5df8e253e65fb814d91cfd31f6dd27caa9ccdd12b52fe1b9bc553",
+      "evidence_size_bytes": 16424,
+      "verification_summary": "The verify-first-public-clone CLI ran in a fresh Docker/Linux reader environment against the second public seed address, connected to the explicit seed address, cloned the retained RID, and verified that git HEAD matched d596024dac0d90605d4f103d567e5851771be5a8.",
+      "live_network_action": true,
+      "local_cli_verified": true,
+      "selected_relay_readback_verified": false,
+      "synthetic": false,
+      "public_identifiers": {
+        "rid": "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+        "current_source_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+        "seed_id": "second",
+        "seed_node_id": "z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A",
+        "seed_address": "z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877",
+        "source_evidence_id": "loop75-radicle-public-seed-update-d596024",
+        "source_evidence_file": "evidence/radicle-public-seed-update-d596024-2026-06-30.json",
+        "verifier_command": "python scripts/forge_registry.py verify-first-public-clone --seed second --json",
+        "verifier_schema": "decentralized-forge.first-public-clone-verifier.v1",
+        "checker_schema": "decentralized-forge.public-radicle-seed-health-check.v1",
+        "fresh_reader_environment": "Docker/Linux container with project-scoped temporary Radicle state",
+        "live_actions_executed": true,
+        "connected_to_seed": true,
+        "clone_succeeded": true,
+        "readback_commit": "d596024dac0d90605d4f103d567e5851771be5a8",
+        "readback_matches_expected": true,
+        "temp_state_removed": true,
+        "retained_state_committed": false,
+        "secret_values_recorded": false,
+        "maintainer_seed_required": false
+      },
+      "non_claims": [
+        "not a default public-routing claim",
+        "not a durability guarantee",
+        "not proof of automatic future update propagation",
+        "not proof of broad Radicle network availability",
+        "not proof of independent provider or network availability",
+        "not proof of censorship resistance",
+        "not proof of identity trust",
+        "not a security guarantee",
+        "not production readiness",
+        "not maintainer key material on ubuntu-work",
+        "not a committed secret or key backup"
+      ],
+      "notes": "This verifies the second public direct-seed address through the same RC verifier command. The second address remains relay-backed through openclaw to ubuntu-work, so it is not an independent-provider availability proof."
     }
   ]
 }

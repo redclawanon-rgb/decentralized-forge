@@ -20,6 +20,18 @@ The release candidate must not claim permanent durability, censorship resistance
 - The portable verification bundle includes the verifier, docs, latest evidence, and non-claims.
 - CI passes on `main`.
 
+## Execution Status
+
+As of Loop 79, the first public clone release-candidate path has passed from
+fresh Docker/Linux reader profiles against both public seed addresses:
+
+- primary: `evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json`
+- second: `evidence/radicle-first-public-clone-second-d596024-2026-06-30.json`
+
+Loops 80-82 are release-polish and hardening-backlog loops: they keep the
+verified public clone path visible in docs, bundle reports, release notes, and
+post-RC availability gates without upgrading the claim boundary.
+
 ## Autonomous Loop Sequence
 
 The controller may execute these loops in order without asking for "continue" after each loop, as long as each loop stays inside the approved boundaries recorded in `fixtures/next-loop-controller.json`.

@@ -113,6 +113,10 @@ def write_json(path: Path, payload: object) -> None:
         handle.write(f"{json.dumps(payload, indent=2, sort_keys=True)}\n")
 
 
+def now_utc() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
 def stable_json_bytes(payload: object) -> bytes:
     return f"{json.dumps(payload, indent=2, sort_keys=True)}\n".encode("utf-8")
 
@@ -366,6 +370,26 @@ def retained_radicle_quickstart_model(index_path: Path = DEFAULT_LIVE_EVIDENCE_I
         "retained_state_committed": public["retained_state_committed"],
         "secret_values_recorded": public["secret_values_recorded"],
         "seed_peer_hint": public.get("vps_seed_address", "<seed-peer-id>@<reachable-host>:<port>"),
+        "public_seeds": [
+            {
+                "id": "primary",
+                "address": public.get("primary_public_seed_address", public.get("vps_seed_address", "<seed-peer-id>@<reachable-host>:<port>")),
+                "node_id": public.get("primary_public_seed_node_id", public.get("vps_seed_node_id", "<seed-peer-id>")),
+                "role": "primary public follower seed",
+            },
+            *(
+                [
+                    {
+                        "id": "second",
+                        "address": public["second_public_seed_address"],
+                        "node_id": public.get("second_public_seed_node_id", public["second_public_seed_address"].split("@", 1)[0]),
+                        "role": "second public follower seed via openclaw relay to ubuntu-work",
+                    }
+                ]
+                if public.get("second_public_seed_address")
+                else []
+            ),
+        ],
         "commands": [
             "rad auth --alias decentralized-forge-reader --stdin",
             "rad node start",
@@ -425,6 +449,83 @@ def format_retained_radicle_quickstart(model: dict) -> str:
     lines.extend(f"- {item}" for item in model["expected_verification"])
     lines.extend(["", "Non-claims:"])
     lines.extend(f"- {item}" for item in model["non_claims"])
+    return "\n".join(lines)
+
+
+def first_public_clone_plan(args: argparse.Namespace) -> dict:
+    model = retained_radicle_quickstart_model(args.index)
+    seeds = {seed["id"]: seed for seed in model["public_seeds"]}
+    if args.seed not in seeds:
+        raise ValueError(f"seed {args.seed!r} is not available in retained Radicle evidence")
+    seed = seeds[args.seed]
+    return {
+        "schema_version": "decentralized-forge.first-public-clone-verifier.v1",
+        "created_utc": now_utc(),
+        "mode": "plan" if args.plan_only else "live",
+        "live_actions_executed": False,
+        "source_evidence_id": model["source_evidence_id"],
+        "source_evidence_file": model["source_evidence_file"],
+        "rid": model["rid"],
+        "expected_commit": model["expected_commit"],
+        "seed": seed,
+        "command": [
+            sys.executable,
+            "scripts/check_public_radicle_seed.py",
+            "--seed",
+            seed["address"],
+            "--rid",
+            model["rid"],
+            "--expected-commit",
+            model["expected_commit"],
+        ],
+        "expected_verification": f"git rev-parse HEAD prints {model['expected_commit']}",
+        "secret_values_recorded": False,
+        "non_claims": [
+            "not a default public-routing claim",
+            "not a durability guarantee",
+            "not proof of automatic future update propagation",
+            "not proof of broad Radicle network availability",
+            "not proof of censorship resistance",
+            "not proof of identity trust",
+            "not a security guarantee",
+            "not production readiness",
+        ],
+    }
+
+
+def format_first_public_clone_result(result: dict) -> str:
+    seed = result["seed"]
+    lines = [
+        "First public Radicle clone verifier",
+        "",
+        f"- mode: `{result['mode']}`",
+        f"- source evidence: `{result['source_evidence_file']}`",
+        f"- RID: `{result['rid']}`",
+        f"- seed: `{seed['address']}`",
+        f"- expected commit: `{result['expected_commit']}`",
+    ]
+    if result["mode"] == "plan":
+        lines.extend(
+            [
+                "- live actions executed: `false`",
+                "",
+                "Planned command:",
+                "",
+                "```sh",
+                " ".join(result["command"]),
+                "```",
+            ]
+        )
+    else:
+        lines.extend(
+            [
+                f"- verification passed: `{str(result.get('verification_passed', False)).lower()}`",
+                f"- readback commit: `{result.get('readback_commit', '')}`",
+                f"- checker exit code: `{result.get('checker_exit_code')}`",
+            ]
+        )
+    lines.extend(["", "Non-claims:"])
+    lines.extend(f"- {item}" for item in result["non_claims"])
     return "\n".join(lines)
 
 
@@ -818,6 +919,7 @@ def collect_verification_bundle_paths() -> list[Path]:
         "docs/community-quickstart.md",
         "docs/first-decentralized-repo-milestone.md",
         "docs/first-public-clone-rc-plan.md",
+        "docs/live-completion-gates.md",
         "docs/radicle-persistent-seed-plan.md",
         "docs/radicle-retained-rid-quickstart.md",
         relative(DEFAULT_BUNDLE_REVIEW_CHECKLIST),
@@ -954,6 +1056,7 @@ def build_verification_bundle_manifest(paths: list[Path]) -> dict:
             "python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip",
             "python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip",
             "python scripts/forge_registry.py radicle-retained-quickstart",
+            "python scripts/forge_registry.py verify-first-public-clone --plan-only",
             "python scripts/forge_registry.py verify-local --skip-npm-ci",
         ],
         "non_claims": [
@@ -1300,9 +1403,27 @@ def bundle_report(source: Path) -> dict:
     states = Counter(item.get("state", "unknown") for item in evidence_entries if isinstance(item, dict))
 
     evidence_summary_entries = []
+    first_public_clone_entries = []
     for item in evidence_entries:
         if not isinstance(item, dict):
             continue
+        public = item.get("public_identifiers", {})
+        if isinstance(public, dict) and str(item.get("scope", "")).startswith("radicle.first_public_clone_rc."):
+            first_public_clone_entries.append(
+                {
+                    "id": item.get("id"),
+                    "state": item.get("state"),
+                    "evidence_file": item.get("evidence_file"),
+                    "rid": public.get("rid"),
+                    "expected_commit": public.get("current_source_commit"),
+                    "seed_id": public.get("seed_id"),
+                    "seed_address": public.get("seed_address"),
+                    "readback_commit": public.get("readback_commit"),
+                    "readback_matches_expected": public.get("readback_matches_expected"),
+                    "verifier_command": public.get("verifier_command"),
+                    "fresh_reader_environment": public.get("fresh_reader_environment"),
+                }
+            )
         evidence_summary_entries.append(
             {
                 "id": item.get("id"),
@@ -1353,6 +1474,16 @@ def bundle_report(source: Path) -> dict:
             "synthetic_count": sum(1 for item in evidence_entries if isinstance(item, dict) and item.get("synthetic") is True),
             "entries": evidence_summary_entries,
         },
+        "first_public_clone": {
+            "entry_count": len(first_public_clone_entries),
+            "rid": first_public_clone_entries[0]["rid"] if first_public_clone_entries else None,
+            "expected_commit": first_public_clone_entries[0]["expected_commit"] if first_public_clone_entries else None,
+            "entries": first_public_clone_entries,
+            "claim_boundary": (
+                "Fresh reader public direct-seed clone evidence only; not a durability, default-routing, "
+                "independent-provider, security, identity-trust, or production-readiness claim."
+            ),
+        },
         "non_claims": manifest.get("non_claims", []),
         "verification_gaps": verification_gaps,
     }
@@ -1392,6 +1523,19 @@ def format_bundle_report(report: dict) -> str:
         f"- live_network_action={evidence['live_network_action_count']}; "
         f"selected_relay_readback={evidence['selected_relay_readback_count']}; synthetic={evidence['synthetic_count']}"
     )
+
+    public_clone = report.get("first_public_clone", {})
+    if public_clone.get("entry_count"):
+        lines.append("")
+        lines.append("First public clone RC")
+        lines.append(f"- rid: {public_clone['rid']}")
+        lines.append(f"- expected_commit: {public_clone['expected_commit']}")
+        for entry in public_clone["entries"]:
+            lines.append(
+                f"- {entry['seed_id']}: {entry['seed_address']} -> {entry['readback_commit']} "
+                f"({entry['state']}; {entry['evidence_file']})"
+            )
+        lines.append(f"- boundary: {public_clone['claim_boundary']}")
 
     lines.append("")
     lines.append("Non-claims")
@@ -1474,9 +1618,23 @@ def format_bundle_release_note(bundle_path: Path = DEFAULT_BUNDLE_OUTPUT, checkl
         f"- live_network_action_entries: `{report['evidence']['live_network_action_count']}`",
         f"- selected_relay_readback_entries: `{report['evidence']['selected_relay_readback_count']}`",
         "",
-        "## Projects",
-        "",
     ]
+
+    public_clone = report.get("first_public_clone", {})
+    lines.extend(["## First Public Clone RC", ""])
+    if public_clone.get("entry_count"):
+        lines.append(f"- rid: `{public_clone['rid']}`")
+        lines.append(f"- expected_commit: `{public_clone['expected_commit']}`")
+        for entry in public_clone["entries"]:
+            lines.append(
+                f"- `{entry['seed_id']}`: `{entry['seed_address']}` -> `{entry['readback_commit']}` "
+                f"via `{entry['evidence_file']}`"
+            )
+        lines.append(f"- boundary: {public_clone['claim_boundary']}")
+    else:
+        lines.append("- no first public clone RC evidence found in the bundle report")
+
+    lines.extend(["", "## Projects", ""])
 
     for project in report["projects"]:
         counts = project["counts"]
@@ -1726,6 +1884,58 @@ def command_radicle_retained_quickstart(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_verify_first_public_clone(args: argparse.Namespace) -> int:
+    result = first_public_clone_plan(args)
+    if not args.plan_only:
+        with tempfile.TemporaryDirectory(prefix="df-first-public-clone-") as tmpdir:
+            checker_output = Path(tmpdir) / "check.json"
+            command = [
+                *result["command"],
+                "--output",
+                str(checker_output),
+                "--connect-timeout",
+                args.connect_timeout,
+                "--clone-timeout",
+                args.clone_timeout,
+            ]
+            if args.bin_dir:
+                command.extend(["--bin-dir", str(args.bin_dir)])
+            if args.keep_temp:
+                command.append("--keep-temp")
+            completed = subprocess.run(
+                command,
+                cwd=ROOT,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+            checker = json.loads(checker_output.read_text(encoding="utf-8")) if checker_output.is_file() else {}
+            result.update(
+                {
+                    "mode": "live",
+                    "live_actions_executed": True,
+                    "command": command,
+                    "checker_exit_code": completed.returncode,
+                    "checker_stdout": completed.stdout,
+                    "checker_stderr": completed.stderr,
+                    "checker": checker,
+                    "readback_commit": checker.get("readback_commit", ""),
+                    "verification_passed": completed.returncode == 0 and checker.get("verification_passed") is True,
+                }
+            )
+    output = json.dumps(result, indent=2, sort_keys=True) if args.json else format_first_public_clone_result(result)
+    if args.output:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(f"{json.dumps(result, indent=2, sort_keys=True)}\n", encoding="utf-8", newline="\n")
+        print(f"wrote first public clone verification: {relative(args.output)}")
+        if not args.json:
+            print(format_first_public_clone_result(result))
+    else:
+        print(output)
+    return 0 if result["mode"] == "plan" or result.get("verification_passed") else 1
+
+
 def doctor_report() -> dict:
     tools = {}
     for name in ["git", "node", "npm", "python", "rad", "nak"]:
@@ -1868,6 +2078,7 @@ def command_verify_local(args: argparse.Namespace) -> int:
         [sys.executable, "scripts/forge_registry.py", "validate-evidence-index", "fixtures/live-evidence-index.json"],
         [sys.executable, "scripts/forge_registry.py", "refresh-evidence-hashes", "fixtures/live-evidence-index.json", "--check"],
         [sys.executable, "scripts/forge_registry.py", "radicle-retained-quickstart"],
+        [sys.executable, "scripts/forge_registry.py", "verify-first-public-clone", "--plan-only", "--json"],
         [sys.executable, "scripts/forge_registry.py", "doctor", "--json"],
         [
             sys.executable,
@@ -2052,6 +2263,21 @@ def build_parser() -> argparse.ArgumentParser:
     radicle_retained.add_argument("--index", type=Path, default=DEFAULT_LIVE_EVIDENCE_INDEX, help="Live evidence index to read")
     radicle_retained.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
     radicle_retained.set_defaults(func=command_radicle_retained_quickstart)
+
+    first_public_clone = subparsers.add_parser(
+        "verify-first-public-clone",
+        help="Verify or plan the current retained RID public direct-seed clone path",
+    )
+    first_public_clone.add_argument("--index", type=Path, default=DEFAULT_LIVE_EVIDENCE_INDEX, help="Live evidence index to read")
+    first_public_clone.add_argument("--seed", choices=["primary", "second"], default="primary", help="Public seed path to verify")
+    first_public_clone.add_argument("--plan-only", action="store_true", help="Print the bounded verification plan without running Radicle")
+    first_public_clone.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+    first_public_clone.add_argument("--output", type=Path, help="Write machine-readable result JSON")
+    first_public_clone.add_argument("--bin-dir", type=Path, help="Directory containing rad/radicle-node")
+    first_public_clone.add_argument("--keep-temp", action="store_true", help="Preserve checker temporary state in live mode")
+    first_public_clone.add_argument("--connect-timeout", default="30s")
+    first_public_clone.add_argument("--clone-timeout", default="180s")
+    first_public_clone.set_defaults(func=command_verify_first_public_clone)
 
     doctor = subparsers.add_parser("doctor", help="Report local tool and evidence readiness without live protocol actions")
     doctor.add_argument("--json", action="store_true", help="Emit machine-readable JSON")

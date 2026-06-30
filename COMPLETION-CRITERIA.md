@@ -45,6 +45,7 @@ python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-fo
 python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip --json
 python scripts/forge_registry.py report-bundle output/decentralized-forge-verification-bundle.zip --json --output output/onboarding-sample.bundle-report.json
 python scripts/forge_registry.py export-bundle-release-note output/decentralized-forge-verification-bundle.zip
+python scripts/forge_registry.py verify-first-public-clone --plan-only
 python scripts/live_gate_inventory.py
 python -m unittest discover -s tests
 npm ci
@@ -143,6 +144,8 @@ Loop 67 added public VPS follower-seed readback evidence for the retained RID. T
 Loops 68-72 complete the first usable decentralized repo milestone. The `openclaw` follower seed now runs as an enabled user-level `systemd` service, `scripts/check_public_radicle_seed.py` provides a repeatable fresh-profile health check, `ubuntu-work` runs an external health timer, and the retained RID advanced to `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68` with fresh public readback from the VPS follower after the temporary maintainer bridge and maintainer seed were stopped. This satisfies the current MVP usability target: a user can clone the project from a published Radicle seed address and verify the expected retained-RID commit. It still does not satisfy permanent durability, automatic future propagation, independent multi-seed availability, security, identity trust, default public routing, or production readiness.
 
 Loop 73 stages independent multi-seed availability by bootstrapping a second persistent `ubuntu-work` follower seed with separate Radicle state and verifying fresh readback from `openclaw` over Tailnet. Loop 74 promotes that staged seed into a second public direct-seed address at `z6MksRdjzuN2VYV4HTXdVSchitJ8Bq1zbx8WhBb3KhyfSm6A@187.77.19.162:8877`. This improves usability, but it still does not prove independent provider/network availability because public ingress for both public seed addresses uses `openclaw`.
+
+Loop 79 completes the first public clone release-candidate proof. `python scripts/forge_registry.py verify-first-public-clone` now selects the current retained RID, public seed address, and expected commit from the evidence model, then runs `scripts/check_public_radicle_seed.py` from disposable reader state. Fresh Docker/Linux runs against both public seed addresses wrote `evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json` and `evidence/radicle-first-public-clone-second-d596024-2026-06-30.json`, each verifying clone HEAD `d596024dac0d90605d4f103d567e5851771be5a8`. This is sufficient for v0.1.0-alpha public-clone usability, but still does not prove durability, automatic future propagation, independent provider/network availability, default public routing, identity trust, security, or production readiness.
 
 ## Release Rule
 
