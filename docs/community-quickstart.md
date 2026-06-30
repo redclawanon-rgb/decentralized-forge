@@ -128,3 +128,12 @@ python scripts/forge_registry.py render-app output/forge-app.html
 ```
 
 Open `output/forge-app.html` and use the Nostr draft view to create local JSON drafts. The draft view does not sign, fetch, open WebSockets, or publish. A live selected-relay recheck remains an explicit bounded action through `npm run live:nostr-issue-patch`; use it only for disposable project-scoped evidence and keep the resulting evidence row secret-free.
+
+For a project registry record created with `add-issue` or `add-patch`, export a project-specific unsigned draft from the CLI:
+
+```sh
+python scripts/forge_registry.py export-nostr-draft fixtures/<project-id>.registry.json issue issue-1
+python scripts/forge_registry.py export-nostr-draft fixtures/<project-id>.registry.json patch patch-1
+```
+
+The exported `output/*.nostr-draft.json` file contains the unsigned NIP-34-shaped event body, local conformance metadata, relay hints, and the live replay boundary. It is not signed, published, or read back until a separate disposable selected-relay live gate records evidence.

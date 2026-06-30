@@ -1,0 +1,91 @@
+{
+  "event": {
+    "content": "Prototype a deterministic stdlib renderer for project registry fixtures.",
+    "created_at": 1782778260,
+    "kind": 1617,
+    "pubkey": "0000000000000000000000000000000000000000000000000000000000000000",
+    "tags": [
+      [
+        "a",
+        "30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project",
+        "",
+        "root"
+      ],
+      [
+        "subject",
+        "Add static registry renderer"
+      ],
+      [
+        "status",
+        "proposed"
+      ],
+      [
+        "t",
+        "demo-project"
+      ],
+      [
+        "client",
+        "decentralized-forge-cli"
+      ],
+      [
+        "relays",
+        "wss://relay.example.invalid"
+      ]
+    ]
+  },
+  "event_conformance": {
+    "event_id_computed": false,
+    "id_is_placeholder": false,
+    "kind": 1617,
+    "label": "demo-project.patch.PATCH-1",
+    "nip34_kind_known": true,
+    "possible_event_id": "bc91fe241f15f8afdb78c3ced43968c70055e051c4bd77545c2fcd65ef75ecb0",
+    "published": false,
+    "serialized_event_payload": "[0,\"0000000000000000000000000000000000000000000000000000000000000000\",1782778260,1617,[[\"a\",\"30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project\",\"\",\"root\"],[\"subject\",\"Add static registry renderer\"],[\"status\",\"proposed\"],[\"t\",\"demo-project\"],[\"client\",\"decentralized-forge-cli\"],[\"relays\",\"wss://relay.example.invalid\"]],\"Prototype a deterministic stdlib renderer for project registry fixtures.\"]",
+    "shape": {
+      "content_is_string": true,
+      "created_at_is_int": true,
+      "errors": [],
+      "kind_is_int": true,
+      "pubkey_is_fixture_synthetic": true,
+      "pubkey_is_lower_hex_64": true,
+      "required_fields_present": true,
+      "tags_are_arrays_of_strings": true,
+      "valid_for_local_fixture": true
+    },
+    "sig_is_placeholder": false,
+    "signed": false
+  },
+  "live_replay_gate": {
+    "boundary": "The current live script proves the committed fixture issue/patch path; this project-specific draft must be signed with a disposable project-scoped key and read back from selected relays before any live collaboration claim.",
+    "current_fixture_command": "npm run live:nostr-issue-patch",
+    "status": "not-run-by-export"
+  },
+  "non_claims": [
+    "unsigned draft only",
+    "not signed",
+    "not published",
+    "no relay readback",
+    "not a Radicle patch submission",
+    "not a hosted collaboration service",
+    "not durable storage",
+    "not production readiness"
+  ],
+  "project": {
+    "id": "demo-project",
+    "name": "Demo Decentralized Forge Project"
+  },
+  "relay_hints": [
+    "wss://relay.example.invalid"
+  ],
+  "repository_address": "30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project",
+  "schema_version": "decentralized-forge.nostr-collaboration-draft.v1",
+  "source_record": {
+    "author": "npub1contributorfixture0000000000000000000000000000000000000000",
+    "id": "PATCH-1",
+    "status": "proposed",
+    "title": "Add static registry renderer",
+    "type": "patch"
+  },
+  "source_registry": "fixtures/example-project.registry.json"
+}

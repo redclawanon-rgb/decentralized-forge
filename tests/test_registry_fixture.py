@@ -101,6 +101,8 @@ OUTPUT_DEMO_SUMMARY = ROOT / "output" / "demo-project.summary.json"
 OUTPUT_PORTABLE_SUMMARY = ROOT / "output" / "portable-lab.summary.json"
 OUTPUT_ONBOARDING_SAMPLE_SUMMARY = ROOT / "output" / "onboarding-sample.registry.summary.json"
 OUTPUT_ONBOARDING_SAMPLE_REPORT = ROOT / "output" / "onboarding-sample.bundle-report.json"
+OUTPUT_DEMO_ISSUE_NOSTR_DRAFT = ROOT / "output" / "demo-project.issue.issue-1.nostr-draft.json"
+OUTPUT_DEMO_PATCH_NOSTR_DRAFT = ROOT / "output" / "demo-project.patch.patch-1.nostr-draft.json"
 OUTPUT_PUBLIC_SEED_STATUS = ROOT / "output" / "public-seed-status.json"
 CIDV1_BASE32_RE = re.compile(r"^b[a-z2-7]{20,}$")
 
@@ -228,6 +230,65 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertEqual(onboarding_summary["project"]["id"], "onboarding-sample")
         self.assertEqual(onboarding_summary["counts"]["artifacts"], 1)
         self.assertEqual(onboarding_summary["artifact_names"], ["onboarding-sample-artifact.txt"])
+
+    def test_demo_nostr_collaboration_drafts_are_current_and_unsigned(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            issue_output = Path(tmpdir) / "issue-draft.json"
+            issue_markdown = Path(tmpdir) / "issue-draft.md"
+            patch_output = Path(tmpdir) / "patch-draft.json"
+            patch_markdown = Path(tmpdir) / "patch-draft.md"
+            self.assertEqual(
+                forge_registry.main(
+                    [
+                        "export-nostr-draft",
+                        str(FIXTURE_PATH),
+                        "issue",
+                        "ISSUE-1",
+                        "--output",
+                        str(issue_output),
+                        "--markdown",
+                        str(issue_markdown),
+                        "--created-at",
+                        "2026-06-30T00:10:00Z",
+                    ]
+                ),
+                0,
+            )
+            self.assertEqual(
+                forge_registry.main(
+                    [
+                        "export-nostr-draft",
+                        str(FIXTURE_PATH),
+                        "patch",
+                        "PATCH-1",
+                        "--output",
+                        str(patch_output),
+                        "--markdown",
+                        str(patch_markdown),
+                        "--created-at",
+                        "2026-06-30T00:11:00Z",
+                    ]
+                ),
+                0,
+            )
+            self.assertEqual(issue_output.read_text(encoding="utf-8"), OUTPUT_DEMO_ISSUE_NOSTR_DRAFT.read_text(encoding="utf-8"))
+            self.assertEqual(patch_output.read_text(encoding="utf-8"), OUTPUT_DEMO_PATCH_NOSTR_DRAFT.read_text(encoding="utf-8"))
+
+        issue_draft = json.loads(OUTPUT_DEMO_ISSUE_NOSTR_DRAFT.read_text(encoding="utf-8"))
+        patch_draft = json.loads(OUTPUT_DEMO_PATCH_NOSTR_DRAFT.read_text(encoding="utf-8"))
+        self.assertEqual(issue_draft["schema_version"], "decentralized-forge.nostr-collaboration-draft.v1")
+        self.assertEqual(issue_draft["event"]["kind"], nip34_adapter.ISSUE_KIND)
+        self.assertEqual(patch_draft["event"]["kind"], nip34_adapter.PATCH_KIND)
+        self.assertTrue(issue_draft["event_conformance"]["shape"]["valid_for_local_fixture"])
+        self.assertFalse(issue_draft["event_conformance"]["signed"])
+        self.assertFalse(issue_draft["event_conformance"]["published"])
+        self.assertEqual(issue_draft["live_replay_gate"]["status"], "not-run-by-export")
+        combined = json.dumps({"issue": issue_draft, "patch": patch_draft}).lower()
+        self.assertIn("unsigned draft only", combined)
+        self.assertIn("no relay readback", combined)
+        self.assertIn("current live script proves the committed fixture", combined)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, combined)
 
     def test_forge_registry_cli_renders_second_fixture_without_demo_adapters(self):
         html = OUTPUT_PORTABLE_HTML.read_text(encoding="utf-8")
@@ -459,6 +520,10 @@ class RegistryFixtureTests(unittest.TestCase):
                 "python scripts/forge_registry.py public-seed-status output/public-seed-status.json",
                 manifest["suggested_verification_commands"],
             )
+            self.assertIn(
+                "python scripts/forge_registry.py export-nostr-draft fixtures/example-project.registry.json issue ISSUE-1 --created-at 2026-06-30T00:10:00Z",
+                manifest["suggested_verification_commands"],
+            )
             payload_paths = {item["path"] for item in manifest["files"]}
             for expected_path in [
                 "fixtures/example-project.registry.json",
@@ -480,6 +545,10 @@ class RegistryFixtureTests(unittest.TestCase):
                 "output/portable-lab.summary.json",
                 "output/onboarding-sample.registry.summary.json",
                 "output/public-seed-status.json",
+                "output/demo-project.issue.issue-1.nostr-draft.json",
+                "output/demo-project.issue.issue-1.nostr-draft.md",
+                "output/demo-project.patch.patch-1.nostr-draft.json",
+                "output/demo-project.patch.patch-1.nostr-draft.md",
                 "docs/radicle-persistent-seed-plan.md",
                 "docs/radicle-retained-rid-quickstart.md",
                 "docs/first-public-clone-outside-reader-rehearsal.md",
@@ -1099,6 +1168,54 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertIn("no nostr publish/readback", combined)
             for unsupported_claim in ["production ready", "durably stored", "pinned and available", "slsa compliant"]:
                 self.assertNotIn(unsupported_claim, combined)
+
+            issue_draft_path = Path(tmpdir) / "started-widget.issue.nostr-draft.json"
+            patch_draft_path = Path(tmpdir) / "started-widget.patch.nostr-draft.json"
+            self.assertEqual(
+                forge_registry.main(
+                    [
+                        "export-nostr-draft",
+                        str(registry_path),
+                        "issue",
+                        "issue-local-1",
+                        "--output",
+                        str(issue_draft_path),
+                        "--created-at",
+                        "2026-06-30T00:07:00Z",
+                    ]
+                ),
+                0,
+            )
+            self.assertEqual(
+                forge_registry.main(
+                    [
+                        "export-nostr-draft",
+                        str(registry_path),
+                        "patch",
+                        "patch-local-1",
+                        "--output",
+                        str(patch_draft_path),
+                        "--created-at",
+                        "2026-06-30T00:08:00Z",
+                    ]
+                ),
+                0,
+            )
+            issue_draft = json.loads(issue_draft_path.read_text(encoding="utf-8"))
+            patch_draft = json.loads(patch_draft_path.read_text(encoding="utf-8"))
+            self.assertEqual(issue_draft["event"]["kind"], nip34_adapter.ISSUE_KIND)
+            self.assertEqual(patch_draft["event"]["kind"], nip34_adapter.PATCH_KIND)
+            self.assertEqual(issue_draft["source_record"]["id"], "issue-local-1")
+            self.assertEqual(patch_draft["source_record"]["id"], "patch-local-1")
+            self.assertTrue(issue_draft["event_conformance"]["shape"]["valid_for_local_fixture"])
+            self.assertFalse(issue_draft["event_conformance"]["signed"])
+            self.assertFalse(issue_draft["event_conformance"]["published"])
+            draft_combined = json.dumps({"issue": issue_draft, "patch": patch_draft}).lower()
+            self.assertIn("unsigned draft only", draft_combined)
+            self.assertIn("no relay readback", draft_combined)
+            self.assertIn("project-specific draft must be signed with a disposable", draft_combined)
+            for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "api_token"]:
+                self.assertNotIn(accidental_secret_marker, draft_combined)
 
     def test_live_gate_inventory_is_read_only_and_secret_free(self):
         payload = live_gate_inventory.inventory()

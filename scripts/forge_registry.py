@@ -972,6 +972,136 @@ def apply_local_collaboration_record(
     return registry
 
 
+def parse_created_at(value: str | None = None) -> int:
+    if value is None:
+        return int(datetime.now(timezone.utc).timestamp())
+    try:
+        return int(value)
+    except ValueError:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        return int(parsed.timestamp())
+
+
+def collaboration_record(registry: dict, *, kind: str, record_id: str) -> dict:
+    collection = "issues" if kind == "issue" else "patches"
+    for item in registry.get(collection, []):
+        if isinstance(item, dict) and item.get("id") == record_id:
+            return item
+    raise ValueError(f"{kind} record not found: {record_id}")
+
+
+def default_nostr_draft_paths(registry: dict, *, kind: str, record_id: str) -> tuple[Path, Path]:
+    project_id = slugify_project_id(registry["project"]["id"])
+    record_slug = slugify_project_id(record_id)
+    stem = f"{project_id}.{kind}.{record_slug}.nostr-draft"
+    return ROOT / "output" / f"{stem}.json", ROOT / "output" / f"{stem}.md"
+
+
+def export_nostr_collaboration_draft(
+    registry_path: Path,
+    *,
+    kind: str,
+    record_id: str,
+    output_path: Path | None = None,
+    markdown_path: Path | None = None,
+    pubkey: str = "0" * 64,
+    created_at: str | None = None,
+    relays: list[str] | None = None,
+) -> dict:
+    if kind not in {"issue", "patch"}:
+        raise ValueError(f"unsupported collaboration kind: {kind}")
+    registry = render_project_page.load_registry(registry_path)
+    record = collaboration_record(registry, kind=kind, record_id=record_id)
+    default_output, default_markdown = default_nostr_draft_paths(registry, kind=kind, record_id=record_id)
+    output_path = output_path or default_output
+    markdown_path = markdown_path or (output_path.with_suffix(".md") if output_path != default_output else default_markdown)
+    created_at_int = parse_created_at(created_at)
+    nip34 = registry.get("substrates", {}).get("nip34", {})
+    repo_id = nip34.get("repo_id_tag") or registry["project"]["id"]
+    relay_hints = list(dict.fromkeys([*(nip34.get("relay_hints", []) or []), *(relays or [])]))
+    repository_address = f"{nip34_adapter.REPOSITORY_KIND}:{pubkey}:{repo_id}"
+    event = {
+        "pubkey": pubkey,
+        "created_at": created_at_int,
+        "kind": nip34_adapter.ISSUE_KIND if kind == "issue" else nip34_adapter.PATCH_KIND,
+        "tags": [
+            ["a", repository_address, "", "root"],
+            ["subject", record["title"]],
+            ["status", record["status"]],
+            ["t", registry["project"]["id"]],
+            ["client", "decentralized-forge-cli"],
+        ],
+        "content": record.get("summary", ""),
+    }
+    for relay in relay_hints:
+        event["tags"].append(["relays", relay])
+    conformance = nip34_adapter.conformance_report(event, label=f"{registry['project']['id']}.{kind}.{record_id}")
+    draft = {
+        "schema_version": "decentralized-forge.nostr-collaboration-draft.v1",
+        "source_registry": relative(registry_path),
+        "source_record": {
+            "type": kind,
+            "id": record_id,
+            "title": record["title"],
+            "status": record["status"],
+            "author": record.get("author", ""),
+        },
+        "project": {
+            "id": registry["project"]["id"],
+            "name": registry["project"]["name"],
+        },
+        "repository_address": repository_address,
+        "relay_hints": relay_hints,
+        "event": event,
+        "event_conformance": conformance,
+        "live_replay_gate": {
+            "status": "not-run-by-export",
+            "current_fixture_command": "npm run live:nostr-issue-patch",
+            "boundary": "The current live script proves the committed fixture issue/patch path; this project-specific draft must be signed with a disposable project-scoped key and read back from selected relays before any live collaboration claim.",
+        },
+        "non_claims": [
+            "unsigned draft only",
+            "not signed",
+            "not published",
+            "no relay readback",
+            "not a Radicle patch submission",
+            "not a hosted collaboration service",
+            "not durable storage",
+            "not production readiness",
+        ],
+    }
+    write_json(output_path, draft)
+    markdown_path.parent.mkdir(parents=True, exist_ok=True)
+    markdown_path.write_text(format_nostr_collaboration_draft_markdown(draft, output_path), encoding="utf-8", newline="\n")
+    return draft
+
+
+def format_nostr_collaboration_draft_markdown(draft: dict, output_path: Path) -> str:
+    record = draft["source_record"]
+    lines = [
+        f"# Nostr {record['type'].title()} Draft",
+        "",
+        f"- Project: `{draft['project']['id']}`",
+        f"- Record: `{record['id']}`",
+        f"- Draft JSON: `{relative(output_path)}`",
+        f"- Event kind: `{draft['event']['kind']}`",
+        f"- Possible event id: `{draft['event_conformance'].get('possible_event_id') or 'not computed'}`",
+        f"- Repository address: `{draft['repository_address']}`",
+        "",
+        "## Boundary",
+        "",
+        draft["live_replay_gate"]["boundary"],
+        "",
+        "## Non-Claims",
+        "",
+        *[f"- {item}" for item in draft["non_claims"]],
+        "",
+    ]
+    return "\n".join(lines)
+
+
 def refresh_registry_outputs(
     registry_path: Path,
     *,
@@ -1422,7 +1552,17 @@ def bundle_role(path: str) -> str:
 
 def collect_verification_bundle_paths() -> list[Path]:
     paths: set[Path] = set()
-    for pattern in ["schemas/*.json", "fixtures/*.json", "fixtures/*.txt", "evidence/*", "output/*.html", "output/*.summary.json", "output/*.start-project.json"]:
+    for pattern in [
+        "schemas/*.json",
+        "fixtures/*.json",
+        "fixtures/*.txt",
+        "evidence/*",
+        "output/*.html",
+        "output/*.summary.json",
+        "output/*.start-project.json",
+        "output/*.nostr-draft.json",
+        "output/*.nostr-draft.md",
+    ]:
         paths.update(path for path in ROOT.glob(pattern) if path.is_file())
 
     for relative_path in [
@@ -1524,6 +1664,22 @@ def regenerate_portable_outputs() -> None:
         render_project_page.main([str(onboarding_registry), str(ROOT / "output" / "onboarding-sample.registry.html")])
         registry = render_project_page.load_registry(onboarding_registry)
         write_json(ROOT / "output" / "onboarding-sample.registry.summary.json", registry_summary(registry, onboarding_registry))
+    export_nostr_collaboration_draft(
+        ROOT / "fixtures" / "example-project.registry.json",
+        kind="issue",
+        record_id="ISSUE-1",
+        output_path=ROOT / "output" / "demo-project.issue.issue-1.nostr-draft.json",
+        markdown_path=ROOT / "output" / "demo-project.issue.issue-1.nostr-draft.md",
+        created_at="2026-06-30T00:10:00Z",
+    )
+    export_nostr_collaboration_draft(
+        ROOT / "fixtures" / "example-project.registry.json",
+        kind="patch",
+        record_id="PATCH-1",
+        output_path=ROOT / "output" / "demo-project.patch.patch-1.nostr-draft.json",
+        markdown_path=ROOT / "output" / "demo-project.patch.patch-1.nostr-draft.md",
+        created_at="2026-06-30T00:11:00Z",
+    )
     write_json(DEFAULT_PUBLIC_SEED_STATUS_OUTPUT, public_seed_status_model())
 
 
@@ -1581,6 +1737,7 @@ def build_verification_bundle_manifest(paths: list[Path]) -> dict:
             "python scripts/forge_registry.py radicle-retained-quickstart",
             "python scripts/forge_registry.py verify-first-public-clone --plan-only",
             "python scripts/forge_registry.py public-seed-status output/public-seed-status.json",
+            "python scripts/forge_registry.py export-nostr-draft fixtures/example-project.registry.json issue ISSUE-1 --created-at 2026-06-30T00:10:00Z",
             "python scripts/forge_registry.py verify-local --skip-npm-ci",
         ],
         "non_claims": [
@@ -2378,6 +2535,32 @@ def command_add_collaboration_record(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_export_nostr_draft(args: argparse.Namespace) -> int:
+    draft = export_nostr_collaboration_draft(
+        args.registry,
+        kind=args.kind,
+        record_id=args.record_id,
+        output_path=args.output,
+        markdown_path=args.markdown,
+        pubkey=args.pubkey,
+        created_at=args.created_at,
+        relays=args.relay,
+    )
+    output_path = args.output or default_nostr_draft_paths(
+        render_project_page.load_registry(args.registry),
+        kind=args.kind,
+        record_id=args.record_id,
+    )[0]
+    markdown_path = args.markdown or output_path.with_suffix(".md")
+    print(f"wrote Nostr {args.kind} draft: {relative(output_path)}")
+    print(f"- markdown: {relative(markdown_path)}")
+    print(f"- kind: {draft['event']['kind']}")
+    print(f"- possible_event_id: {draft['event_conformance'].get('possible_event_id') or 'not computed'}")
+    print("- scope: unsigned local NIP-34-shaped draft only; no signing, publish, relay readback, or production claim")
+    print(f"- live gate: {draft['live_replay_gate']['boundary']}")
+    return 0
+
+
 def command_onboard_local_project(args: argparse.Namespace) -> int:
     result = onboard_local_project(
         args.repository,
@@ -2801,6 +2984,34 @@ def command_verify_local(args: argparse.Namespace) -> int:
         [sys.executable, "scripts/forge_registry.py", "radicle-retained-quickstart"],
         [sys.executable, "scripts/forge_registry.py", "verify-first-public-clone", "--plan-only", "--json"],
         [sys.executable, "scripts/forge_registry.py", "public-seed-status", "output/public-seed-status.json"],
+        [
+            sys.executable,
+            "scripts/forge_registry.py",
+            "export-nostr-draft",
+            "fixtures/example-project.registry.json",
+            "issue",
+            "ISSUE-1",
+            "--output",
+            "output/demo-project.issue.issue-1.nostr-draft.json",
+            "--markdown",
+            "output/demo-project.issue.issue-1.nostr-draft.md",
+            "--created-at",
+            "2026-06-30T00:10:00Z",
+        ],
+        [
+            sys.executable,
+            "scripts/forge_registry.py",
+            "export-nostr-draft",
+            "fixtures/example-project.registry.json",
+            "patch",
+            "PATCH-1",
+            "--output",
+            "output/demo-project.patch.patch-1.nostr-draft.json",
+            "--markdown",
+            "output/demo-project.patch.patch-1.nostr-draft.md",
+            "--created-at",
+            "2026-06-30T00:11:00Z",
+        ],
         [sys.executable, "scripts/forge_registry.py", "doctor", "--json"],
         [
             sys.executable,
@@ -2935,6 +3146,20 @@ def build_parser() -> argparse.ArgumentParser:
         "Add or update a local patch/PR-like record in a registry fixture",
         ["proposed", "review", "accepted", "rejected", "merged"],
     )
+
+    nostr_draft = subparsers.add_parser(
+        "export-nostr-draft",
+        help="Export a registry issue or patch as an unsigned NIP-34-shaped draft",
+    )
+    nostr_draft.add_argument("registry", type=Path, help="Registry fixture JSON to read")
+    nostr_draft.add_argument("kind", choices=["issue", "patch"], help="Collaboration record type")
+    nostr_draft.add_argument("record_id", help="Issue or patch id to export")
+    nostr_draft.add_argument("--output", type=Path, help="Draft JSON path; defaults to output/<project>.<kind>.<id>.nostr-draft.json")
+    nostr_draft.add_argument("--markdown", type=Path, help="Markdown handoff path; defaults beside the draft JSON")
+    nostr_draft.add_argument("--pubkey", default="0" * 64, help="Draft pubkey; defaults to an obvious placeholder key")
+    nostr_draft.add_argument("--created-at", help="Draft created_at as Unix seconds or ISO-8601; defaults to current time")
+    nostr_draft.add_argument("--relay", action="append", default=[], help="Relay hint to include; may be repeated")
+    nostr_draft.set_defaults(func=command_export_nostr_draft)
 
     onboard = subparsers.add_parser(
         "onboard-local-project",

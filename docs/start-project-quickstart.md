@@ -68,6 +68,15 @@ python scripts/forge_registry.py add-patch fixtures/<project-id>.registry.json -
 
 Each command updates the registry, refreshes the project page/workbench, rebuilds the verification bundle, and records a local-only collaboration verification state. This is the usable local collaboration path; use the workbench Nostr draft or selected-relay replay gate when live decentralized issue/patch evidence is required.
 
+Export one of those records as an unsigned NIP-34-shaped Nostr draft:
+
+```sh
+python scripts/forge_registry.py export-nostr-draft fixtures/<project-id>.registry.json issue issue-1
+python scripts/forge_registry.py export-nostr-draft fixtures/<project-id>.registry.json patch patch-1
+```
+
+The draft export writes `output/<project-id>.<type>.<record-id>.nostr-draft.json` plus a Markdown handoff beside it. It does not sign, publish, fetch, or read back from relays. A live collaboration claim requires signing with a disposable project-scoped key and selected-relay readback evidence.
+
 ## Verify
 
 ```sh
@@ -82,4 +91,5 @@ python scripts/forge_registry.py report-bundle output/decentralized-forge-verifi
 - This is not a hosted production forge.
 - This is not a Radicle publication proof for your project until the Radicle genesis gate runs for that project.
 - Local `add-issue` and `add-patch` records are not Nostr publishes, selected-relay readbacks, Radicle patch submissions, signatures, or hosted collaboration services.
+- `export-nostr-draft` creates unsigned draft payloads only; it is not a live relay proof.
 - This is not durable storage, pinning, broad availability, censorship resistance, security, SLSA compliance, or production readiness.

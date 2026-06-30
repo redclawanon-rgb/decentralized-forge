@@ -1,11 +1,11 @@
 {
   "bundle": {
-    "file_count": 135,
+    "file_count": 139,
     "name": "decentralized-forge portable verification bundle",
     "role_counts": {
       "documentation": 16,
       "fixture": 14,
-      "generated-output": 9,
+      "generated-output": 13,
       "schema": 2,
       "source-evidence": 69,
       "supporting-file": 2,
@@ -21,6 +21,7 @@
       "python scripts/forge_registry.py radicle-retained-quickstart",
       "python scripts/forge_registry.py verify-first-public-clone --plan-only",
       "python scripts/forge_registry.py public-seed-status output/public-seed-status.json",
+      "python scripts/forge_registry.py export-nostr-draft fixtures/example-project.registry.json issue ISSUE-1 --created-at 2026-06-30T00:10:00Z",
       "python scripts/forge_registry.py verify-local --skip-npm-ci"
     ]
   },

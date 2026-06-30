@@ -1,0 +1,91 @@
+{
+  "event": {
+    "content": "Choose how maintainer authority is represented across Nostr, Radicle, DID, and SSH identities.",
+    "created_at": 1782778200,
+    "kind": 1621,
+    "pubkey": "0000000000000000000000000000000000000000000000000000000000000000",
+    "tags": [
+      [
+        "a",
+        "30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project",
+        "",
+        "root"
+      ],
+      [
+        "subject",
+        "Define portable project identity"
+      ],
+      [
+        "status",
+        "open"
+      ],
+      [
+        "t",
+        "demo-project"
+      ],
+      [
+        "client",
+        "decentralized-forge-cli"
+      ],
+      [
+        "relays",
+        "wss://relay.example.invalid"
+      ]
+    ]
+  },
+  "event_conformance": {
+    "event_id_computed": false,
+    "id_is_placeholder": false,
+    "kind": 1621,
+    "label": "demo-project.issue.ISSUE-1",
+    "nip34_kind_known": true,
+    "possible_event_id": "f35c31311cd270c53983c29e7eabb7eed94d38b2bf0c504c657f744c4fcc0d6a",
+    "published": false,
+    "serialized_event_payload": "[0,\"0000000000000000000000000000000000000000000000000000000000000000\",1782778200,1621,[[\"a\",\"30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project\",\"\",\"root\"],[\"subject\",\"Define portable project identity\"],[\"status\",\"open\"],[\"t\",\"demo-project\"],[\"client\",\"decentralized-forge-cli\"],[\"relays\",\"wss://relay.example.invalid\"]],\"Choose how maintainer authority is represented across Nostr, Radicle, DID, and SSH identities.\"]",
+    "shape": {
+      "content_is_string": true,
+      "created_at_is_int": true,
+      "errors": [],
+      "kind_is_int": true,
+      "pubkey_is_fixture_synthetic": true,
+      "pubkey_is_lower_hex_64": true,
+      "required_fields_present": true,
+      "tags_are_arrays_of_strings": true,
+      "valid_for_local_fixture": true
+    },
+    "sig_is_placeholder": false,
+    "signed": false
+  },
+  "live_replay_gate": {
+    "boundary": "The current live script proves the committed fixture issue/patch path; this project-specific draft must be signed with a disposable project-scoped key and read back from selected relays before any live collaboration claim.",
+    "current_fixture_command": "npm run live:nostr-issue-patch",
+    "status": "not-run-by-export"
+  },
+  "non_claims": [
+    "unsigned draft only",
+    "not signed",
+    "not published",
+    "no relay readback",
+    "not a Radicle patch submission",
+    "not a hosted collaboration service",
+    "not durable storage",
+    "not production readiness"
+  ],
+  "project": {
+    "id": "demo-project",
+    "name": "Demo Decentralized Forge Project"
+  },
+  "relay_hints": [
+    "wss://relay.example.invalid"
+  ],
+  "repository_address": "30617:0000000000000000000000000000000000000000000000000000000000000000:demo-project",
+  "schema_version": "decentralized-forge.nostr-collaboration-draft.v1",
+  "source_record": {
+    "author": "npub1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqfixture",
+    "id": "ISSUE-1",
+    "status": "open",
+    "title": "Define portable project identity",
+    "type": "issue"
+  },
+  "source_registry": "fixtures/example-project.registry.json"
+}
