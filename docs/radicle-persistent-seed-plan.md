@@ -90,6 +90,56 @@ test "$(git rev-parse HEAD)" = "d596024dac0d90605d4f103d567e5851771be5a8"
 
 Record health-check evidence only if command output is secret-free.
 
+## Repeatable Follower Refresh
+
+Loop 75 proved the manual refresh path for stale follower caches. Use `scripts/refresh_radicle_follower_seed.py` to make the next retained-RID update repeatable while preserving each follower seed identity.
+
+First produce a dry-run plan from any checkout:
+
+```sh
+python scripts/refresh_radicle_follower_seed.py \
+  --dry-run \
+  --rid rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy \
+  --source-seed <retained-maintainer-node-id>@<trusted-host>:8799 \
+  --expected-commit <new-retained-rid-commit> \
+  --state-dir /home/openclaw/df-rad-follower \
+  --listen 0.0.0.0:8776 \
+  --service decentralized-forge-radicle-seed.service \
+  --mode auto
+```
+
+Then run the same command without `--dry-run` on the follower seed host. The helper stops the optional user service, stops any existing node, backs up stale state under `<state-dir>/backups/`, clones from the trusted source seed with signed refs enabled, verifies `git rev-parse HEAD`, restores `rad seed --scope all --no-fetch`, stops the manual node, and restarts the service. It records `secret_values_recorded=false` and redacts the follower passphrase from captured command output.
+
+Primary public follower seed template:
+
+```sh
+python scripts/refresh_radicle_follower_seed.py \
+  --rid rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy \
+  --source-seed <retained-maintainer-node-id>@<trusted-host>:8799 \
+  --expected-commit <new-retained-rid-commit> \
+  --state-dir /home/openclaw/df-rad-follower \
+  --listen 0.0.0.0:8776 \
+  --service decentralized-forge-radicle-seed.service \
+  --mode auto \
+  --output /home/openclaw/df-rad-follower/latest-refresh.json
+```
+
+Second public follower seed template:
+
+```sh
+python scripts/refresh_radicle_follower_seed.py \
+  --rid rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy \
+  --source-seed <retained-maintainer-node-id>@<trusted-host>:8799 \
+  --expected-commit <new-retained-rid-commit> \
+  --state-dir /home/atladmin/df-rad-follower-mirror \
+  --listen 100.83.206.66:8877 \
+  --service decentralized-forge-radicle-mirror-seed.service \
+  --mode auto \
+  --output /home/atladmin/df-rad-follower-mirror/latest-refresh.json
+```
+
+`--mode auto` first backs up only `rad-home/storage/<rid-without-rad-prefix>`. If that readback still does not match the expected commit, it backs up the whole `rad-home`, recreates it with the existing `keys/` and `config.json`, and retries. Use `--mode storage` for the smaller reset only, or `--mode rad-home` when a full cache rebuild is known to be required.
+
 ## Promotion Gate
 
 Promote the persistent seed address into the public quickstart only after:

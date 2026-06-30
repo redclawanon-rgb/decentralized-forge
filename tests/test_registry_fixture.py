@@ -72,6 +72,7 @@ STATIC_PREFLIGHT = ROOT / "scripts" / "preflight_static_artifact.py"
 PORTABLE_BUNDLE_REVIEW_CHECKLIST = ROOT / "docs" / "portable-bundle-review-checklist.md"
 RADICLE_PERSISTENT_SEED_PLAN = ROOT / "docs" / "radicle-persistent-seed-plan.md"
 RADICLE_RETAINED_RID_QUICKSTART = ROOT / "docs" / "radicle-retained-rid-quickstart.md"
+RADICLE_FOLLOWER_REFRESH_SCRIPT = ROOT / "scripts" / "refresh_radicle_follower_seed.py"
 OUTPUT_DEMO_HTML = ROOT / "output" / "demo-project.html"
 OUTPUT_VERIFICATION_BUNDLE = ROOT / "output" / "decentralized-forge-verification-bundle.zip"
 OUTPUT_FORGE_APP_HTML = ROOT / "output" / "forge-app.html"
@@ -438,6 +439,7 @@ class RegistryFixtureTests(unittest.TestCase):
                 "docs/radicle-retained-rid-quickstart.md",
                 "docs/portable-bundle-review-checklist.md",
                 "scripts/bootstrap_radicle_follower_seed.py",
+                "scripts/refresh_radicle_follower_seed.py",
                 "scripts/forge_registry.py",
                 "scripts/install_tcp_relay_user_service.py",
                 "scripts/run_radicle_independent_availability_check.py",
@@ -456,6 +458,67 @@ class RegistryFixtureTests(unittest.TestCase):
             manifest_blob = json.dumps(manifest, sort_keys=True).lower()
             for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
                 self.assertNotIn(accidental_secret_marker, manifest_blob)
+
+    def test_radicle_follower_refresh_dry_run_is_bounded_and_secret_free(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output = Path(tmpdir) / "refresh-plan.json"
+            state_dir = Path(tmpdir) / "df-follower"
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(RADICLE_FOLLOWER_REFRESH_SCRIPT),
+                    "--dry-run",
+                    "--rid",
+                    "rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy",
+                    "--source-seed",
+                    "z6Mks7mTrustedMaintainerNode@127.0.0.1:8799",
+                    "--expected-commit",
+                    "d596024dac0d90605d4f103d567e5851771be5a8",
+                    "--state-dir",
+                    str(state_dir),
+                    "--listen",
+                    "127.0.0.1:8877",
+                    "--service",
+                    "decentralized-forge-radicle-seed.service",
+                    "--mode",
+                    "auto",
+                    "--output",
+                    str(output),
+                ],
+                cwd=ROOT,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True,
+            )
+            plan = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(plan, json.loads(result.stdout))
+            self.assertEqual(plan["schema_version"], "decentralized-forge.radicle-follower-refresh-plan.v1")
+            self.assertTrue(plan["dry_run"])
+            self.assertFalse(plan["live_actions_executed"])
+            self.assertFalse(plan["secret_values_recorded"])
+            self.assertEqual(plan["mode_requested"], "auto")
+            self.assertTrue(plan["would_backup_storage"])
+            self.assertTrue(plan["would_backup_rad_home"])
+            self.assertTrue(plan["would_preserve_keys_and_config"])
+            self.assertEqual(plan["source_seed_node_id"], "z6Mks7mTrustedMaintainerNode")
+            self.assertIn("--signed-refs-feature-level", plan["clone_command"])
+            self.assertIn("root", plan["clone_command"])
+            self.assertIn("rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy", plan["seed_command"])
+            self.assertFalse(state_dir.exists())
+
+            combined = json.dumps(plan).lower()
+            for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "passphrase-value"]:
+                self.assertNotIn(accidental_secret_marker, combined)
+
+    def test_radicle_follower_refresh_script_preserves_identity_before_rad_home_reset(self):
+        script = RADICLE_FOLLOWER_REFRESH_SCRIPT.read_text(encoding="utf-8")
+        self.assertIn("rad_home.resolve().parent != state_dir.resolve()", script)
+        self.assertIn("storage.resolve().parent", script)
+        self.assertIn('rad_home / "keys"', script)
+        self.assertIn('rad_home / "config.json"', script)
+        self.assertIn("refusing rad-home refresh because keys are missing", script)
+        self.assertIn("refusing rad-home refresh because config.json is missing", script)
 
     def test_portable_bundle_review_checklist_preserves_release_boundaries(self):
         checklist = PORTABLE_BUNDLE_REVIEW_CHECKLIST.read_text(encoding="utf-8")

@@ -1,6 +1,6 @@
 {
   "bundle": {
-    "file_count": 119,
+    "file_count": 120,
     "name": "decentralized-forge portable verification bundle",
     "role_counts": {
       "documentation": 10,
@@ -9,7 +9,7 @@
       "schema": 2,
       "source-evidence": 63,
       "supporting-file": 2,
-      "verifier-tooling": 20
+      "verifier-tooling": 21
     },
     "schema_version": "decentralized-forge.verification-bundle.v1",
     "scope": "portable local verification package; no live protocol actions, signing, spending, or publishing",
