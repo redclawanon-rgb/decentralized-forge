@@ -54,8 +54,11 @@ def load_config(path: Path) -> dict:
         raise ValueError(f"unsupported controller schema: {config.get('schema_version')}")
     if config.get("mode") != "approval-bounded":
         raise ValueError("controller mode must stay approval-bounded")
-    if config.get("max_iterations_per_run") != 1:
-        raise ValueError("controller is limited to one iteration per run")
+    max_iterations = config.get("max_iterations_per_run")
+    if not isinstance(max_iterations, int) or max_iterations < 1 or max_iterations > 6:
+        raise ValueError("controller max_iterations_per_run must stay between 1 and 6")
+    if not isinstance(config.get("autonomous_loop_sequence"), list) or not config["autonomous_loop_sequence"]:
+        raise ValueError("controller must define a non-empty autonomous_loop_sequence")
     return config
 
 
@@ -133,6 +136,33 @@ def build_report(config: dict, verification: dict | None, plan_only: bool, dirty
     else:
         lines.append("- clean")
 
+    lines.extend(
+        [
+            "",
+            "## Active Goal",
+            "",
+        ]
+    )
+    active_goal = config.get("active_goal", {})
+    if active_goal:
+        lines.extend(
+            [
+                f"- `{active_goal.get('id', 'unknown')}`: {active_goal.get('title', 'untitled')}",
+                f"- Plan: `{active_goal.get('plan', 'unknown')}`",
+                f"- Target claim: {active_goal.get('target_claim', 'unknown')}",
+                f"- Success gate: {active_goal.get('success_gate', 'unknown')}",
+                "",
+            ]
+        )
+
+    lines.extend(
+        [
+            "## Autonomous Loop Sequence",
+            "",
+        ]
+    )
+    for loop in config.get("autonomous_loop_sequence", []):
+        lines.append(f"- Loop `{loop['loop']}` `{loop['id']}`: {loop['goal']}")
     lines.extend(
         [
             "",

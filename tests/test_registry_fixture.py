@@ -73,6 +73,7 @@ PORTABLE_BUNDLE_REVIEW_CHECKLIST = ROOT / "docs" / "portable-bundle-review-check
 RADICLE_PERSISTENT_SEED_PLAN = ROOT / "docs" / "radicle-persistent-seed-plan.md"
 RADICLE_RETAINED_RID_QUICKSTART = ROOT / "docs" / "radicle-retained-rid-quickstart.md"
 RADICLE_FOLLOWER_REFRESH_SCRIPT = ROOT / "scripts" / "refresh_radicle_follower_seed.py"
+FIRST_PUBLIC_CLONE_RC_PLAN = ROOT / "docs" / "first-public-clone-rc-plan.md"
 OUTPUT_DEMO_HTML = ROOT / "output" / "demo-project.html"
 OUTPUT_VERIFICATION_BUNDLE = ROOT / "output" / "decentralized-forge-verification-bundle.zip"
 OUTPUT_FORGE_APP_HTML = ROOT / "output" / "forge-app.html"
@@ -437,6 +438,7 @@ class RegistryFixtureTests(unittest.TestCase):
                 "output/onboarding-sample.registry.summary.json",
                 "docs/radicle-persistent-seed-plan.md",
                 "docs/radicle-retained-rid-quickstart.md",
+                "docs/first-public-clone-rc-plan.md",
                 "docs/portable-bundle-review-checklist.md",
                 "scripts/bootstrap_radicle_follower_seed.py",
                 "scripts/refresh_radicle_follower_seed.py",
@@ -831,9 +833,25 @@ class RegistryFixtureTests(unittest.TestCase):
             "decentralized-forge.next-loop-controller.v1",
         )
         self.assertEqual(controller["mode"], "approval-bounded")
-        self.assertEqual(controller["max_iterations_per_run"], 1)
+        self.assertEqual(controller["max_iterations_per_run"], 6)
         self.assertIn("run_local_verification_suite", controller["approved_safe_actions"])
         self.assertEqual(controller["standing_live_approval"]["approved_by"], "user_chat_2026-06-28")
+        self.assertEqual(controller["active_goal"]["id"], "first-public-clone-rc")
+        self.assertEqual(controller["active_goal"]["plan"], "docs/first-public-clone-rc-plan.md")
+        self.assertIn("published Radicle direct-seed address", controller["active_goal"]["target_claim"])
+
+        loop_ids = [loop["id"] for loop in controller["autonomous_loop_sequence"]]
+        self.assertEqual(
+            loop_ids,
+            [
+                "public-clone-surface-audit",
+                "first-public-clone-verifier",
+                "fresh-linux-public-clone-proof",
+                "product-surface-rc-polish",
+                "release-candidate-package",
+                "availability-hardening-backlog",
+            ],
+        )
 
         approved_live = {
             action["id"]: action["scope"]
@@ -878,6 +896,11 @@ class RegistryFixtureTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("Next Loop Controller Report", result.stdout)
+        self.assertIn("Active Goal", result.stdout)
+        self.assertIn("Autonomous Loop Sequence", result.stdout)
+        self.assertIn("first-public-clone-rc", result.stdout)
+        self.assertIn("public-clone-surface-audit", result.stdout)
+        self.assertIn("fresh-linux-public-clone-proof", result.stdout)
         self.assertIn("Approved live action scope", result.stdout)
         self.assertIn("Still blocked without separate approval", result.stdout)
         self.assertIn("Live IPFS, Radicle, Nostr, and signing actions are approved", result.stdout)
@@ -893,6 +916,27 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("python scripts/next_loop_controller.py --check --skip-npm-ci", workflow)
         self.assertNotIn("git push", workflow)
         self.assertNotIn("gh discussion", workflow)
+
+    def test_first_public_clone_rc_plan_defines_autonomous_release_path(self):
+        plan = FIRST_PUBLIC_CLONE_RC_PLAN.read_text(encoding="utf-8")
+        for required in [
+            "v0.1.0-alpha",
+            "published Radicle direct-seed address",
+            "Definition Of Done",
+            "Loop 77: Public Clone Surface Audit",
+            "Loop 78: First Public Clone Verifier Command",
+            "Loop 79: Fresh Linux Public Clone Proof",
+            "Loop 80: Product Surface RC Polish",
+            "Loop 81: Release Candidate Package",
+            "Loop 82: Availability Hardening Backlog",
+            "Stop and ask before spending",
+            "production/private personal keys",
+            "censorship resistance",
+            "production readiness",
+        ]:
+            self.assertIn(required, plan)
+        for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+            self.assertNotIn(accidental_secret_marker, plan.lower())
 
     def test_ci_workflow_generates_keyless_attestations_for_release_artifacts(self):
         workflow = CI_WORKFLOW_PATH.read_text(encoding="utf-8")

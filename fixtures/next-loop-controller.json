@@ -1,7 +1,100 @@
 {
   "schema_version": "decentralized-forge.next-loop-controller.v1",
   "mode": "approval-bounded",
-  "max_iterations_per_run": 1,
+  "max_iterations_per_run": 6,
+  "active_goal": {
+    "id": "first-public-clone-rc",
+    "title": "First public Radicle clone release candidate",
+    "plan": "docs/first-public-clone-rc-plan.md",
+    "target_claim": "A user can clone decentralized-forge from a published Radicle direct-seed address and verify that HEAD equals the expected retained-RID commit.",
+    "success_gate": "README/quickstart/verifier/evidence/bundle are current, at least one fresh Linux public clone verifies the expected commit, and CI is green."
+  },
+  "autonomous_loop_sequence": [
+    {
+      "loop": 77,
+      "id": "public-clone-surface-audit",
+      "goal": "Make the public clone docs current and obvious.",
+      "primary_outputs": [
+        "README.md",
+        "docs/community-quickstart.md",
+        "docs/first-decentralized-repo-milestone.md",
+        "docs/radicle-retained-rid-quickstart.md"
+      ],
+      "verification": [
+        "python scripts/forge_registry.py radicle-retained-quickstart",
+        "python scripts/forge_registry.py verify-local --skip-npm-ci"
+      ]
+    },
+    {
+      "loop": 78,
+      "id": "first-public-clone-verifier",
+      "goal": "Add one user-facing verifier command for the current public direct-seed path.",
+      "primary_outputs": [
+        "scripts/check_public_radicle_seed.py",
+        "scripts/forge_registry.py",
+        "tests/test_registry_fixture.py"
+      ],
+      "verification": [
+        "focused verifier tests",
+        "python scripts/forge_registry.py verify-local --skip-npm-ci"
+      ]
+    },
+    {
+      "loop": 79,
+      "id": "fresh-linux-public-clone-proof",
+      "goal": "Run the verifier from fresh Linux reader state and record evidence.",
+      "primary_outputs": [
+        "evidence/",
+        "fixtures/live-evidence-index.json"
+      ],
+      "verification": [
+        "fresh public clone HEAD equals expected retained-RID commit",
+        "python scripts/forge_registry.py validate-evidence-index fixtures/live-evidence-index.json"
+      ]
+    },
+    {
+      "loop": 80,
+      "id": "product-surface-rc-polish",
+      "goal": "Expose current Radicle seed status in the product surface and bundle report.",
+      "primary_outputs": [
+        "README.md",
+        "COMPLETION-CRITERIA.md",
+        "output/forge-app.html",
+        "output/decentralized-forge-verification-bundle.zip"
+      ],
+      "verification": [
+        "renderer/static artifact tests",
+        "python scripts/forge_registry.py verify-local --skip-npm-ci"
+      ]
+    },
+    {
+      "loop": 81,
+      "id": "release-candidate-package",
+      "goal": "Produce a shareable v0.1.0-alpha release-candidate package from committed artifacts.",
+      "primary_outputs": [
+        "output/decentralized-forge-verification-bundle.zip",
+        "docs/public-update-drafts/"
+      ],
+      "verification": [
+        "python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip",
+        "python scripts/forge_registry.py verify-bundle-cleanroom output/decentralized-forge-verification-bundle.zip",
+        "GitHub Actions green on main"
+      ]
+    },
+    {
+      "loop": 82,
+      "id": "availability-hardening-backlog",
+      "goal": "Document the post-RC hardening gates without blocking first usability.",
+      "primary_outputs": [
+        "docs/first-public-clone-rc-plan.md",
+        "docs/radicle-persistent-seed-plan.md"
+      ],
+      "verification": [
+        "documentation tests",
+        "claim-boundary tests"
+      ]
+    }
+  ],
   "standing_live_approval": {
     "approved_by": "user_chat_2026-06-28",
     "approval_text": "For what its worth I am totally ok with live IPFS/Radicle/Nostr/signing actions",

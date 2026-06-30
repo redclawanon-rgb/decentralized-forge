@@ -817,6 +817,7 @@ def collect_verification_bundle_paths() -> list[Path]:
         "docs/threat-model.md",
         "docs/community-quickstart.md",
         "docs/first-decentralized-repo-milestone.md",
+        "docs/first-public-clone-rc-plan.md",
         "docs/radicle-persistent-seed-plan.md",
         "docs/radicle-retained-rid-quickstart.md",
         relative(DEFAULT_BUNDLE_REVIEW_CHECKLIST),
