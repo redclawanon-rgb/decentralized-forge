@@ -57,6 +57,17 @@ python scripts/forge_registry.py start-project ../my-project --project-id my-pro
 
 When `--run-radicle-genesis` succeeds, the command updates `fixtures/<project-id>.registry.json` with `substrates.radicle.rid`, adds a Radicle clone URL, records a live-verified `registry.radicle_genesis_readback` state, refreshes the rendered project page/workbench, and rebuilds the verification bundle.
 
+## Add First Collaboration Records
+
+After a project exists, add local alpha issue and patch/PR-like records to the same registry:
+
+```sh
+python scripts/forge_registry.py add-issue fixtures/<project-id>.registry.json --title "Document first contributor task" --summary "Track the first project task."
+python scripts/forge_registry.py add-patch fixtures/<project-id>.registry.json --title "Add first patch proposal" --summary "Describe the first proposed change."
+```
+
+Each command updates the registry, refreshes the project page/workbench, rebuilds the verification bundle, and records a local-only collaboration verification state. This is the usable local collaboration path; use the workbench Nostr draft or selected-relay replay gate when live decentralized issue/patch evidence is required.
+
 ## Verify
 
 ```sh
@@ -70,4 +81,5 @@ python scripts/forge_registry.py report-bundle output/decentralized-forge-verifi
 
 - This is not a hosted production forge.
 - This is not a Radicle publication proof for your project until the Radicle genesis gate runs for that project.
+- Local `add-issue` and `add-patch` records are not Nostr publishes, selected-relay readbacks, Radicle patch submissions, signatures, or hosted collaboration services.
 - This is not durable storage, pinning, broad availability, censorship resistance, security, SLSA compliance, or production readiness.

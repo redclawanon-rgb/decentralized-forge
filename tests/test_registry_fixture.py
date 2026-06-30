@@ -1012,6 +1012,94 @@ class RegistryFixtureTests(unittest.TestCase):
             self.assertTrue(radicle_states[0]["live_verified"])
             self.assertIn("no persistent seed", radicle_states[0]["claim_boundary"].lower())
 
+            self.assertEqual(
+                forge_registry.main(
+                    [
+                        "add-issue",
+                        str(registry_path),
+                        "--id",
+                        "issue-local-1",
+                        "--title",
+                        "Document first contributor task",
+                        "--summary",
+                        "A local alpha issue that should appear on the project workbench.",
+                        "--author",
+                        "fixture-contributor",
+                        "--summary-output",
+                        str(summary_path),
+                        "--html",
+                        str(html_path),
+                        "--workbench",
+                        str(workbench_path),
+                        "--bundle",
+                        str(bundle_path),
+                        "--report-json",
+                        str(report_path),
+                        "--timestamp",
+                        "2026-06-30T00:05:00Z",
+                    ]
+                ),
+                0,
+            )
+            self.assertEqual(
+                forge_registry.main(
+                    [
+                        "add-patch",
+                        str(registry_path),
+                        "--id",
+                        "patch-local-1",
+                        "--title",
+                        "Add first patch proposal",
+                        "--summary",
+                        "A local alpha patch proposal that should appear beside issues.",
+                        "--author",
+                        "fixture-contributor",
+                        "--status",
+                        "review",
+                        "--summary-output",
+                        str(summary_path),
+                        "--html",
+                        str(html_path),
+                        "--workbench",
+                        str(workbench_path),
+                        "--bundle",
+                        str(bundle_path),
+                        "--report-json",
+                        str(report_path),
+                        "--timestamp",
+                        "2026-06-30T00:06:00Z",
+                    ]
+                ),
+                0,
+            )
+            collaborated = json.loads(registry_path.read_text(encoding="utf-8"))
+            render_project_page.validate_registry(collaborated)
+            self.assertEqual(collaborated["issues"][0]["id"], "issue-local-1")
+            self.assertEqual(collaborated["issues"][0]["status"], "open")
+            self.assertEqual(collaborated["patches"][0]["id"], "patch-local-1")
+            self.assertEqual(collaborated["patches"][0]["status"], "review")
+            self.assertEqual(collaborated["updated_at"], "2026-06-30T00:06:00Z")
+            collaboration_scopes = {item["scope"] for item in collaborated["verification_states"]}
+            self.assertIn("registry.local_collaboration.issue.issue-local-1", collaboration_scopes)
+            self.assertIn("registry.local_collaboration.patch.patch-local-1", collaboration_scopes)
+
+            summary = json.loads(summary_path.read_text(encoding="utf-8"))
+            self.assertEqual(summary["counts"]["issues"], 1)
+            self.assertEqual(summary["counts"]["patches"], 1)
+            html_after_collaboration = html_path.read_text(encoding="utf-8")
+            self.assertIn("Document first contributor task", html_after_collaboration)
+            self.assertIn("Add first patch proposal", html_after_collaboration)
+            workbench_after_collaboration = workbench_path.read_text(encoding="utf-8")
+            self.assertIn("Document first contributor task", workbench_after_collaboration)
+            self.assertIn("Add first patch proposal", workbench_after_collaboration)
+            self.assertEqual(forge_registry.verify_verification_bundle(bundle_path), [])
+
+            combined = json.dumps({"registry": collaborated, "workbench": workbench_after_collaboration}).lower()
+            self.assertIn("local registry collaboration record only", combined)
+            self.assertIn("no nostr publish/readback", combined)
+            for unsupported_claim in ["production ready", "durably stored", "pinned and available", "slsa compliant"]:
+                self.assertNotIn(unsupported_claim, combined)
+
     def test_live_gate_inventory_is_read_only_and_secret_free(self):
         payload = live_gate_inventory.inventory()
         self.assertEqual(payload["schema_version"], "decentralized-forge.live-gate-inventory.v1")

@@ -900,6 +900,126 @@ def attach_local_artifact_guidance(registry_path: Path) -> list[str]:
     ]
 
 
+def next_collaboration_id(prefix: str, records: list[dict]) -> str:
+    existing = {item.get("id") for item in records if isinstance(item, dict)}
+    index = 1
+    while f"{prefix}-{index}" in existing:
+        index += 1
+    return f"{prefix}-{index}"
+
+
+def apply_local_collaboration_record(
+    registry_path: Path,
+    *,
+    kind: str,
+    title: str,
+    summary: str = "",
+    status: str | None = None,
+    record_id: str | None = None,
+    author: str | None = None,
+    timestamp: str | None = None,
+) -> dict:
+    if kind not in {"issue", "patch"}:
+        raise ValueError(f"unsupported collaboration kind: {kind}")
+    if not title.strip():
+        raise ValueError("collaboration title cannot be empty")
+
+    registry = render_project_page.load_registry(registry_path)
+    updated_at = timestamp or now_utc()
+    collection_name = "issues" if kind == "issue" else "patches"
+    prefix = "issue" if kind == "issue" else "patch"
+    default_status = "open" if kind == "issue" else "proposed"
+    allowed_statuses = {"open", "closed"} if kind == "issue" else {"proposed", "review", "accepted", "rejected", "merged"}
+    resolved_status = status or default_status
+    if resolved_status not in allowed_statuses:
+        raise ValueError(f"unsupported {kind} status {resolved_status!r}; expected one of {sorted(allowed_statuses)}")
+
+    records = registry.setdefault(collection_name, [])
+    resolved_id = record_id or next_collaboration_id(prefix, records)
+    record = {
+        "id": resolved_id,
+        "title": title.strip(),
+        "status": resolved_status,
+    }
+    if author:
+        record["author"] = author
+    if summary:
+        record["summary"] = summary
+    records = [item for item in records if not (isinstance(item, dict) and item.get("id") == resolved_id)]
+    records.append(record)
+    registry[collection_name] = records
+
+    scope = f"registry.local_collaboration.{kind}.{resolved_id}"
+    state = {
+        "scope": scope,
+        "state": "local-fixture",
+        "evidence": f"Recorded local {kind} {resolved_id} in {relative(registry_path)} with status {resolved_status}.",
+        "live_verified": False,
+        "synthetic": False,
+        "claim_boundary": "Local registry collaboration record only; no Nostr publish/readback, Radicle patch submission, signing, relay delivery, hosted service, or production readiness claim.",
+        "last_checked_at": updated_at,
+        "notes": "Use the Nostr draft or selected-relay replay gate when live decentralized collaboration evidence is required.",
+    }
+    states = [
+        item
+        for item in registry.get("verification_states", [])
+        if not (isinstance(item, dict) and item.get("scope") == scope)
+    ]
+    states.append(state)
+    registry["verification_states"] = states
+    registry["updated_at"] = updated_at
+    render_project_page.validate_registry(registry)
+    return registry
+
+
+def refresh_registry_outputs(
+    registry_path: Path,
+    *,
+    summary_output: Path | None = None,
+    html_output: Path | None = None,
+    workbench_output: Path | None = None,
+    bundle_output: Path = DEFAULT_BUNDLE_OUTPUT,
+    report_json_output: Path | None = None,
+) -> dict:
+    stem = registry_path.stem
+    summary_path = summary_output or ROOT / "output" / f"{stem}.summary.json"
+    html_path = html_output or ROOT / "output" / f"{stem}.html"
+    workbench_path = workbench_output or ROOT / "output" / f"{stem}.forge-app.html"
+    registry = render_project_page.load_registry(registry_path)
+    render_project_page.main([str(registry_path), str(html_path)])
+    write_json(summary_path, registry_summary(registry, registry_path))
+
+    render_args = [str(workbench_path)]
+    for candidate in [
+        ROOT / "fixtures" / "example-project.registry.json",
+        ROOT / "fixtures" / "portable-lab.registry.json",
+        ROOT / "fixtures" / "onboarding-sample.registry.json",
+        registry_path,
+    ]:
+        if candidate.is_file():
+            render_args.extend(["--registry", str(candidate)])
+    render_exit = render_forge_app.main(render_args)
+    if render_exit:
+        raise ValueError(f"workbench render failed for registry: {registry_path}")
+
+    manifest = create_verification_bundle(bundle_output)
+    errors = verify_verification_bundle(bundle_output)
+    if errors:
+        raise ValueError(f"verification bundle failed after registry refresh: {'; '.join(errors)}")
+    report = bundle_report(bundle_output)
+    if report_json_output is not None:
+        write_json(report_json_output, report)
+    return {
+        "summary": summary_path,
+        "html": html_path,
+        "workbench": workbench_path,
+        "bundle": bundle_output,
+        "report_json": report_json_output,
+        "bundle_manifest": manifest,
+        "bundle_report": report,
+    }
+
+
 def apply_radicle_genesis_to_registry(
     registry_path: Path,
     evidence_path: Path,
@@ -2217,6 +2337,47 @@ def command_attach_local_artifact(args: argparse.Namespace) -> int:
     return 0
 
 
+def command_add_collaboration_record(args: argparse.Namespace) -> int:
+    registry = apply_local_collaboration_record(
+        args.registry,
+        kind=args.kind,
+        title=args.title,
+        summary=args.summary or "",
+        status=args.status,
+        record_id=args.id,
+        author=args.author,
+        timestamp=args.timestamp,
+    )
+    write_json(args.registry, registry)
+    collection_name = "issues" if args.kind == "issue" else "patches"
+    record = registry[collection_name][-1]
+    print(f"recorded local {args.kind}: {record['id']} -> {relative(args.registry)}")
+    print("- scope: local registry collaboration record only; no publish, signing, relay delivery, or production claim")
+    if args.no_refresh:
+        print("- refresh skipped")
+        print(f"  - python scripts/forge_registry.py render {relative(args.registry)} output/{args.registry.stem}.html")
+        print(f"  - python scripts/forge_registry.py render-app output/{args.registry.stem}.forge-app.html --registry {relative(args.registry)}")
+        return 0
+
+    refreshed = refresh_registry_outputs(
+        args.registry,
+        summary_output=args.summary_output,
+        html_output=args.html,
+        workbench_output=args.workbench,
+        bundle_output=args.bundle,
+        report_json_output=args.report_json,
+    )
+    print(f"- summary: {relative(refreshed['summary'])}")
+    print(f"- html: {relative(refreshed['html'])}")
+    print(f"- workbench: {relative(refreshed['workbench'])}")
+    print(f"- bundle: {relative(refreshed['bundle'])}")
+    if refreshed["report_json"] is not None:
+        print(f"- report_json: {relative(refreshed['report_json'])}")
+    print(f"- bundle_valid: {str(refreshed['bundle_report']['verification']['valid']).lower()}")
+    print("- next gate: use the workbench Nostr draft or selected-relay replay when live decentralized collaboration evidence is required")
+    return 0
+
+
 def command_onboard_local_project(args: argparse.Namespace) -> int:
     result = onboard_local_project(
         args.repository,
@@ -2744,6 +2905,36 @@ def build_parser() -> argparse.ArgumentParser:
     attach_local_artifact.add_argument("--media-type", help="Override guessed media type")
     attach_local_artifact.add_argument("--timestamp", help="Override updated_at and verification timestamp")
     attach_local_artifact.set_defaults(func=command_attach_local_artifact)
+
+    def add_collaboration_parser(name: str, kind: str, help_text: str, status_choices: list[str]) -> None:
+        collab = subparsers.add_parser(name, help=help_text)
+        collab.add_argument("registry", type=Path, help="Registry fixture JSON to update in place")
+        collab.add_argument("--id", help=f"Record id; defaults to the next {kind}-N id")
+        collab.add_argument("--title", required=True, help="Issue or patch title")
+        collab.add_argument("--summary", default="", help="Short issue/patch summary")
+        collab.add_argument("--author", help="Optional author display name or public id")
+        collab.add_argument("--status", choices=status_choices, help="Record status; defaults to open for issues and proposed for patches")
+        collab.add_argument("--timestamp", help="Override updated_at and verification timestamp")
+        collab.add_argument("--summary-output", type=Path, help="Summary JSON to refresh; defaults to output/<registry-stem>.summary.json")
+        collab.add_argument("--html", type=Path, help="Rendered HTML to refresh; defaults to output/<registry-stem>.html")
+        collab.add_argument("--workbench", type=Path, help="Workbench HTML to refresh; defaults to output/<registry-stem>.forge-app.html")
+        collab.add_argument("--bundle", type=Path, default=DEFAULT_BUNDLE_OUTPUT, help="Verification bundle to refresh")
+        collab.add_argument("--report-json", type=Path, help="Optional bundle report JSON to write after refresh")
+        collab.add_argument("--no-refresh", action="store_true", help="Only update the registry; skip summary/page/workbench/bundle refresh")
+        collab.set_defaults(func=command_add_collaboration_record, kind=kind)
+
+    add_collaboration_parser(
+        "add-issue",
+        "issue",
+        "Add or update a local issue record in a registry fixture",
+        ["open", "closed"],
+    )
+    add_collaboration_parser(
+        "add-patch",
+        "patch",
+        "Add or update a local patch/PR-like record in a registry fixture",
+        ["proposed", "review", "accepted", "rejected", "merged"],
+    )
 
     onboard = subparsers.add_parser(
         "onboard-local-project",
