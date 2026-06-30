@@ -977,6 +977,41 @@ class RegistryFixtureTests(unittest.TestCase):
             for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:", "api_token"]:
                 self.assertNotIn(accidental_secret_marker, combined)
 
+            genesis_evidence_path = Path(tmpdir) / "started-widget.radicle-genesis.json"
+            genesis_evidence_path.write_text(
+                json.dumps(
+                    {
+                        "schema_version": "decentralized-forge.started-project-radicle-genesis.v1",
+                        "created_utc": "2026-06-30T00:00:00Z",
+                        "verification_passed": True,
+                        "start_project": {"project_id": "started-widget"},
+                        "radicle": {
+                            "rid": "rad:zStartedWidgetFixture111111111111111111",
+                            "visibility": "public",
+                            "seed_node_id": "z6MstartedWidgetSeed111111111111111111111111111",
+                            "project_git_commit": "a" * 40,
+                            "clone_commit": "a" * 40,
+                            "remote_clone_succeeded": True,
+                            "readback_commit_matches_project": True,
+                        },
+                    },
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+            with_radicle = forge_registry.apply_radicle_genesis_to_registry(registry_path, genesis_evidence_path)
+            self.assertEqual(with_radicle["substrates"]["radicle"]["rid"], "rad:zStartedWidgetFixture111111111111111111")
+            self.assertEqual(with_radicle["substrates"]["radicle"]["genesis_status"], "verified-disposable-genesis-readback")
+            self.assertTrue(with_radicle["substrates"]["radicle"]["readback_commit_matches_project"])
+            self.assertFalse(with_radicle["substrates"]["radicle"]["persistent_seed"])
+            self.assertFalse(with_radicle["substrates"]["radicle"]["durability_claim"])
+            self.assertIn({"transport": "radicle", "url": "rad:zStartedWidgetFixture111111111111111111", "primary": False}, with_radicle["clone_urls"])
+            radicle_states = [item for item in with_radicle["verification_states"] if item["scope"] == "registry.radicle_genesis_readback"]
+            self.assertEqual(len(radicle_states), 1)
+            self.assertTrue(radicle_states[0]["live_verified"])
+            self.assertIn("no persistent seed", radicle_states[0]["claim_boundary"].lower())
+
     def test_live_gate_inventory_is_read_only_and_secret_free(self):
         payload = live_gate_inventory.inventory()
         self.assertEqual(payload["schema_version"], "decentralized-forge.live-gate-inventory.v1")

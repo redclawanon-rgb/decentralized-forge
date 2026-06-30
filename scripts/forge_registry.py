@@ -900,6 +900,83 @@ def attach_local_artifact_guidance(registry_path: Path) -> list[str]:
     ]
 
 
+def apply_radicle_genesis_to_registry(
+    registry_path: Path,
+    evidence_path: Path,
+    *,
+    timestamp: str | None = None,
+) -> dict:
+    registry = render_project_page.load_registry(registry_path)
+    evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+    if evidence.get("schema_version") != "decentralized-forge.started-project-radicle-genesis.v1":
+        raise ValueError(f"unsupported Radicle genesis evidence schema: {evidence_path}")
+    if evidence.get("verification_passed") is not True:
+        raise ValueError(f"Radicle genesis evidence did not pass verification: {evidence_path}")
+
+    project = evidence.get("start_project", {})
+    radicle = evidence.get("radicle", {})
+    rid = radicle.get("rid")
+    if not isinstance(rid, str) or not rid.startswith("rad:z"):
+        raise ValueError(f"Radicle genesis evidence missing RID: {evidence_path}")
+    if project.get("project_id") and project.get("project_id") != registry["project"]["id"]:
+        raise ValueError(
+            f"Radicle genesis project id {project.get('project_id')} does not match registry {registry['project']['id']}"
+        )
+
+    checked_at = timestamp or evidence.get("created_utc") or datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    source_commit = radicle.get("project_git_commit", "")
+    clone_commit = radicle.get("clone_commit", "")
+    readback_matches = bool(radicle.get("readback_commit_matches_project"))
+
+    substrates = registry.setdefault("substrates", {})
+    substrates["radicle"] = {
+        "rid": rid,
+        "visibility": radicle.get("visibility", "unknown"),
+        "seed_node_id": radicle.get("seed_node_id", ""),
+        "genesis_status": "verified-disposable-genesis-readback",
+        "project_git_commit": source_commit,
+        "clone_commit": clone_commit,
+        "readback_commit_matches_project": readback_matches,
+        "remote_clone_succeeded": bool(radicle.get("remote_clone_succeeded")),
+        "evidence_file": relative(evidence_path),
+        "evidence_schema": evidence["schema_version"],
+        "persistent_seed": False,
+        "durability_claim": False,
+        "default_public_routing_claim": False,
+        "production_readiness_claim": False,
+        "notes": "Project-specific Radicle RID was created and read back with disposable temporary state; no persistent seed or durability claim.",
+    }
+
+    clone_urls = [
+        item
+        for item in registry.get("clone_urls", [])
+        if not (isinstance(item, dict) and item.get("transport") == "radicle")
+    ]
+    clone_urls.append({"transport": "radicle", "url": rid, "primary": False})
+    registry["clone_urls"] = clone_urls
+
+    state = {
+        "scope": "registry.radicle_genesis_readback",
+        "state": "live-verified",
+        "evidence": f"Radicle RID {rid} was created for this project and cloned/read back at commit {clone_commit}; evidence {relative(evidence_path)}.",
+        "live_verified": True,
+        "synthetic": False,
+        "claim_boundary": "Project-specific disposable Radicle genesis/readback only; no persistent seed, default public routing, durable storage, broad availability, security, SLSA compliance, or production readiness claim.",
+        "last_checked_at": checked_at,
+        "notes": "The RID is a recorded decentralized repository identity for this project. Availability beyond the bounded clone/readback evidence is not claimed.",
+    }
+    states = [
+        item
+        for item in registry.get("verification_states", [])
+        if not (isinstance(item, dict) and item.get("scope") == state["scope"])
+    ]
+    states.append(state)
+    registry["verification_states"] = states
+    registry["updated_at"] = checked_at
+    render_project_page.validate_registry(registry)
+    return registry
+
+
 def default_onboarding_registry_path(repo_path: Path, project_id: str | None = None) -> Path:
     metadata = local_repo_metadata(repo_path)
     slug = slugify_project_id(project_id or metadata["repo_name"])
@@ -1175,6 +1252,36 @@ def start_project(
         "receipt": receipt,
         "receipt_output": receipt_path,
     }
+
+
+def refresh_started_project_outputs(result: dict) -> dict:
+    paths = result["paths"]
+    registry_path = paths["registry"]
+    render_project_page.main([str(registry_path), str(paths["html"])])
+    write_json(paths["summary"], registry_summary(render_project_page.load_registry(registry_path), registry_path))
+
+    render_args = [str(result["app_output"])]
+    for registry in [
+        ROOT / "fixtures" / "example-project.registry.json",
+        ROOT / "fixtures" / "portable-lab.registry.json",
+        ROOT / "fixtures" / "onboarding-sample.registry.json",
+        registry_path,
+    ]:
+        if registry.is_file():
+            render_args.extend(["--registry", str(registry)])
+    render_exit = render_forge_app.main(render_args)
+    if render_exit:
+        raise ValueError(f"workbench render failed for started project: {registry_path}")
+    manifest = create_verification_bundle(paths["bundle"])
+    errors = verify_verification_bundle(paths["bundle"])
+    if errors:
+        raise ValueError(f"verification bundle failed after Radicle genesis: {'; '.join(errors)}")
+    report = bundle_report(paths["bundle"])
+    if paths["report_json"] is not None:
+        write_json(paths["report_json"], report)
+    result["bundle_manifest"] = manifest
+    result["bundle_report"] = report
+    return result
 
 
 def bundle_role(path: str) -> str:
@@ -2196,11 +2303,40 @@ def command_start_project(args: argparse.Namespace) -> int:
             evidence_output=args.radicle_evidence,
             markdown_output=args.radicle_markdown,
         )
+        run_command[0] = sys.executable
         completed = subprocess.run(run_command, cwd=ROOT, check=False)
         if completed.returncode != 0:
             print(f"- radicle genesis failed: exit {completed.returncode}")
             return completed.returncode
+        evidence_path, _markdown_path = radicle_genesis_output_paths(registry["project"]["id"])
+        evidence_path = args.radicle_evidence or evidence_path
+        registry = apply_radicle_genesis_to_registry(paths["registry"], evidence_path)
+        write_json(paths["registry"], registry)
+        result["registry"] = registry
+        evidence = json.loads(evidence_path.read_text(encoding="utf-8"))
+        result["receipt"]["radicle_next_gate"]["status"] = "completed-by-run-radicle-genesis"
+        result["receipt"]["radicle_next_gate"]["rid"] = evidence["radicle"]["rid"]
+        result["receipt"]["radicle_next_gate"]["readback_commit"] = evidence["radicle"]["clone_commit"]
+        result["receipt"]["radicle_result"] = {
+            "status": "verified-disposable-genesis-readback",
+            "rid": evidence["radicle"]["rid"],
+            "project_git_commit": evidence["radicle"]["project_git_commit"],
+            "clone_commit": evidence["radicle"]["clone_commit"],
+            "readback_commit_matches_project": evidence["radicle"]["readback_commit_matches_project"],
+            "evidence_json": relative(evidence_path),
+            "non_claims": [
+                "not a persistent public seed",
+                "not a default public-routing claim",
+                "not a durability guarantee",
+                "not proof of broad availability",
+                "not production readiness",
+            ],
+        }
+        write_json(result["receipt_output"], result["receipt"])
+        refresh_started_project_outputs(result)
         print("- radicle genesis: completed")
+        print(f"  - rid: {evidence['radicle']['rid']}")
+        print(f"  - readback_commit: {evidence['radicle']['clone_commit']}")
     print("- non-claims:")
     for item in result["receipt"]["radicle_next_gate"]["non_claims"]:
         print(f"  - {item}")

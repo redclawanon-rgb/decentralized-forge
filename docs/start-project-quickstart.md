@@ -55,6 +55,8 @@ The project-specific gate works from a temporary clone of your Git repository, t
 python scripts/forge_registry.py start-project ../my-project --project-id my-project --project-name "My Project" --run-radicle-genesis
 ```
 
+When `--run-radicle-genesis` succeeds, the command updates `fixtures/<project-id>.registry.json` with `substrates.radicle.rid`, adds a Radicle clone URL, records a live-verified `registry.radicle_genesis_readback` state, refreshes the rendered project page/workbench, and rebuilds the verification bundle.
+
 ## Verify
 
 ```sh
