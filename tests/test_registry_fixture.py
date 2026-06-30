@@ -79,6 +79,7 @@ KEYLESS_REGISTRY_IMPORT_PATH = ROOT / "fixtures" / "keyless-attestation.registry
 FIXTURE_PATHS = [FIXTURE_PATH, PORTABLE_FIXTURE_PATH, RADICLE_FIXTURE_PATH]
 RENDERER = ROOT / "scripts" / "render_project_page.py"
 STATIC_PREFLIGHT = ROOT / "scripts" / "preflight_static_artifact.py"
+NOSTR_ISSUE_PATCH_SCRIPT = ROOT / "scripts" / "run_nostr_issue_patch_readback.mjs"
 PORTABLE_BUNDLE_REVIEW_CHECKLIST = ROOT / "docs" / "portable-bundle-review-checklist.md"
 RADICLE_PERSISTENT_SEED_PLAN = ROOT / "docs" / "radicle-persistent-seed-plan.md"
 RADICLE_RETAINED_RID_QUICKSTART = ROOT / "docs" / "radicle-retained-rid-quickstart.md"
@@ -289,6 +290,57 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("current live script proves the committed fixture", combined)
         for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
             self.assertNotIn(accidental_secret_marker, combined)
+
+    def test_nostr_collaboration_drafts_build_secret_free_readback_plan(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            plan_path = Path(tmpdir) / "nostr-draft-plan.json"
+            result = subprocess.run(
+                [
+                    "node",
+                    str(NOSTR_ISSUE_PATCH_SCRIPT),
+                    "--plan-only",
+                    "--draft",
+                    str(OUTPUT_DEMO_ISSUE_NOSTR_DRAFT),
+                    "--draft",
+                    str(OUTPUT_DEMO_PATCH_NOSTR_DRAFT),
+                    "--output",
+                    str(plan_path),
+                    "--created-at",
+                    "1782778800",
+                ],
+                cwd=ROOT,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("wrote Nostr issue/patch readback plan", result.stdout)
+
+            plan = json.loads(plan_path.read_text(encoding="utf-8"))
+            self.assertEqual(plan["schema_version"], "decentralized-forge.nostr-issue-patch-readback-plan.v1")
+            self.assertEqual(plan["source_mode"], "drafts")
+            self.assertEqual(
+                plan["source_files"],
+                [
+                    "output/demo-project.issue.issue-1.nostr-draft.json",
+                    "output/demo-project.patch.patch-1.nostr-draft.json",
+                ],
+            )
+            self.assertEqual(plan["event_count"], 2)
+            self.assertEqual({item["kind"] for item in plan["events"]}, {nip34_adapter.ISSUE_KIND, nip34_adapter.PATCH_KIND})
+            self.assertEqual({item["mapped_registry_path"] for item in plan["events"]}, {"issues.ISSUE-1", "patches.PATCH-1"})
+            self.assertTrue(plan["verification_passed"])
+            combined = json.dumps(plan).lower()
+            for required in [
+                "no nostr event was signed",
+                "no nostr event was published",
+                "no relay readback",
+                "no secret key material was generated",
+            ]:
+                self.assertIn(required, combined)
+            for accidental_secret_marker in ["nsec1", "-----begin", "private key:", "seed phrase:"]:
+                self.assertNotIn(accidental_secret_marker, combined)
 
     def test_forge_registry_cli_renders_second_fixture_without_demo_adapters(self):
         html = OUTPUT_PORTABLE_HTML.read_text(encoding="utf-8")
@@ -524,6 +576,10 @@ class RegistryFixtureTests(unittest.TestCase):
                 "python scripts/forge_registry.py export-nostr-draft fixtures/example-project.registry.json issue ISSUE-1 --created-at 2026-06-30T00:10:00Z",
                 manifest["suggested_verification_commands"],
             )
+            self.assertIn(
+                "node scripts/run_nostr_issue_patch_readback.mjs --plan-only --draft output/demo-project.issue.issue-1.nostr-draft.json --draft output/demo-project.patch.patch-1.nostr-draft.json",
+                manifest["suggested_verification_commands"],
+            )
             payload_paths = {item["path"] for item in manifest["files"]}
             for expected_path in [
                 "fixtures/example-project.registry.json",
@@ -562,6 +618,7 @@ class RegistryFixtureTests(unittest.TestCase):
                 "scripts/run_first_public_clone_rehearsal.py",
                 "scripts/refresh_radicle_follower_seed.py",
                 "scripts/forge_registry.py",
+                "scripts/run_nostr_issue_patch_readback.mjs",
                 "scripts/install_tcp_relay_user_service.py",
                 "scripts/run_radicle_independent_availability_check.py",
                 "scripts/run_radicle_seed_restart_check.py",
@@ -3121,6 +3178,7 @@ class RegistryFixtureTests(unittest.TestCase):
             "Collaboration Alpha Path",
             "evidence/nostr-loop43-issue-patch-readback-2026-06-28.json",
             "unsigned local JSON",
+            "run_nostr_issue_patch_readback.mjs --plan-only",
         ]:
             self.assertIn(required, readme + "\n" + community)
 

@@ -1,6 +1,6 @@
 {
   "bundle": {
-    "file_count": 139,
+    "file_count": 140,
     "name": "decentralized-forge portable verification bundle",
     "role_counts": {
       "documentation": 16,
@@ -9,7 +9,7 @@
       "schema": 2,
       "source-evidence": 69,
       "supporting-file": 2,
-      "verifier-tooling": 23
+      "verifier-tooling": 24
     },
     "schema_version": "decentralized-forge.verification-bundle.v1",
     "scope": "portable local verification package; no live protocol actions, signing, spending, or publishing",
@@ -22,6 +22,7 @@
       "python scripts/forge_registry.py verify-first-public-clone --plan-only",
       "python scripts/forge_registry.py public-seed-status output/public-seed-status.json",
       "python scripts/forge_registry.py export-nostr-draft fixtures/example-project.registry.json issue ISSUE-1 --created-at 2026-06-30T00:10:00Z",
+      "node scripts/run_nostr_issue_patch_readback.mjs --plan-only --draft output/demo-project.issue.issue-1.nostr-draft.json --draft output/demo-project.patch.patch-1.nostr-draft.json",
       "python scripts/forge_registry.py verify-local --skip-npm-ci"
     ]
   },

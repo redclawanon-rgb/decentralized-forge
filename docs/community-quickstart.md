@@ -137,3 +137,23 @@ python scripts/forge_registry.py export-nostr-draft fixtures/<project-id>.regist
 ```
 
 The exported `output/*.nostr-draft.json` file contains the unsigned NIP-34-shaped event body, local conformance metadata, relay hints, and the live replay boundary. It is not signed, published, or read back until a separate disposable selected-relay live gate records evidence.
+
+To review the exact project-specific selected-relay replay before any network action, build a secret-free plan:
+
+```sh
+node scripts/run_nostr_issue_patch_readback.mjs --plan-only \
+  --draft output/<project-id>.issue.issue-1.nostr-draft.json \
+  --draft output/<project-id>.patch.patch-1.nostr-draft.json \
+  --output output/<project-id>.nostr-draft-readback-plan.json
+```
+
+To run the bounded live replay for those project drafts, remove `--plan-only` and write evidence to a project-specific file:
+
+```sh
+node scripts/run_nostr_issue_patch_readback.mjs \
+  --draft output/<project-id>.issue.issue-1.nostr-draft.json \
+  --draft output/<project-id>.patch.patch-1.nostr-draft.json \
+  --output evidence/<project-id>.nostr-draft-collaboration-readback.json
+```
+
+That live command uses a disposable generated key for the run, publishes only to the selected relays, records readback evidence, and still does not prove durability, global propagation, identity trust, security, full NIP-34/forge compatibility, or production readiness.

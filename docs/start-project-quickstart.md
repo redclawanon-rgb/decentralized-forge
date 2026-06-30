@@ -77,6 +77,26 @@ python scripts/forge_registry.py export-nostr-draft fixtures/<project-id>.regist
 
 The draft export writes `output/<project-id>.<type>.<record-id>.nostr-draft.json` plus a Markdown handoff beside it. It does not sign, publish, fetch, or read back from relays. A live collaboration claim requires signing with a disposable project-scoped key and selected-relay readback evidence.
 
+Before any live relay action, build the project-specific replay plan:
+
+```sh
+node scripts/run_nostr_issue_patch_readback.mjs --plan-only \
+  --draft output/<project-id>.issue.issue-1.nostr-draft.json \
+  --draft output/<project-id>.patch.patch-1.nostr-draft.json \
+  --output output/<project-id>.nostr-draft-readback-plan.json
+```
+
+When you intentionally want selected-relay evidence for those drafts, remove `--plan-only` and write the result to a project-specific evidence file:
+
+```sh
+node scripts/run_nostr_issue_patch_readback.mjs \
+  --draft output/<project-id>.issue.issue-1.nostr-draft.json \
+  --draft output/<project-id>.patch.patch-1.nostr-draft.json \
+  --output evidence/<project-id>.nostr-draft-collaboration-readback.json
+```
+
+The live command uses a disposable generated key for the run and records bounded selected-relay acceptance/readback only.
+
 ## Verify
 
 ```sh
@@ -92,4 +112,5 @@ python scripts/forge_registry.py report-bundle output/decentralized-forge-verifi
 - This is not a Radicle publication proof for your project until the Radicle genesis gate runs for that project.
 - Local `add-issue` and `add-patch` records are not Nostr publishes, selected-relay readbacks, Radicle patch submissions, signatures, or hosted collaboration services.
 - `export-nostr-draft` creates unsigned draft payloads only; it is not a live relay proof.
+- `run_nostr_issue_patch_readback.mjs --plan-only` validates the draft replay plan only; it does not sign, publish, fetch, or read back from relays.
 - This is not durable storage, pinning, broad availability, censorship resistance, security, SLSA compliance, or production readiness.
