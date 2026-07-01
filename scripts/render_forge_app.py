@@ -88,6 +88,80 @@ def live_nostr_collaboration(evidence: dict) -> list[dict]:
     return rows
 
 
+def project_readiness(registry: dict, source_path: Path, collaboration_gate: dict) -> dict:
+    summary = forge_registry.registry_summary(registry, source_path)
+    states = [item for item in registry.get("verification_states", []) if isinstance(item, dict)]
+    radicle_state = next((item for item in states if item.get("scope") == "registry.radicle_genesis_readback"), None)
+    has_registry = registry.get("schema_version") == "decentralized-forge.project-registry.v1"
+    has_artifact = summary["counts"]["artifacts"] > 0
+    has_issue = summary["counts"]["issues"] > 0
+    has_patch = summary["counts"]["patches"] > 0
+    has_collaboration_pair = has_issue and has_patch
+    radicle_live = bool(radicle_state and radicle_state.get("live_verified")) or registry.get("substrates", {}).get("radicle", {}).get("genesis_status") == "verified-disposable-genesis-readback"
+    local_complete = has_registry and has_artifact
+    active_items = [
+        has_registry,
+        has_artifact,
+        has_collaboration_pair,
+        collaboration_gate.get("status") == "local-records-ready",
+        radicle_live,
+    ]
+    completed = sum(1 for item in active_items if item)
+    status = "local-product-ready" if local_complete and has_collaboration_pair else "local-product-started" if local_complete else "needs-local-project"
+    return {
+        "status": status,
+        "completed_count": completed,
+        "total_count": len(active_items),
+        "headline": "Usable local alpha" if local_complete else "Project setup needed",
+        "next_action": "Run Nostr replay plan" if has_collaboration_pair else "Add first issue and patch" if local_complete else "Run start-project",
+        "start_project_command": 'python scripts/forge_registry.py start-project ../my-project --project-id my-project --project-name "My Project"',
+        "verify_bundle_command": "python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip",
+        "steps": [
+            {
+                "id": "local_registry",
+                "label": "Local project registry",
+                "state": "complete" if has_registry else "needed",
+                "detail": f"Registry source: {relative(source_path)}" if has_registry else "Run start-project against a local Git worktree.",
+            },
+            {
+                "id": "artifact_metadata",
+                "label": "Artifact metadata",
+                "state": "complete" if has_artifact else "needed",
+                "detail": f"{summary['counts']['artifacts']} local artifact(s) recorded; no pinning or durability claim.",
+            },
+            {
+                "id": "collaboration_records",
+                "label": "Issue and patch records",
+                "state": "complete" if has_collaboration_pair else "planned",
+                "detail": f"{summary['counts']['issues']} issue(s), {summary['counts']['patches']} patch(es).",
+            },
+            {
+                "id": "nostr_replay",
+                "label": "Nostr draft replay",
+                "state": "planned" if has_collaboration_pair else "blocked",
+                "detail": collaboration_gate.get("plan_replay_command") if has_collaboration_pair else "Needs both an issue and a patch draft before replay planning.",
+            },
+            {
+                "id": "radicle_genesis",
+                "label": "Radicle genesis/readback",
+                "state": "complete" if radicle_live else "planned",
+                "detail": "Disposable project RID clone/readback verified." if radicle_live else "Available as a separate bounded live gate.",
+            },
+            {
+                "id": "verification_bundle",
+                "label": "Verification bundle",
+                "state": "planned",
+                "detail": "Export and verify the deterministic portable bundle before sharing.",
+            },
+        ],
+        "non_claims": [
+            "local-product-ready does not mean hosted production forge",
+            "planned gates do not sign, publish, fetch, or read back until their explicit commands run",
+            "no durability, broad availability, identity trust, security, SLSA, or production-readiness claim",
+        ],
+    }
+
+
 def build_app_data(args: argparse.Namespace) -> dict:
     registries = [render_project_page.load_registry(path) for path in args.registries]
     registry_sources = [relative(path) for path in args.registries]
@@ -103,12 +177,14 @@ def build_app_data(args: argparse.Namespace) -> dict:
 
     projects = []
     for source, source_path, registry in zip(registry_sources, args.registries, registries):
+        collaboration_gate = forge_registry.collaboration_next_gate(source_path, registry)
         projects.append(
             {
                 "source": source,
                 "summary": forge_registry.registry_summary(registry, ROOT / source),
                 "registry": registry,
-                "collaboration_next_gate": forge_registry.collaboration_next_gate(source_path, registry),
+                "collaboration_next_gate": collaboration_gate,
+                "readiness": project_readiness(registry, source_path, collaboration_gate),
             }
         )
 
@@ -230,6 +306,26 @@ def render_html(app_data: dict) -> str:
     .metric strong {{ display: block; font-size: 23px; line-height: 1.1; }}
     .panel {{ padding: 14px; margin-bottom: 12px; }}
     .item {{ padding: 12px; margin-bottom: 10px; }}
+    .step-list {{ display: grid; gap: 8px; }}
+    .step {{
+      display: grid;
+      grid-template-columns: 118px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+    }}
+    .step strong {{ display: block; margin-bottom: 2px; }}
+    .progress {{
+      height: 9px;
+      background: #dce4e8;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 12px;
+    }}
+    .progress span {{ display: block; height: 100%; background: var(--teal); }}
     .span-3 {{ grid-column: span 3; }}
     .span-4 {{ grid-column: span 4; }}
     .span-6 {{ grid-column: span 6; }}
@@ -300,7 +396,7 @@ def render_html(app_data: dict) -> str:
     <p class="brand">Decentralized Forge</p>
     <select id="projectSelect" class="project-select" aria-label="Project"></select>
     <nav class="nav" aria-label="Views">
-      <button data-view="overview" aria-selected="true">Overview</button>
+      <button data-view="overview" aria-selected="true">Dashboard</button>
       <button data-view="collaboration" aria-selected="false">Issues & patches</button>
       <button data-view="releases" aria-selected="false">Releases</button>
       <button data-view="evidence" aria-selected="false">Evidence</button>
@@ -374,17 +470,38 @@ function renderHeader() {{
 function renderOverview() {{
   const reg = registry();
   const summary = project().summary;
+  const readiness = project().readiness || {{}};
+  const steps = readiness.steps || [];
+  const progress = readiness.total_count ? Math.round((readiness.completed_count / readiness.total_count) * 100) : 0;
   $('view-overview').innerHTML = `
     <div class="grid">
       ${{metric('Issues', summary.counts.issues)}}
       ${{metric('Patches', summary.counts.patches)}}
       ${{metric('Artifacts', summary.counts.artifacts)}}
-      ${{metric('Evidence', app.live_evidence_index.evidence.length)}}
+      ${{metric('Readiness', `${{readiness.completed_count || 0}}/${{readiness.total_count || 0}}`)}}
     </div>
     <div class="grid">
+      <section class="panel span-8">
+        <h2>Project dashboard</h2>
+        ${{badge(readiness.headline || 'Local alpha', readiness.status === 'local-product-ready' ? 'good' : 'warn')}}
+        ${{badge(`next: ${{readiness.next_action || 'review project'}}`, 'blue')}}
+        <div class="progress" aria-label="Readiness progress"><span style="width:${{progress}}%"></span></div>
+        <div class="step-list">
+          ${{steps.map((step) => `
+            <div class="step">
+              ${{badge(step.state, step.state === 'complete' ? 'good' : step.state === 'blocked' ? 'warn' : 'blue')}}
+              <div><strong>${{escapeHtml(step.label)}}</strong><span class="muted">${{escapeHtml(step.detail)}}</span></div>
+            </div>`).join('')}}
+        </div>
+      </section>
+      <section class="panel span-4">
+        <h2>First run</h2>
+        <label class="field">Start command<textarea class="output command-output" readonly>${{escapeHtml(readiness.start_project_command || '')}}</textarea></label>
+        <label class="field">Verify bundle<textarea class="output command-output" readonly>${{escapeHtml(readiness.verify_bundle_command || '')}}</textarea></label>
+      </section>
       <section class="panel span-6"><h2>Maintainers</h2>${{reg.maintainers.map((m) => `<div class="item">${{meta([['Name', m.name], ['ID type', m.id_type], ['Public ID', m.public_id], ['Role', m.role]])}}</div>`).join('')}}</section>
       <section class="panel span-6"><h2>Clone URLs</h2>${{reg.clone_urls.map((clone) => `<div class="item">${{badge(clone.transport, 'blue')}}<code>${{escapeHtml(clone.url)}}</code></div>`).join('')}}</section>
-      <section class="panel span-12"><h2>Trust boundary</h2>${{app.non_claims.map((claim) => badge(claim, 'warn')).join('')}}</section>
+      <section class="panel span-12"><h2>Boundaries</h2>${{(readiness.non_claims || app.non_claims).map((claim) => badge(claim, 'warn')).join('')}}</section>
     </div>`;
 }}
 
