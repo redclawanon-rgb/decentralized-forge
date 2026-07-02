@@ -3226,6 +3226,8 @@ class RegistryFixtureTests(unittest.TestCase):
 
         for required in [
             "As of Loop 89",
+            "separate `ubuntu-work` outside-reader host",
+            "Loop 96 also proves the",
             evidence["rid"],
             evidence["updated_commit"],
             evidence["public_readbacks"]["primary_public_seed_address"],
@@ -3241,11 +3243,13 @@ class RegistryFixtureTests(unittest.TestCase):
             "python scripts/forge_registry.py radicle-retained-quickstart",
             "not proof of automatic future update propagation",
             "not proof of independent provider or network availability",
+            "does not keep a persistent seed",
         ]:
             self.assertIn(required, combined)
         for stale_front_door in [
             "As of Loop 67",
             "As of Loop 79, the project has a first public clone release-candidate path",
+            "As of Loop 79, this project has usable public Radicle direct-seed paths",
             "As of Loop 75, the project has a first usable public Radicle direct-seed clone path",
             "As of Loop 74, this project has usable public Radicle direct-seed paths",
             "Verified milestone commit: `ef16e2ad39d3e13bdcc9d454443c5bbb17733c68`",

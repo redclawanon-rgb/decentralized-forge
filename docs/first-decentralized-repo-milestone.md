@@ -1,9 +1,11 @@
 # First Decentralized Repo Milestone
 
-As of Loop 79, this project has usable public Radicle direct-seed paths for the
-retained project RID plus a release-candidate verifier command that fresh
-Docker/Linux reader profiles used successfully against both public seed
-addresses.
+As of Loop 89, this project has usable public Radicle direct-seed paths for the
+retained project RID plus a release-candidate verifier command that both fresh
+Docker/Linux reader profiles and a separate `ubuntu-work` outside-reader host
+used successfully against both public seed addresses. Loop 96 also proves the
+first customer-facing `start-project` path can hand a fresh local Git project to
+a bounded disposable Radicle genesis/readback gate.
 
 ## What Works
 
@@ -32,6 +34,8 @@ addresses.
 | Update propagation summary | both public seed addresses | `d596024dac0d90605d4f103d567e5851771be5a8` | `evidence/radicle-public-seed-update-d596024-2026-06-30.json` |
 | First public clone verifier | primary public follower seed | `d596024dac0d90605d4f103d567e5851771be5a8` | `evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json` |
 | First public clone verifier | second public follower seed | `d596024dac0d90605d4f103d567e5851771be5a8` | `evidence/radicle-first-public-clone-second-d596024-2026-06-30.json` |
+| Outside-reader verifier | primary public follower seed | `d596024dac0d90605d4f103d567e5851771be5a8` | `evidence/radicle-first-public-clone-outside-reader-ubuntu-work-primary-e0f7144-2026-06-30.json` |
+| Outside-reader verifier | second public follower seed | `d596024dac0d90605d4f103d567e5851771be5a8` | `evidence/radicle-first-public-clone-outside-reader-ubuntu-work-second-e0f7144-2026-06-30.json` |
 
 ## Clone
 
@@ -93,6 +97,8 @@ python scripts/forge_registry.py verify-first-public-clone --seed second --json
 - `evidence/radicle-public-seed-second-health-d596024-2026-06-30.json`
 - `evidence/radicle-first-public-clone-primary-d596024-2026-06-30.json`
 - `evidence/radicle-first-public-clone-second-d596024-2026-06-30.json`
+- `evidence/radicle-first-public-clone-outside-reader-ubuntu-work-primary-e0f7144-2026-06-30.json`
+- `evidence/radicle-first-public-clone-outside-reader-ubuntu-work-second-e0f7144-2026-06-30.json`
 - `evidence/radicle-start-project-genesis-2026-06-30.json`
 
 ## Non-Claims
@@ -101,3 +107,7 @@ This milestone does not prove permanent durability, is not proof of automatic fu
 serve the current retained-RID commit. Loop 79 verifies that the release-candidate public clone command works from fresh Docker/Linux reader profiles against both public seed addresses. Loop 74 adds a second public direct-seed address, but the
 second seed still uses `openclaw` as public ingress to reach the `ubuntu-work`
 seed over Tailnet, so it is not proof of independent provider or network availability.
+Loop 89 adds a separate `ubuntu-work` outside-reader proof for both public seed
+addresses. Loop 96 proves one disposable started-project Radicle genesis/readback
+path, but it does not keep a persistent seed or prove durability for future
+customer projects.
