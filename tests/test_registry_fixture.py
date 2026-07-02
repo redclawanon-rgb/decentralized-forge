@@ -408,6 +408,9 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("Project dashboard", html)
         self.assertIn("First run", html)
         self.assertIn("Readiness", html)
+        self.assertIn("Readiness evidence scopes", html)
+        self.assertIn("Evidence</dt>", html)
+        self.assertIn("Boundary</dt>", html)
         self.assertIn("Issues & patches", html)
         self.assertIn("Nostr collaboration draft", html)
         self.assertIn("unsigned local draft", html)
@@ -441,6 +444,23 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertEqual(readiness_steps["artifact_metadata"]["state"], "complete")
         self.assertEqual(readiness_steps["collaboration_records"]["state"], "complete")
         self.assertEqual(readiness_steps["nostr_replay"]["state"], "planned")
+        self.assertEqual(readiness_steps["local_registry"]["evidence_scope"], "local fixture")
+        self.assertEqual(readiness_steps["artifact_metadata"]["evidence_scope"], "local fixture")
+        self.assertEqual(readiness_steps["collaboration_records"]["evidence_scope"], "synthetic local fixture")
+        self.assertEqual(readiness_steps["nostr_replay"]["evidence_scope"], "planned or live-unverified")
+        self.assertEqual(readiness_steps["radicle_genesis"]["evidence_scope"], "source-inspected mapping")
+        self.assertEqual(readiness_steps["verification_bundle"]["evidence_scope"], "local fixture")
+        self.assertEqual(
+            app_data["projects"][0]["readiness"]["evidence_scope_counts"],
+            {
+                "local fixture": 3,
+                "planned or live-unverified": 1,
+                "source-inspected mapping": 1,
+                "synthetic local fixture": 1,
+            },
+        )
+        self.assertIn("Local static registry fixture only", readiness_steps["local_registry"]["claim_boundary"])
+        self.assertIn("no IPFS add/fetch/pin", readiness_steps["artifact_metadata"]["claim_boundary"])
         self.assertEqual({item["type"] for item in app_data["live_nostr_collaboration"]}, {"issue", "patch"})
         self.assertEqual(len(app_data["live_nostr_collaboration"]), 2)
         self.assertEqual(app_data["live_evidence_index"]["loop"], self.live_evidence_index["loop"])

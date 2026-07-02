@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+from collections import Counter
 from pathlib import Path
 
 import forge_registry
@@ -88,10 +89,56 @@ def live_nostr_collaboration(evidence: dict) -> list[dict]:
     return rows
 
 
+def verification_state_for_scope(states: list[dict], *scopes: str) -> dict | None:
+    for scope in scopes:
+        for state in states:
+            if state.get("scope") == scope:
+                return state
+    return None
+
+
+def readiness_evidence(state: dict | None, fallback_scope: str, fallback_evidence: str, fallback_boundary: str) -> dict:
+    if state:
+        return {
+            "verification_scope": state.get("scope", fallback_scope),
+            "evidence_scope": render_project_page.evidence_scope_for_state(state),
+            "evidence_source": state.get("evidence", fallback_evidence),
+            "claim_boundary": state.get("claim_boundary", fallback_boundary),
+        }
+    return {
+        "verification_scope": fallback_scope,
+        "evidence_scope": fallback_scope,
+        "evidence_source": fallback_evidence,
+        "claim_boundary": fallback_boundary,
+    }
+
+
+def readiness_step(
+    step_id: str,
+    label: str,
+    state: str,
+    detail: str,
+    evidence_state: dict | None,
+    fallback_scope: str,
+    fallback_evidence: str,
+    fallback_boundary: str,
+) -> dict:
+    return {
+        "id": step_id,
+        "label": label,
+        "state": state,
+        "detail": detail,
+        **readiness_evidence(evidence_state, fallback_scope, fallback_evidence, fallback_boundary),
+    }
+
+
 def project_readiness(registry: dict, source_path: Path, collaboration_gate: dict) -> dict:
     summary = forge_registry.registry_summary(registry, source_path)
     states = [item for item in registry.get("verification_states", []) if isinstance(item, dict)]
-    radicle_state = next((item for item in states if item.get("scope") == "registry.radicle_genesis_readback"), None)
+    registry_state = verification_state_for_scope(states, "registry.renderer", "registry.local_import_scaffold")
+    artifact_state = verification_state_for_scope(states, "artifact-metadata.ipfs", "registry.local_artifact_metadata")
+    collaboration_state = verification_state_for_scope(states, "nostr.nip34.repository-collaboration-state-status")
+    radicle_state = verification_state_for_scope(states, "registry.radicle_genesis_readback", "radicle.mapping")
     has_registry = registry.get("schema_version") == "decentralized-forge.project-registry.v1"
     has_artifact = summary["counts"]["artifacts"] > 0
     has_issue = summary["counts"]["issues"] > 0
@@ -108,6 +155,69 @@ def project_readiness(registry: dict, source_path: Path, collaboration_gate: dic
     ]
     completed = sum(1 for item in active_items if item)
     status = "local-product-ready" if local_complete and has_collaboration_pair else "local-product-started" if local_complete else "needs-local-project"
+    steps = [
+        readiness_step(
+            "local_registry",
+            "Local project registry",
+            "complete" if has_registry else "needed",
+            f"Registry source: {relative(source_path)}" if has_registry else "Run start-project against a local Git worktree.",
+            registry_state,
+            "local fixture",
+            f"Registry source: {relative(source_path)}",
+            "Local registry metadata only; not hosted authority or production readiness.",
+        ),
+        readiness_step(
+            "artifact_metadata",
+            "Artifact metadata",
+            "complete" if has_artifact else "needed",
+            f"{summary['counts']['artifacts']} local artifact(s) recorded; no pinning or durability claim.",
+            artifact_state,
+            "local fixture",
+            "Registry artifact rows and local metadata fields.",
+            "Local artifact metadata only; no pinning, paid storage, durability, or public availability claim.",
+        ),
+        readiness_step(
+            "collaboration_records",
+            "Issue and patch records",
+            "complete" if has_collaboration_pair else "planned",
+            f"{summary['counts']['issues']} issue(s), {summary['counts']['patches']} patch(es).",
+            collaboration_state,
+            "local fixture",
+            "Registry issue/patch rows and optional NIP-34 fixture mapping.",
+            "Local collaboration records only unless separate selected-relay readback evidence is shown.",
+        ),
+        readiness_step(
+            "nostr_replay",
+            "Nostr draft replay",
+            "planned" if has_collaboration_pair else "blocked",
+            collaboration_gate.get("plan_replay_command") if has_collaboration_pair else "Needs both an issue and a patch draft before replay planning.",
+            None,
+            "planned or live-unverified",
+            "Replay command is a gate; live relay evidence exists only after the explicit live command runs.",
+            "Planned replay does not sign, publish, fetch, or read back until the live command is intentionally run.",
+        ),
+        readiness_step(
+            "radicle_genesis",
+            "Radicle genesis/readback",
+            "complete" if radicle_live else "planned",
+            "Disposable project RID clone/readback verified." if radicle_live else "Available as a separate bounded live gate.",
+            radicle_state,
+            "planned or live-unverified",
+            "Registry Radicle fields or genesis/readback verification state.",
+            "No durable availability, default routing, identity trust, security, or production-readiness claim.",
+        ),
+        readiness_step(
+            "verification_bundle",
+            "Verification bundle",
+            "planned",
+            "Export and verify the deterministic portable bundle before sharing.",
+            None,
+            "local fixture",
+            "Local deterministic bundle export and readback verifier.",
+            "Bundle verification is local readback; it is not signing, hosting, durability, or production readiness.",
+        ),
+    ]
+    evidence_scope_counts = Counter(step["evidence_scope"] for step in steps)
     return {
         "status": status,
         "completed_count": completed,
@@ -116,44 +226,8 @@ def project_readiness(registry: dict, source_path: Path, collaboration_gate: dic
         "next_action": "Run Nostr replay plan" if has_collaboration_pair else "Add first issue and patch" if local_complete else "Run start-project",
         "start_project_command": 'python scripts/forge_registry.py start-project ../my-project --project-id my-project --project-name "My Project"',
         "verify_bundle_command": "python scripts/forge_registry.py verify-bundle output/decentralized-forge-verification-bundle.zip",
-        "steps": [
-            {
-                "id": "local_registry",
-                "label": "Local project registry",
-                "state": "complete" if has_registry else "needed",
-                "detail": f"Registry source: {relative(source_path)}" if has_registry else "Run start-project against a local Git worktree.",
-            },
-            {
-                "id": "artifact_metadata",
-                "label": "Artifact metadata",
-                "state": "complete" if has_artifact else "needed",
-                "detail": f"{summary['counts']['artifacts']} local artifact(s) recorded; no pinning or durability claim.",
-            },
-            {
-                "id": "collaboration_records",
-                "label": "Issue and patch records",
-                "state": "complete" if has_collaboration_pair else "planned",
-                "detail": f"{summary['counts']['issues']} issue(s), {summary['counts']['patches']} patch(es).",
-            },
-            {
-                "id": "nostr_replay",
-                "label": "Nostr draft replay",
-                "state": "planned" if has_collaboration_pair else "blocked",
-                "detail": collaboration_gate.get("plan_replay_command") if has_collaboration_pair else "Needs both an issue and a patch draft before replay planning.",
-            },
-            {
-                "id": "radicle_genesis",
-                "label": "Radicle genesis/readback",
-                "state": "complete" if radicle_live else "planned",
-                "detail": "Disposable project RID clone/readback verified." if radicle_live else "Available as a separate bounded live gate.",
-            },
-            {
-                "id": "verification_bundle",
-                "label": "Verification bundle",
-                "state": "planned",
-                "detail": "Export and verify the deterministic portable bundle before sharing.",
-            },
-        ],
+        "steps": steps,
+        "evidence_scope_counts": dict(sorted(evidence_scope_counts.items())),
         "non_claims": [
             "local-product-ready does not mean hosted production forge",
             "planned gates do not sign, publish, fetch, or read back until their explicit commands run",
@@ -486,11 +560,23 @@ function renderOverview() {{
         ${{badge(readiness.headline || 'Local alpha', readiness.status === 'local-product-ready' ? 'good' : 'warn')}}
         ${{badge(`next: ${{readiness.next_action || 'review project'}}`, 'blue')}}
         <div class="progress" aria-label="Readiness progress"><span style="width:${{progress}}%"></span></div>
+        ${{renderEvidenceScopeCounts(readiness)}}
         <div class="step-list">
           ${{steps.map((step) => `
             <div class="step">
               ${{badge(step.state, step.state === 'complete' ? 'good' : step.state === 'blocked' ? 'warn' : 'blue')}}
-              <div><strong>${{escapeHtml(step.label)}}</strong><span class="muted">${{escapeHtml(step.detail)}}</span></div>
+              <div>
+                <strong>${{escapeHtml(step.label)}}</strong>
+                <span class="muted">${{escapeHtml(step.detail)}}</span>
+                <div>
+                  ${{badge(step.evidence_scope || 'other or unspecified evidence', evidenceScopeKind(step.evidence_scope))}}
+                  ${{step.verification_scope ? badge(step.verification_scope, 'blue') : ''}}
+                </div>
+                <dl class="meta">
+                  <dt>Evidence</dt><dd>${{escapeHtml(step.evidence_source || 'not listed')}}</dd>
+                  <dt>Boundary</dt><dd>${{escapeHtml(step.claim_boundary || 'not listed')}}</dd>
+                </dl>
+              </div>
             </div>`).join('')}}
         </div>
       </section>
@@ -507,6 +593,24 @@ function renderOverview() {{
 
 function metric(label, value) {{
   return `<div class="metric span-3"><strong>${{escapeHtml(value)}}</strong><span class="muted">${{escapeHtml(label)}}</span></div>`;
+}}
+
+function evidenceScopeKind(scope) {{
+  if (scope === 'bounded live evidence') return 'good';
+  if (scope === 'planned or live-unverified') return 'warn';
+  if (scope === 'synthetic local fixture') return 'rose';
+  return 'blue';
+}}
+
+function renderEvidenceScopeCounts(readiness) {{
+  const counts = readiness.evidence_scope_counts || {{}};
+  const rows = Object.entries(counts);
+  if (!rows.length) return '';
+  return `
+    <div class="scope-summary">
+      <h3>Readiness evidence scopes</h3>
+      ${{rows.map(([scope, count]) => badge(`${{scope}}: ${{count}}`, evidenceScopeKind(scope))).join('')}}
+    </div>`;
 }}
 
 function slug(value) {{

@@ -8,7 +8,7 @@ Current public clone RC: retained RID `rad:z3Q8ePG6Qs4PQi1SWf9BEzDayENcy` at com
 
 Current alpha candidate commit: `e0f71448005b5ba8ed4a4e7ee55fa05b721ae23f`, with GitHub Actions green at `https://github.com/redclawanon-rgb/decentralized-forge/actions/runs/28434085840`.
 
-Current post-alpha loop: Loop 89 converted the outside-reader rehearsal fallback into actual separate-host public clone evidence. The highest-value remaining gates are release decision/tagging, independent-provider seed availability, broader decentralized collaboration beyond selected-relay Nostr proof, signed release/provenance hardening, and durable storage/pinning with separate approval where required.
+Current post-alpha loop: the latest workbench loop extended project readiness cards with the same evidence-scope language used by registry verification states, so dashboard steps now distinguish local fixtures, synthetic fixtures, source-inspected mappings, planned/live-unverified gates, and bounded live evidence. The highest-value remaining gates are release decision/tagging, independent-provider seed availability, broader decentralized collaboration beyond selected-relay Nostr proof, signed release/provenance hardening, and durable storage/pinning with separate approval where required.
 
 Milestone 1 — Local registry/static forge prototype and protocol mapping.
 
