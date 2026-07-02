@@ -32,6 +32,14 @@ VERIFICATION_STATE_ORDER = [
     "live-unverified",
     "live-verified",
 ]
+EVIDENCE_SCOPE_ORDER = [
+    "bounded live evidence",
+    "local fixture",
+    "source-inspected mapping",
+    "synthetic local fixture",
+    "planned or live-unverified",
+    "other or unspecified evidence",
+]
 
 
 class RegistryError(ValueError):
@@ -225,16 +233,33 @@ def render_count_chips(items: list[tuple[str, int]], class_prefix: str) -> str:
     )
 
 
+def evidence_scope_for_state(state: dict) -> str:
+    state_label = str(state.get("state", "unknown"))
+    if state.get("live_verified") is True:
+        return "bounded live evidence"
+    if state_label == "local-fixture":
+        return "local fixture"
+    if state_label == "source-inspected-mapping":
+        return "source-inspected mapping"
+    if state_label == "synthetic-fixture" or state.get("synthetic") is True:
+        return "synthetic local fixture"
+    if state_label == "live-unverified":
+        return "planned or live-unverified"
+    return "other or unspecified evidence"
+
+
 def summarize_verification_states(states: list[dict]) -> dict:
     state_counts = Counter(str(state.get("state", "unknown")) for state in states)
     live_counts = Counter("live_verified=true" if state.get("live_verified") is True else "live_verified=false" for state in states)
     synthetic_counts = Counter("synthetic=true" if state.get("synthetic") is True else "synthetic=false" for state in states)
+    evidence_scope_counts = Counter(evidence_scope_for_state(state) for state in states)
     boundary_counts = Counter(str(state.get("claim_boundary", "not listed")) for state in states)
     return {
         "total": len(states),
         "state_counts": state_counts,
         "live_counts": live_counts,
         "synthetic_counts": synthetic_counts,
+        "evidence_scope_counts": evidence_scope_counts,
         "boundary_counts": boundary_counts,
     }
 
@@ -257,6 +282,8 @@ def render_verification_summary(states: list[dict], label: str, css_scope: str) 
         + render_count_chips(ordered_count_items(summary["live_counts"], ["live_verified=true", "live_verified=false"]), "live")
         + "<h4>Counts by synthetic flag</h4>"
         + render_count_chips(ordered_count_items(summary["synthetic_counts"], ["synthetic=true", "synthetic=false"]), "synthetic")
+        + "<h4>Counts by evidence scope</h4>"
+        + render_count_chips(ordered_count_items(summary["evidence_scope_counts"], EVIDENCE_SCOPE_ORDER), "evidence-scope")
         + "<h4>Claim-boundary summary</h4>"
         + render_count_chips(ordered_count_items(summary["boundary_counts"], []), "boundary")
         + "</div>"
@@ -301,6 +328,7 @@ def render_verification_state(state: dict) -> str:
         + '<dl class="metadata">'
         + field("Scope", state.get("scope"))
         + field("State", state_label)
+        + field("Evidence scope", evidence_scope_for_state(state), code=False)
         + f"<dt>Live verified</dt><dd>{yes_no(state.get('live_verified'))}</dd>"
         + f"<dt>Synthetic</dt><dd>{yes_no(state.get('synthetic'))}</dd>"
         + field("Evidence", state.get("evidence"), code=False)
