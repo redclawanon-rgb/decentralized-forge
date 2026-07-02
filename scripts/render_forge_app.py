@@ -236,6 +236,75 @@ def project_readiness(registry: dict, source_path: Path, collaboration_gate: dic
     }
 
 
+def live_evidence_scope(item: dict) -> str:
+    if item.get("synthetic"):
+        return "synthetic local fixture"
+    if item.get("live_network_action"):
+        return "bounded live evidence"
+    if item.get("local_cli_verified"):
+        return "local CLI evidence"
+    return "local/imported evidence"
+
+
+def evidence_trust_path(live_evidence_index: dict) -> dict:
+    evidence = [item for item in live_evidence_index.get("evidence", []) if isinstance(item, dict)]
+    scoped_rows = [
+        {
+            **item,
+            "evidence_scope": live_evidence_scope(item),
+        }
+        for item in evidence
+    ]
+    protocol_groups: dict[str, list[dict]] = {}
+    for item in scoped_rows:
+        protocol_groups.setdefault(item.get("protocol", "unknown"), []).append(item)
+
+    protocol_summaries = []
+    for protocol, items in sorted(protocol_groups.items()):
+        scope_counts = Counter(item["evidence_scope"] for item in items)
+        protocol_summaries.append(
+            {
+                "protocol": protocol,
+                "row_count": len(items),
+                "bounded_live_count": scope_counts.get("bounded live evidence", 0),
+                "local_cli_count": scope_counts.get("local CLI evidence", 0),
+                "synthetic_count": scope_counts.get("synthetic local fixture", 0),
+                "selected_relay_readback_count": sum(1 for item in items if item.get("selected_relay_readback_verified")),
+                "scope_counts": dict(sorted(scope_counts.items())),
+            }
+        )
+
+    scope_counts = Counter(item["evidence_scope"] for item in scoped_rows)
+    has_ipfs_gap = any(
+        item.get("protocol") == "ipfs" and item.get("state") == "public-gateway-no-readback-observed"
+        for item in scoped_rows
+    )
+    if has_ipfs_gap:
+        next_gate = {
+            "id": "artifact_public_readback",
+            "label": "Artifact public readback",
+            "reason": (
+                "Public clone evidence is stronger than artifact availability evidence; the next customer-trust "
+                "gate is a free/project-scoped artifact publication or pinning readback without a durability claim."
+            ),
+            "boundary": "No paid storage, wallet, durability, global availability, security, or production-readiness claim.",
+        }
+    else:
+        next_gate = {
+            "id": "signed_release_review",
+            "label": "Signed release review",
+            "reason": "Review release signing and provenance evidence before upgrading customer-facing trust language.",
+            "boundary": "No SLSA, supply-chain security, or production-readiness claim without separate verification.",
+        }
+
+    return {
+        "row_count": len(scoped_rows),
+        "scope_counts": dict(sorted(scope_counts.items())),
+        "protocol_summaries": protocol_summaries,
+        "next_customer_trust_gate": next_gate,
+    }
+
+
 def build_app_data(args: argparse.Namespace) -> dict:
     registries = [render_project_page.load_registry(path) for path in args.registries]
     registry_sources = [relative(path) for path in args.registries]
@@ -278,6 +347,7 @@ def build_app_data(args: argparse.Namespace) -> dict:
         "nip34": nip34_export,
         "live_nostr_collaboration": live_nostr_collaboration(nostr_issue_patch_evidence),
         "live_evidence_index": live_evidence_index,
+        "evidence_trust_path": evidence_trust_path(live_evidence_index),
         "keyless_import": keyless_import,
         "non_claims": [
             "static app does not publish protocol events",
@@ -443,6 +513,16 @@ def render_html(app_data: dict) -> str:
     .field textarea {{ min-height: 142px; resize: vertical; }}
     .output {{ width: 100%; min-height: 240px; resize: vertical; background: #10171b; color: #e8f1f4; }}
     .command-output {{ min-height: 96px; }}
+    .trust-gate {{
+      border-left: 4px solid var(--teal);
+      background: #f8fbfb;
+    }}
+    .evidence-group {{
+      display: grid;
+      grid-template-columns: 140px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+    }}
     .actions {{ display: flex; flex-wrap: wrap; gap: 8px; }}
     .primary, .secondary {{
       min-height: 36px;
@@ -613,6 +693,12 @@ function renderEvidenceScopeCounts(readiness) {{
     </div>`;
 }}
 
+function renderScopeBadges(counts) {{
+  return Object.entries(counts || {{}})
+    .map(([scope, count]) => badge(`${{scope}}: ${{count}}`, evidenceScopeKind(scope)))
+    .join('');
+}}
+
 function slug(value) {{
   const slugged = String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').replace(/-+/g, '-');
   return slugged || 'local-import';
@@ -717,6 +803,8 @@ function renderReleases() {{
 
 function renderEvidence() {{
   const protocols = ['all', ...new Set(app.live_evidence_index.evidence.map((item) => item.protocol))];
+  const trust = app.evidence_trust_path || {{}};
+  const nextGate = trust.next_customer_trust_gate || {{}};
   const query = state.evidenceQuery.toLowerCase();
   const rows = app.live_evidence_index.evidence.filter((item) => {{
     const protocolOk = state.evidenceProtocol === 'all' || item.protocol === state.evidenceProtocol;
@@ -728,6 +816,30 @@ function renderEvidence() {{
       <select id="evidenceProtocol" aria-label="Evidence protocol">${{protocols.map((p) => `<option value="${{p}}">${{p}}</option>`).join('')}}</select>
       <input id="evidenceQuery" type="search" value="${{escapeHtml(state.evidenceQuery)}}" placeholder="Filter evidence" aria-label="Filter evidence">
     </div>
+    <section class="panel trust-gate">
+      <h2>Customer trust path</h2>
+      ${{renderScopeBadges(trust.scope_counts)}}
+      <div class="item">
+        <h3>${{escapeHtml(nextGate.label || 'Review next trust gate')}}</h3>
+        <p class="muted">${{escapeHtml(nextGate.reason || 'Evidence rows are grouped by protocol and evidence scope.')}}</p>
+        ${{badge('next gate', 'blue')}}
+        ${{badge(nextGate.id || 'review', 'warn')}}
+        ${{meta([['Boundary', nextGate.boundary || 'No stronger claim without separate evidence.']])}}
+      </div>
+    </section>
+    <section class="panel">
+      <h2>Evidence by protocol</h2>
+      ${{(trust.protocol_summaries || []).map((group) => `
+        <div class="item evidence-group">
+          <strong>${{escapeHtml(group.protocol)}}</strong>
+          <div>
+            ${{badge(`${{group.row_count}} row${{group.row_count === 1 ? '' : 's'}}`, 'blue')}}
+            ${{badge(`${{group.bounded_live_count}} bounded live`, group.bounded_live_count ? 'good' : 'warn')}}
+            ${{badge(`${{group.selected_relay_readback_count}} selected-relay`, group.selected_relay_readback_count ? 'good' : 'blue')}}
+            ${{renderScopeBadges(group.scope_counts)}}
+          </div>
+        </div>`).join('')}}
+    </section>
     <div id="evidenceList"></div>`;
   $('evidenceProtocol').value = state.evidenceProtocol;
   $('evidenceProtocol').onchange = (event) => {{ state.evidenceProtocol = event.target.value; renderEvidence(); }};
@@ -738,6 +850,7 @@ function renderEvidence() {{
       <p>${{escapeHtml(item.verification_summary)}}</p>
       ${{badge(item.protocol, 'blue')}}
       ${{badge(item.state, item.synthetic ? 'warn' : 'good')}}
+      ${{badge(item.synthetic ? 'synthetic local fixture' : item.live_network_action ? 'bounded live evidence' : item.local_cli_verified ? 'local CLI evidence' : 'local/imported evidence', evidenceScopeKind(item.synthetic ? 'synthetic local fixture' : item.live_network_action ? 'bounded live evidence' : item.local_cli_verified ? 'local CLI evidence' : 'local/imported evidence'))}}
       ${{badge('live network: ' + item.live_network_action, badgeClass(item.live_network_action))}}
       ${{badge('selected relay: ' + item.selected_relay_readback_verified, badgeClass(item.selected_relay_readback_verified))}}
       ${{meta([['Evidence file', item.evidence_file], ['Evidence SHA-256', item.evidence_sha256], ['Scope', item.scope], ['Non-claims', item.non_claims.join('; ')]])}}

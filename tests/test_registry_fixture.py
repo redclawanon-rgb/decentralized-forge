@@ -419,6 +419,9 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertIn("projectSetCommand", html)
         self.assertIn("loop43-nostr-issue-patch-readback", html)
         self.assertIn("selected-relay-issue-patch-readback-verified", html)
+        self.assertIn("Customer trust path", html)
+        self.assertIn("Evidence by protocol", html)
+        self.assertIn("Artifact public readback", html)
 
         data_match = re.search(
             r'<script id="forge-data" type="application/json">(.*?)</script>',
@@ -464,6 +467,16 @@ class RegistryFixtureTests(unittest.TestCase):
         self.assertEqual({item["type"] for item in app_data["live_nostr_collaboration"]}, {"issue", "patch"})
         self.assertEqual(len(app_data["live_nostr_collaboration"]), 2)
         self.assertEqual(app_data["live_evidence_index"]["loop"], self.live_evidence_index["loop"])
+        trust_path = app_data["evidence_trust_path"]
+        self.assertEqual(trust_path["row_count"], len(self.live_evidence_index["evidence"]))
+        self.assertGreater(trust_path["scope_counts"]["bounded live evidence"], 0)
+        self.assertEqual(trust_path["next_customer_trust_gate"]["id"], "artifact_public_readback")
+        self.assertIn("without a durability claim", trust_path["next_customer_trust_gate"]["reason"])
+        protocols = {item["protocol"]: item for item in trust_path["protocol_summaries"]}
+        self.assertIn("radicle", protocols)
+        self.assertIn("ipfs", protocols)
+        self.assertGreater(protocols["radicle"]["bounded_live_count"], 0)
+        self.assertGreater(protocols["ipfs"]["row_count"], 0)
         self.assertIn("static app does not publish protocol events", app_data["non_claims"])
 
         for forbidden_runtime in [
